@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta name="theme-color" content="#174b3b">
+  <link rel="icon" type="image/webp" href="assets/paustik-logo-user.webp">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>Delivery operations · Paustik</title>
+  <style>
+    :root{--green:#174b3b;--green2:#277455;--cream:#faf7ef;--ink:#1f312a;--muted:#6f7d74;--line:#e8e9df;--mint:#e9f2e9;--orange:#eaa34b;--red:#a4493e;--shadow:0 16px 45px #1b3e2d12}
+    *{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--ink);font:15px/1.6 Manrope,Arial,sans-serif}.shell{width:min(1080px,calc(100% - 36px));margin:auto}.top{background:var(--green);color:white;padding:8px;text-align:center;font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:800}.nav{background:#fffdf8;border-bottom:1px solid var(--line)}.navrow{height:78px;display:flex;align-items:center;justify-content:space-between;gap:20px}.logo{width:205px;height:auto;display:block}.nav a{color:var(--green);font-weight:800;text-decoration:none}.hero{padding:35px 0 22px}.eyebrow{text-transform:uppercase;letter-spacing:.14em;font-size:11px;color:var(--green2);font-weight:900}.hero h1{font-size:clamp(34px,5vw,46px);letter-spacing:-.05em;line-height:1.1;margin:8px 0}.hero p{margin:0;color:var(--muted);max-width:730px}.state{display:flex;align-items:center;gap:10px;margin:16px 0;padding:13px 16px;border-radius:14px;background:white;border:1px solid var(--line);font-size:13px;font-weight:750}.dot{width:9px;height:9px;border-radius:50%;background:var(--orange);flex:none}.dot.ready{background:#2e9a67}.layout{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;align-items:start;padding-bottom:48px}.card{background:white;border:1px solid var(--line);border-radius:20px;padding:23px;box-shadow:var(--shadow)}.card h2{margin:0 0 5px;font-size:19px;letter-spacing:-.03em}.muted{color:var(--muted);font-size:13px;margin:0 0 18px}.field{margin:0 0 13px}.field label{display:block;font-size:12px;font-weight:850;margin-bottom:5px}.field input{width:100%;padding:11px 12px;border-radius:11px;border:1px solid #d9e1d8;background:#fff;color:var(--ink);font:inherit}.field input:focus{outline:3px solid #dcebdd;border-color:var(--green2)}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.btn{border:0;border-radius:12px;padding:12px 17px;background:var(--green);color:white;font:inherit;font-weight:850;cursor:pointer}.btn:disabled{opacity:.48;cursor:not-allowed}.btn.alt{background:var(--mint);color:var(--green)}.buttonrow{display:flex;gap:9px;flex-wrap:wrap;margin-top:15px}.notice{background:#fff4dc;border:1px solid #f2e1bd;color:#73511d;padding:12px 14px;border-radius:13px;font-size:12px;line-height:1.55}.result{margin-top:16px;padding:15px;border-radius:15px;background:#edf5ee;border:1px solid #cfdfd1}.result h3{margin:0 0 8px;font-size:15px}.result label{display:block;font-size:11px;color:var(--muted);font-weight:850;margin:10px 0 4px}.copyrow{display:flex;gap:7px}.copyrow input{min-width:0;flex:1;padding:9px;border:1px solid #d7e1d6;border-radius:9px;background:white;font:12px Manrope,Arial}.copy{border:0;border-radius:9px;padding:8px 11px;background:var(--green);color:#fff;font-weight:800;cursor:pointer}.code{font-size:27px;font-weight:900;letter-spacing:.18em;color:var(--green)}.tablewrap{overflow:auto}.table{width:100%;border-collapse:collapse;font-size:12px}.table th,.table td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:middle}.table th{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}.table tr:last-child td{border:0}.error{color:var(--red);font-size:13px;margin-top:10px;min-height:1.4em}.footer{padding:21px 0 35px;color:var(--muted);font-size:11px}.footrow{display:flex;justify-content:space-between;gap:15px;align-items:center}.footrow img{width:155px;vertical-align:middle;background:#faf7ef;border-radius:9px;padding:4px 7px}
+    @media(max-width:760px){.layout{grid-template-columns:1fr}.navrow{height:70px}.logo{width:170px}.grid{grid-template-columns:1fr}.card{padding:19px}.footrow{align-items:flex-start;flex-direction:column}}
+  </style>
+</head>
+<body>
+  <div class="top">Protected live operations · Sample delivery preview available below</div>
+  <header class="nav"><div class="shell navrow"><a href="/" aria-label="Paustik home"><img class="logo" src="assets/paustik-logo-user.webp" alt="Paustik"></a><a href="/">Back to website</a></div></header>
+  <main class="shell">
+    <section class="hero"><div class="eyebrow">Delivery operations</div><h1>Create a live delivery</h1><p>Set the destination boundary, then securely share a courier link and a customer tracking link. Location updates are collected only after the courier opts in and starts GPS.</p><div id="backendState" class="state"><span class="dot"></span><span>Checking backend status…</span></div></section>
+    <section class="card" style="margin:0 0 18px;background:#fffdf7">
+      <h2>Try the sample tracking flow</h2><p class="muted">These fictional pages work without the operations key, database changes, or device GPS.</p>
+      <div class="buttonrow"><a class="btn alt" style="display:inline-block;text-decoration:none" href="/courier.html?demo=1">Open sample courier</a><a class="btn alt" style="display:inline-block;text-decoration:none" href="/track.html?demo=1">Open customer tracking preview</a><a class="btn alt" style="display:inline-block;text-decoration:none" href="/">View sample menu & kitchens</a></div>
+    </section>
+    <div class="layout">
+      <section class="card">
+        <h2>New delivery</h2><p class="muted">Use an order reference and delivery coordinates. Customer details are not needed here.</p>
+        <form id="deliveryForm">
+          <div class="field"><label for="adminToken">Operations key</label><input id="adminToken" type="password" autocomplete="off" spellcheck="false" required placeholder="Paste the Vercel operations key"></div>
+          <div class="grid">
+            <div class="field"><label for="orderRef">Order reference</label><input id="orderRef" maxlength="64" required placeholder="P-2048"></div>
+            <div class="field"><label for="courierLabel">Courier label</label><input id="courierLabel" maxlength="80" placeholder="Paustik courier"></div>
+          </div>
+          <div class="grid">
+            <div class="field"><label for="destinationLat">Destination latitude</label><input id="destinationLat" type="number" min="-90" max="90" step="any" required placeholder="20.2961"></div>
+            <div class="field"><label for="destinationLon">Destination longitude</label><input id="destinationLon" type="number" min="-180" max="180" step="any" required placeholder="85.8245"></div>
+          </div>
+          <div class="field"><label for="geofenceMeters">Arrival boundary</label><select id="geofenceMeters"><option value="150">150 metres</option><option value="200">200 metres</option><option value="300" selected>300 metres</option><option value="400">400 metres</option><option value="500">500 metres</option><option value="750">750 metres</option><option value="1000">1,000 metres</option></select></div>
+          <div class="notice">The customer link can view the courier’s latest location. The courier link can share device GPS only after a separate checkbox and browser permission. The service keeps one current point, removes it on Stop, handover, or cancellation, and makes it unavailable after 24 hours before daily cleanup deletes it.</div>
+          <div class="buttonrow"><button id="createButton" class="btn" type="submit" disabled>Create delivery links</button></div>
+          <div id="createError" class="error" role="status"></div>
+        </form>
+        <div id="createdResult" class="result" hidden>
+          <h3>Delivery is ready</h3><div class="muted" id="createdMeta"></div>
+          <label>Courier link · expires in 12 hours</label><div class="copyrow"><input id="courierUrl" readonly><button class="copy" type="button" data-copy="courierUrl">Copy</button></div>
+          <label>Customer tracking link · expires in 48 hours</label><div class="copyrow"><input id="parentUrl" readonly><button class="copy" type="button" data-copy="parentUrl">Copy</button></div>
+          <label>One-time handover code · send separately</label><div class="code" id="handoverCode"></div><div class="muted">The recipient enters this code when the meal arrives. Do not put it in either link.</div>
+        </div>
+      </section>
+      <section class="card">
+        <h2>Active deliveries</h2><p class="muted">Refresh with the operations key. Canceling immediately stops sharing and deletes the current coordinate.</p>
+        <form id="listForm"><div class="field"><label for="listToken">Operations key</label><input id="listToken" type="password" autocomplete="off" spellcheck="false" placeholder="Paste the key to load deliveries"></div><div class="buttonrow"><button class="btn alt" type="submit">Load active deliveries</button></div></form>
+        <div id="listError" class="error" role="status"></div>
+        <div class="tablewrap"><table class="table"><thead><tr><th>Order</th><th>Status</th><th>Sharing</th><th></th></tr></thead><tbody id="deliveryRows"><tr><td colspan="4" class="muted">No list loaded.</td></tr></tbody></table></div>
+      </section>
+    </div>
+  </main>
+  <footer class="footer"><div class="shell footrow"><span><img src="assets/paustik-logo-user.webp" alt="Paustik"> · Operations · Sample and real-delivery tools</span><span>Precise coordinates are never sent to a map provider.</span></div></footer>
+  <script>
+    const $=id=>document.getElementById(id);let backendReady=false;
+    async function request(path,options={}){const response=await fetch(path,{credentials:'same-origin',...options});const payload=await response.json().catch(()=>({}));if(!response.ok){const error=new Error(payload.message||payload.error||'The request could not be completed.');error.status=response.status;error.data=payload;throw error}return payload}
+    async function checkHealth(){try{const state=await request('/api/health');backendReady=state.state==='ready';$('backendState').innerHTML='<span class="dot '+(backendReady?'ready':'')+'"></span><span>Backend connected · Live delivery tools are ready.</span>'}catch(error){backendReady=false;const label=error.data?.state==='schema_required'?'Database is connected, but the Paustik schema still needs to be applied.':'Backend setup pending · Connect Neon, add the three server secrets, and apply db/schema.sql.';$('backendState').innerHTML='<span class="dot"></span><span>'+label+'</span>'} $('createButton').disabled=!backendReady}
+    $('deliveryForm').addEventListener('submit',async event=>{event.preventDefault();$('createError').textContent='';const token=$('adminToken').value.trim();$('adminToken').value='';const body={orderRef:$('orderRef').value.trim(),courierLabel:$('courierLabel').value.trim(),destinationLat:Number($('destinationLat').value),destinationLon:Number($('destinationLon').value),geofenceMeters:Number($('geofenceMeters').value)};$('createButton').disabled=true;try{const result=await request('/api/admin/deliveries',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify(body)});$('createdMeta').textContent=result.delivery.orderRef+' · '+result.delivery.geofenceMeters+' m arrival boundary';$('courierUrl').value=result.courierUrl;$('parentUrl').value=result.parentUrl;$('handoverCode').textContent=result.handoverCode;$('createdResult').hidden=false;event.target.reset();$('geofenceMeters').value='300'}catch(error){$('createError').textContent=error.message}finally{$('createButton').disabled=!backendReady}});
+    $('listForm').addEventListener('submit',async event=>{event.preventDefault();$('listError').textContent='';const token=$('listToken').value.trim();try{const result=await request('/api/admin/deliveries',{headers:{'Authorization':'Bearer '+token}});const rows=$('deliveryRows');if(!result.deliveries.length){rows.innerHTML='<tr><td colspan="4" class="muted">No active deliveries.</td></tr>';return}rows.innerHTML=result.deliveries.map(d=>'<tr><td>'+escapeText(d.order_ref)+'</td><td>'+escapeText(d.status)+'</td><td>'+(d.sharing_enabled?'Live':'Stopped')+'</td><td><button class="copy" type="button" data-cancel="'+escapeText(d.id)+'">Cancel</button></td></tr>').join('')}catch(error){$('listError').textContent=error.message}});
+    document.addEventListener('click',async event=>{const copy=event.target.closest('[data-copy]');if(copy){try{await navigator.clipboard.writeText($(copy.dataset.copy).value);copy.textContent='Copied';setTimeout(()=>copy.textContent='Copy',1200)}catch{$('createError').textContent='Could not access the clipboard. Select and copy the link manually.'}}const cancel=event.target.closest('[data-cancel]');if(cancel){const token=$('listToken').value.trim();if(!token){$('listError').textContent='Enter the operations key again before canceling.';return}try{await request('/api/admin/deliveries',{method:'DELETE',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({deliveryId:cancel.dataset.cancel})});cancel.closest('tr').remove()}catch(error){$('listError').textContent=error.message}}});
+    function escapeText(value){return String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]))}
+    window.addEventListener('pagehide',()=>{$('adminToken').value='';$('listToken').value=''});checkHealth();
+  </script>
+</body>
+</html>
