@@ -158,7 +158,6 @@ export function createLocalUser(input: {
   role: LocalRole;
   status: LocalStatus;
   profile: Record<string, string>;
-  verificationTokenHash: string;
 }) {
   const db = database();
   const now = new Date();
@@ -167,12 +166,6 @@ export function createLocalUser(input: {
   try {
     db.prepare(`INSERT INTO users(id,name,email,phone,role,status,profile_json,created_at)
       VALUES(?,?,?,?,?,?,?,?)`).run(id, input.name, input.email.toLowerCase(), input.phone, input.role, input.status, JSON.stringify(input.profile), now.toISOString());
-    db.prepare("INSERT INTO email_tokens(token_hash,user_id,expires_at,created_at) VALUES(?,?,?,?)").run(
-      input.verificationTokenHash,
-      id,
-      new Date(now.getTime() + 24 * 60 * 60_000).toISOString(),
-      now.toISOString(),
-    );
     db.exec("COMMIT");
     return { id, status: input.status };
   } catch (error) {
@@ -246,3 +239,4 @@ export function revokeLocalSession(tokenHash: string) {
 export function touchLocalUser(userId: string) {
   database().prepare("UPDATE users SET last_login_at = ? WHERE id = ?").run(new Date().toISOString(), userId);
 }
+

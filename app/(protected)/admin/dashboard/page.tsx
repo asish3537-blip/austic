@@ -1,5 +1,6 @@
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import Link from "next/link";
 
 type CurrencyAmount = { currency: string; amount: number };
 type ActivityItem = {
@@ -72,7 +73,7 @@ export default async function AdminDashboardPage() {
     prisma.earning.groupBy({ by: ["beneficiaryRole", "status", "currency"], _sum: { netAmount: true }, _count: { _all: true } }),
     prisma.payout.groupBy({ by: ["status", "currency"], _sum: { amount: true }, _count: { _all: true } }),
     prisma.user.findMany({ where: { role: { not: "ADMIN" } }, orderBy: { createdAt: "desc" }, take: 8, select: { id: true, name: true, role: true, status: true, createdAt: true } }),
-    prisma.user.findMany({ where: { role: { not: "ADMIN" }, lastLoginAt: { not: null } }, orderBy: { lastLoginAt: "desc" }, take: 8, select: { id: true, name: true, role: true, lastLoginAt: true } }),
+    prisma.user.findMany({ where: { lastLoginAt: { not: null } }, orderBy: { lastLoginAt: "desc" }, take: 8, select: { id: true, name: true, role: true, lastLoginAt: true } }),
     prisma.orderEvent.findMany({ orderBy: { createdAt: "desc" }, take: 8, include: { order: { select: { orderNumber: true } }, actorUser: { select: { name: true } } } }),
     prisma.payment.findMany({ orderBy: { createdAt: "desc" }, take: 8, include: { order: { select: { orderNumber: true } } } }),
     prisma.delivery.findMany({ orderBy: { updatedAt: "desc" }, take: 8, include: { order: { select: { orderNumber: true } }, agent: { select: { user: { select: { name: true } } } } } }),
@@ -122,17 +123,20 @@ export default async function AdminDashboardPage() {
 
   const phoneOtpReady = Boolean(process.env.TWILIO_API_KEY_SID && process.env.TWILIO_API_KEY_SECRET && process.env.TWILIO_VERIFY_SERVICE_SID);
   const emailVerificationReady = Boolean(process.env.RESEND_API_KEY && process.env.EMAIL_FROM);
+  const demoAuth = process.env.PAUSTIK_DEMO_AUTH === "true";
   const orderStatusRows = [...orderGroups].sort((a, b) => b._count._all - a._count._all);
   const deliveryStatusRows = [...deliveryGroups].sort((a, b) => b._count._all - a._count._all);
 
   return <main className="dashboard-shell admin-dashboard">
     <div className="dashboard-head admin-dashboard-head">
       <div><span className="eyebrow">Paustik operations</span><h1>Admin overview</h1><p>Track accounts, orders, deliveries and recorded money movement.</p></div>
+      <Link className="button button-light" href="/admin/accounts">Manage admin accounts</Link>
       <div className="admin-live-badge"><span aria-hidden="true" /> Live database · {timestamp(new Date())}</div>
     </div>
 
-    {!phoneOtpReady && <div className="dashboard-banner admin-warning"><strong>Phone sign-in is not connected.</strong> Customers, mothers and couriers cannot request SMS codes until <code>TWILIO_API_KEY_SID</code>, <code>TWILIO_API_KEY_SECRET</code> and <code>TWILIO_VERIFY_SERVICE_SID</code> are set in Vercel Production.</div>}
-    {!emailVerificationReady && <div className="dashboard-banner admin-warning"><strong>Email confirmation is not connected.</strong> Paustik cannot send account confirmation links until <code>RESEND_API_KEY</code> and <code>EMAIL_FROM</code> are set in Vercel Production. Phone-code sign-in does not depend on email.</div>}
+    {demoAuth && <div className="dashboard-banner admin-warning"><strong>Temporary preview sign-in is on.</strong> Codes are shown in the app and do not verify phone ownership. Disable this mode before accepting real customers.</div>}
+    {!demoAuth && !phoneOtpReady && <div className="dashboard-banner admin-warning"><strong>Phone sign-in is not connected.</strong> Customers, mothers and couriers cannot request SMS codes until a phone verification service is configured.</div>}
+    {!demoAuth && !emailVerificationReady && <div className="dashboard-banner admin-warning"><strong>Email confirmation is not connected.</strong> Account confirmation links require a configured email sender. Phone-code sign-in does not depend on email.</div>}
 
     <section className="admin-kpi-grid" aria-label="Marketplace overview">
       <article className="admin-kpi"><span>All accounts</span><strong>{totalUsers}</strong><small>{countFor("CUSTOMER")} customers · {countFor("MOTHER")} mothers · {countFor("DELIVERY_AGENT")} couriers</small></article>
@@ -175,3 +179,4 @@ export default async function AdminDashboardPage() {
     </section>
   </main>;
 }
+

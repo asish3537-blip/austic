@@ -8,11 +8,13 @@ import { makeAuthLink, sendAuthEmail } from "@/lib/email";
 import { rejectCrossOrigin } from "@/lib/http";
 import { registrationSchema } from "@/lib/auth-validation";
 import { isLocalAuthMode } from "@/lib/local-auth-mode";
+import { clearDemoOtpCookie, isDemoAuthEnabled, verifyDemoOtp } from "@/lib/demo-auth";
+import { createSession, roleHome } from "@/lib/auth";
 
 export const runtime = "nodejs";
 
 function unavailable() {
-  if (!isPhoneOtpConfigured()) {
+  if (!isPhoneOtpConfigured() && !isDemoAuthEnabled()) {
     return NextResponse.json({ error: "Phone sign-up is not connected yet. Paustik needs its SMS verification service configured before it can create accounts." }, { status: 503 });
   }
   return NextResponse.json({ error: "Paustik could not complete account creation. Please try again." }, { status: 503 });
@@ -22,6 +24,7 @@ export async function POST(request: Request) {
   const originError = rejectCrossOrigin(request);
   if (originError) return originError;
   const localAuth = isLocalAuthMode();
+  const demoAuth = !localAuth && isDemoAuthEnabled();
   if (!localAuth && (!process.env.DATABASE_URL || !process.env.AUTH_SECRET)) return unavailable();
 
   let body: unknown;
@@ -37,8 +40,7 @@ export async function POST(request: Request) {
   if (!phone) return NextResponse.json({ error: "Enter a valid phone number with your country code. Indian numbers can use 10 digits or +91." }, { status: 400 });
   const candidates = phoneLookupCandidates(input.phone, phone);
   const email = input.email.toLowerCase();
-  const verificationToken = randomBytes(32).toString("base64url");
-  const emailTokenHash = createHash("sha256").update(verificationToken).digest("hex");
+  const verificationToken = demoAuth ? null : randomBytes(32).toString("base64url");
 
   if (localAuth) {
     try {
@@ -69,17 +71,13 @@ export async function POST(request: Request) {
           kitchenName: input.kitchenName || "",
           vehicleType: input.vehicleType || "",
         },
-        verificationTokenHash: emailTokenHash,
       });
-      const emailSent = await sendAuthEmail(email, "verify", verificationToken);
-      const developmentLink = !emailSent ? makeAuthLink("verify", verificationToken, new URL(request.url).origin) : undefined;
+      await createSession(user.id);
       return NextResponse.json({
         created: true,
         status: user.status,
-        emailSent,
-        email,
-        ...(developmentLink ? { verificationUrl: developmentLink } : {}),
-        message: "Your local Paustik account is saved in the project’s private .data database. Verify the email link below, then sign in with a local phone code.",
+        destination: "/account/local-demo",
+        message: "Your local Paustik account is saved. No email or SMS was sent; the in-app code was for this local preview.",
       }, { status: 201 });
     } catch (error) {
       if (error instanceof Error && error.message.includes("UNIQUE constraint failed")) {
@@ -103,7 +101,9 @@ export async function POST(request: Request) {
     });
     if (failedCodes >= 8) return NextResponse.json({ error: "Too many code attempts. Request a new code and try again later." }, { status: 429 });
 
-    const approved = await checkPhoneOtp(phone, input.otp);
+    const approved = demoAuth
+      ? verifyDemoOtp(request, phone, "signup", input.otp)
+      : await checkPhoneOtp(phone, input.otp);
     if (!approved) {
       await prisma.failedLoginAttempt.create({ data: { identifierHash } });
       return NextResponse.json({ error: "That code is incorrect or expired. Request a new code and try again." }, { status: 401 });
@@ -152,15 +152,28 @@ export async function POST(request: Request) {
           data: { userId: created.id, vehicleType: input.vehicleType!, verificationStatus: "PENDING" },
         });
       }
-      await tx.emailVerificationToken.create({
-        data: { userId: created.id, tokenHash: emailTokenHash, expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000) },
-      });
+      if (!demoAuth && verificationToken) {
+        await tx.emailVerificationToken.create({
+          data: { userId: created.id, tokenHash: createHash("sha256").update(verificationToken).digest("hex"), expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000) },
+        });
+      }
       return created;
     });
 
     await prisma.failedLoginAttempt.deleteMany({ where: { identifierHash } });
-    const emailSent = await sendAuthEmail(email, "verify", verificationToken);
-    const developmentLink = process.env.NODE_ENV !== "production" && !emailSent
+    if (demoAuth) {
+      await createSession(user.id);
+      const response = NextResponse.json({
+        created: true,
+        status: user.status,
+        destination: roleHome({ role: user.role, status: user.status }),
+        message: "Your account is ready. No email or SMS was sent; this temporary code is for the Paustik preview only.",
+      }, { status: 201, headers: { "Cache-Control": "no-store" } });
+      clearDemoOtpCookie(response);
+      return response;
+    }
+    const emailSent = verificationToken ? await sendAuthEmail(email, "verify", verificationToken) : false;
+    const developmentLink = process.env.NODE_ENV !== "production" && !emailSent && verificationToken
       ? makeAuthLink("verify", verificationToken)
       : undefined;
     return NextResponse.json({
@@ -183,3 +196,4 @@ export async function POST(request: Request) {
     return unavailable();
   }
 }
+

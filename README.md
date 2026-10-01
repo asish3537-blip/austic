@@ -6,13 +6,13 @@ Paustik connects customers with nearby mother-led kitchens and local delivery pa
 
 ## Current implementation stage
 
-The source implements account registration and sign-in with one-time phone codes, session cookies, email confirmation links and server-side role checks. Production phone codes use Twilio Verify; email links use Resend. Local development without `DATABASE_URL` switches to an isolated SQLite account store and displays development-only phone codes and verification links.
+The source implements role-based account registration, temporary preview codes, admin username/password sign-in, session cookies and server-side role checks. Preview codes are displayed in the app and do not verify phone ownership. Set `PAUSTIK_DEMO_AUTH=true` only for a controlled preview; production SMS and email verification use Twilio Verify and Resend when demo mode is off. Local development without `DATABASE_URL` uses an isolated SQLite account store.
 
 The new Next.js app is the root route after deployment. The previous interactive concept is kept at `/legacy-demo.html`; the delivery operations, courier and tracking pages remain at their prior URLs. The sample concept still uses local browser data and is not connected to the new marketplace accounts.
 
 Marketplace schema also models nearby-kitchen discovery (city, PIN code, coordinates and service radius), kitchen-specific meals and menus, weekly menu cycles, daily/weekly/monthly plans, versioned cancellation and meal-change policies, order/payment ledgers, earnings, payouts and admin audit history. Customer browsing/checkout, mother menu CRUD, approval tools, order operations, real payment processing and analytics are later implementation phases; dashboard copy identifies these as upcoming instead of pretending they are live.
 
-The `paustik_marketplace` schema was applied to Neon in the earlier production setup. This updated local-auth source has not been deployed. The local demo account created during verification is stored only in the ignored `.data` folder; no external email messages or payments were sent.
+The `paustik_marketplace` schema is managed through the versioned Prisma migrations. The local demo account store remains isolated in the ignored `.data` folder; no external email messages or payments are sent by preview auth.
 
 ## Local setup
 
@@ -25,7 +25,7 @@ Requirements: Node.js 20.19 or later and pnpm.
 5. Apply the new marketplace migration to a **development** database: `pnpm db:migrate:dev`.
 6. Start the app: `pnpm dev`.
 
-The local auth database is created automatically at `.data/paustik-local-auth.sqlite`. The app shows the one-time code and local email-confirmation URL on screen. This development fallback is never enabled in production and its SQLite file does not sync to Vercel.
+The local auth database is created automatically at `.data/paustik-local-auth.sqlite`. The app shows a temporary one-time code on screen. This SQLite database is not available on Vercel and does not sync to production.
 
 For production, first verify the linked Vercel project and Neon environment values. Apply reviewed migrations with `pnpm db:migrate:deploy` using `DIRECT_URL` (or a direct Neon URL), then deploy the app. The migration creates its own `paustik_marketplace` schema and leaves the existing live-tracking tables in `public` alone. Do not point `db:migrate:dev` at production.
 
@@ -37,27 +37,28 @@ For production, first verify the linked Vercel project and Neon environment valu
 - `TWILIO_API_KEY_SID`, `TWILIO_API_KEY_SECRET`, `TWILIO_VERIFY_SERVICE_SID`: required server-side credentials for phone OTP. Create a Verify Service configured for 6-digit SMS codes.
 - `RESEND_API_KEY`, `EMAIL_FROM`: Resend credentials and a verified sender address used to send account email-confirmation links in production. Email is not used for phone-code sign-in.
 - `PAUSTIK_PUBLIC_URL`: public app origin used to create absolute email-confirmation links.
-- `PAUSTIK_ADMIN_EMAIL`, `PAUSTIK_ADMIN_PHONE`, `PAUSTIK_ADMIN_NAME`: one-time admin bootstrap inputs; set in the shell that runs the bootstrap command and do not commit them.
+- `PAUSTIK_ADMIN_PASSWORD`, optional `PAUSTIK_ADMIN_USERNAME`, `PAUSTIK_ADMIN_EMAIL`, `PAUSTIK_ADMIN_NAME`: one-time first-admin bootstrap inputs; set in the shell that runs the bootstrap command and do not commit them. The username defaults to `Asish11`; use a fresh password with at least 8 characters.
+- `PAUSTIK_DEMO_AUTH`: temporary preview switch for on-page codes. It bypasses phone ownership verification and must be off before taking real sign-ups.
 - `PAUSTIK_ADMIN_TOKEN`, `CRON_SECRET`: existing tracking-pilot secrets; keep them server-side.
 
 Generate `AUTH_SECRET` locally without printing or committing it. Add real values to the Vercel project environment through its secure settings. Never put server secrets in a `NEXT_PUBLIC_` variable.
 
 ### Create the first administrator
 
-After the marketplace migration is applied, set `PAUSTIK_ADMIN_EMAIL`, `PAUSTIK_ADMIN_PHONE` and optionally `PAUSTIK_ADMIN_NAME` in the current shell, then run `pnpm db:admin:create`. The command refuses to promote an existing non-admin user. Admin is not an option on public sign-up. The administrator signs in with an SMS code.
+After the marketplace and admin-username migrations are applied, set a fresh `PAUSTIK_ADMIN_PASSWORD` (at least 8 characters) and `DATABASE_URL` in the shell that runs `pnpm db:admin:create`. The username defaults to `Asish11` (or can be overridden with `PAUSTIK_ADMIN_USERNAME`); `PAUSTIK_ADMIN_EMAIL` is optional and defaults to a non-deliverable `@paustik.local` address. This is only for bootstrapping the first admin; additional admins are created in the protected `/admin/accounts` panel. Admin is never an option on public sign-up. Admins sign in at `/admin-sign-in` with username and password.
 
 ## Authentication and route protection
 
-- Sign-up and sign-in verify phone ownership through Twilio Verify. Phone numbers are sent to the SMS provider in E.164 format; 10-digit Indian numbers are normalized to `+91`.
-- Sign-up can create an account after the phone code succeeds. Email confirmation uses a one-time, 24-hour link; email delivery does not block phone-code sign-in.
-- OTP codes are not stored in Paustik. Twilio Verify manages code expiry and one-time approval; the application limits code requests and failed checks.
+- Preview sign-up and sign-in display a short-lived code in the app and use a signed, HttpOnly challenge cookie. This does not prove phone ownership; disable preview mode before real customer onboarding.
+- With preview mode off, phone sign-up and sign-in use Twilio Verify. Email confirmation uses a one-time link when Resend is configured.
+- Admin usernames are case-insensitive and unique. Admin passwords are bcrypt-hashed and must be at least 8 characters; admins are created through the protected admin panel after first-admin bootstrap.
 - Sessions use random opaque tokens. Only SHA-256 token hashes are stored in PostgreSQL; the browser cookie is HttpOnly, SameSite=Lax and Secure in production.
 - Server layouts load the current user and enforce their database role. Role and account state are not accepted from the browser as authorization.
 - Public registration accepts only Customer, Mother and Delivery Agent. Mother and delivery applications start pending; only an active approved account may open that role dashboard.
-- Admin accounts are created through the backend bootstrap script.
-- Email remains an account contact; it is not used to authenticate the account. Production confirmation emails require valid Resend settings and a verified sender domain.
-- Mother and delivery accounts can sign in after phone verification, but remain pending until an administrator approves them.
-- Public sign-up cannot create admins. Administrator bootstrap requires a phone number that can receive SMS.
+- Admin accounts can only be created through the protected admin panel. The one-time CLI bootstrap creates the first owner account.
+- Email remains an account contact for customer, mother and delivery accounts. Admins sign in with a username and password.
+- Mother and delivery accounts can sign in after the preview code succeeds, but remain pending until an administrator approves them.
+- Public sign-up accepts only Customer, Mother and Delivery Agent. The ADMIN role is never accepted from public form input.
 
 ## Marketplace model and money handling
 
@@ -108,3 +109,4 @@ public/              Brand assets and preserved legacy/tracking pages
 ## Existing deployment
 
 The current public URL is `https://paustik-vercel-upload-99710b4719064.vercel.app`. It continues serving the earlier deployment until this source is published. The Vercel project is not connected to a Git repository.
+

@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const passwordSchema = z.string()
-  .min(12, "Use at least 12 characters.")
+  .min(8, "Use at least 8 characters.")
   .max(72, "Use 72 characters or fewer.")
   .refine((value) => new TextEncoder().encode(value).length <= 72, "Use 72 bytes or fewer.")
   .regex(/[a-z]/, "Add a lowercase letter.")
@@ -37,6 +37,23 @@ export const loginSchema = z.object({
   otp: z.string().trim().regex(/^\d{6}$/, "Enter the 6-digit code sent to your phone."),
 });
 
+const adminUsernameSchema = z.string().trim()
+  .min(3, "Use at least 3 characters for the username.")
+  .max(32, "Usernames can be up to 32 characters.")
+  .regex(/^[A-Za-z0-9._-]+$/, "Use letters, numbers, dots, underscores or hyphens.");
+
+export const adminLoginSchema = z.object({
+  username: adminUsernameSchema,
+  password: passwordSchema,
+});
+
+export const adminCreateSchema = z.object({
+  name: z.string().trim().min(2, "Enter a name.").max(100),
+  username: adminUsernameSchema,
+  email: z.string().trim().email().max(254),
+  password: passwordSchema,
+});
+
 export const otpRequestSchema = z.object({
   phone: z.string().trim().min(7).max(24),
   purpose: z.enum(["signup", "login"]),
@@ -48,3 +65,4 @@ export const resetPasswordSchema = z.object({
 });
 
 export const emailSchema = z.object({ email: z.string().trim().email().max(254) });
+

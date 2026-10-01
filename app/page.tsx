@@ -37,7 +37,7 @@ export default function HomePage() {
             <Link className="button button-light" href="#how-it-works">How Paustik works</Link>
           </div>
           <div className="hero-note"><span>✳</span> Local kitchens · Veg and non-veg menus planned · Neighbourhood delivery</div>
-          <p className="launch-note">We’re preparing the first pilot. Online ordering and account sign-up are not open yet.</p>
+          <p className="launch-note">Account preview is open for early onboarding. Orders and live payments are not open yet.</p>
         </div>
         <div className="hero-art" aria-label="Paustik mother and child illustration">
           <div className="art-halo" />
@@ -133,3 +133,4 @@ export default function HomePage() {
     </main>
   );
 }
+

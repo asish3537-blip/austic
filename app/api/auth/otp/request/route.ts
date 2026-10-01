@@ -6,6 +6,7 @@ import { phoneLookupCandidates } from "@/lib/phone-number";
 import { otpRequestSchema } from "@/lib/auth-validation";
 import { rejectCrossOrigin } from "@/lib/http";
 import { isLocalAuthMode } from "@/lib/local-auth-mode";
+import { attachDemoOtpCookie, createDemoOtp, isDemoAuthEnabled } from "@/lib/demo-auth";
 
 export const runtime = "nodejs";
 
@@ -21,8 +22,9 @@ export async function POST(request: Request) {
   const originError = rejectCrossOrigin(request);
   if (originError) return originError;
   const localAuth = isLocalAuthMode();
+  const demoAuth = !localAuth && isDemoAuthEnabled();
   if (!localAuth && (!process.env.DATABASE_URL || !process.env.AUTH_SECRET)) return phoneOtpUnavailable();
-  if (!localAuth && !isPhoneOtpConfigured()) return phoneOtpUnavailable();
+  if (!localAuth && !demoAuth && !isPhoneOtpConfigured()) return phoneOtpUnavailable();
 
   let body: unknown;
   try { body = await request.json(); } catch { return NextResponse.json({ error: "Enter your phone number." }, { status: 400 }); }
@@ -56,13 +58,13 @@ export async function POST(request: Request) {
   const windowStart = new Date(Date.now() - 60 * 60 * 1000);
 
   try {
-    const user = await prisma.user.findFirst({ where: { phone: { in: candidates } }, select: { id: true, status: true } });
+    const user = await prisma.user.findFirst({ where: { phone: { in: candidates } }, select: { id: true, status: true, role: true } });
     if (parsed.data.purpose === "signup" && user) {
       return NextResponse.json({ error: "This phone number already has a Paustik account. Sign in with a phone code instead." }, { status: 409 });
     }
 
     // Keep sign-in responses the same for known and unknown numbers.
-    if (parsed.data.purpose === "login" && (!user || user.status === "SUSPENDED" || user.status === "REJECTED")) {
+    if (parsed.data.purpose === "login" && (!user || user.role === "ADMIN" || user.status === "SUSPENDED" || user.status === "REJECTED")) {
       return NextResponse.json({ sent: true, message: "If a Paustik account uses this number, a sign-in code has been sent." });
     }
 
@@ -76,6 +78,19 @@ export async function POST(request: Request) {
     await prisma.failedLoginAttempt.createMany({
       data: [{ identifierHash }, ...(ipHash ? [{ identifierHash: ipHash }] : [])],
     });
+    if (demoAuth) {
+      if (parsed.data.purpose === "login" && (!user || user.role === "ADMIN")) {
+        return NextResponse.json({ sent: true, message: "If a Paustik account uses this number, an in-app demo code is ready." }, { headers: { "Cache-Control": "no-store" } });
+      }
+      const challenge = createDemoOtp(phone, parsed.data.purpose);
+      const response = NextResponse.json({
+        sent: true,
+        developmentCode: challenge.code,
+        message: "Temporary demo sign-in: no SMS or email was sent. Use the code shown here; phone ownership is not verified in demo mode.",
+      }, { headers: { "Cache-Control": "no-store" } });
+      attachDemoOtpCookie(response, challenge.token);
+      return response;
+    }
     await sendPhoneOtp(phone);
     return NextResponse.json({
       sent: true,
@@ -88,3 +103,4 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Paustik could not send a code right now. Check the number and try again shortly." }, { status: 503 });
   }
 }
+

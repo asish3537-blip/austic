@@ -171,6 +171,7 @@ model User {
   id                  String       @id @default(uuid()) @db.Uuid
   name                String
   email               String       @unique
+  username            String?      @unique
   phone               String?      @unique
   passwordHash        String       @map("password_hash")
   role                UserRole
@@ -828,3 +829,4 @@ model OrderEvent {
   @@map("order_events")
   @@schema("paustik_marketplace")
 }
+

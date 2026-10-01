@@ -407,6 +407,20 @@ h1, h2, h3, .brand, .display-font { font-family: 'Manrope', 'DM Sans', sans-seri
 .admin-empty-state { display: grid; gap: 5px; border-top: 1px solid #f0ece3; padding: 18px 0 5px; }
 .admin-empty-state strong { color: #45463f; font-size: 12px; }
 .admin-empty-state span { color: #837b70; font-size: 10px; line-height: 1.5; }
+.admin-account-page { max-width: 1040px; }
+.admin-account-page > .dashboard-head { display: flex; justify-content: space-between; gap: 18px; }
+.admin-account-create, .admin-account-list { margin-top: 20px; }
+.admin-account-help { margin: -5px 0 20px; color: #81796e; font-size: 12px; line-height: 1.6; }
+.admin-create-form .form-grid { margin-bottom: 15px; }
+.admin-create-form .field small { color: #81796e; font-size: 10px; line-height: 1.45; }
+.admin-admin-list { display: grid; }
+.admin-admin-list article { display: flex; align-items: center; gap: 12px; border-top: 1px solid #f0ece3; padding: 13px 0; }
+.admin-person-mark { display: grid; width: 36px; height: 36px; flex: 0 0 36px; place-items: center; border-radius: 50%; background: #e8f0e7; color: #24563d; font-weight: 700; }
+.admin-admin-list article > div { display: grid; min-width: 0; flex: 1; gap: 3px; }
+.admin-admin-list article > div strong { color: #383a34; font-size: 12px; }
+.admin-admin-list article > div span { overflow-wrap: anywhere; color: #777167; font-size: 10px; }
+.account-status { border-radius: 20px; background: #eef4ed; padding: 5px 8px; color: #285a3f; font-size: 9px; font-weight: 700; text-transform: capitalize; }
+.admin-dashboard-head > .button { white-space: nowrap; }
 
 @media (max-width: 1000px) {
   .admin-kpi-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
@@ -414,6 +428,9 @@ h1, h2, h3, .brand, .display-font { font-family: 'Manrope', 'DM Sans', sans-seri
   .admin-lower-grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 620px) {
+  .admin-account-page > .dashboard-head { align-items: flex-start; flex-direction: column; }
+  .admin-admin-list article { align-items: flex-start; }
+  .admin-admin-list article .account-status { margin-left: auto; }
   .admin-dashboard-head { align-items: flex-start; }
   .admin-live-badge { white-space: normal; }
   .admin-kpi-grid, .admin-finance-grid { grid-template-columns: 1fr; }
@@ -423,3 +440,4 @@ h1, h2, h3, .brand, .display-font { font-family: 'Manrope', 'DM Sans', sans-seri
   .admin-activity-list li { grid-template-columns: 10px minmax(0,1fr); }
   .admin-activity-amount { grid-column: 2; }
 }
+
