@@ -20,6 +20,15 @@ export default withApi(async (req, res) => {
      WHERE sharing_enabled = true AND last_location_at < now() - interval '24 hours'
      RETURNING id
   `;
+  const marketplaceLocations = await sql`
+    UPDATE paustik_marketplace.deliveries
+       SET current_latitude = NULL, current_longitude = NULL,
+           current_accuracy_meters = NULL, location_updated_at = NULL,
+           location_consent_at = NULL, updated_at = now()
+     WHERE location_updated_at < now() - interval '24 hours'
+        OR (status IN ('DELIVERED', 'FAILED', 'CANCELLED') AND location_updated_at IS NOT NULL)
+     RETURNING id
+  `;
   const [abandoned] = await sql`
     WITH stale AS (
       SELECT id FROM paustik_deliveries
@@ -67,6 +76,7 @@ export default withApi(async (req, res) => {
   return send(res, 200, {
     ok: true,
     deletedLocationRows: locations.length,
+    deletedMarketplaceLocationPoints: marketplaceLocations.length,
     pausedStaleDeliveries: stale.length,
     cancelledAbandonedDeliveries: abandoned?.count || 0,
     purgedTerminalDeliveries: purged.length
