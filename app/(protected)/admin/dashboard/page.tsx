@@ -2,6 +2,7 @@ import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { AdminPartnerReview } from "@/components/admin-partner-review";
+import { AdminPaymentCapture } from "@/components/admin-payment-capture";
 
 type CurrencyAmount = { currency: string; amount: number };
 type ActivityItem = {
@@ -65,6 +66,7 @@ export default async function AdminDashboardPage() {
     openComplaints,
     pendingCancellations,
     pendingMealChanges,
+    ordersNeedingPayment,
   ] = await Promise.all([
     prisma.user.groupBy({ by: ["role", "status"], _count: { _all: true } }),
     prisma.order.groupBy({ by: ["status"], _count: { _all: true } }),
@@ -83,6 +85,11 @@ export default async function AdminDashboardPage() {
     prisma.complaint.count({ where: { status: { in: ["OPEN", "IN_REVIEW"] } } }),
     prisma.cancellationRequest.count({ where: { status: "PENDING" } }),
     prisma.mealChangeRequest.count({ where: { status: "PENDING" } }),
+    prisma.order.findMany({
+      where: { paymentStatus: "PENDING", status: { notIn: ["CANCELLED", "FAILED"] }, payments: { some: { status: "PENDING" } } },
+      orderBy: { scheduledFor: "asc" }, take: 20,
+      select: { id: true, orderNumber: true, currency: true, scheduledFor: true, customer: { select: { name: true } }, kitchen: { select: { name: true } }, payments: { where: { status: "PENDING" }, select: { amount: true } } },
+    }),
   ]);
 
   const countFor = (role: string, status?: string) => userGroups
@@ -159,6 +166,12 @@ export default async function AdminDashboardPage() {
       </div>
       <p className="admin-finance-note">This view reports recorded transactions; it does not collect payments or send bank payouts. Live checkout and payout processing still need a payment-provider integration.</p>
     </section>
+
+    <AdminPaymentCapture orders={ordersNeedingPayment.map((order) => ({
+      id: order.id, orderNumber: order.orderNumber, customer: order.customer.name, kitchen: order.kitchen.name,
+      scheduledFor: order.scheduledFor.toISOString(), currency: order.currency,
+      amountDue: order.payments.reduce((total, payment) => total + Number(payment.amount), 0),
+    }))} />
 
     <section className="admin-lower-grid">
       <article className="admin-panel admin-status-panel">

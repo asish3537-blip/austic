@@ -10,18 +10,19 @@ const journey = [
 ];
 
 const plans = [
-  { name: "Everyday", note: "A meal when you need one", detail: "Flexible single-meal choices for busy days.", items: ["Veg and non-veg options planned", "Browse kitchens near you", "Clear itemized price before checkout"], featured: false },
-  { name: "Weekly table", note: "A little more organised", detail: "A rotating selection for the week ahead.", items: ["Choose a weekly meal rhythm", "See each day’s menu before you join", "Pause and change rules shown up front"], featured: true },
-  { name: "Family table", note: "Meals for more than one", detail: "Plan portions and preferences for your household.", items: ["Household portions", "Dietary preferences planned", "Delivery details for your area"], featured: false },
+  { name: "Base meal", note: "A balanced everyday lunch", price: "₹69", detail: "Choose three components from the mother’s published meal.", items: ["Three meal components", "Mother sets each day’s menu", "₹30 delivery per order"], featured: false },
+  { name: "Egg meal", note: "An egg-based lunch box", price: "₹79", detail: "A three-part lunch with an egg component.", items: ["Three meal components", "Vegetarian and non-vegetarian labels", "₹30 delivery per order"], featured: false },
+  { name: "Cheese meal", note: "A richer vegetarian choice", price: "₹89", detail: "A three-part meal with a cheese component.", items: ["Three meal components", "Ingredients and allergens listed", "₹30 delivery per order"], featured: true },
+  { name: "Chicken meal", note: "A hearty non-vegetarian lunch", price: "₹99", detail: "A three-part meal. Mother-selected price cannot exceed ₹100.", items: ["Three meal components", "Chicken meal capped at ₹100", "₹30 delivery per order"], featured: false },
 ];
 
 const principles = [
-  ["Kitchen review", "Kitchen approval and food-safety review are planned before a mother can publish meals."],
-  ["Clear meal details", "Menus are being designed to show ingredients, allergens and meal categories."],
-  ["Published standards", "Food handling, packing and handover standards will be shared with kitchen partners."],
-  ["Visible order progress", "Marketplace delivery updates will connect to orders after dispatch is built."],
-  ["Clear meal rules", "Cancellation cutoffs and meal-change windows will be shown before checkout."],
-  ["Itemized payments", "The checkout will show meal, delivery, tax, platform fee and refund amounts separately."],
+  ["Kitchen review", "Only approved mother-led kitchens with saved pickup pins appear as live kitchens."],
+  ["Clear meal details", "Mother menus show meal tier, three components, serving date and delivery time."],
+  ["Neighbourhood coverage", "Customers see kitchens inside the selected 5–10 km service area."],
+  ["Visible order progress", "Order status, courier assignment and consent-based GPS updates are linked to the order."],
+  ["Flexible meal days", "Skip one day up to five hours before delivery; eligible paid value less ₹5 goes to wallet."],
+  ["Honest payment records", "Online checkout is not connected. The pilot never claims an uncollected payment."],
 ];
 
 export default function HomePage() {
@@ -37,7 +38,7 @@ export default function HomePage() {
             <Link className="button button-light" href="#how-it-works">How Pausstik works</Link>
           </div>
           <div className="hero-note"><span>✳</span> Local kitchens · Veg and non-veg menus planned · Neighbourhood delivery</div>
-          <p className="launch-note">Account preview is open for early onboarding. Orders and live payments are not open yet.</p>
+          <p className="launch-note">Pilot ordering is open for approved kitchens. Online checkout is not connected, so no payment is taken here.</p>
         </div>
         <div className="hero-art" aria-label="Pausstik mother and child illustration">
           <div className="art-halo" />
@@ -49,7 +50,7 @@ export default function HomePage() {
       <section className="availability-section" id="availability">
         <span className="eyebrow">Neighbourhood launch</span>
         <h2>Is Pausstik coming to your area?</h2>
-        <p>We’re preparing a controlled neighbourhood pilot and will publish service areas before taking orders.</p>
+        <p>Check nearby kitchens and their current menu. Mothers serve within a selected 5–10 km delivery area.</p>
         <AvailabilityCheck />
       </section>
 
@@ -66,7 +67,7 @@ export default function HomePage() {
           <ol className="mother-steps">
             <li><span>01</span><div><b>Apply to join</b><small>Share your kitchen and cooking experience.</small></div></li>
             <li><span>02</span><div><b>Review and prepare</b><small>Kitchen review and food-safety guidance are planned before launch.</small></div></li>
-            <li><span>03</span><div><b>Publish your menu</b><small>Menu tools and weekly meal cycles are in the next build phase.</small></div></li>
+            <li><span>03</span><div><b>Publish your menu</b><small>Add three-part meals by day, set the delivery time and choose a price tier.</small></div></li>
           </ol>
           <Link className="button button-warm" href="/help#mother-onboarding">See the mother guide <span aria-hidden="true">→</span></Link>
         </div>
@@ -76,13 +77,13 @@ export default function HomePage() {
         <div className="section-heading">
           <span className="eyebrow">A neighbourhood food journey</span>
           <h2>From a mother’s kitchen to your table.</h2>
-          <p>This is the marketplace flow Pausstik is preparing. Ordering and delivery assignments are not active yet.</p>
+          <p>Choose a mother, reserve the days you need, and follow the order through preparation and delivery.</p>
         </div>
         <div className="journey-grid">
           {journey.map(([number, title, detail]) => (
             <article className="journey-card" key={number}>
               <span className="journey-number">{number}</span><span className="journey-mark" aria-hidden="true">{number === "01" ? "⌖" : number === "02" ? "☼" : number === "03" ? "♨" : "→"}</span>
-              <h3>{title}</h3><p>{detail}</p><small>PLANNED FOR PILOT</small>
+              <h3>{title}</h3><p>{detail}</p><small>PAUSSTIK PILOT</small>
             </article>
           ))}
         </div>
@@ -91,19 +92,19 @@ export default function HomePage() {
       <section className="plans-section" id="meal-plans">
         <span className="anchor-alias" id="pricing" aria-hidden="true" />
         <div className="section-heading">
-          <span className="eyebrow">Meal plans</span>
-          <h2>Good food, with a rhythm that fits.</h2>
-          <p>Plan formats are being designed now. Prices and final meal rules will be published before ordering opens.</p>
+          <span className="eyebrow">Meal price guide</span>
+          <h2>Three components. Clear prices.</h2>
+          <p>Mother-published meals start at ₹69, ₹79, ₹89 and ₹99. Choose any 3–7 days with one mother for a one-week reservation; renew manually. Cancel a meal day at least five hours before delivery and eligible collected value less a ₹5 processing fee returns to your wallet.</p>
         </div>
         <div className="plans-grid">
           {plans.map((plan) => (
             <article className={`plan-card${plan.featured ? " plan-card-featured" : ""}`} key={plan.name}>
-              {plan.featured && <span className="plan-badge">A flexible option</span>}
-              <span className="plan-status">PLANNED</span><h3>{plan.name}</h3><p className="plan-note">{plan.note}</p>
-              <p className="plan-price">Pricing <small>announced before launch</small></p>
+              {plan.featured && <span className="plan-badge">Neighbourhood favourite</span>}
+              <span className="plan-status">PER MEAL</span><h3>{plan.name}</h3><p className="plan-note">{plan.note}</p>
+              <p className="plan-price">{plan.price}<small>starting price · per serving</small></p>
               <p className="plan-detail">{plan.detail}</p>
               <ul>{plan.items.map((item) => <li key={item}><span aria-hidden="true">✓</span>{item}</li>)}</ul>
-              <Link className="button plan-button" href="/help#marketplace-roadmap">View launch roadmap</Link>
+              <Link className="button plan-button" href="/sign-up">Find a nearby mother</Link>
             </article>
           ))}
         </div>
@@ -113,7 +114,7 @@ export default function HomePage() {
         <div className="section-heading">
           <span className="eyebrow">Trust and safety</span>
           <h2>Trust belongs in every step.</h2>
-          <p>These are the safeguards Pausstik is designing into the marketplace. They are not yet active operating services.</p>
+          <p>These pilot controls keep kitchen discovery, delivery coverage and payment status visible.</p>
         </div>
         <div className="principles-grid">
           {principles.map(([title, detail], index) => (

@@ -3,16 +3,22 @@ import { z } from "zod";
 import { getCurrentUser } from "@/lib/auth";
 import { rejectCrossOrigin, serviceUnavailable } from "@/lib/http";
 import { prisma } from "@/lib/prisma";
+import { MEAL_PRICE_TIERS } from "@/lib/marketplace-rules";
 
 export const runtime = "nodejs";
 
 const updateSchema = z.object({
   name: z.string().trim().min(3).max(90),
   description: z.string().trim().max(400).optional().default(""),
-  category: z.enum(["VEGETARIAN", "NON_VEGETARIAN", "VEGAN"]),
-  price: z.number().finite().min(20).max(5000),
+  tier: z.enum(["BASE", "EGG", "CHEESE", "CHICKEN"]),
+  components: z.array(z.string().trim().min(1).max(70)).length(3),
+  price: z.number().finite().min(69).max(500),
+  deliveryTime: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/),
   servings: z.number().int().min(0).max(200),
   isAvailable: z.boolean(),
+}).superRefine((meal, context) => {
+  const rule = MEAL_PRICE_TIERS[meal.tier];
+  if (meal.price < rule.startingPrice || meal.price > rule.maxPrice) context.addIssue({ code: "custom", message: rule.label + " must be priced between ₹" + rule.startingPrice + " and ₹" + rule.maxPrice + "." });
 });
 
 export async function PATCH(request: Request, context: { params: Promise<{ menuId: string }> }) {
@@ -35,12 +41,15 @@ export async function PATCH(request: Request, context: { params: Promise<{ menuI
       prisma.meal.update({ where: { id: menu.mealId }, data: {
         name: parsed.data.name,
         description: parsed.data.description || null,
-        category: parsed.data.category,
+        category: parsed.data.tier === "EGG" || parsed.data.tier === "CHICKEN" ? "NON_VEGETARIAN" : "VEGETARIAN",
+        tier: parsed.data.tier,
+        components: parsed.data.components,
         price: parsed.data.price,
         isAvailable: parsed.data.isAvailable && canPublish,
       } }),
       prisma.menu.update({ where: { id: menu.id }, data: {
         stockCount: parsed.data.servings,
+        deliveryTime: parsed.data.deliveryTime,
         isAvailable: parsed.data.isAvailable && canPublish && parsed.data.servings > 0,
       } }),
     ]);
