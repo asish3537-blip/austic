@@ -177,7 +177,7 @@ export default async function CustomerDashboardPage() {
     <CustomerDeliveryPin initialPinned={hasDeliveryPin} />
     <CustomerWallet />
 
-    <section className="customer-discovery" aria-labelledby="nearby-kitchens-title">
+    <section className="customer-discovery" id="customer-discover" aria-labelledby="nearby-kitchens-title">
       <div className="customer-panel-heading"><div><span className="eyebrow">From neighbourhood kitchens</span><h2 id="nearby-kitchens-title">Find your next lunch</h2></div><span className="customer-count">{visibleKitchens.length}</span></div>
       {listingsAreSamples && <p className="customer-demo-label">Sample kitchens and prices for the Bhubaneswar preview. Live listings appear here after kitchens are verified and menus are published.</p>}
       <div className="customer-kitchen-grid">{visibleKitchens.map((kitchen) => <article className="customer-kitchen-card" key={kitchen.id}>
@@ -195,7 +195,7 @@ export default async function CustomerDashboardPage() {
       </article>)}</div>
     </section>
 
-    <section className="customer-activity-grid" aria-label="Your orders and meal plans">
+    <section className="customer-activity-grid" id="order-history" aria-label="Your orders and meal plans">
       <article className="customer-panel">
         <div className="customer-panel-heading"><div><span className="eyebrow">Order history</span><h2>Recent orders</h2></div><span className="customer-count">{orders.length}</span></div>
         {!activityAvailable ? <p className="customer-empty">We couldn’t load your account activity right now. Refresh this page in a moment.</p> : orders.length ? <ul className="customer-record-list">

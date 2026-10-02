@@ -108,7 +108,7 @@ export function CustomerWallet() {
     }).catch(() => {});
     return () => { active = false; };
   }, []);
-  return <section className="customer-wallet" aria-label="Pausstik wallet">
+  return <section className="customer-wallet" id="wallet-section" aria-label="Pausstik wallet">
     <div className="customer-wallet-heading"><div><span className="eyebrow">Meal day adjustments</span><h2>Your Pausstik wallet</h2><p>Eligible early cancellations return to wallet after the ₹5 processing fee. Wallet credit can pay for a later order.</p></div><strong>₹{(wallet?.balance ?? 0).toFixed(0)}</strong></div>
     {wallet?.entries.length ? <ul>{wallet.entries.slice(0, 4).map((entry) => <li key={entry.id}><span>{entry.description}</span><b className={entry.direction === "CREDIT" ? "wallet-credit" : "wallet-debit"}>{entry.direction === "CREDIT" ? "+" : "−"}₹{entry.amount.toFixed(0)}</b></li>)}</ul> : <p className="customer-wallet-empty">Wallet activity will appear here when credits or order payments are recorded.</p>}
   </section>;

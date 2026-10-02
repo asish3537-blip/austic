@@ -1,0 +1,30 @@
+.phone-bottom-nav {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.phone-bottom-nav a {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 3px;
+  border-radius: 10px;
+  color: #898174;
+  font-size: 8px;
+  text-decoration: none;
+}
+
+.phone-bottom-nav a > span {
+  color: var(--green);
+  font-size: 16px;
+  line-height: 1;
+}
+
+.phone-bottom-nav a:focus-visible,
+.app-bottom-nav a:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: -2px;
+}
+
+.app-bottom-nav {
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+}

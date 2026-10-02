@@ -168,7 +168,7 @@ export function MotherWorkspace() {
   if (!workspace) return <div className="dashboard-banner admin-warning">{problem || "Your kitchen workspace could not load."}</div>;
 
   return <div className="mother-workspace">
-    <section className="mother-summary-grid" aria-label="Kitchen status">
+    <section className="mother-summary-grid" id="kitchen-summary" aria-label="Kitchen status">
       <article><span>Kitchen</span><strong>{workspace.kitchen.name}</strong><small>{workspace.kitchen.approved ? "Pausstik verified" : "Waiting for Pausstik approval"}</small></article>
       <article><span>Menu items</span><strong>{workspace.menus.filter((item) => item.isPublished && item.isAvailable).length}</strong><small>Live and available to customers</small></article>
       <article><span>Recorded earnings</span><strong>{money(workspace.earningsRecorded, workspace.currency)}</strong><small>Recorded after payment; payouts are not connected</small></article>
@@ -182,9 +182,9 @@ export function MotherWorkspace() {
     {message && <p className="workspace-message" role="status">{message}</p>}
     {problem && <p className="workspace-message is-error" role="alert">{problem}</p>}
 
-    <section className="mother-work-grid">
+    <section className="mother-work-grid" id="mother-orders">
       <article className="dashboard-card mother-menu-editor">
-        <div className="workspace-section-heading"><div><span className="eyebrow">Weekly menu</span><h2>{editing ? "Update meal" : "Add a meal"}</h2></div><button className="button button-quiet" type="button" onClick={publishDrafts} disabled={busyId === "publish" || !workspace.kitchen.approved || !workspace.kitchen.hasLocation}>{busyId === "publish" ? "Publishing…" : "Publish menu"}</button></div>
+        <div className="workspace-section-heading"><div><span className="eyebrow">Weekly menu</span><h2 id="weekly-menu">{editing ? "Update meal" : "Add a meal"}</h2></div><button className="button button-quiet" type="button" onClick={publishDrafts} disabled={busyId === "publish" || !workspace.kitchen.approved || !workspace.kitchen.hasLocation}>{busyId === "publish" ? "Publishing…" : "Publish menu"}</button></div>
         {!workspace.kitchen.approved && <p className="mother-gate-note">Pausstik must approve your kitchen before customers can order. You can save meal drafts now.</p>}
         {workspace.kitchen.approved && !workspace.kitchen.hasLocation && <p className="mother-gate-note">Set your pickup pin before menu publishing. Pickup geofencing needs this verified location.</p>}
         <form className="workspace-form" key={editing?.id || "new-meal"} onSubmit={saveMenu}>
@@ -211,7 +211,7 @@ export function MotherWorkspace() {
       </article>
 
       <article className="dashboard-card mother-orders-panel">
-        <div className="workspace-section-heading"><div><span className="eyebrow">Kitchen queue</span><h2>Incoming orders</h2></div><span className="customer-count">{workspace.orders.length}</span></div>
+        <div className="workspace-section-heading"><div><span className="eyebrow">Kitchen queue</span><h2 id="incoming-orders">Incoming orders</h2></div><span className="customer-count">{workspace.orders.length}</span></div>
         {workspace.orders.length ? <div className="workspace-record-list">{workspace.orders.map((order) => <article key={order.id}>
           <div className="workspace-record-head"><strong>{order.orderNumber}</strong><span className={"customer-status customer-status-" + order.status.toLowerCase()}>{order.status.toLowerCase().replaceAll("_", " ")}</span></div>
           <p>{order.customer} · {order.items.join(", ")}</p><small>For {new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeZone: "Asia/Kolkata" }).format(new Date(order.scheduledFor))} · {money(order.total, "INR")}</small>
@@ -229,7 +229,7 @@ export function MotherWorkspace() {
     </section>
 
     <section className="dashboard-card mother-menu-list">
-      <div className="workspace-section-heading"><div><span className="eyebrow">Your kitchen</span><h2>Scheduled meals</h2></div><span className="customer-count">{workspace.menus.length}</span></div>
+      <div className="workspace-section-heading"><div><span className="eyebrow">Your kitchen</span><h2 id="scheduled-menu">Scheduled meals</h2></div><span className="customer-count">{workspace.menus.length}</span></div>
       {workspace.menus.length ? <div className="workspace-menu-list">{workspace.menus.map((item) => <article key={item.id}>
         <div><span className="meal-type-mark">{item.tier} · {item.category === "NON_VEGETARIAN" ? "NON-VEG" : "VEG"}</span><strong>{item.name}</strong><small>{item.components.join(" · ")} · {dateLabel(item.serviceDate)} · {item.deliveryTime} · {item.servings} servings · {money(item.price, "INR")}</small></div>
         <span className={"customer-status " + (item.isPublished && item.isAvailable ? "customer-status-active" : "customer-status-pending")}>{item.isPublished && item.isAvailable ? "Live" : "Draft"}</span>

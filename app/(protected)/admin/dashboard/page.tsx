@@ -146,7 +146,7 @@ export default async function AdminDashboardPage() {
     {!demoAuth && !phoneOtpReady && <div className="dashboard-banner admin-warning"><strong>Phone sign-in is not connected.</strong> Customers, mothers and couriers cannot request SMS codes until a phone verification service is configured.</div>}
     {!demoAuth && !emailVerificationReady && <div className="dashboard-banner admin-warning"><strong>Email confirmation is not connected.</strong> Account confirmation links require a configured email sender. Phone-code sign-in does not depend on email.</div>}
 
-    <section className="admin-kpi-grid" aria-label="Marketplace overview">
+    <section className="admin-kpi-grid" id="admin-overview" aria-label="Marketplace overview">
       <article className="admin-kpi"><span>All accounts</span><strong>{totalUsers}</strong><small>{countFor("CUSTOMER")} customers · {countFor("MOTHER")} mothers · {countFor("DELIVERY_AGENT")} couriers</small></article>
       <article className="admin-kpi"><span>Partner applications to review</span><strong>{pendingPartners}</strong><small>{countFor("MOTHER", "PENDING")} mothers · {countFor("DELIVERY_AGENT", "PENDING")} couriers</small></article>
       <article className="admin-kpi"><span>Orders in progress</span><strong>{activeOrders}</strong><small>Excludes delivered, cancelled and failed orders</small></article>
@@ -184,7 +184,7 @@ export default async function AdminDashboardPage() {
       </article>
 
       <article className="admin-panel admin-activity-panel">
-        <div className="admin-section-heading"><div><span className="eyebrow">Recent activity</span><h2>Marketplace activity</h2></div></div>
+        <div className="admin-section-heading"><div><span className="eyebrow">Recent activity</span><h2 id="admin-activity-title">Marketplace activity</h2></div></div>
         <p className="admin-activity-caption">Registrations, sign-ins, order changes, delivery updates, payments, payouts and logged admin actions.</p>
         {activity.length ? <ol className="admin-activity-list">{activity.map((item) => <li key={item.id}>
           <span className="admin-activity-dot" aria-hidden="true" />
