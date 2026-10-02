@@ -3,12 +3,13 @@ import Link from "next/link";
 const guides = [
   {
     slug: "account-setup",
-    title: "Create an account with a preview code",
-    status: "Available now",
+    title: "Create an account with SMS or WhatsApp",
+    status: "Available now · SMS / WhatsApp setup required",
     text: "Choose a role, use the temporary on-page code, and reach the right workspace.",
     steps: [
       "Select Customer, Mother entrepreneur, or Delivery agent on the sign-up page.",
-      "Enter your details and request a 6-digit preview code. No SMS or email is sent in preview mode.",
+      "Choose SMS or WhatsApp, enter your number, and request a 6-digit code. Preview mode shows the code on the page and sends no message.",
+      "WhatsApp delivery works only after Paustik's WhatsApp sender is configured in Twilio Verify. If it is not enabled, choose SMS.",
       "Enter the code shown on the page to create your account and continue to your role workspace.",
       "Mother and courier accounts wait for Paustik approval; active customers open their workspace.",
       "Admin accounts are not available on public sign-up. An active admin creates them in the admin panel.",
@@ -32,9 +33,9 @@ const guides = [
     status: "Application available · Menu tools upcoming",
     text: "Apply with your kitchen details and understand the review state before publishing meals.",
     steps: [
-      "Choose Mother entrepreneur and enter your kitchen name and cuisine.",
+      "Choose Mother entrepreneur and enter your kitchen name, cooking specialties, daily meal capacity, lunch days, and service window.",
       "Use the preview code shown on the page. No phone or email ownership is verified in this mode.",
-      "Your account stays pending while Paustik reviews the kitchen and food-safety details.",
+      "Your application is saved with your kitchen capacity and lunch availability. Your account stays pending while Paustik reviews the kitchen and food-safety details.",
       "Menu editing, weekly cycles, and meal-change and cancellation rules are planned features, not live tools yet.",
     ],
   },
@@ -87,7 +88,11 @@ export default function HelpPage() {
       <nav className="help-jump" aria-label="Jump to a help topic">
         {guides.map((guide) => <a key={guide.slug} href={`#${guide.slug}`}>{guide.title}</a>)}
       </nav>
-      <div className="help-callout"><strong>Account setup status:</strong> preview codes are displayed in the app and do not prove phone ownership. Admin sign-in uses a username and password, and only an active admin can create another admin. Menu publishing, marketplace delivery assignments, checkout, and payments are not live in this build. The separate delivery tracking pilot is available.</div>
+      <div className="help-callout"><strong>Account setup status:</strong> preview codes are displayed in the app and do not prove phone ownership. In production, SMS and WhatsApp need Twilio Verify configured; WhatsApp also needs an enabled sender. Admin account creation is restricted to the admin panel. Menu publishing, marketplace delivery assignments, checkout, and payments are not live in this build. The separate delivery tracking pilot is available.</div>
+      <section className="help-documents" aria-labelledby="help-documents-title">
+        <div><span className="eyebrow">Take Paustik with you</span><h2 id="help-documents-title">Guides and project documents</h2><p>Download the current user guide or the detailed product and development specification.</p></div>
+        <div className="help-document-actions"><a className="button button-small" href="/docs/Paustik_User_Guide.pdf" download>Download user guide (PDF)</a><a className="button button-small button-light" href="/docs/Paustik_Product_and_Development_Specification.pdf" download>Download product and development specification (PDF)</a></div>
+      </section>
       <section className="help-grid" aria-label="Paustik video help guides">
         {guides.map((guide, index) => (
           <article className="help-card" id={guide.slug} key={guide.slug}>
@@ -111,4 +116,3 @@ export default function HelpPage() {
     </main>
   );
 }
-

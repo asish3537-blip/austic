@@ -20,6 +20,9 @@ export const registrationSchema = z.object({
   pinCode: z.string().trim().regex(/^[0-9A-Za-z -]{4,12}$/),
   kitchenName: z.string().trim().max(120).optional(),
   cuisine: z.string().trim().max(80).optional(),
+  capacityPerDay: z.coerce.number().int().min(1).max(300).optional(),
+  availableDays: z.string().trim().max(120).optional(),
+  lunchWindow: z.string().trim().max(80).optional(),
   vehicleType: z.string().trim().max(40).optional(),
 }).refine((value) => value.role !== "MOTHER" || Boolean(value.kitchenName && value.kitchenName.length >= 2), {
   message: "Add your kitchen name.",
@@ -27,6 +30,15 @@ export const registrationSchema = z.object({
 }).refine((value) => value.role !== "MOTHER" || Boolean(value.cuisine && value.cuisine.length >= 2), {
   message: "Add your main cuisine.",
   path: ["cuisine"],
+}).refine((value) => value.role !== "MOTHER" || Boolean(value.capacityPerDay && value.capacityPerDay >= 1), {
+  message: "Enter how many meals your kitchen can prepare each day.",
+  path: ["capacityPerDay"],
+}).refine((value) => value.role !== "MOTHER" || Boolean(value.availableDays && value.availableDays.length >= 2), {
+  message: "Add the days you can prepare lunch orders.",
+  path: ["availableDays"],
+}).refine((value) => value.role !== "MOTHER" || Boolean(value.lunchWindow && value.lunchWindow.length >= 3), {
+  message: "Add your lunch service time, for example 11:30 AM to 2:00 PM.",
+  path: ["lunchWindow"],
 }).refine((value) => value.role !== "DELIVERY_AGENT" || Boolean(value.vehicleType && value.vehicleType.length >= 2), {
   message: "Choose or enter a vehicle type.",
   path: ["vehicleType"],
@@ -57,6 +69,7 @@ export const adminCreateSchema = z.object({
 export const otpRequestSchema = z.object({
   phone: z.string().trim().min(7).max(24),
   purpose: z.enum(["signup", "login"]),
+  channel: z.enum(["sms", "whatsapp"]).default("sms"),
 });
 
 export const resetPasswordSchema = z.object({
@@ -65,4 +78,3 @@ export const resetPasswordSchema = z.object({
 });
 
 export const emailSchema = z.object({ email: z.string().trim().email().max(254) });
-

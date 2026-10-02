@@ -11,7 +11,7 @@ import { attachDemoOtpCookie, createDemoOtp, isDemoAuthEnabled } from "@/lib/dem
 export const runtime = "nodejs";
 
 function phoneOtpUnavailable() {
-  return NextResponse.json({ error: "Phone verification is not connected yet. Paustik needs its SMS verification service configured before it can send codes." }, { status: 503 });
+  return NextResponse.json({ error: "Phone verification is not connected yet. Paustik needs its Twilio Verify service configured before it can send codes." }, { status: 503 });
 }
 
 function hashIdentifier(value: string) {
@@ -43,7 +43,7 @@ export async function POST(request: Request) {
       return NextResponse.json({
         sent: true,
         developmentCode: result.code,
-        message: "Local sign-in is enabled because no hosted database is configured. Use the one-time code shown below.",
+        message: `Local sign-in is enabled because no hosted database is configured. No ${parsed.data.channel === "whatsapp" ? "WhatsApp" : "SMS"} was sent; use the one-time code shown below.`,
       });
     } catch (error) {
       console.error("Paustik local phone code could not be created.", error instanceof Error ? error.name : "unknown error");
@@ -86,21 +86,23 @@ export async function POST(request: Request) {
       const response = NextResponse.json({
         sent: true,
         developmentCode: challenge.code,
-        message: "Temporary demo sign-in: no SMS or email was sent. Use the code shown here; phone ownership is not verified in demo mode.",
+        message: `Temporary demo sign-in: no ${parsed.data.channel === "whatsapp" ? "WhatsApp" : "SMS"} was sent. Use the code shown here; phone ownership is not verified in demo mode.`,
       }, { headers: { "Cache-Control": "no-store" } });
       attachDemoOtpCookie(response, challenge.token);
       return response;
     }
-    await sendPhoneOtp(phone);
+    await sendPhoneOtp(phone, parsed.data.channel);
     return NextResponse.json({
       sent: true,
       message: parsed.data.purpose === "signup"
-        ? "We sent a 6-digit code to your phone. It expires shortly."
-        : "If a Paustik account uses this number, a sign-in code has been sent.",
+        ? `We sent a 6-digit code by ${parsed.data.channel === "whatsapp" ? "WhatsApp" : "SMS"}. It expires shortly.`
+        : `If a Paustik account uses this number, a sign-in code has been sent by ${parsed.data.channel === "whatsapp" ? "WhatsApp" : "SMS"}.`,
     });
   } catch (error) {
     console.error("Paustik phone verification request failed.", error instanceof Error ? error.name : "unknown error");
+    if (parsed.data.channel === "whatsapp" && error && typeof error === "object" && "twilioCode" in error && error.twilioCode === 68008) {
+      return NextResponse.json({ error: "WhatsApp verification is not enabled in the Twilio Verify service yet. Configure a WhatsApp sender in Twilio, or choose SMS." }, { status: 503 });
+    }
     return NextResponse.json({ error: "Paustik could not send a code right now. Check the number and try again shortly." }, { status: 503 });
   }
 }
-

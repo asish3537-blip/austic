@@ -36,7 +36,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         {children}
         <footer className="site-footer">
           <span>Purity. Hygiene. Delivered.</span>
-          <span><Link href="/help">Help videos</Link> &nbsp; Good food · Empowered mothers · Healthier neighbourhoods</span>
+          <span><Link href="/help">Help videos</Link> &nbsp; <Link className="footer-admin-link" href="/admin-sign-in">Admin portal</Link> &nbsp; Good food · Empowered mothers · Healthier neighbourhoods</span>
         </footer>
       </body>
     </html>

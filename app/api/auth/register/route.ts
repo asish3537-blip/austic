@@ -15,7 +15,7 @@ export const runtime = "nodejs";
 
 function unavailable() {
   if (!isPhoneOtpConfigured() && !isDemoAuthEnabled()) {
-    return NextResponse.json({ error: "Phone sign-up is not connected yet. Paustik needs its SMS verification service configured before it can create accounts." }, { status: 503 });
+    return NextResponse.json({ error: "Phone sign-up is not connected yet. Configure Paustik's Twilio Verify service before creating accounts with SMS or WhatsApp." }, { status: 503 });
   }
   return NextResponse.json({ error: "Paustik could not complete account creation. Please try again." }, { status: 503 });
 }
@@ -69,6 +69,9 @@ export async function POST(request: Request) {
           pinCode: input.pinCode,
           cuisine: input.cuisine || "",
           kitchenName: input.kitchenName || "",
+          capacityPerDay: String(input.capacityPerDay || 0),
+          availableDays: input.availableDays || "",
+          lunchWindow: input.lunchWindow || "",
           vehicleType: input.vehicleType || "",
         },
       });
@@ -144,6 +147,9 @@ export async function POST(request: Request) {
             city: input.city,
             pinCode: input.pinCode,
             cuisine: input.cuisine!,
+            capacityPerDay: input.capacityPerDay!,
+            availableDays: input.availableDays!.split(",").map((day) => day.trim()).filter(Boolean),
+            operatingHours: { lunch: input.lunchWindow! },
             verificationStatus: "PENDING",
           },
         });
@@ -196,4 +202,3 @@ export async function POST(request: Request) {
     return unavailable();
   }
 }
-

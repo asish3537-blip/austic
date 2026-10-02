@@ -4,9 +4,20 @@ import { useState, type FormEvent } from "react";
 import Link from "next/link";
 
 type Role = "CUSTOMER" | "MOTHER" | "DELIVERY_AGENT";
+type VerificationChannel = "sms" | "whatsapp";
 
 function Alert({ children, success = false }: { children: React.ReactNode; success?: boolean }) {
   return <div className={success ? "form-success" : "form-alert"} role={success ? "status" : "alert"}>{children}</div>;
+}
+
+function VerificationChannelPicker({ value, onChange, idPrefix }: { value: VerificationChannel; onChange: (channel: VerificationChannel) => void; idPrefix: string }) {
+  return <fieldset className="verification-channel">
+    <legend>Send code using</legend>
+    {(["sms", "whatsapp"] as const).map((channel) => <label key={channel} className="verification-channel-option">
+      <input type="radio" name={`${idPrefix}-channel`} value={channel} checked={value === channel} onChange={() => onChange(channel)} />
+      <span>{channel === "sms" ? "SMS" : "WhatsApp"}</span>
+    </label>)}
+  </fieldset>;
 }
 
 export function SignInForm() {
@@ -14,6 +25,7 @@ export function SignInForm() {
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
   const [phone, setPhone] = useState("");
+  const [channel, setChannel] = useState<VerificationChannel>("sms");
   const [codeSent, setCodeSent] = useState(false);
   const [message, setMessage] = useState("");
   const [developmentCode, setDevelopmentCode] = useState("");
@@ -23,7 +35,7 @@ export function SignInForm() {
     try {
       const response = await fetch("/api/auth/otp/request", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone, purpose: "login" }),
+        body: JSON.stringify({ phone, purpose: "login", channel }),
       });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || "Could not send a sign-in code.");
@@ -48,7 +60,7 @@ export function SignInForm() {
   }
   return <>
     <span className="eyebrow">Welcome back</span><h2>Sign in to Paustik</h2>
-    <p className="auth-intro">Request a one-time code and enter it here. In the current preview, the code appears on this page; no SMS or email is sent.</p>
+    <p className="auth-intro">Choose SMS or WhatsApp for your one-time sign-in code. Preview codes appear on this page; no message is sent in preview mode.</p>
     {error && <Alert>{error}</Alert>}
     <form onSubmit={submit}>
       <div className="form-grid">
@@ -57,7 +69,8 @@ export function SignInForm() {
           <div className="phone-otp-row"><input id="signin-phone" name="phone" type="tel" autoComplete="tel" placeholder="+91 98765 43210" value={phone} onChange={(event) => { setPhone(event.target.value); setCodeSent(false); setMessage(""); setDevelopmentCode(""); }} required minLength={7} maxLength={24} /><button className="otp-request-button" type="button" onClick={requestCode} disabled={sending || phone.trim().length < 7}>{sending ? "Sending…" : codeSent ? "Send again" : "Send code"}</button></div>
           <small>Indian numbers can use 10 digits or include +91.</small>
         </div>
-        {codeSent && <div className="field full"><label htmlFor="signin-otp">6-digit sign-in code</label><input id="signin-otp" name="otp" type="text" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" maxLength={6} required /></div>}
+        <div className="field full"><VerificationChannelPicker value={channel} onChange={(next) => { setChannel(next); setCodeSent(false); setMessage(""); setDevelopmentCode(""); }} idPrefix="signin" /><small>WhatsApp codes require a WhatsApp sender enabled for Paustik in Twilio Verify.</small></div>
+        {codeSent && <div className="field full"><label htmlFor="signin-otp">6-digit verification code</label><input id="signin-otp" name="otp" type="text" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" maxLength={6} required /></div>}
       </div>
       {message && <Alert success>{message}{developmentCode && <><br /><strong>Paustik preview code: {developmentCode}</strong></>}</Alert>}
       <div className="auth-links"><span>Preview codes do not verify phone ownership.</span></div>
@@ -116,6 +129,7 @@ export function SignUpForm() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState<{ message: string; email: string; emailSent: boolean; verificationUrl?: string } | null>(null);
   const [phone, setPhone] = useState("");
+  const [channel, setChannel] = useState<VerificationChannel>("sms");
   const [codeSent, setCodeSent] = useState(false);
   const [message, setMessage] = useState("");
   const [developmentCode, setDevelopmentCode] = useState("");
@@ -125,7 +139,7 @@ export function SignUpForm() {
     try {
       const response = await fetch("/api/auth/otp/request", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone, purpose: "signup" }),
+        body: JSON.stringify({ phone, purpose: "signup", channel }),
       });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || "Could not send a verification code.");
@@ -162,7 +176,7 @@ export function SignUpForm() {
   }
   return <>
     <span className="eyebrow">Join the neighbourhood table</span><h2>Create your account</h2>
-    <p className="auth-intro">Choose how you want to take part. This preview shows a temporary code on the page instead of sending SMS or email. Mother and delivery accounts need approval; admin accounts are created only inside the admin panel.</p>
+    <p className="auth-intro">Choose how you want to take part and where to receive your verification code. Preview codes appear on this page instead of being sent as messages.</p>
     {error && <Alert>{error}</Alert>}
     {success && <><Alert success>{success.message}{success.verificationUrl && <><br /><Link href={success.verificationUrl}>Verify this development email</Link></>}</Alert>{!success.emailSent && !success.verificationUrl && <ResendVerificationForm initialEmail={success.email} />}<p className="form-footer">Continue to <Link className="text-link" href="/sign-in">sign in with your phone</Link></p></>}
     {!success && <form onSubmit={submit}>
@@ -172,9 +186,10 @@ export function SignUpForm() {
       <div className="form-grid" style={{ marginTop: 16 }}>
         <div className="field"><label htmlFor="signup-name">Full name</label><input id="signup-name" name="name" autoComplete="name" required minLength={2} maxLength={100} /></div>
         <div className="field"><label htmlFor="signup-phone">Phone number</label><div className="phone-otp-row"><input id="signup-phone" name="phone" autoComplete="tel" type="tel" placeholder="+91 98765 43210" value={phone} onChange={(event) => { setPhone(event.target.value); setCodeSent(false); setMessage(""); setDevelopmentCode(""); }} required minLength={7} maxLength={24} /><button className="otp-request-button" type="button" onClick={requestCode} disabled={sending || phone.trim().length < 7}>{sending ? "Sending…" : codeSent ? "Send again" : "Send code"}</button></div><small>Indian numbers can use 10 digits or include +91.</small></div>
+        <div className="field"><VerificationChannelPicker value={channel} onChange={(next) => { setChannel(next); setCodeSent(false); setMessage(""); setDevelopmentCode(""); }} idPrefix="signup" /><small>WhatsApp requires a configured Paustik sender in Twilio Verify.</small></div>
         <div className="field full"><label htmlFor="signup-email">Email address for account updates</label><input id="signup-email" name="email" autoComplete="email" type="email" required maxLength={254} /></div>
-        {codeSent && <div className="field full"><label htmlFor="signup-otp">6-digit preview code</label><input id="signup-otp" name="otp" type="text" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" maxLength={6} required /></div>}
-        {role === "MOTHER" && <><div className="field"><label htmlFor="signup-kitchen">Kitchen name</label><input id="signup-kitchen" name="kitchenName" required minLength={2} maxLength={120} /></div><div className="field"><label htmlFor="signup-cuisine">Main cuisine</label><input id="signup-cuisine" name="cuisine" placeholder="e.g. Odia home cooking" required minLength={2} maxLength={80} /></div></>}
+        {codeSent && <div className="field full"><label htmlFor="signup-otp">6-digit verification code</label><input id="signup-otp" name="otp" type="text" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" maxLength={6} required /></div>}
+        {role === "MOTHER" && <><div className="field"><label htmlFor="signup-kitchen">Kitchen name</label><input id="signup-kitchen" name="kitchenName" required minLength={2} maxLength={120} /></div><div className="field"><label htmlFor="signup-cuisine">Cooking specialties</label><input id="signup-cuisine" name="cuisine" placeholder="e.g. Odia home cooking, vegetarian thalis" required minLength={2} maxLength={80} /></div><div className="field"><label htmlFor="signup-capacity">Meals you can prepare per day</label><input id="signup-capacity" name="capacityPerDay" type="number" min={1} max={300} required /></div><div className="field"><label htmlFor="signup-days">Available lunch days</label><input id="signup-days" name="availableDays" placeholder="Monday, Tuesday, Wednesday" required minLength={2} maxLength={120} /><small>Separate days with commas.</small></div><div className="field full"><label htmlFor="signup-lunch-window">Lunch service window</label><input id="signup-lunch-window" name="lunchWindow" placeholder="11:30 AM to 2:00 PM" required minLength={3} maxLength={80} /></div></>}
         {role === "DELIVERY_AGENT" && <div className="field full"><label htmlFor="signup-vehicle">Vehicle type</label><select id="signup-vehicle" name="vehicleType" required defaultValue=""><option value="" disabled>Select vehicle</option><option>Bicycle</option><option>Scooter</option><option>Motorcycle</option><option>Car</option><option>Other</option></select></div>}
         <div className="field full"><label htmlFor="signup-address">Street address</label><input id="signup-address" name="addressLine1" autoComplete="street-address" required minLength={3} maxLength={160} /></div>
         <div className="field"><label htmlFor="signup-locality">Locality / neighbourhood</label><input id="signup-locality" name="locality" required minLength={2} maxLength={100} /></div>
@@ -199,4 +214,3 @@ export function ResetPasswordForm({ token }: { token: string }) {
   void token;
   return <><span className="eyebrow">Account recovery</span><h2>Use a one-time code</h2><p className="auth-intro">Customer and partner accounts use a one-time code; admin accounts use the password assigned by an administrator.</p><Link className="button form-submit" href="/sign-in">Continue to sign in</Link></>;
 }
-

@@ -37,7 +37,11 @@ function database() {
   const globalStore = globalThis as LocalAuthDbGlobal;
   if (globalStore.__paustikLocalAuthDb) return globalStore.__paustikLocalAuthDb;
 
-  const file = join(process.cwd(), ".data", "paustik-local-auth.sqlite");
+  const fileName = process.env.PAUSTIK_LOCAL_AUTH_DB_NAME?.trim() || "paustik-local-auth.sqlite";
+  if (!/^[A-Za-z0-9_.-]+\.sqlite$/.test(fileName)) {
+    throw new Error("PAUSTIK_LOCAL_AUTH_DB_NAME must be a simple .sqlite filename.");
+  }
+  const file = join(process.cwd(), ".data", fileName);
   mkdirSync(dirname(file), { recursive: true });
   const db = new DatabaseSync(file);
   db.exec("PRAGMA foreign_keys = ON; PRAGMA journal_mode = WAL;");
@@ -239,4 +243,3 @@ export function revokeLocalSession(tokenHash: string) {
 export function touchLocalUser(userId: string) {
   database().prepare("UPDATE users SET last_login_at = ? WHERE id = ?").run(new Date().toISOString(), userId);
 }
-

@@ -1,6 +1,8 @@
 import { normalizePhoneNumber } from "@/lib/phone-number";
 
-type TwilioResponse = { status?: string };
+type TwilioResponse = { status?: string; code?: number; message?: string };
+
+export type PhoneOtpChannel = "sms" | "whatsapp";
 
 function config() {
   const keySid = process.env.TWILIO_API_KEY_SID;
@@ -36,9 +38,13 @@ export function isPhoneOtpConfigured() {
   return config() !== null;
 }
 
-export async function sendPhoneOtp(phone: string) {
-  const { response, payload } = await callVerify("Verifications", { To: phone, Channel: "sms" });
-  if (!response.ok || payload?.status !== "pending") throw new Error("Phone verification could not send a code.");
+export async function sendPhoneOtp(phone: string, channel: PhoneOtpChannel = "sms") {
+  const { response, payload } = await callVerify("Verifications", { To: phone, Channel: channel });
+  if (!response.ok || payload?.status !== "pending") {
+    const error = new Error("Phone verification could not send a code.") as Error & { twilioCode?: number };
+    error.twilioCode = payload?.code;
+    throw error;
+  }
 }
 
 export async function checkPhoneOtp(phone: string, code: string) {
