@@ -24,7 +24,7 @@ export async function POST(request: Request) {
       if (!token || token.usedAt || token.expiresAt <= now) throw new Error("RESET_TOKEN_INVALID");
       const consumed = await tx.passwordResetToken.updateMany({ where: { id: token.id, usedAt: null, expiresAt: { gt: now } }, data: { usedAt: now } });
       if (consumed.count !== 1) throw new Error("RESET_TOKEN_INVALID");
-      await tx.user.update({ where: { id: token.userId }, data: { passwordHash } });
+      await tx.user.update({ where: { id: token.userId }, data: { passwordHash, emailVerifiedAt: now } });
       await tx.authSession.updateMany({ where: { userId: token.userId, revokedAt: null }, data: { revokedAt: now } });
     });
     return NextResponse.json({ reset: true });
@@ -32,7 +32,7 @@ export async function POST(request: Request) {
     if (error instanceof Error && error.message === "RESET_TOKEN_INVALID") {
       return NextResponse.json({ error: "This reset link is expired or has already been used." }, { status: 400 });
     }
-    console.error("Paustik password update failed.", error instanceof Error ? error.name : "unknown error");
+    console.error("Pausstik password update failed.", error instanceof Error ? error.name : "unknown error");
     return serviceUnavailable();
   }
 }

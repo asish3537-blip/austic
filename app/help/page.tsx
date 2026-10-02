@@ -9,9 +9,9 @@ const guides = [
     steps: [
       "Select Customer, Mother entrepreneur, or Delivery agent on the sign-up page.",
       "Choose SMS or WhatsApp, enter your number, and request a 6-digit code. Preview mode shows the code on the page and sends no message.",
-      "WhatsApp delivery works only after Paustik's WhatsApp sender is configured in Twilio Verify. If it is not enabled, choose SMS.",
+      "WhatsApp delivery works only after Pausstik's WhatsApp sender is configured in Twilio Verify. If it is not enabled, choose SMS.",
       "Enter the code shown on the page to create your account and continue to your role workspace.",
-      "Mother and courier accounts wait for Paustik approval; active customers open their workspace.",
+      "Mother and courier accounts wait for Pausstik approval; active customers open their workspace.",
       "Admin accounts are not available on public sign-up. An active admin creates them in the admin panel.",
     ],
   },
@@ -35,7 +35,7 @@ const guides = [
     steps: [
       "Choose Mother entrepreneur and enter your kitchen name, cooking specialties, daily meal capacity, lunch days, and service window.",
       "Use the preview code shown on the page. No phone or email ownership is verified in this mode.",
-      "Your application is saved with your kitchen capacity and lunch availability. Your account stays pending while Paustik reviews the kitchen and food-safety details.",
+      "Your application is saved with your kitchen capacity and lunch availability. Your account stays pending while Pausstik reviews the kitchen and food-safety details.",
       "Menu editing, weekly cycles, and meal-change and cancellation rules are planned features, not live tools yet.",
     ],
   },
@@ -46,7 +46,7 @@ const guides = [
     text: "Apply as a local courier and learn how account approval relates to the separate tracking pilot.",
     steps: [
       "Choose Delivery agent and add your contact, address, and vehicle type.",
-      "Use the preview code shown on the page, then wait for Paustik approval before activation.",
+      "Use the preview code shown on the page, then wait for Pausstik approval before activation.",
       "Marketplace order assignment is still being built; the current courier account does not receive real jobs.",
       "The existing tracking pilot uses a separate, secure courier link and is not connected to marketplace orders.",
     ],
@@ -71,7 +71,7 @@ const guides = [
     steps: [
       "Customers will browse nearby kitchens and published weekly menus with vegetarian and non-vegetarian choices.",
       "Mothers will manage dishes, portions, prices, availability, and dated weekly menu cycles.",
-      "Published cancellation cutoffs and meal-change rules will be shown before checkout; Paustik has not set those terms yet.",
+      "Published cancellation cutoffs and meal-change rules will be shown before checkout; Pausstik has not set those terms yet.",
       "Checkout will show meal, delivery, tax, platform fee, mother earnings, refunds, and adjustments separately.",
     ],
   },
@@ -81,7 +81,7 @@ export default function HelpPage() {
   return (
     <main className="help-shell">
       <header className="help-heading">
-        <span className="eyebrow">Paustik help centre</span>
+        <span className="eyebrow">Pausstik help centre</span>
         <h1>Short guides for every role.</h1>
         <p>Short visual walkthroughs explain account setup and the separate delivery pilot. Each guide also includes written steps.</p>
       </header>
@@ -90,10 +90,10 @@ export default function HelpPage() {
       </nav>
       <div className="help-callout"><strong>Account setup status:</strong> preview codes are displayed in the app and do not prove phone ownership. In production, SMS and WhatsApp need Twilio Verify configured; WhatsApp also needs an enabled sender. Admin account creation is restricted to the admin panel. Menu publishing, marketplace delivery assignments, checkout, and payments are not live in this build. The separate delivery tracking pilot is available.</div>
       <section className="help-documents" aria-labelledby="help-documents-title">
-        <div><span className="eyebrow">Take Paustik with you</span><h2 id="help-documents-title">Guides and project documents</h2><p>Download the current user guide or the detailed product and development specification.</p></div>
-        <div className="help-document-actions"><a className="button button-small" href="/docs/Paustik_User_Guide.pdf" download>Download user guide (PDF)</a><a className="button button-small button-light" href="/docs/Paustik_Product_and_Development_Specification.pdf" download>Download product and development specification (PDF)</a></div>
+        <div><span className="eyebrow">Take Pausstik with you</span><h2 id="help-documents-title">Guides and project documents</h2><p>Download the current user guide or the detailed product and development specification.</p></div>
+        <div className="help-document-actions"><a className="button button-small" href="/docs/Pausstik_User_Guide.pdf" download>Download user guide (PDF)</a><a className="button button-small button-light" href="/docs/Pausstik_Product_and_Development_Specification.pdf" download>Download product and development specification (PDF)</a></div>
       </section>
-      <section className="help-grid" aria-label="Paustik video help guides">
+      <section className="help-grid" aria-label="Pausstik video help guides">
         {guides.map((guide, index) => (
           <article className="help-card" id={guide.slug} key={guide.slug}>
             <video className="help-video" controls playsInline preload="none" poster={`/assets/help-${guide.slug}.png`} aria-label={`${guide.title} help video`}>
@@ -112,7 +112,7 @@ export default function HelpPage() {
           </article>
         ))}
       </section>
-      <footer className="help-footer"><span>Need an account?</span><Link className="text-link" href="/sign-up">Create a Paustik account</Link><span aria-hidden="true">·</span><Link className="text-link" href="/sign-in">Sign in</Link></footer>
+      <footer className="help-footer"><span>Need an account?</span><Link className="text-link" href="/sign-up">Create a Pausstik account</Link><span aria-hidden="true">·</span><Link className="text-link" href="/sign-in">Sign in</Link></footer>
     </main>
   );
 }

@@ -24,8 +24,10 @@ button, input, select { font: inherit; }
 h1, h2, h3, .brand, .display-font { font-family: 'Manrope', 'DM Sans', sans-serif; }
 .site-header { position: relative; z-index: 2; border-bottom: 1px solid rgba(68, 75, 49, .1); background: rgba(251,248,240,.94); }
 .header-inner { display: flex; align-items: center; justify-content: space-between; max-width: 1240px; min-height: 82px; padding: 0 32px; margin: auto; }
-.brand { display: inline-flex; align-items: center; }
-.brand img { display: block; width: 172px; height: auto; }
+.brand { display: inline-flex; align-items: center; gap: 2px; color: #49301f; text-decoration: none; }
+.brand-icon { position: relative; display: block; width: 62px; height: 62px; flex: 0 0 62px; overflow: hidden; }
+.brand-icon img { position: absolute; top: 0; left: 0; display: block; width: 193px; max-width: none; height: auto; }
+.brand-name { font-family: 'Manrope', 'DM Sans', sans-serif; font-size: 34px; font-weight: 800; letter-spacing: -.075em; line-height: 1; }
 .header-nav { display: flex; align-items: center; gap: 28px; color: var(--muted); font-size: 14px; }
 .header-nav a { text-decoration: none; }
 .header-nav a:hover, .text-link:hover { color: var(--green); }
@@ -34,7 +36,10 @@ h1, h2, h3, .brand, .display-font { font-family: 'Manrope', 'DM Sans', sans-seri
 .button-small { min-height: 40px; border-radius: 11px; padding: 0 16px; }
 .button-light { background: transparent; color: var(--green); border-color: var(--line); }
 .button-light:hover { background: white; }
-.site-footer { display: flex; justify-content: space-between; gap: 16px; max-width: 1240px; padding: 24px 32px 30px; margin: 24px auto 0; border-top: 1px solid var(--line); color: #81796d; font-size: 12px; }
+.site-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; max-width: 1240px; padding: 24px 32px 30px; margin: 24px auto 0; border-top: 1px solid var(--line); color: #81796d; font-size: 12px; }
+.footer-links { display: flex; flex-wrap: wrap; gap: 8px 16px; }
+.footer-links a { text-underline-offset: 3px; }
+.footer-copyright { color: #81796d; font-size: 11px; }
 .landing-hero { display: grid; grid-template-columns: 1.03fr .97fr; align-items: center; gap: 42px; max-width: 1240px; min-height: 590px; padding: 56px 32px 52px; margin: auto; }
 .hero-copy { max-width: 590px; }
 .eyebrow { display: inline-flex; align-items: center; gap: 9px; color: var(--green); font-size: 12px; font-weight: 700; letter-spacing: .105em; text-transform: uppercase; }
@@ -100,6 +105,9 @@ h1, h2, h3, .brand, .display-font { font-family: 'Manrope', 'DM Sans', sans-seri
 .form-footer { margin: 18px 0 0; color: var(--muted); font-size: 13px; text-align: center; }
 .text-link { color: var(--green); font-weight: 700; text-decoration: none; }
 .auth-links { display: flex; justify-content: space-between; gap: 12px; margin-top: 13px; font-size: 12px; }
+.verification-help { margin-top: 18px; border-top: 1px solid var(--line); padding-top: 13px; }
+.verification-help summary { color: var(--green); font-size: 12px; font-weight: 700; cursor: pointer; }
+.verification-help .resend-verification { margin-top: 12px; }
 .form-alert { border: 1px solid #edc3b9; border-radius: 11px; background: #fff5f1; padding: 11px 13px; color: var(--danger); font-size: 13px; line-height: 1.5; }
 .form-success { border: 1px solid #c6d9c7; border-radius: 11px; background: #f2f7ee; padding: 12px 14px; color: var(--green-deep); font-size: 13px; line-height: 1.55; }
 .form-success a { display: inline-block; margin-top: 8px; font-weight: 700; }
@@ -223,6 +231,8 @@ h1, h2, h3, .brand, .display-font { font-family: 'Manrope', 'DM Sans', sans-seri
 .header-actions { display: flex; align-items: center; gap: 18px; flex: 0 0 auto; color: #5e584e; font-size: 13px; }
 .header-actions > a:first-child { text-decoration: none; }
 .header-actions .button { color: white; }
+.header-controls { display: flex; align-items: center; gap: 14px; }
+.mobile-nav { display: none; }
 .button-warm { border-color: #f1a00c; background: #f1a00c; color: #2f291f; }
 .button-warm:hover { border-color: #df8f00; background: #df8f00; }
 .market-home { overflow: hidden; }
@@ -321,13 +331,35 @@ h1, h2, h3, .brand, .display-font { font-family: 'Manrope', 'DM Sans', sans-seri
   .story-art { min-height: 490px; }
   .journey-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
 }
-@media (max-width: 620px) {
-  .header-inner { display: grid; grid-template-columns: 1fr auto; justify-content: stretch; gap: 0; padding: 9px 16px 8px; }
-  .brand img { width: 118px; }
+@media (max-width: 760px) {
+  .header-inner { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; gap: 0 12px; min-height: 68px; padding: 8px 18px; }
+  .brand-icon { width: 51px; height: 53px; flex-basis: 51px; }
+  .brand-icon img { width: 164px; }
+  .brand-name { font-size: 29px; }
+  .header-nav { display: none; }
+  .header-controls { gap: 8px; }
   .header-actions { gap: 10px; font-size: 12px; }
-  .header-actions .button-small { min-height: 35px; padding: 0 10px; font-size: 10px; }
-  .header-nav { grid-column: 1 / -1; justify-content: space-between; gap: 6px; padding-top: 9px; font-size: 10px; }
-  .site-footer { font-size: 10px; }
+  .header-actions > a:first-child { display: none; }
+  .header-actions .button-small { min-height: 39px; padding: 0 13px; font-size: 12px; }
+  .mobile-nav { position: relative; display: block; }
+  .mobile-nav summary { display: flex; min-height: 40px; align-items: center; gap: 8px; border: 1px solid var(--line); border-radius: 11px; background: var(--paper); padding: 0 11px; color: var(--green-deep); font-size: 12px; font-weight: 700; list-style: none; cursor: pointer; }
+  .mobile-nav summary::-webkit-details-marker { display: none; }
+  .menu-icon { display: grid; gap: 3px; width: 16px; }
+  .menu-icon i { display: block; height: 2px; border-radius: 2px; background: currentColor; }
+  .mobile-nav-panel { position: absolute; z-index: 10; top: calc(100% + 10px); right: 0; display: grid; width: min(260px, calc(100vw - 32px)); gap: 3px; border: 1px solid var(--line); border-radius: 16px; background: var(--paper); padding: 9px; box-shadow: 0 18px 45px rgba(52,42,30,.16); }
+  .mobile-nav-panel a { border-radius: 10px; padding: 12px; color: #4e514a; font-size: 13px; text-decoration: none; }
+  .mobile-nav-panel a:hover, .mobile-nav-panel a:focus-visible { background: #f2f6ee; color: var(--green-deep); }
+}
+@media (max-width: 620px) {
+  .header-inner { padding: 8px 14px; }
+  .brand-icon { width: 43px; height: 45px; flex-basis: 43px; }
+  .brand-icon img { width: 140px; }
+  .brand-name { font-size: 25px; }
+  .header-actions .button-small { min-height: 38px; padding: 0 11px; font-size: 11px; }
+  .mobile-nav summary { min-height: 38px; padding: 0 9px; font-size: 11px; }
+  .site-footer { align-items: flex-start; flex-direction: column; gap: 10px; padding: 21px 20px; font-size: 11px; }
+  .footer-links { gap: 7px 13px; }
+  .footer-copyright { margin-top: 2px; }
   .landing-hero { min-height: 0; gap: 0; padding: 38px 20px 35px; }
   .landing-hero h1 { font-size: clamp(46px,12.7vw,63px); }
   .hero-copy > p { font-size: 15px; }
@@ -375,12 +407,15 @@ h1, h2, h3, .brand, .display-font { font-family: 'Manrope', 'DM Sans', sans-seri
   .auth-aside h1 { font-size: 36px; }
 }
 @media (max-width: 620px) {
-  .header-inner { min-height: 70px; padding: 0 18px; }
+  .header-inner { min-height: 68px; padding: 8px 14px; }
   .brand { flex: 0 0 auto; }
-  .brand img { width: 132px; }
-  .header-nav { flex: 0 0 auto; gap: 10px; font-size: 12px; }
-  .header-nav a:not(.button), .header-nav .button-small { white-space: nowrap; }
-  .header-nav .button-small { min-height: 37px; padding: 0 8px; font-size: 11px; }
+  .brand-icon img { width: 140px; }
+  .header-nav { display: none; }
+  .header-controls { gap: 8px; }
+  .header-actions > a:first-child { display: none; }
+  .header-actions .button-small { min-height: 38px; padding: 0 11px; font-size: 11px; }
+  .mobile-nav { display: block; }
+  .mobile-nav summary { min-height: 38px; padding: 0 9px; font-size: 11px; }
   .site-footer { flex-direction: column; padding: 21px 20px; font-size: 11px; }
   .dashboard-topline { padding: 12px 18px; }
   .landing-hero { display: flex; flex-direction: column; align-items: stretch; gap: 0; padding: 42px 21px 30px; }
@@ -530,6 +565,12 @@ h1, h2, h3, .brand, .display-font { font-family: 'Manrope', 'DM Sans', sans-seri
   .customer-record-main > span { max-width: 205px; }
 }
 @media (max-width: 360px) {
-  .header-actions { gap: 7px; font-size: 10px; }
-  .header-actions .button-small { min-height: 33px; padding: 0 7px; font-size: 9px; }
+  .header-inner { padding-right: 10px; padding-left: 10px; }
+  .brand-icon { width: 39px; height: 41px; flex-basis: 39px; }
+  .brand-icon img { width: 127px; }
+  .brand-name { font-size: 22px; }
+  .header-controls { gap: 6px; }
+  .mobile-nav summary { width: 38px; justify-content: center; overflow: hidden; padding: 0; }
+  .mobile-nav summary > span:last-child { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+  .header-actions .button-small { min-height: 36px; padding: 0 8px; font-size: 10px; }
 }

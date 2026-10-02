@@ -31,15 +31,15 @@ export default function HomePage() {
         <div className="hero-copy">
           <div className="eyebrow"><span className="eyebrow-dot" /> Mother-led food, rooted in your neighbourhood</div>
           <h1>Homemade care,<br /><em>delivered nearby.</em></h1>
-          <p>Paustik is building a local food marketplace where families can discover home-style meals prepared by mother entrepreneurs.</p>
+          <p>Pausstik is building a local food marketplace where families can discover home-style meals prepared by mother entrepreneurs.</p>
           <div className="hero-actions">
             <Link className="button" href="#availability">Check your neighbourhood <span aria-hidden="true">→</span></Link>
-            <Link className="button button-light" href="#how-it-works">How Paustik works</Link>
+            <Link className="button button-light" href="#how-it-works">How Pausstik works</Link>
           </div>
           <div className="hero-note"><span>✳</span> Local kitchens · Veg and non-veg menus planned · Neighbourhood delivery</div>
           <p className="launch-note">Account preview is open for early onboarding. Orders and live payments are not open yet.</p>
         </div>
-        <div className="hero-art" aria-label="Paustik mother and child illustration">
+        <div className="hero-art" aria-label="Pausstik mother and child illustration">
           <div className="art-halo" />
           <Image src="/assets/mother-child-meal.svg" alt="A mother and child sharing a home-style meal" width={680} height={540} priority />
           <div className="art-caption"><span className="caption-mark">✦</span><div><strong>Good food grows stronger communities</strong><small>Mother-led · Local · Made with care</small></div></div>
@@ -48,7 +48,7 @@ export default function HomePage() {
 
       <section className="availability-section" id="availability">
         <span className="eyebrow">Neighbourhood launch</span>
-        <h2>Is Paustik coming to your area?</h2>
+        <h2>Is Pausstik coming to your area?</h2>
         <p>We’re preparing a controlled neighbourhood pilot and will publish service areas before taking orders.</p>
         <AvailabilityCheck />
       </section>
@@ -62,7 +62,7 @@ export default function HomePage() {
         <div className="story-copy">
           <span className="eyebrow">For mothers</span>
           <h2>Your kitchen.<br />Your skills.<br /><em>Your business.</em></h2>
-          <p>Paustik is being built to help mothers turn their cooking into a local food business, with clear onboarding, kitchen review and neighbourhood delivery support.</p>
+          <p>Pausstik is being built to help mothers turn their cooking into a local food business, with clear onboarding, kitchen review and neighbourhood delivery support.</p>
           <ol className="mother-steps">
             <li><span>01</span><div><b>Apply to join</b><small>Share your kitchen and cooking experience.</small></div></li>
             <li><span>02</span><div><b>Review and prepare</b><small>Kitchen review and food-safety guidance are planned before launch.</small></div></li>
@@ -76,7 +76,7 @@ export default function HomePage() {
         <div className="section-heading">
           <span className="eyebrow">A neighbourhood food journey</span>
           <h2>From a mother’s kitchen to your table.</h2>
-          <p>This is the marketplace flow Paustik is preparing. Ordering and delivery assignments are not active yet.</p>
+          <p>This is the marketplace flow Pausstik is preparing. Ordering and delivery assignments are not active yet.</p>
         </div>
         <div className="journey-grid">
           {journey.map(([number, title, detail]) => (
@@ -113,7 +113,7 @@ export default function HomePage() {
         <div className="section-heading">
           <span className="eyebrow">Trust and safety</span>
           <h2>Trust belongs in every step.</h2>
-          <p>These are the safeguards Paustik is designing into the marketplace. They are not yet active operating services.</p>
+          <p>These are the safeguards Pausstik is designing into the marketplace. They are not yet active operating services.</p>
         </div>
         <div className="principles-grid">
           {principles.map(([title, detail], index) => (
@@ -126,11 +126,10 @@ export default function HomePage() {
       </section>
 
       <section className="closing-section">
-        <div><span className="eyebrow">A healthier neighbourhood, one meal at a time</span><h2>Good food grows stronger communities.</h2><p>Explore the account and delivery pilot guides while Paustik prepares its first marketplace launch.</p></div>
-        <Link className="button button-warm" href="/help">Explore Paustik guides <span aria-hidden="true">→</span></Link>
+        <div><span className="eyebrow">A healthier neighbourhood, one meal at a time</span><h2>Good food grows stronger communities.</h2><p>Explore the account and delivery pilot guides while Pausstik prepares its first marketplace launch.</p></div>
+        <Link className="button button-warm" href="/help">Explore Pausstik guides <span aria-hidden="true">→</span></Link>
       </section>
       <p className="demo-link"><Link href="/legacy-demo.html">Explore the previous interactive concept demo</Link></p>
     </main>
   );
 }
-

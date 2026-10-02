@@ -111,12 +111,12 @@ export default async function CustomerDashboardPage() {
       [orders, subscriptions] = await loadCustomerActivity(user.id);
     } catch (error) {
       activityAvailable = false;
-      console.error("Paustik customer activity could not be loaded.", error instanceof Error ? error.name : "unknown error");
+      console.error("Pausstik customer activity could not be loaded.", error instanceof Error ? error.name : "unknown error");
     }
     try {
       kitchens = await loadNearbyKitchens();
     } catch (error) {
-      console.error("Paustik kitchen discovery could not be loaded.", error instanceof Error ? error.name : "unknown error");
+      console.error("Pausstik kitchen discovery could not be loaded.", error instanceof Error ? error.name : "unknown error");
     }
   }
   const listingsAreSamples = kitchens.length === 0;
@@ -127,12 +127,12 @@ export default async function CustomerDashboardPage() {
 
   return <main className="dashboard-shell customer-dashboard">
     <div className="dashboard-head customer-dashboard-head">
-      <div><span className="eyebrow">Your Paustik table</span><h1>Good to see you, {user.name.split(" ")[0]}.</h1><p>Your orders, meal plans and account activity in one place.</p></div>
+      <div><span className="eyebrow">Your Pausstik table</span><h1>Good to see you, {user.name.split(" ")[0]}.</h1><p>Your orders, meal plans and account activity in one place.</p></div>
       <Link className="button button-warm customer-menu-cta" href="/legacy-demo.html">Explore sample menu <span aria-hidden="true">→</span></Link>
     </div>
 
     <section className="customer-stats" aria-label="Your account activity">
-      <article className="customer-stat"><span>Orders</span><strong>{paidOrderCount}</strong><small>Saved to your Paustik account</small></article>
+      <article className="customer-stat"><span>Orders</span><strong>{paidOrderCount}</strong><small>Saved to your Pausstik account</small></article>
       <article className="customer-stat"><span>Active meal plans</span><strong>{activePlans}</strong><small>Plans with an active status</small></article>
       <article className="customer-stat"><span>Account</span><strong className="customer-stat-active">Active</strong><small>Signed in as a customer</small></article>
     </section>

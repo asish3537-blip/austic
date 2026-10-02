@@ -16,7 +16,7 @@ type DemoChallenge = {
 };
 
 export function isDemoAuthEnabled() {
-  return process.env.PAUSTIK_DEMO_AUTH === "true";
+  return process.env.NODE_ENV !== "production" && process.env.PAUSTIK_DEMO_AUTH === "true";
 }
 
 function secret() {
@@ -87,4 +87,3 @@ export function verifyDemoOtp(request: Request, phone: string, purpose: OtpPurpo
     return false;
   }
 }
-

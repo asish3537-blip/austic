@@ -45,8 +45,7 @@ export async function POST(request: Request) {
     if (error && typeof error === "object" && "code" in error && error.code === "P2002") {
       return NextResponse.json({ error: "That username or email is already in use." }, { status: 409 });
     }
-    console.error("Paustik admin account creation failed.", error instanceof Error ? error.name : "unknown error");
+    console.error("Pausstik admin account creation failed.", error instanceof Error ? error.name : "unknown error");
     return serviceUnavailable();
   }
 }
-

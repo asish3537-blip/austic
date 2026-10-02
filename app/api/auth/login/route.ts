@@ -18,7 +18,7 @@ export async function POST(request: Request) {
   const demoAuth = !localAuth && isDemoAuthEnabled();
   if (!localAuth && (!process.env.DATABASE_URL || !process.env.AUTH_SECRET)) return serviceUnavailable();
   if (!localAuth && !demoAuth && !isPhoneOtpConfigured()) {
-    return NextResponse.json({ error: "Phone sign-in is not connected yet. Paustik needs its SMS verification service configured." }, { status: 503 });
+    return NextResponse.json({ error: "Phone sign-in is not connected yet. Pausstik needs its SMS verification service configured." }, { status: 503 });
   }
 
   let body: unknown;
@@ -41,7 +41,7 @@ export async function POST(request: Request) {
       await createSession(user.id);
       return NextResponse.json({ destination: "/account/local-demo" });
     } catch (error) {
-      console.error("Paustik local phone sign-in failed.", error instanceof Error ? error.name : "unknown error");
+      console.error("Pausstik local phone sign-in failed.", error instanceof Error ? error.name : "unknown error");
       return serviceUnavailable();
     }
   }
@@ -56,13 +56,15 @@ export async function POST(request: Request) {
     if (!user || user.role === "ADMIN" || user.status === "SUSPENDED" || user.status === "REJECTED") {
       return NextResponse.json({ error: "The code is incorrect or expired, or this account is unavailable." }, { status: 401 });
     }
-
     const approved = demoAuth
       ? verifyDemoOtp(request, phone, "login", parsed.data.otp)
       : await checkPhoneOtp(phone, parsed.data.otp);
     if (!approved) {
       await prisma.failedLoginAttempt.create({ data: { identifierHash } });
       return NextResponse.json({ error: "That code is incorrect or expired. Request a new code and try again." }, { status: 401 });
+    }
+    if (!demoAuth && !user.emailVerifiedAt) {
+      return NextResponse.json({ error: "Verify the email address on your account before signing in. Request a fresh link below if needed." }, { status: 403 });
     }
 
     await prisma.$transaction([
@@ -74,8 +76,7 @@ export async function POST(request: Request) {
     if (demoAuth) clearDemoOtpCookie(response);
     return response;
   } catch (error) {
-    console.error("Paustik phone sign-in failed.", error instanceof Error ? error.name : "unknown error");
+    console.error("Pausstik phone sign-in failed.", error instanceof Error ? error.name : "unknown error");
     return serviceUnavailable();
   }
 }
-

@@ -78,3 +78,12 @@ export const resetPasswordSchema = z.object({
 });
 
 export const emailSchema = z.object({ email: z.string().trim().email().max(254) });
+
+export const emailPasswordLoginSchema = z.object({
+  email: z.string().trim().email().max(254),
+  password: z.string().min(1).max(72).refine((value) => new TextEncoder().encode(value).length <= 72),
+});
+
+export const adminBootstrapSchema = adminCreateSchema.extend({
+  setupCode: z.string().min(32).max(128),
+});

@@ -31,8 +31,8 @@ export function AdminSignInForm() {
   }
 
   return <>
-    <span className="eyebrow">Paustik operations</span><h2>Admin sign in</h2>
-    <p className="auth-intro">Use the username and password assigned to you by a Paustik administrator.</p>
+    <span className="eyebrow">Pausstik operations</span><h2>Admin sign in</h2>
+    <p className="auth-intro">Use the username and password assigned to you by a Pausstik administrator.</p>
     {error && <Notice>{error}</Notice>}
     <form onSubmit={submit}>
       <div className="form-grid">
@@ -41,7 +41,8 @@ export function AdminSignInForm() {
       </div>
       <button className="button form-submit" type="submit" disabled={busy}>{busy ? "Signing in…" : "Sign in as admin"}<span aria-hidden="true">→</span></button>
     </form>
+    <p className="form-footer"><Link className="text-link" href="/forgot-password">Forgot admin password?</Link></p>
+    <p className="form-footer">First-time recovery? <Link className="text-link" href="/admin-setup">Create owner admin account</Link></p>
     <p className="form-footer"><Link className="text-link" href="/sign-in">Back to customer and partner sign in</Link></p>
   </>;
 }
-

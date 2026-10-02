@@ -129,7 +129,7 @@ export default async function AdminDashboardPage() {
 
   return <main className="dashboard-shell admin-dashboard">
     <div className="dashboard-head admin-dashboard-head">
-      <div><span className="eyebrow">Paustik operations</span><h1>Admin overview</h1><p>Track accounts, orders, deliveries and recorded money movement.</p></div>
+      <div><span className="eyebrow">Pausstik operations</span><h1>Admin overview</h1><p>Track accounts, orders, deliveries and recorded money movement.</p></div>
       <Link className="button button-light" href="/admin/accounts">Manage admin accounts</Link>
       <div className="admin-live-badge"><span aria-hidden="true" /> Live database · {timestamp(new Date())}</div>
     </div>
@@ -146,10 +146,10 @@ export default async function AdminDashboardPage() {
     </section>
 
     <section className="admin-section" aria-labelledby="admin-finance-title">
-      <div className="admin-section-heading"><div><span className="eyebrow">Finance</span><h2 id="admin-finance-title">Income and payouts</h2></div><span className="admin-section-note">Amounts come from saved Paustik payment and ledger records.</span></div>
+      <div className="admin-section-heading"><div><span className="eyebrow">Finance</span><h2 id="admin-finance-title">Income and payouts</h2></div><span className="admin-section-note">Amounts come from saved Pausstik payment and ledger records.</span></div>
       <div className="admin-finance-grid">
         <article className="admin-panel"><h3>Captured customer payments</h3><MoneyRows rows={capturedPayments} empty="No captured payments yet." /></article>
-        <article className="admin-panel"><h3>Paustik platform fees</h3><MoneyRows rows={platformFees} empty="No platform fees recorded yet." /></article>
+        <article className="admin-panel"><h3>Pausstik platform fees</h3><MoneyRows rows={platformFees} empty="No platform fees recorded yet." /></article>
         <article className="admin-panel"><h3>Mother earnings awaiting payout</h3><MoneyRows rows={unpaidEarnings("MOTHER")} empty="No unpaid mother earnings." /></article>
         <article className="admin-panel"><h3>Courier earnings awaiting payout</h3><MoneyRows rows={unpaidEarnings("DELIVERY_AGENT")} empty="No unpaid courier earnings." /></article>
         <article className="admin-panel"><h3>Payouts completed</h3><MoneyRows rows={paidPayouts} empty="No completed payouts yet." /></article>
@@ -179,4 +179,3 @@ export default async function AdminDashboardPage() {
     </section>
   </main>;
 }
-

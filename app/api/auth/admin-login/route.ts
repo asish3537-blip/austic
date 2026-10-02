@@ -44,8 +44,7 @@ export async function POST(request: Request) {
     await createSession(user.id);
     return NextResponse.json({ destination: roleHome({ role: user.role, status: user.status }) }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
-    console.error("Paustik administrator sign-in failed.", error instanceof Error ? error.name : "unknown error");
+    console.error("Pausstik administrator sign-in failed.", error instanceof Error ? error.name : "unknown error");
     return serviceUnavailable();
   }
 }
-

@@ -59,8 +59,8 @@ export function SignInForm() {
     }
   }
   return <>
-    <span className="eyebrow">Welcome back</span><h2>Sign in to Paustik</h2>
-    <p className="auth-intro">Choose SMS or WhatsApp for your one-time sign-in code. Preview codes appear on this page; no message is sent in preview mode.</p>
+    <span className="eyebrow">Welcome back</span><h2>Sign in to Pausstik</h2>
+    <p className="auth-intro">Choose SMS or WhatsApp. Pausstik sends a real verification code in production; only local previews show temporary codes on screen.</p>
     {error && <Alert>{error}</Alert>}
     <form onSubmit={submit}>
       <div className="form-grid">
@@ -69,15 +69,17 @@ export function SignInForm() {
           <div className="phone-otp-row"><input id="signin-phone" name="phone" type="tel" autoComplete="tel" placeholder="+91 98765 43210" value={phone} onChange={(event) => { setPhone(event.target.value); setCodeSent(false); setMessage(""); setDevelopmentCode(""); }} required minLength={7} maxLength={24} /><button className="otp-request-button" type="button" onClick={requestCode} disabled={sending || phone.trim().length < 7}>{sending ? "Sending…" : codeSent ? "Send again" : "Send code"}</button></div>
           <small>Indian numbers can use 10 digits or include +91.</small>
         </div>
-        <div className="field full"><VerificationChannelPicker value={channel} onChange={(next) => { setChannel(next); setCodeSent(false); setMessage(""); setDevelopmentCode(""); }} idPrefix="signin" /><small>WhatsApp codes require a WhatsApp sender enabled for Paustik in Twilio Verify.</small></div>
+        <div className="field full"><VerificationChannelPicker value={channel} onChange={(next) => { setChannel(next); setCodeSent(false); setMessage(""); setDevelopmentCode(""); }} idPrefix="signin" /><small>WhatsApp codes require a WhatsApp sender enabled for Pausstik in Twilio Verify.</small></div>
         {codeSent && <div className="field full"><label htmlFor="signin-otp">6-digit verification code</label><input id="signin-otp" name="otp" type="text" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" maxLength={6} required /></div>}
       </div>
-      {message && <Alert success>{message}{developmentCode && <><br /><strong>Paustik preview code: {developmentCode}</strong></>}</Alert>}
-      <div className="auth-links"><span>Preview codes do not verify phone ownership.</span></div>
+      {message && <Alert success>{message}{developmentCode && <><br /><strong>Pausstik preview code: {developmentCode}</strong></>}</Alert>}
+      <div className="auth-links"><span>Codes expire shortly and can be used once.</span></div>
       <button className="button form-submit" type="submit" disabled={busy}>{busy ? "Signing in…" : "Sign in"}<span aria-hidden="true">→</span></button>
     </form>
+    <p className="form-footer">Prefer a password? <Link className="text-link" href="/password-sign-in">Sign in with email</Link> · <Link className="text-link" href="/forgot-password">Reset password</Link></p>
+    <details className="verification-help"><summary>Need a fresh email verification link?</summary><ResendVerificationForm /></details>
     <p className="form-footer">Administrator? <Link className="text-link" href="/admin-sign-in">Admin sign in</Link></p>
-    <p className="form-footer">New to Paustik? <Link className="text-link" href="/sign-up">Create an account</Link></p>
+    <p className="form-footer">New to Pausstik? <Link className="text-link" href="/sign-up">Create an account</Link></p>
   </>;
 }
 
@@ -176,7 +178,7 @@ export function SignUpForm() {
   }
   return <>
     <span className="eyebrow">Join the neighbourhood table</span><h2>Create your account</h2>
-    <p className="auth-intro">Choose how you want to take part and where to receive your verification code. Preview codes appear on this page instead of being sent as messages.</p>
+    <p className="auth-intro">Choose your account type. Pausstik verifies your phone using SMS or WhatsApp and sends account email to the address you provide.</p>
     {error && <Alert>{error}</Alert>}
     {success && <><Alert success>{success.message}{success.verificationUrl && <><br /><Link href={success.verificationUrl}>Verify this development email</Link></>}</Alert>{!success.emailSent && !success.verificationUrl && <ResendVerificationForm initialEmail={success.email} />}<p className="form-footer">Continue to <Link className="text-link" href="/sign-in">sign in with your phone</Link></p></>}
     {!success && <form onSubmit={submit}>
@@ -186,7 +188,7 @@ export function SignUpForm() {
       <div className="form-grid" style={{ marginTop: 16 }}>
         <div className="field"><label htmlFor="signup-name">Full name</label><input id="signup-name" name="name" autoComplete="name" required minLength={2} maxLength={100} /></div>
         <div className="field"><label htmlFor="signup-phone">Phone number</label><div className="phone-otp-row"><input id="signup-phone" name="phone" autoComplete="tel" type="tel" placeholder="+91 98765 43210" value={phone} onChange={(event) => { setPhone(event.target.value); setCodeSent(false); setMessage(""); setDevelopmentCode(""); }} required minLength={7} maxLength={24} /><button className="otp-request-button" type="button" onClick={requestCode} disabled={sending || phone.trim().length < 7}>{sending ? "Sending…" : codeSent ? "Send again" : "Send code"}</button></div><small>Indian numbers can use 10 digits or include +91.</small></div>
-        <div className="field"><VerificationChannelPicker value={channel} onChange={(next) => { setChannel(next); setCodeSent(false); setMessage(""); setDevelopmentCode(""); }} idPrefix="signup" /><small>WhatsApp requires a configured Paustik sender in Twilio Verify.</small></div>
+        <div className="field"><VerificationChannelPicker value={channel} onChange={(next) => { setChannel(next); setCodeSent(false); setMessage(""); setDevelopmentCode(""); }} idPrefix="signup" /><small>WhatsApp requires a configured Pausstik sender in Twilio Verify.</small></div>
         <div className="field full"><label htmlFor="signup-email">Email address for account updates</label><input id="signup-email" name="email" autoComplete="email" type="email" required maxLength={254} /></div>
         {codeSent && <div className="field full"><label htmlFor="signup-otp">6-digit verification code</label><input id="signup-otp" name="otp" type="text" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" maxLength={6} required /></div>}
         {role === "MOTHER" && <><div className="field"><label htmlFor="signup-kitchen">Kitchen name</label><input id="signup-kitchen" name="kitchenName" required minLength={2} maxLength={120} /></div><div className="field"><label htmlFor="signup-cuisine">Cooking specialties</label><input id="signup-cuisine" name="cuisine" placeholder="e.g. Odia home cooking, vegetarian thalis" required minLength={2} maxLength={80} /></div><div className="field"><label htmlFor="signup-capacity">Meals you can prepare per day</label><input id="signup-capacity" name="capacityPerDay" type="number" min={1} max={300} required /></div><div className="field"><label htmlFor="signup-days">Available lunch days</label><input id="signup-days" name="availableDays" placeholder="Monday, Tuesday, Wednesday" required minLength={2} maxLength={120} /><small>Separate days with commas.</small></div><div className="field full"><label htmlFor="signup-lunch-window">Lunch service window</label><input id="signup-lunch-window" name="lunchWindow" placeholder="11:30 AM to 2:00 PM" required minLength={3} maxLength={80} /></div></>}
@@ -196,21 +198,10 @@ export function SignUpForm() {
         <div className="field"><label htmlFor="signup-city">City</label><input id="signup-city" name="city" autoComplete="address-level2" required minLength={2} maxLength={100} /></div>
         <div className="field"><label htmlFor="signup-pin">PIN code</label><input id="signup-pin" name="pinCode" autoComplete="postal-code" required minLength={4} maxLength={12} /></div>
       </div>
-      {message && <Alert success>{message}{developmentCode && <><br /><strong>Paustik preview code: {developmentCode}</strong></>}</Alert>}
-      <p className="form-note">Preview codes do not verify phone ownership. Your email is collected for future account updates; no email verification is sent in preview mode. Mother and delivery accounts remain pending until reviewed. Admin accounts are created only by an active admin.</p>
+      {message && <Alert success>{message}{developmentCode && <><br /><strong>Pausstik preview code: {developmentCode}</strong></>}</Alert>}
+      <p className="form-note">Use a phone number and email you can access. Mother and delivery accounts stay pending until reviewed. Admin accounts are created through the restricted admin setup.</p>
       <button className="button form-submit" type="submit" disabled={busy}>{busy ? "Creating account…" : "Create account"}<span aria-hidden="true">→</span></button>
     </form>}
     <p className="form-footer">Already registered? <Link className="text-link" href="/sign-in">Sign in</Link></p>
   </>;
-}
-
-export function ForgotPasswordForm() {
-  return <><span className="eyebrow">Account recovery</span><h2>No password to reset</h2><p className="auth-intro">Customer and partner accounts use a one-time code. In preview mode it appears in the app; no SMS or email is sent.</p>
-    <Link className="button form-submit" href="/sign-in">Continue to phone sign-in</Link>
-    <p className="form-footer"><Link className="text-link" href="/sign-up">Create a Paustik account</Link></p></>;
-}
-
-export function ResetPasswordForm({ token }: { token: string }) {
-  void token;
-  return <><span className="eyebrow">Account recovery</span><h2>Use a one-time code</h2><p className="auth-intro">Customer and partner accounts use a one-time code; admin accounts use the password assigned by an administrator.</p><Link className="button form-submit" href="/sign-in">Continue to sign in</Link></>;
 }

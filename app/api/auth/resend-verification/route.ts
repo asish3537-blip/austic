@@ -8,7 +8,7 @@ import { isLocalAuthMode } from "@/lib/local-auth-mode";
 
 export const runtime = "nodejs";
 
-const genericMessage = "If an unverified Paustik account uses that email, a fresh verification link has been sent.";
+const genericMessage = "If an unverified Pausstik account uses that email, a fresh verification link has been sent.";
 
 export async function POST(request: Request) {
   const originError = rejectCrossOrigin(request);
@@ -20,7 +20,7 @@ export async function POST(request: Request) {
 
   let body: unknown;
   try { body = await request.json(); } catch {
-    return NextResponse.json({ error: "Enter the email address for your Paustik account." }, { status: 400 });
+    return NextResponse.json({ error: "Enter the email address for your Pausstik account." }, { status: 400 });
   }
   const parsed = emailSchema.safeParse(body);
   if (!parsed.success) {
@@ -42,20 +42,20 @@ export async function POST(request: Request) {
       const token = randomBytes(32).toString("base64url");
       const tokenHash = createHash("sha256").update(token).digest("hex");
       local.createLocalEmailToken(user.id, tokenHash);
-      const emailSent = await sendAuthEmail(email, "verify", token);
+      const emailSent = await sendAuthEmail(email, "verify", token, new URL(request.url).origin);
       const verificationUrl = !emailSent ? makeAuthLink("verify", token, new URL(request.url).origin) : undefined;
       return NextResponse.json({
         message: emailSent ? genericMessage : "Email delivery is not configured in local mode. Use this one-time verification link:",
         ...(verificationUrl ? { verificationUrl } : {}),
       });
     } catch (error) {
-      console.error("Paustik local verification resend failed.", error instanceof Error ? error.name : "unknown error");
+      console.error("Pausstik local verification resend failed.", error instanceof Error ? error.name : "unknown error");
       return NextResponse.json({ error: "Could not create a local verification link. Please try again." }, { status: 503 });
     }
   }
 
   if (!process.env.RESEND_API_KEY || !process.env.EMAIL_FROM) {
-    return NextResponse.json({ error: "Paustik email delivery is not configured yet. The team must finish email setup before accounts can be verified." }, { status: 503 });
+    return NextResponse.json({ error: "Pausstik email delivery is not configured yet. The team must finish email setup before accounts can be verified." }, { status: 503 });
   }
 
   try {
@@ -85,13 +85,13 @@ export async function POST(request: Request) {
       });
     });
 
-    const emailSent = await sendAuthEmail(email, "verify", token);
+    const emailSent = await sendAuthEmail(email, "verify", token, new URL(request.url).origin);
     if (!emailSent) {
-      return NextResponse.json({ error: "Paustik could not send the verification email. Please try again later." }, { status: 503 });
+      return NextResponse.json({ error: "Pausstik could not send the verification email. Please try again later." }, { status: 503 });
     }
     return NextResponse.json({ message: genericMessage });
   } catch (error) {
-    console.error("Paustik verification resend failed.", error instanceof Error ? error.name : "unknown error");
+    console.error("Pausstik verification resend failed.", error instanceof Error ? error.name : "unknown error");
     return NextResponse.json({ error: "Could not resend the verification email. Please try again later." }, { status: 503 });
   }
 }
