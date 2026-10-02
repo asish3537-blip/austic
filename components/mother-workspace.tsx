@@ -3,8 +3,8 @@
 import { useCallback, useEffect, useState } from "react";
 import type { FormEvent } from "react";
 
-type MenuItem = { id: string; mealId: string; name: string; description: string | null; category: string; price: number; serviceDate: string; servings: number; isAvailable: boolean; isPublished: boolean };
-type KitchenInfo = { name: string; approved: boolean; acceptingOrders: boolean; hasLocation: boolean };
+type MenuItem = { id: string; mealId: string; name: string; description: string | null; category: string; tier: string; components: string[]; deliveryTime: string; price: number; serviceDate: string; servings: number; isAvailable: boolean; isPublished: boolean };
+type KitchenInfo = { name: string; approved: boolean; acceptingOrders: boolean; hasLocation: boolean; marketplaceRadiusKm: number };
 type MotherOrder = { id: string; orderNumber: string; status: string; customer: string; items: string[]; total: number; scheduledFor: string; deliveryStatus: string | null };
 type Workspace = { kitchen: KitchenInfo; menus: MenuItem[]; orders: MotherOrder[]; earningsRecorded: number; currency: string };
 
@@ -23,6 +23,7 @@ export function MotherWorkspace() {
   const [message, setMessage] = useState("");
   const [editing, setEditing] = useState<MenuItem | null>(null);
   const [busyId, setBusyId] = useState("");
+  const [marketplaceRadiusKm, setMarketplaceRadiusKm] = useState(8);
 
   const refresh = useCallback(async () => {
     try {
@@ -30,6 +31,7 @@ export function MotherWorkspace() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Could not load your kitchen workspace.");
       setWorkspace(data);
+      setMarketplaceRadiusKm(data.kitchen.marketplaceRadiusKm || 8);
       setProblem("");
     } catch (error) {
       setProblem(error instanceof Error ? error.message : "Could not load your kitchen workspace.");
@@ -52,10 +54,12 @@ export function MotherWorkspace() {
     const payload = {
       name: String(form.get("name") || ""),
       description: String(form.get("description") || ""),
-      category: String(form.get("category") || "VEGETARIAN"),
+      tier: String(form.get("tier") || "BASE"),
+      components: [String(form.get("component1") || ""), String(form.get("component2") || ""), String(form.get("component3") || "")],
       price: Number(form.get("price")),
       servings: Number(form.get("servings")),
       serviceDate: String(form.get("serviceDate") || ""),
+      deliveryTime: String(form.get("deliveryTime") || "12:30"),
       ingredients: String(form.get("ingredients") || ""),
       allergens: String(form.get("allergens") || ""),
     };
@@ -89,7 +93,7 @@ export function MotherWorkspace() {
       try {
         const response = await fetch("/api/mother/kitchen/location", {
           method: "POST", headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ latitude: position.coords.latitude, longitude: position.coords.longitude, consent: true }),
+          body: JSON.stringify({ latitude: position.coords.latitude, longitude: position.coords.longitude, consent: true, marketplaceRadiusKm }),
         });
         const data = await response.json();
         if (!response.ok) throw new Error(data.error || "Could not save the kitchen pickup pin.");
@@ -158,6 +162,8 @@ export function MotherWorkspace() {
 
   const today = new Date();
   const localToday = [today.getFullYear(), String(today.getMonth() + 1).padStart(2, "0"), String(today.getDate()).padStart(2, "0")].join("-");
+  const minimumPrice = editing?.tier === "EGG" ? 79 : editing?.tier === "CHEESE" ? 89 : editing?.tier === "CHICKEN" ? 99 : 69;
+  const maximumPrice = editing?.tier === "CHICKEN" ? 100 : 500;
   if (loading) return <div className="dashboard-banner">Loading your kitchen workspace…</div>;
   if (!workspace) return <div className="dashboard-banner admin-warning">{problem || "Your kitchen workspace could not load."}</div>;
 
@@ -169,7 +175,7 @@ export function MotherWorkspace() {
     </section>
 
     <section className="mother-location-panel">
-      <div><span className="eyebrow">Pickup location</span><h2>{workspace.kitchen.hasLocation ? "Kitchen pin saved" : "Add your kitchen pickup pin"}</h2><p>{workspace.kitchen.hasLocation ? "Couriers use this pin for the 150 m pickup geofence." : "Allow one-time browser location access while you are at your kitchen. This pin is used to verify courier pickup."}</p></div>
+      <div><span className="eyebrow">Kitchen location</span><h2>{workspace.kitchen.hasLocation ? "Kitchen pin saved" : "Add your kitchen pickup pin"}</h2><p>Choose a customer service radius from 5–10 km. Couriers still use the separate 150 m pickup geofence at this pin.</p><label className="mother-radius-setting">Customer delivery area<select value={marketplaceRadiusKm} onChange={(event) => setMarketplaceRadiusKm(Number(event.target.value))}>{[5,6,7,8,9,10].map((radius) => <option key={radius} value={radius}>{radius} km</option>)}</select></label></div>
       <button className="button button-small" type="button" onClick={pinKitchen} disabled={busyId === "location"}>{busyId === "location" ? "Waiting for GPS…" : workspace.kitchen.hasLocation ? "Refresh kitchen pin" : "Use this device location"}</button>
     </section>
 
@@ -185,12 +191,18 @@ export function MotherWorkspace() {
           <label>Meal name<input name="name" required minLength={3} maxLength={90} defaultValue={editing?.name ?? ""} placeholder="e.g. Dalma, rice and seasonal sides" /></label>
           <label>Description<input name="description" maxLength={400} defaultValue={editing?.description ?? ""} placeholder="What comes in the lunch box?" /></label>
           <div className="workspace-form-row">
-            <label>Food type<select name="category" defaultValue={editing?.category ?? "VEGETARIAN"}><option value="VEGETARIAN">Vegetarian</option><option value="NON_VEGETARIAN">Non-vegetarian</option><option value="VEGAN">Vegan</option></select></label>
-            <label>Price (₹)<input name="price" type="number" min="20" max="5000" step="1" required defaultValue={editing?.price ?? 149} /></label>
+            <label>Meal tier<select name="tier" defaultValue={editing?.tier ?? "BASE"} onChange={(event) => { const price = event.currentTarget.form?.elements.namedItem("price") as HTMLInputElement | null; const limits = ({ BASE: { min: 69, max: 500 }, EGG: { min: 79, max: 500 }, CHEESE: { min: 89, max: 500 }, CHICKEN: { min: 99, max: 100 } } as Record<string, { min: number; max: number }>)[event.currentTarget.value] || { min: 69, max: 500 }; if (price) { price.min = String(limits.min); price.max = String(limits.max); price.value = String(limits.min); } }}><option value="BASE">Base meal · from ₹69</option><option value="EGG">Egg meal · from ₹79</option><option value="CHEESE">Cheese meal · from ₹89</option><option value="CHICKEN">Chicken meal · ₹99–₹100</option></select></label>
+            <label>Price (₹)<input name="price" type="number" min={minimumPrice} max={maximumPrice} step="1" required defaultValue={editing?.price ?? 69} /><small>Starting prices are ₹69 / ₹79 / ₹89 / ₹99. Chicken is capped at ₹100.</small></label>
+          </div>
+          <div className="workspace-form-row">
+            <label>Meal component 1<input name="component1" required maxLength={70} defaultValue={editing?.components[0] ?? ""} placeholder="e.g. rice" /></label>
+            <label>Meal component 2<input name="component2" required maxLength={70} defaultValue={editing?.components[1] ?? ""} placeholder="e.g. egg curry" /></label>
+            <label>Meal component 3<input name="component3" required maxLength={70} defaultValue={editing?.components[2] ?? ""} placeholder="e.g. seasonal vegetables" /></label>
           </div>
           <div className="workspace-form-row">
             <label>Servings available<input name="servings" type="number" min="1" max="200" step="1" required defaultValue={editing?.servings ?? 10} /></label>
             <label>Serving date<input name="serviceDate" type="date" min={localToday} required defaultValue={editing?.serviceDate ?? localToday} disabled={Boolean(editing)} /></label>
+            <label>Delivery time (India)<input name="deliveryTime" type="time" required defaultValue={editing?.deliveryTime ?? "12:30"} /></label>
           </div>
           <label>Ingredients, separated by commas<input name="ingredients" maxLength={500} placeholder="rice, lentils, vegetables" /></label>
           <label>Allergens, if any<input name="allergens" maxLength={300} placeholder="dairy, nuts, gluten" /></label>
@@ -219,7 +231,7 @@ export function MotherWorkspace() {
     <section className="dashboard-card mother-menu-list">
       <div className="workspace-section-heading"><div><span className="eyebrow">Your kitchen</span><h2>Scheduled meals</h2></div><span className="customer-count">{workspace.menus.length}</span></div>
       {workspace.menus.length ? <div className="workspace-menu-list">{workspace.menus.map((item) => <article key={item.id}>
-        <div><span className="meal-type-mark">{item.category === "NON_VEGETARIAN" ? "NON-VEG" : item.category === "VEGAN" ? "VEGAN" : "VEG"}</span><strong>{item.name}</strong><small>{dateLabel(item.serviceDate)} · {item.servings} servings · {money(item.price, "INR")}</small></div>
+        <div><span className="meal-type-mark">{item.tier} · {item.category === "NON_VEGETARIAN" ? "NON-VEG" : "VEG"}</span><strong>{item.name}</strong><small>{item.components.join(" · ")} · {dateLabel(item.serviceDate)} · {item.deliveryTime} · {item.servings} servings · {money(item.price, "INR")}</small></div>
         <span className={"customer-status " + (item.isPublished && item.isAvailable ? "customer-status-active" : "customer-status-pending")}>{item.isPublished && item.isAvailable ? "Live" : "Draft"}</span>
         <div className="workspace-record-actions"><button type="button" onClick={() => setEditing(item)}>Edit</button><button type="button" onClick={() => removeMenu(item)} disabled={busyId === item.id}>Remove</button></div>
       </article>)}</div> : <div className="customer-empty-state"><strong>Your menu is empty</strong><span>Add a meal and choose its date, servings and price to build the weekly menu.</span></div>}

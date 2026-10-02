@@ -5,7 +5,7 @@ import { rejectCrossOrigin, serviceUnavailable } from "@/lib/http";
 import { prisma } from "@/lib/prisma";
 
 export const runtime = "nodejs";
-const locationSchema = z.object({ latitude: z.number().min(-90).max(90), longitude: z.number().min(-180).max(180), consent: z.literal(true) });
+const locationSchema = z.object({ latitude: z.number().min(-90).max(90), longitude: z.number().min(-180).max(180), consent: z.literal(true), marketplaceRadiusKm: z.number().min(5).max(10).default(8) });
 
 export async function POST(request: Request) {
   const originError = rejectCrossOrigin(request);
@@ -19,8 +19,8 @@ export async function POST(request: Request) {
   try {
     const profile = await prisma.motherProfile.findUnique({ where: { userId: user.id }, select: { kitchen: { select: { id: true } } } });
     if (!profile?.kitchen) return NextResponse.json({ error: "Kitchen profile not found." }, { status: 404 });
-    await prisma.kitchen.update({ where: { id: profile.kitchen.id }, data: { latitude: parsed.data.latitude, longitude: parsed.data.longitude, serviceRadiusMeters: 150 } });
-    return NextResponse.json({ saved: true, message: "Kitchen pickup pin saved. Publish your menu to accept orders." });
+    await prisma.kitchen.update({ where: { id: profile.kitchen.id }, data: { latitude: parsed.data.latitude, longitude: parsed.data.longitude, serviceRadiusMeters: 150, marketplaceRadiusMeters: Math.round(parsed.data.marketplaceRadiusKm * 1000) } });
+    return NextResponse.json({ saved: true, message: "Kitchen pin saved. Customers within " + parsed.data.marketplaceRadiusKm + " km can discover your menu. The courier geofence stays at 150 m." });
   } catch (error) {
     console.error("Pausstik kitchen location save failed.", error instanceof Error ? error.name : "unknown error");
     return serviceUnavailable();

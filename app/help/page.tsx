@@ -18,13 +18,15 @@ const guides = [
   {
     slug: "customer-workspace",
     title: "Customer workspace and ordering",
-    status: "Nearby menus and order records available · online payment pending",
-    text: "Set a delivery pin, browse approved kitchens in your city, and place an order from a published weekly menu.",
+    status: "Nearby menu and one-week reservations available · online payment pending",
+    text: "Set a delivery pin, compare live mother-led menus within their service area, or reserve 3–7 meal days with one mother.",
     steps: [
       "Create a Customer account with the preview code, then sign in with another on-page code.",
-      "Use my location to save your drop-off pin. Pausstik shares it only with the courier assigned to your order.",
-      "Browse vegetarian, non-vegetarian and vegan meals from approved kitchens serving your city. Menu cards show serving date, remaining portions and price.",
-      "Choose servings and place an order. The current delivery fee is ₹30 and is shown separately; online payment is not connected and no charge is taken.",
+      "Use my location to save your drop-off pin. Pausstik uses it to calculate nearby kitchens and shares it with the assigned courier for an order.",
+      "Browse approved mothers within their chosen 5–10 km customer service area. Menu cards show the three meal components, tier price, serving day and delivery time. OpenStreetMap links share coordinates with that map provider.",
+      "Choose a meal once, or select 3–7 days from one mother for a one-week plan. Delivery is ₹30 per meal day. Plans renew manually.",
+      "Online checkout is not connected. No payment is taken here; use the pilot collection process with Pausstik admin if a payment is collected outside the app.",
+      "Cancel a meal day at least five hours before its scheduled delivery. The eligible amount already paid, minus the ₹5 processing fee, is credited to your Pausstik wallet. No credit is issued for an unpaid amount.",
       "Track kitchen and courier status in Recent orders. A current courier point appears after pickup when the courier has opted in to GPS sharing.",
     ],
   },
@@ -32,13 +34,13 @@ const guides = [
     slug: "mother-onboarding",
     title: "Mother entrepreneur onboarding",
     status: "Kitchen application, weekly menu and order queue available",
-    text: "After Pausstik approval, save your kitchen pin, manage dated meals and prepare customer orders.",
+    text: "After Pausstik approval, save your kitchen pin, choose a 5–10 km customer service radius, publish dated three-part meals, and prepare customer orders.",
     steps: [
       "Choose Mother entrepreneur and enter your kitchen name, cooking specialties, daily meal capacity, lunch days, and service window.",
       "Use the preview code shown on the page. No phone or email ownership is verified in this mode.",
       "Your application stays pending until an administrator reviews and approves it in the operations dashboard.",
-      "In your Mother workspace, allow location access while at your kitchen to save the pickup pin. Couriers use it for the 150 m pickup geofence.",
-      "Add meals by date with category, description, ingredients, allergens, price and servings, then publish the weekly menu.",
+      "In your Mother workspace, allow location access while at your kitchen to save the pickup pin. Choose a 5–10 km customer delivery radius. Courier pickup/drop-off geofences remain 150 m.",
+      "Add meals by date with tier, exactly three meal components, delivery time, ingredients, allergens and servings. Starting prices are ₹69 base, ₹79 egg, ₹89 cheese and ₹99 chicken; chicken cannot exceed ₹100.",
       "Accept or decline incoming orders, start preparation, and mark a packed order ready for a courier. Recorded earnings are shown separately from unpaid online orders.",
     ],
   },
@@ -69,13 +71,16 @@ const guides = [
   },
   {
     slug: "marketplace-roadmap",
-    title: "Order pricing, plans and payments",
-    status: "Order flow works · payment provider pending",
-    text: "Understand the current one-time meal checkout and which payment features still need provider setup.",
+    title: "Meal days, cancellations and payments",
+    status: "One-week reservation and wallet records available · checkout pending",
+    text: "Understand meal-tier pricing, manual weekly renewal, early cancellation and wallet adjustments.",
     steps: [
-      "A placed order saves the menu price and a ₹30 delivery fee. The app shows that payment is pending and does not charge the customer.",
-      "The admin dashboard reports captured payments and ledger income only. It does not count unpaid orders as revenue.",
-      "Meal-plan subscriptions, vouchers, refunds, online payment and partner payouts still need their product rules and payment-provider connection.",
+      "Meal prices start at ₹69 base, ₹79 egg, ₹89 cheese and ₹99 chicken. Mother entrepreneurs publish three meal components; chicken is capped at ₹100.",
+      "A weekly selection reserves 3–7 days from one mother for one week. Delivery is ₹30 for each day. It does not renew automatically.",
+      "Cancel a day at least five hours before delivery. If money was collected, eligible value less the ₹5 processing fee goes to the customer wallet; wallet funds can be applied to the next order.",
+      "Online payments are not connected. Admin can record confirmed external UPI or cash receipts with a reference. Do not record a receipt until the money has actually been received.",
+      "The admin dashboard reports payment receipts and wallet adjustments separately. It does not count unpaid order balances as revenue.",
+      "Online checkout, vouchers, provider refunds and partner payouts still need their payment-provider connection.",
       "Account verification by real email and WhatsApp/SMS depends on configured Resend and Twilio credentials. Preview codes do not verify contact ownership.",
     ],
   },
@@ -92,7 +97,7 @@ export default function HelpPage() {
       <nav className="help-jump" aria-label="Jump to a help topic">
         {guides.map((guide) => <a key={guide.slug} href={`#${guide.slug}`}>{guide.title}</a>)}
       </nav>
-      <div className="help-callout"><strong>Live service status:</strong> the marketplace supports approval-based partner onboarding, dated menus, orders, courier claims and opt-in GPS tracking. Online payments, vouchers, meal-plan billing and real email/SMS/WhatsApp delivery still require provider setup. Admin accounts are created in the admin panel.</div>
+      <div className="help-callout"><strong>Live pilot status:</strong> approved mothers can publish priced three-part menus; customers can reserve one week (3–7 days), cancel eligible days to receive wallet credits, and see nearby kitchens using opted-in pins. Online checkout and real email/SMS/WhatsApp delivery still need provider setup. Admin records only confirmed external payment receipts. Admin accounts are created in the admin panel.</div>
       <section className="help-documents" aria-labelledby="help-documents-title">
         <div><span className="eyebrow">Take Pausstik with you</span><h2 id="help-documents-title">Guides and project documents</h2><p>Download the current user guide or the detailed product and development specification.</p></div>
         <div className="help-document-actions"><a className="button button-small" href="/docs/Pausstik_User_Guide.pdf" download>Download user guide (PDF)</a><a className="button button-small button-light" href="/docs/Pausstik_Product_and_Development_Specification.pdf" download>Download product and development specification (PDF)</a></div>

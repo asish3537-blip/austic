@@ -3,18 +3,24 @@ import { z } from "zod";
 import { getCurrentUser } from "@/lib/auth";
 import { rejectCrossOrigin, serviceUnavailable } from "@/lib/http";
 import { prisma } from "@/lib/prisma";
+import { MEAL_PRICE_TIERS } from "@/lib/marketplace-rules";
 
 export const runtime = "nodejs";
 
 const mealSchema = z.object({
   name: z.string().trim().min(3).max(90),
   description: z.string().trim().max(400).optional().default(""),
-  category: z.enum(["VEGETARIAN", "NON_VEGETARIAN", "VEGAN"]),
-  price: z.number().finite().min(20).max(5000),
+  tier: z.enum(["BASE", "EGG", "CHEESE", "CHICKEN"]),
+  components: z.array(z.string().trim().min(1).max(70)).length(3),
+  price: z.number().finite().min(69).max(500),
   servings: z.number().int().min(1).max(200),
   serviceDate: z.iso.date(),
+  deliveryTime: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/),
   ingredients: z.string().max(500).optional().default(""),
   allergens: z.string().max(300).optional().default(""),
+}).superRefine((meal, context) => {
+  const rule = MEAL_PRICE_TIERS[meal.tier];
+  if (meal.price < rule.startingPrice || meal.price > rule.maxPrice) context.addIssue({ code: "custom", message: rule.label + " must be priced between ₹" + rule.startingPrice + " and ₹" + rule.maxPrice + "." });
 });
 
 function mondayFor(date: Date) {
@@ -51,10 +57,11 @@ export async function GET() {
       prisma.earning.aggregate({ where: { motherId: mother.id, beneficiaryRole: "MOTHER" }, _sum: { netAmount: true } }),
     ]);
     return NextResponse.json({
-      kitchen: { name: mother.kitchen.name, approved: mother.kitchen.verificationStatus === "APPROVED", acceptingOrders: mother.kitchen.isAcceptingOrders, hasLocation: mother.kitchen.latitude !== null && mother.kitchen.longitude !== null },
+      kitchen: { name: mother.kitchen.name, approved: mother.kitchen.verificationStatus === "APPROVED", acceptingOrders: mother.kitchen.isAcceptingOrders, hasLocation: mother.kitchen.latitude !== null && mother.kitchen.longitude !== null, marketplaceRadiusKm: mother.kitchen.marketplaceRadiusMeters / 1000 },
       menus: menus.map((menu) => ({
         id: menu.id, mealId: menu.mealId, name: menu.meal.name, description: menu.meal.description,
         category: menu.meal.category, price: Number(menu.meal.price), serviceDate: menu.serviceDate.toISOString().slice(0, 10),
+        tier: menu.meal.tier, components: menu.meal.components, deliveryTime: menu.deliveryTime,
         servings: menu.stockCount, isAvailable: menu.isAvailable, isPublished: menu.cycle.status === "PUBLISHED",
       })),
       orders: orders.map((order) => ({
@@ -110,7 +117,9 @@ export async function POST(request: Request) {
         kitchenId: mother.kitchen.id,
         name: parsed.data.name,
         description: parsed.data.description || null,
-        category: parsed.data.category,
+        category: parsed.data.tier === "EGG" || parsed.data.tier === "CHICKEN" ? "NON_VEGETARIAN" : "VEGETARIAN",
+        tier: parsed.data.tier,
+        components: parsed.data.components,
         cuisine: mother.kitchen.cuisine,
         price: parsed.data.price,
         ingredients: parsed.data.ingredients.split(",").map((item) => item.trim()).filter(Boolean),
@@ -125,6 +134,7 @@ export async function POST(request: Request) {
         mealId: meal.id,
         serviceDate,
         mealPeriod: "LUNCH",
+        deliveryTime: parsed.data.deliveryTime,
         stockCount: parsed.data.servings,
         isAvailable: publish,
       },

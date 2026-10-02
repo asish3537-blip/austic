@@ -2,7 +2,8 @@ import Link from "next/link";
 import { isLocalAuthMode } from "@/lib/local-auth-mode";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { CustomerDeliveryPin, CustomerDeliveryTracking, PlaceOrderButton } from "@/components/customer-marketplace-controls";
+import { CancelOrderButton, CustomerDeliveryPin, CustomerDeliveryTracking, CustomerWallet, FavoriteKitchenButton, PlaceOrderButton, WeeklyPlanPicker } from "@/components/customer-marketplace-controls";
+import { distanceMeters, mealPriceAllowed } from "@/lib/marketplace-rules";
 
 function date(value: Date) {
   return new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeZone: "Asia/Kolkata" }).format(value);
@@ -28,13 +29,18 @@ type KitchenCard = {
   city: string;
   cuisine: string;
   rating: number;
-  meals: { id: string; menuId?: string; name: string; category: string; price: number; serviceDate?: string; servings: number }[];
+  latitude?: number;
+  longitude?: number;
+  distanceKm?: number;
+  marketplaceRadiusKm?: number;
+  isFavorite?: boolean;
+  meals: { id: string; menuId?: string; name: string; category: string; tier: string; components: string[]; price: number; serviceDate?: string; deliveryTime?: string; servings: number }[];
 };
 
 const sampleKitchens: KitchenCard[] = [
-  { id: "sample-ananya", name: "Ananya's Home Kitchen", motherName: "Ananya", locality: "Patia", city: "Bhubaneswar", cuisine: "Odia · Vegetarian", rating: 4.9, meals: [{ id: "sample-dal", name: "Dalma lunch box", category: "VEGETARIAN", price: 149, servings: 8 }, { id: "sample-khichdi", name: "Ghee khichdi & sides", category: "VEGETARIAN", price: 129, servings: 8 }] },
-  { id: "sample-sabita", name: "Sabita's Rasoi", motherName: "Sabita", locality: "Sailashree Vihar", city: "Bhubaneswar", cuisine: "Odia · Home-style", rating: 4.8, meals: [{ id: "sample-thali", name: "Seasonal veg thali", category: "VEGETARIAN", price: 179, servings: 8 }, { id: "sample-chicken", name: "Chicken curry & rice", category: "NON_VEGETARIAN", price: 219, servings: 8 }] },
-  { id: "sample-meera", name: "Meera's Neighbourhood Kitchen", motherName: "Meera", locality: "Chandrasekharpur", city: "Bhubaneswar", cuisine: "North Indian · Vegetarian & non-vegetarian", rating: 4.7, meals: [{ id: "sample-paneer", name: "Paneer lunch bowl", category: "VEGETARIAN", price: 189, servings: 8 }, { id: "sample-egg", name: "Egg curry meal box", category: "NON_VEGETARIAN", price: 169, servings: 8 }] },
+  { id: "sample-ananya", name: "Ananya's Home Kitchen", motherName: "Ananya", locality: "Patia", city: "Bhubaneswar", cuisine: "Odia · Vegetarian", rating: 4.9, meals: [{ id: "sample-dal", name: "Dalma lunch box", category: "VEGETARIAN", tier: "BASE", components: ["Rice", "Dalma", "Seasonal greens"], price: 69, servings: 8 }, { id: "sample-khichdi", name: "Egg khichdi lunch", category: "NON_VEGETARIAN", tier: "EGG", components: ["Rice", "Egg", "Seasonal vegetables"], price: 79, servings: 8 }] },
+  { id: "sample-sabita", name: "Sabita's Rasoi", motherName: "Sabita", locality: "Sailashree Vihar", city: "Bhubaneswar", cuisine: "Odia · Home-style", rating: 4.8, meals: [{ id: "sample-thali", name: "Seasonal cheese meal", category: "VEGETARIAN", tier: "CHEESE", components: ["Rice", "Cheese curry", "Seasonal vegetables"], price: 89, servings: 8 }, { id: "sample-chicken", name: "Chicken curry lunch", category: "NON_VEGETARIAN", tier: "CHICKEN", components: ["Rice", "Chicken curry", "Seasonal vegetables"], price: 99, servings: 8 }] },
+  { id: "sample-meera", name: "Meera's Neighbourhood Kitchen", motherName: "Meera", locality: "Chandrasekharpur", city: "Bhubaneswar", cuisine: "North Indian · Vegetarian & non-vegetarian", rating: 4.7, meals: [{ id: "sample-paneer", name: "Cheese meal box", category: "VEGETARIAN", tier: "CHEESE", components: ["Rice", "Cheese curry", "Salad"], price: 89, servings: 8 }, { id: "sample-egg", name: "Egg curry meal box", category: "NON_VEGETARIAN", tier: "EGG", components: ["Rice", "Egg curry", "Seasonal vegetables"], price: 79, servings: 8 }] },
 ];
 
 async function loadCustomerActivity(customerId: string) {
@@ -47,6 +53,7 @@ async function loadCustomerActivity(customerId: string) {
         id: true,
         orderNumber: true,
         status: true,
+        paymentStatus: true,
         orderedAt: true,
         scheduledFor: true,
         totalAmount: true,
@@ -72,7 +79,7 @@ async function loadCustomerActivity(customerId: string) {
   ]);
 }
 
-async function loadNearbyKitchens(city?: string): Promise<KitchenCard[]> {
+async function loadNearbyKitchens(city?: string, customerPin?: { latitude: number; longitude: number }, favoriteKitchenIds: Set<string> = new Set()): Promise<KitchenCard[]> {
   const today = new Date();
   today.setUTCHours(0, 0, 0, 0);
   const weekEnd = new Date(today);
@@ -80,24 +87,28 @@ async function loadNearbyKitchens(city?: string): Promise<KitchenCard[]> {
   const kitchens = await prisma.kitchen.findMany({
     where: {
       verificationStatus: "APPROVED", isAcceptingOrders: true,
-      ...(city ? { city: { equals: city, mode: "insensitive" as const } } : {}),
+      ...(city && !customerPin ? { city: { equals: city, mode: "insensitive" as const } } : {}),
       menus: { some: { isAvailable: true, serviceDate: { gte: today, lt: weekEnd }, cycle: { status: "PUBLISHED" }, meal: { isAvailable: true } } },
     },
     orderBy: [{ mother: { rating: "desc" } }, { name: "asc" }],
     take: 8,
     select: {
-      id: true, name: true, locality: true, city: true, cuisine: true,
+      id: true, name: true, locality: true, city: true, cuisine: true, latitude: true, longitude: true, marketplaceRadiusMeters: true,
       mother: { select: { rating: true, user: { select: { name: true, status: true } } } },
       menus: {
         where: { isAvailable: true, serviceDate: { gte: today, lt: weekEnd }, cycle: { status: "PUBLISHED" }, meal: { isAvailable: true } },
         orderBy: [{ serviceDate: "asc" }, { meal: { name: "asc" } }], take: 12,
-        select: { id: true, serviceDate: true, stockCount: true, meal: { select: { id: true, name: true, category: true, price: true } } },
+        select: { id: true, serviceDate: true, deliveryTime: true, stockCount: true, meal: { select: { id: true, name: true, category: true, tier: true, components: true, price: true } } },
       },
     },
   });
   return kitchens
-    .filter((kitchen) => kitchen.mother.user.status === "ACTIVE")
-    .map((kitchen) => ({
+    .filter((kitchen) => kitchen.mother.user.status === "ACTIVE" && kitchen.latitude !== null && kitchen.longitude !== null && kitchen.menus.some((menu) => menu.meal.components.length === 3 && mealPriceAllowed(menu.meal.tier, Number(menu.meal.price))))
+    .map((kitchen) => {
+      const distanceKm = customerPin && kitchen.latitude !== null && kitchen.longitude !== null
+        ? distanceMeters(customerPin, { latitude: Number(kitchen.latitude), longitude: Number(kitchen.longitude) }) / 1000
+        : undefined;
+      return ({
       id: kitchen.id,
       name: kitchen.name,
       motherName: kitchen.mother.user.name,
@@ -105,8 +116,15 @@ async function loadNearbyKitchens(city?: string): Promise<KitchenCard[]> {
       city: kitchen.city,
       cuisine: kitchen.cuisine,
       rating: Number(kitchen.mother.rating),
-      meals: kitchen.menus.map((menu) => ({ menuId: menu.id, id: menu.meal.id, name: menu.meal.name, category: menu.meal.category, price: Number(menu.meal.price), serviceDate: menu.serviceDate.toISOString().slice(0, 10), servings: menu.stockCount })),
-    }));
+      isFavorite: favoriteKitchenIds.has(kitchen.id),
+      latitude: Number(kitchen.latitude),
+      longitude: Number(kitchen.longitude),
+      distanceKm,
+      marketplaceRadiusKm: kitchen.marketplaceRadiusMeters / 1000,
+      meals: kitchen.menus.filter((menu) => menu.meal.components.length === 3 && mealPriceAllowed(menu.meal.tier, Number(menu.meal.price))).map((menu) => ({ menuId: menu.id, id: menu.meal.id, name: menu.meal.name, category: menu.meal.category, tier: menu.meal.tier, components: menu.meal.components, price: Number(menu.meal.price), serviceDate: menu.serviceDate.toISOString().slice(0, 10), deliveryTime: menu.deliveryTime, servings: menu.stockCount })),
+    }); })
+    .filter((kitchen) => kitchen.distanceKm === undefined || kitchen.distanceKm <= (kitchen.marketplaceRadiusKm ?? 8))
+    .sort((a, b) => Number(Boolean(b.isFavorite)) - Number(Boolean(a.isFavorite)) || (a.distanceKm !== undefined && b.distanceKm !== undefined ? a.distanceKm - b.distanceKm : b.rating - a.rating));
 }
 
 export default async function CustomerDashboardPage() {
@@ -118,6 +136,7 @@ export default async function CustomerDashboardPage() {
   let kitchens: KitchenCard[] = [];
   let deliveryCity: string | undefined;
   let hasDeliveryPin = false;
+  let customerPin: { latitude: number; longitude: number } | undefined;
 
   if (!isLocalAuthMode()) {
     try {
@@ -128,9 +147,11 @@ export default async function CustomerDashboardPage() {
     }
     try {
       const address = await prisma.address.findFirst({ where: { userId: user.id }, orderBy: [{ isDefault: "desc" }, { createdAt: "asc" }], select: { city: true, latitude: true, longitude: true } });
+      const savedKitchens = await prisma.favoriteKitchen.findMany({ where: { customerId: user.id }, select: { kitchenId: true } });
       deliveryCity = address?.city;
       hasDeliveryPin = address?.latitude !== null && address?.latitude !== undefined && address?.longitude !== null && address?.longitude !== undefined;
-      kitchens = await loadNearbyKitchens(deliveryCity);
+      if (hasDeliveryPin && address?.latitude !== null && address?.latitude !== undefined && address?.longitude !== null && address?.longitude !== undefined) customerPin = { latitude: Number(address.latitude), longitude: Number(address.longitude) };
+      kitchens = await loadNearbyKitchens(deliveryCity, customerPin, new Set(savedKitchens.map((favorite) => favorite.kitchenId)));
     } catch (error) {
       console.error("Pausstik kitchen discovery could not be loaded.", error instanceof Error ? error.name : "unknown error");
     }
@@ -143,8 +164,8 @@ export default async function CustomerDashboardPage() {
 
   return <main className="dashboard-shell customer-dashboard">
     <div className="dashboard-head customer-dashboard-head">
-      <div><span className="eyebrow">Your Pausstik table</span><h1>Good to see you, {user.name.split(" ")[0]}.</h1><p>Your orders, meal plans and account activity in one place.</p></div>
-      <Link className="button button-warm customer-menu-cta" href="/legacy-demo.html">Explore sample menu <span aria-hidden="true">→</span></Link>
+      <div><span className="eyebrow">Your Pausstik table</span><h1>Good to see you, {user.name.split(" ")[0]}.</h1><p>Find a nearby mother, choose the meals you like and reserve at least three days with her for the week.</p></div>
+      <Link className="button button-warm customer-menu-cta" href="#nearby-kitchens-title">Find nearby meals <span aria-hidden="true">→</span></Link>
     </div>
 
     <section className="customer-stats" aria-label="Your account activity">
@@ -154,6 +175,7 @@ export default async function CustomerDashboardPage() {
     </section>
 
     <CustomerDeliveryPin initialPinned={hasDeliveryPin} />
+    <CustomerWallet />
 
     <section className="customer-discovery" aria-labelledby="nearby-kitchens-title">
       <div className="customer-panel-heading"><div><span className="eyebrow">From neighbourhood kitchens</span><h2 id="nearby-kitchens-title">Find your next lunch</h2></div><span className="customer-count">{visibleKitchens.length}</span></div>
@@ -161,12 +183,15 @@ export default async function CustomerDashboardPage() {
       <div className="customer-kitchen-grid">{visibleKitchens.map((kitchen) => <article className="customer-kitchen-card" key={kitchen.id}>
         <div className="customer-kitchen-top"><span className="customer-kitchen-mark" aria-hidden="true">{kitchen.motherName.slice(0, 1)}</span><span className="customer-rating">★ {kitchen.rating.toFixed(1)}</span></div>
         <h3>{kitchen.name}</h3><p className="customer-kitchen-meta">{kitchen.locality}, {kitchen.city} · {kitchen.cuisine}</p>
+        {kitchen.distanceKm !== undefined && <p className="customer-kitchen-distance">{kitchen.distanceKm.toFixed(1)} km away · kitchen serves up to {kitchen.marketplaceRadiusKm?.toFixed(0) ?? 8} km</p>}
+        {kitchen.latitude !== undefined && kitchen.longitude !== undefined && <a className="customer-map-link" href={"https://www.openstreetmap.org/?mlat=" + kitchen.latitude + "&mlon=" + kitchen.longitude + "#map=15/" + kitchen.latitude + "/" + kitchen.longitude} target="_blank" rel="noreferrer">View kitchen on OpenStreetMap ↗</a>}
         <p className="customer-kitchen-mother">Prepared by {kitchen.motherName}</p>
+        {!listingsAreSamples && <FavoriteKitchenButton kitchenId={kitchen.id} initiallySaved={Boolean(kitchen.isFavorite)} />}
         <ul className="customer-meal-list">{kitchen.meals.length ? kitchen.meals.map((meal) => <li key={meal.menuId ?? meal.id}>
-          <span><small>{meal.category === "VEGETARIAN" ? "VEG" : meal.category === "NON_VEGETARIAN" ? "NON-VEG" : title(meal.category)}</small>{meal.name}{meal.serviceDate && <small className="customer-meal-date">{new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short", timeZone: "UTC" }).format(new Date(meal.serviceDate + "T00:00:00.000Z"))} · {meal.servings} left</small>}</span>
+          <span><small>{meal.tier} · {meal.category === "VEGETARIAN" ? "VEG" : "NON-VEG"}</small>{meal.name}<small className="customer-meal-date">{meal.components.join(" · ") || "Three-part meal"}{meal.serviceDate && " · " + new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short", timeZone: "UTC" }).format(new Date(meal.serviceDate + "T00:00:00.000Z")) + " · " + (meal.deliveryTime || "12:30") + " · " + meal.servings + " left"}</small></span>
           <div><strong>{money(meal.price, "INR")}</strong>{meal.menuId && <PlaceOrderButton menuId={meal.menuId} servings={meal.servings} />}</div>
         </li>) : <li><span>Weekly menu is being prepared</span></li>}</ul>
-        {listingsAreSamples ? <Link className="button button-small customer-kitchen-cta" href="/legacy-demo.html">Preview sample menu <span aria-hidden="true">→</span></Link> : <p className="customer-delivery-fee-note">₹30 delivery · amount shown before payment setup · no charge taken online</p>}
+        {listingsAreSamples ? <Link className="button button-small customer-kitchen-cta" href="/help#customer-workspace">See how to order <span aria-hidden="true">→</span></Link> : <><p className="customer-delivery-fee-note">₹30 delivery per day · online checkout is not connected; no payment is taken here.</p><WeeklyPlanPicker kitchenName={kitchen.name} menus={kitchen.meals.filter((meal) => Boolean(meal.menuId && meal.serviceDate)).map((meal) => ({ menuId: meal.menuId!, name: meal.name, serviceDate: meal.serviceDate!, price: meal.price, servings: meal.servings }))} /></>}
       </article>)}</div>
     </section>
 
@@ -192,6 +217,10 @@ export default async function CustomerDashboardPage() {
       </article>
     </section>
 
-    <div className="dashboard-banner customer-demo-note"><strong>Payments:</strong> Orders are saved to Pausstik, but online payment is not connected yet. The app does not charge customers or record sales income until a payment provider is connected.</div>
+    {orders.some((order) => ["ORDER_PLACED", "CONFIRMED"].includes(order.status)) && <section className="customer-cancellation-panel" aria-label="Cancel an upcoming meal day">
+      <div><span className="eyebrow">Plans stay flexible</span><h2>Need to skip a meal day?</h2><p>Cancel at least five hours before delivery. Eligible paid value, less the ₹5 processing fee, goes to your Pausstik wallet.</p></div>
+      <ul>{orders.filter((order) => ["ORDER_PLACED", "CONFIRMED"].includes(order.status)).map((order) => <li key={order.id}><span><strong>{order.orderNumber}</strong><small>{order.kitchen.name} · {date(order.scheduledFor)}</small></span><CancelOrderButton orderId={order.id} orderStatus={order.status} scheduledFor={order.scheduledFor.toISOString()} /></li>)}</ul>
+    </section>}
+    <div className="dashboard-banner customer-demo-note"><strong>Pilot plans and payments:</strong> weekly selections reserve one week only and do not auto-renew. Online checkout is not connected, so this page takes no payment. Wallet credits are recorded in your account.</div>
   </main>;
 }

@@ -4,10 +4,10 @@ import { z } from "zod";
 import { getCurrentUser } from "@/lib/auth";
 import { rejectCrossOrigin, serviceUnavailable } from "@/lib/http";
 import { prisma } from "@/lib/prisma";
+import { CANCELLATION_CUTOFF_HOURS, CANCELLATION_OPERATION_FEE_INR, DELIVERY_FEE_INR, distanceMeters, lockWallet, mealDeliveryInstant, mealPriceAllowed, walletBalance } from "@/lib/marketplace-rules";
 
 export const runtime = "nodejs";
 const orderSchema = z.object({ menuId: z.string().uuid(), quantity: z.number().int().min(1).max(8) });
-const DELIVERY_FEE_INR = 30;
 
 export async function POST(request: Request) {
   const originError = rejectCrossOrigin(request);
@@ -33,6 +33,7 @@ export async function POST(request: Request) {
     if (!menu || !menu.isAvailable || !menu.meal.isAvailable || menu.stockCount < parsed.data.quantity || menu.cycle.status !== "PUBLISHED") {
       return NextResponse.json({ error: "That meal is no longer available. Refresh the menu and choose another serving." }, { status: 409 });
     }
+    if (menu.meal.components.length !== 3 || !mealPriceAllowed(menu.meal.tier, Number(menu.meal.price))) return NextResponse.json({ error: "This older menu needs a mother update before orders can be accepted. Choose a three-part meal with a current tier price." }, { status: 409 });
     if (menu.kitchen.verificationStatus !== "APPROVED" || !menu.kitchen.isAcceptingOrders || menu.kitchen.mother.user.status !== "ACTIVE") {
       return NextResponse.json({ error: "This kitchen is not accepting orders right now." }, { status: 409 });
     }
@@ -46,10 +47,17 @@ export async function POST(request: Request) {
     if (address.city.trim() && address.city.trim().toLocaleLowerCase("en-IN") !== kitchenCity) {
       return NextResponse.json({ error: "This kitchen currently serves " + menu.kitchen.city + ". Choose a kitchen serving your delivery city." }, { status: 409 });
     }
+    const kitchenDistance = distanceMeters({ latitude: Number(address.latitude), longitude: Number(address.longitude) }, { latitude: Number(menu.kitchen.latitude), longitude: Number(menu.kitchen.longitude) });
+    if (kitchenDistance > menu.kitchen.marketplaceRadiusMeters) return NextResponse.json({ error: "This kitchen is outside its " + (menu.kitchen.marketplaceRadiusMeters / 1000).toFixed(1) + " km neighbourhood delivery area." }, { status: 409 });
     const subtotal = Number(menu.meal.price) * parsed.data.quantity;
     const total = subtotal + DELIVERY_FEE_INR;
+    const scheduledFor = mealDeliveryInstant(menu.serviceDate, menu.deliveryTime);
+    if (scheduledFor <= new Date()) return NextResponse.json({ error: "This delivery slot has already passed. Choose a future menu day." }, { status: 409 });
     const orderNumber = "PS-" + Date.now().toString(36).toUpperCase() + "-" + randomBytes(2).toString("hex").toUpperCase();
     const order = await prisma.$transaction(async (tx) => {
+      await lockWallet(tx, user.id);
+      const walletUsed = Math.min(await walletBalance(tx, user.id), total);
+      const amountDue = total - walletUsed;
       const reserved = await tx.menu.updateMany({
         where: { id: menu.id, isAvailable: true, stockCount: { gte: parsed.data.quantity } },
         data: { stockCount: { decrement: parsed.data.quantity } },
@@ -63,25 +71,27 @@ export async function POST(request: Request) {
           kitchenId: menu.kitchenId,
           addressId: address.id,
           status: "ORDER_PLACED",
-          paymentStatus: "PENDING",
-          scheduledFor: menu.serviceDate,
+          paymentStatus: amountDue === 0 ? "CAPTURED" : "PENDING",
+          scheduledFor,
           subtotal,
           deliveryFee: DELIVERY_FEE_INR,
           taxAmount: 0,
           totalAmount: total,
           currency: "INR",
-          policySnapshot: { cancellation: "Contact Pausstik support for this pilot order.", paymentMode: "PAYMENT_PROVIDER_NOT_CONFIGURED" },
-          items: { create: { mealId: menu.mealId, mealName: menu.meal.name, quantity: parsed.data.quantity, unitPrice: menu.meal.price, lineTotal: subtotal, dietarySnapshot: { category: menu.meal.category, allergens: menu.meal.allergens } } },
-          payments: { create: { provider: "not_configured", status: "PENDING", amount: total, currency: "INR" } },
-          events: { create: { actorUserId: user.id, status: "ORDER_PLACED", detail: "Customer placed a marketplace order. Payment provider is not connected." } },
+          policySnapshot: { cancellation: "Cancel at least five hours before the scheduled delivery. Eligible collected value less a ₹5 processing fee is returned to wallet.", cutoffHours: CANCELLATION_CUTOFF_HOURS, operationFeeINR: CANCELLATION_OPERATION_FEE_INR, paymentMode: "PAYMENT_PROVIDER_NOT_CONFIGURED" },
+          items: { create: { mealId: menu.mealId, mealName: menu.meal.name, quantity: parsed.data.quantity, unitPrice: menu.meal.price, lineTotal: subtotal, dietarySnapshot: { category: menu.meal.category, tier: menu.meal.tier, components: menu.meal.components, allergens: menu.meal.allergens, menuId: menu.id } } },
+          ...(amountDue > 0 ? { payments: { create: { provider: "not_configured", status: "PENDING", amount: amountDue, currency: "INR" } } } : {}),
+          events: { create: { actorUserId: user.id, status: "ORDER_PLACED", detail: amountDue === 0 ? "Customer used wallet credit to settle this order." : "Customer placed a marketplace order. Remaining payment is not collected in the app." } },
         },
       });
+      if (walletUsed > 0) await tx.walletLedgerEntry.create({ data: { userId: user.id, orderId: created.id, direction: "DEBIT", amount: walletUsed, reference: "order:" + created.id, description: "Wallet applied to " + created.orderNumber } });
       await tx.notification.create({
         data: { userId: menu.kitchen.mother.userId, title: "New meal order", body: orderNumber + " · " + parsed.data.quantity + " serving(s) of " + menu.meal.name, kind: "ORDER", entityId: created.id },
       });
       return created;
     });
-    return NextResponse.json({ created: true, orderId: order.id, orderNumber: order.orderNumber, total, currency: "INR", paymentStatus: "PENDING", message: "Order saved. Online payment is not connected yet; this demo has not charged you." }, { status: 201 });
+    const walletApplied = await prisma.walletLedgerEntry.aggregate({ where: { orderId: order.id, direction: "DEBIT" }, _sum: { amount: true } });
+    return NextResponse.json({ created: true, orderId: order.id, orderNumber: order.orderNumber, total, walletApplied: Number(walletApplied._sum.amount ?? 0), amountDue: Math.max(0, total - Number(walletApplied._sum.amount ?? 0)), currency: "INR", paymentStatus: order.paymentStatus, message: "Order saved. Online payment is not connected; any remaining balance has not been charged." }, { status: 201 });
   } catch (error) {
     if (error instanceof Error && error.message === "MENU_SOLD_OUT") return NextResponse.json({ error: "That meal just sold out. Refresh the menu to see remaining servings." }, { status: 409 });
     console.error("Pausstik order creation failed.", error instanceof Error ? error.name : "unknown error");
