@@ -536,6 +536,11 @@ model Delivery {
   deliveredAt          DateTime?      @map("delivered_at") @db.Timestamptz(6)
   failureReason        String?        @map("failure_reason")
   trackingReference    String?        @unique @map("tracking_reference")
+  currentLatitude      Decimal?       @map("current_latitude") @db.Decimal(10, 7)
+  currentLongitude     Decimal?       @map("current_longitude") @db.Decimal(10, 7)
+  currentAccuracyMeters Decimal?      @map("current_accuracy_meters") @db.Decimal(7, 2)
+  locationUpdatedAt    DateTime?       @map("location_updated_at") @db.Timestamptz(6)
+  locationConsentAt    DateTime?       @map("location_consent_at") @db.Timestamptz(6)
   createdAt            DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt            DateTime       @updatedAt @map("updated_at") @db.Timestamptz(6)
   order                Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
@@ -829,4 +834,3 @@ model OrderEvent {
   @@map("order_events")
   @@schema("paustik_marketplace")
 }
-

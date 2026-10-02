@@ -1,6 +1,7 @@
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
+import { AdminPartnerReview } from "@/components/admin-partner-review";
 
 type CurrencyAmount = { currency: string; amount: number };
 type ActivityItem = {
@@ -42,7 +43,7 @@ function MoneyRows({ rows, empty = "No ledger entries yet." }: { rows: CurrencyA
 }
 
 export default async function AdminDashboardPage() {
-  const user = await requireRole("ADMIN");
+  await requireRole("ADMIN");
   const activeOrderStatuses = new Set(["DELIVERED", "CANCELLED", "FAILED"]);
   const activeDeliveryStatuses = new Set(["ASSIGNED", "ACCEPTED", "GOING_TO_PICKUP", "PICKED_UP", "OUT_FOR_DELIVERY"]);
 
@@ -144,6 +145,8 @@ export default async function AdminDashboardPage() {
       <article className="admin-kpi"><span>Orders in progress</span><strong>{activeOrders}</strong><small>Excludes delivered, cancelled and failed orders</small></article>
       <article className="admin-kpi"><span>Deliveries in progress</span><strong>{activeDeliveries}</strong><small>Assigned through out for delivery</small></article>
     </section>
+
+    <section className="admin-section" aria-label="Partner onboarding review"><AdminPartnerReview /></section>
 
     <section className="admin-section" aria-labelledby="admin-finance-title">
       <div className="admin-section-heading"><div><span className="eyebrow">Finance</span><h2 id="admin-finance-title">Income and payouts</h2></div><span className="admin-section-note">Amounts come from saved Pausstik payment and ledger records.</span></div>
