@@ -57,6 +57,7 @@ const adminUsernameSchema = z.string().trim()
 export const adminLoginSchema = z.object({
   username: adminUsernameSchema,
   password: passwordSchema,
+  authenticatorCode: z.string().trim().max(40).optional(),
 });
 
 export const adminCreateSchema = z.object({

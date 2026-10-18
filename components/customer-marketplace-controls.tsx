@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 type PinState = "loading" | "ready" | "missing" | "saving" | "error";
-type PlanMenu = { menuId: string; name: string; serviceDate: string; price: number; servings: number };
+export { WeeklyPlanPicker } from "@/components/weekly-plan-picker";
 
 export function CustomerDeliveryPin({ initialPinned = false }: { initialPinned?: boolean }) {
   const [state, setState] = useState<PinState>(initialPinned ? "ready" : "loading");
@@ -55,7 +55,7 @@ export function CustomerDeliveryPin({ initialPinned = false }: { initialPinned?:
 
   return <aside className={"customer-pin-card " + (state === "ready" ? "is-ready" : "")}>
     <div><strong>{state === "ready" ? "Delivery location ready" : "Set your delivery pin"}</strong><span>{message || (state === "ready" ? "Your drop-off pin is shared only with the courier assigned to your order." : "A precise drop-off pin lets the courier verify delivery at the right address." )}</span></div>
-    {state !== "ready" && <button type="button" className="button button-small" onClick={savePin} disabled={state === "loading" || state === "saving"}>{state === "saving" ? "Waiting for GPS…" : "Use my location"}</button>}
+    <button type="button" className="button button-small" onClick={savePin} disabled={state === "loading" || state === "saving"}>{state === "saving" ? "Waiting for GPS…" : state === "ready" ? "Update location" : "Use my location"}</button>
   </aside>;
 }
 
@@ -132,45 +132,6 @@ export function FavoriteKitchenButton({ kitchenId, initiallySaved = false }: { k
     finally { setBusy(false); }
   }
   return <div className="favorite-kitchen-action"><button type="button" aria-pressed={saved} onClick={toggle} disabled={busy}>{busy ? "Saving…" : saved ? "♥ Mother saved" : "♡ Save this mother"}</button>{message && <small role="status">{message}</small>}</div>;
-}
-
-export function WeeklyPlanPicker({ menus, kitchenName }: { menus: PlanMenu[]; kitchenName: string }) {
-  const router = useRouter();
-  const [selected, setSelected] = useState<string[]>([]);
-  const [quantity, setQuantity] = useState(1);
-  const [busy, setBusy] = useState(false);
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState(false);
-  const groups = new Map<string, PlanMenu[]>();
-  for (const menu of menus) groups.set(menu.serviceDate, [...(groups.get(menu.serviceDate) || []), menu]);
-
-  function choose(menu: PlanMenu) {
-    const current = selected.filter((id) => menus.find((candidate) => candidate.menuId === id)?.serviceDate !== menu.serviceDate);
-    if (!selected.includes(menu.menuId) && current.length >= 7) return;
-    setSelected(selected.includes(menu.menuId) ? current : [...current, menu.menuId]);
-    setMessage("");
-  }
-
-  async function createPlan() {
-    setBusy(true); setError(false); setMessage("");
-    try {
-      const response = await fetch("/api/customer/subscriptions", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ menuIds: selected, quantity }) });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "Could not reserve those meal days.");
-      setMessage(data.message + (data.orders.some((order: { amountDue: number }) => order.amountDue > 0) ? " Payment remains due outside the app." : " Wallet credit covered each day."));
-      setSelected([]);
-      router.refresh();
-    } catch (cause) { setError(true); setMessage(cause instanceof Error ? cause.message : "Could not reserve those meal days."); }
-    finally { setBusy(false); }
-  }
-
-  return <div className="weekly-plan-picker">
-    <div className="weekly-plan-heading"><div><strong>Choose this mother for your week</strong><span>Select 3–7 delivery days. One meal is chosen per day.</span></div><label>Servings <select value={quantity} onChange={(event) => setQuantity(Number(event.target.value))}>{[1,2,3,4,5,6].map((count) => <option key={count} value={count}>{count}</option>)}</select></label></div>
-    <div className="weekly-plan-days">{[...groups.entries()].sort(([a],[b]) => a.localeCompare(b)).map(([day, dayMenus]) => <div className="weekly-plan-day" key={day}><time>{new Intl.DateTimeFormat("en-IN", { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" }).format(new Date(day + "T00:00:00.000Z"))}</time><div>{dayMenus.map((menu) => <label key={menu.menuId}><input type="checkbox" checked={selected.includes(menu.menuId)} onChange={() => choose(menu)} /><span>{menu.name} · ₹{menu.price}<small>{menu.servings} portions left</small></span></label>)}</div></div>)}</div>
-    <button className="button button-small" type="button" disabled={busy || selected.length < 3 || selected.length > 7} onClick={createPlan}>{busy ? "Saving plan…" : "Reserve " + selected.length + " meal days"}</button>
-    <small className="weekly-plan-policy">{kitchenName} · one week only · renew manually · ₹30 delivery per day · cancel a day 5+ hours before delivery to receive paid value less ₹5 in wallet.</small>
-    {message && <p role="status" className={"customer-order-message " + (error ? "is-error" : "")}>{message}</p>}
-  </div>;
 }
 
 export function CancelOrderButton({ orderId, scheduledFor, orderStatus }: { orderId: string; scheduledFor: string; orderStatus: string }) {

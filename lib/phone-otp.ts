@@ -5,10 +5,10 @@ type TwilioResponse = { status?: string; code?: number; message?: string };
 export type PhoneOtpChannel = "sms" | "whatsapp";
 
 function config() {
-  const keySid = process.env.TWILIO_API_KEY_SID;
-  const keySecret = process.env.TWILIO_API_KEY_SECRET;
-  const serviceSid = process.env.TWILIO_VERIFY_SERVICE_SID;
-  if (!keySid || !keySecret || !serviceSid) return null;
+  const keySid = process.env.TWILIO_API_KEY_SID?.trim();
+  const keySecret = process.env.TWILIO_API_KEY_SECRET?.trim();
+  const serviceSid = process.env.TWILIO_VERIFY_SERVICE_SID?.trim();
+  if (!keySid || !keySecret || !serviceSid || !/^SK[0-9a-fA-F]{32}$/.test(keySid) || !/^VA[0-9a-fA-F]{32}$/.test(serviceSid)) return null;
   return { keySid, keySecret, serviceSid };
 }
 

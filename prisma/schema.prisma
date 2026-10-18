@@ -190,6 +190,9 @@ model User {
   username             String?                  @unique
   phone                String?                  @unique
   passwordHash         String                   @map("password_hash")
+  adminAuthVersion     Int                      @default(0) @map("admin_auth_version")
+  adminAuthenticator   AdminAuthenticator?
+  adminRecoveryCodes   AdminRecoveryCode[]
   role                 UserRole
   status               AccountStatus            @default(PENDING)
   emailVerifiedAt      DateTime?                @map("email_verified_at") @db.Timestamptz(6)
@@ -836,6 +839,7 @@ model AuthSession {
   id         String    @id @default(uuid()) @db.Uuid
   userId     String    @map("user_id") @db.Uuid
   tokenHash  String    @unique @map("token_hash") @db.Char(64)
+  adminAuthVersion Int @default(0) @map("admin_auth_version")
   expiresAt  DateTime  @map("expires_at") @db.Timestamptz(6)
   lastSeenAt DateTime? @map("last_seen_at") @db.Timestamptz(6)
   revokedAt  DateTime? @map("revoked_at") @db.Timestamptz(6)
@@ -845,6 +849,31 @@ model AuthSession {
   @@index([userId, expiresAt])
   @@index([expiresAt])
   @@map("auth_sessions")
+  @@schema("paustik_marketplace")
+}
+
+model AdminAuthenticator {
+  userId          String    @id @map("user_id") @db.Uuid
+  encryptedSecret String    @map("encrypted_secret")
+  enabledAt       DateTime? @map("enabled_at") @db.Timestamptz(6)
+  pendingExpiresAt DateTime? @map("pending_expires_at") @db.Timestamptz(6)
+  lastUsedStep    BigInt?   @map("last_used_step")
+  version         Int       @default(1)
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("admin_authenticators")
+  @@schema("paustik_marketplace")
+}
+
+model AdminRecoveryCode {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @map("user_id") @db.Uuid
+  codeHash  String    @unique @map("code_hash") @db.Char(64)
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("admin_recovery_codes")
   @@schema("paustik_marketplace")
 }
 

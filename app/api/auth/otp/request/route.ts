@@ -23,7 +23,7 @@ export async function POST(request: Request) {
   if (originError) return originError;
   const localAuth = isLocalAuthMode();
   const demoAuth = !localAuth && isDemoAuthEnabled();
-  if (!localAuth && (!process.env.DATABASE_URL || !process.env.AUTH_SECRET)) return phoneOtpUnavailable();
+  if (!localAuth && (!process.env.DATABASE_URL || !process.env.AUTH_SECRET)) return NextResponse.json({ error: "Account sign-in is not configured yet. Please contact Pausstik support." }, { status: 503 });
   if (!localAuth && !demoAuth && !isPhoneOtpConfigured()) return phoneOtpUnavailable();
 
   let body: unknown;

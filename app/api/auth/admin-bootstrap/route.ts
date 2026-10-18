@@ -9,9 +9,9 @@ import { rejectCrossOrigin, serviceUnavailable } from "@/lib/http";
 export const runtime = "nodejs";
 
 // One-time owner recovery. The raw setup code is shared directly with the user;
-// only its digest is stored here. It expires on 2026-11-02 UTC and can be used once.
-const OWNER_SETUP_CODE_HASH = "350af8612032f12bc40aa1ece3f3dea5a14b73b6d8d5f3c6dda9969fee9184f3";
-const OWNER_SETUP_EXPIRES_AT = Date.parse("2026-11-02T00:00:00.000Z");
+// only its digest is stored here. It expires on 2026-10-21 UTC and can be used once.
+const OWNER_SETUP_CODE_HASH = "b2c6a0e7f77d89306a798141c33f3c59a184dc4d882bfe36f6c5841f7f0d7473";
+const OWNER_SETUP_EXPIRES_AT = Date.parse("2026-10-21T00:00:00.000Z");
 const OWNER_SETUP_LOCK_ID = 704261103;
 
 function matchesOwnerSetupCode(code: string) {
@@ -52,12 +52,14 @@ export async function POST(request: Request) {
     const email = parsed.data.email.toLowerCase();
     const passwordHash = await bcrypt.hash(parsed.data.password, 12);
     const result = await prisma.$transaction(async (tx) => {
-      await tx.$queryRaw`SELECT pg_advisory_xact_lock(${OWNER_SETUP_LOCK_ID})`;
+      await tx.$queryRaw`SELECT pg_advisory_xact_lock(${OWNER_SETUP_LOCK_ID})::text AS locked`;
       const alreadyUsed = await tx.adminActivityLog.findFirst({
         where: { action: "ADMIN_OWNER_BOOTSTRAP" },
         select: { id: true },
       });
       if (alreadyUsed) throw new Error("OWNER_SETUP_ALREADY_USED");
+      const enrolledAdmin = await tx.adminAuthenticator.findFirst({ where: { enabledAt: { not: null } }, select: { userId: true } });
+      if (enrolledAdmin) throw new Error("OWNER_SETUP_MFA_PROTECTED");
 
       const matches = await tx.user.findMany({
         where: { OR: [{ username }, { email }] },
@@ -75,17 +77,20 @@ export async function POST(request: Request) {
       const owner = existingOwner
         ? await tx.user.update({
             where: { id: existingOwner.id },
-            data: { name: parsed.data.name, username, email, passwordHash, role: "ADMIN", status: "ACTIVE" },
-            select: { id: true, name: true, email: true, username: true },
+            data: { name: parsed.data.name, username, email, passwordHash, role: "ADMIN", status: "ACTIVE", adminAuthVersion: { increment: 1 } },
+            select: { id: true, name: true, email: true, username: true, adminAuthVersion: true },
           })
         : await tx.user.create({
             data: { name: parsed.data.name, username, email, passwordHash, role: "ADMIN", status: "ACTIVE" },
-            select: { id: true, name: true, email: true, username: true },
+            select: { id: true, name: true, email: true, username: true, adminAuthVersion: true },
           });
 
       const otherAdminIds = currentAdmins.map((admin) => admin.id).filter((id) => id !== owner.id);
+      await tx.authSession.updateMany({ where: { userId: owner.id, revokedAt: null }, data: { revokedAt: new Date() } });
+      await tx.adminAuthenticator.deleteMany({ where: { userId: owner.id, enabledAt: null } });
+      await tx.passwordResetToken.updateMany({ where: { userId: owner.id, usedAt: null }, data: { usedAt: new Date() } });
       if (otherAdminIds.length) {
-        await tx.user.updateMany({ where: { id: { in: otherAdminIds } }, data: { status: "SUSPENDED" } });
+        await tx.user.updateMany({ where: { id: { in: otherAdminIds } }, data: { status: "SUSPENDED", adminAuthVersion: { increment: 1 } } });
         await tx.authSession.updateMany({
           where: { userId: { in: otherAdminIds }, revokedAt: null },
           data: { revokedAt: new Date() },
@@ -104,9 +109,12 @@ export async function POST(request: Request) {
       return owner;
     });
 
-    await createSession(result.id);
-    return NextResponse.json({ created: true, admin: result, destination: "/admin/dashboard" }, { status: 201, headers: { "Cache-Control": "no-store" } });
+    await createSession(result.id, result.adminAuthVersion);
+    return NextResponse.json({ created: true, admin: result, destination: "/admin/security?setup=1" }, { status: 201, headers: { "Cache-Control": "no-store" } });
   } catch (error) {
+    if (error instanceof Error && error.message === "OWNER_SETUP_MFA_PROTECTED") {
+      return NextResponse.json({ error: "An administrator has already linked an authenticator. Sign in with your authenticator or a saved recovery code. Owner setup cannot override it." }, { status: 409 });
+    }
     if (error instanceof Error && error.message === "OWNER_SETUP_ALREADY_USED") {
       return NextResponse.json({ error: "Admin setup has already been completed. Ask an active admin to create or reset accounts." }, { status: 409 });
     }

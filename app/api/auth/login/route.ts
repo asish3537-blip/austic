@@ -34,7 +34,7 @@ export async function POST(request: Request) {
       const local = await import("@/lib/local-auth-db");
       const approved = local.verifyLocalPhoneCode(phone, parsed.data.otp);
       const user = local.findLocalUserByPhone(phoneLookupCandidates(parsed.data.phone, phone));
-      if (!approved || !user || user.status === "SUSPENDED" || user.status === "REJECTED") {
+      if (!approved || !user || user.role === "ADMIN" || user.status === "SUSPENDED" || user.status === "REJECTED") {
         return NextResponse.json({ error: "The local code is incorrect or expired, or this account is unavailable." }, { status: 401 });
       }
       local.touchLocalUser(user.id);

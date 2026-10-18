@@ -8,9 +8,9 @@ const guides = [
     text: "Choose a role and sign in. Twilio Verify sends real SMS or WhatsApp codes when its production credentials are configured.",
     steps: [
       "Select Customer, Mother entrepreneur, or Delivery agent on the sign-up page.",
-      "Choose SMS or WhatsApp, enter your number, and request a 6-digit code. Local or explicitly enabled preview mode may show a code on the page; this does not verify phone ownership.",
+      "Choose SMS or WhatsApp, enter your number, and request a 6-digit code. The live site sends a real code through the configured provider.",
       "Production SMS and WhatsApp codes need Twilio Verify credentials in Vercel. WhatsApp also needs a Twilio Verify service with an approved WhatsApp sender.",
-      "Enter the code delivered by your selected method. Account confirmation email is sent separately when Resend is configured.",
+      "Enter the code delivered by your selected method, then confirm your email using the link in your inbox before signing in.",
       "Mother and courier accounts wait for Pausstik approval; active customers open their workspace.",
       "Admin accounts are not available on public sign-up. An active admin creates them in the admin panel.",
     ],
@@ -18,13 +18,15 @@ const guides = [
   {
     slug: "customer-workspace",
     title: "Customer workspace and ordering",
-    status: "Nearby menu and one-week reservations available · online payment pending",
-    text: "Set a delivery pin, compare live mother-led menus within their service area, or reserve 3–7 meal days with one mother.",
+    status: "Kitchen discovery, daily menus and one-week subscriptions · online payment pending",
+    text: "Choose a nearby mother-led kitchen, open its daily menu, then build a 3–7-day subscription with a clear price breakdown.",
     steps: [
-      "Create a Customer account with the preview code, then sign in with another on-page code.",
+      "Create a Customer account and sign in using the code delivered by SMS or WhatsApp. Real code delivery requires Pausstik’s messaging provider to be connected.",
       "Use my location to save your drop-off pin. Pausstik uses it to calculate nearby kitchens and shares it with the assigned courier for an order.",
-      "Browse approved mothers within their chosen 5–10 km customer service area. Menu cards show the three meal components, tier price, serving day and delivery time. OpenStreetMap links share coordinates with that map provider.",
-      "Choose a meal once, or select 3–7 days from one mother for a one-week plan. Delivery is ₹30 per meal day. Plans renew manually.",
+      "Browse the kitchen list. Search by a mother’s name, cuisine or dish, filter vegetarian or non-vegetarian menus, and save favourite kitchens. With a delivery pin, the list shows kitchens whose 5–10 km service area reaches you.",
+      "Open View menu on a kitchen to see that mother’s dated menu, three meal components, price, delivery time and available servings. Choose a date to browse its meals. Sample kitchens are labelled and cannot create real orders.",
+      "Select Build my subscription. Choose 3–7 days, one meal per day and your number of servings. The 3, 5, 6 and 7-day shortcuts select the first available days; review or change each meal before reserving. Meals and ₹30-per-day delivery are itemised in the summary. Plans cover one week and renew manually.",
+      "For a single meal, expand Prefer this meal for one day beneath that dish. Your saved orders and subscriptions appear in the customer workspace. OpenStreetMap links share coordinates with that map provider.",
       "Online checkout is not connected. No payment is taken here; use the pilot collection process with Pausstik admin if a payment is collected outside the app.",
       "Cancel a meal day at least five hours before its scheduled delivery. The eligible amount already paid, minus the ₹5 processing fee, is credited to your Pausstik wallet. No credit is issued for an unpaid amount.",
       "Track kitchen and courier status in Recent orders. A current courier point appears after pickup when the courier has opted in to GPS sharing.",
@@ -37,7 +39,7 @@ const guides = [
     text: "After Pausstik approval, save your kitchen pin, choose a 5–10 km customer service radius, publish dated three-part meals, and prepare customer orders.",
     steps: [
       "Choose Mother entrepreneur and enter your kitchen name, cooking specialties, daily meal capacity, lunch days, and service window.",
-      "Use the preview code shown on the page. No phone or email ownership is verified in this mode.",
+      "Verify your phone with a real SMS or WhatsApp code, then confirm your email with the link sent to your inbox.",
       "Your application stays pending until an administrator reviews and approves it in the operations dashboard.",
       "In your Mother workspace, allow location access while at your kitchen to save the pickup pin. Choose a 5–10 km customer delivery radius. Courier pickup/drop-off geofences remain 150 m.",
       "Add meals by date with tier, exactly three meal components, delivery time, ingredients, allergens and servings. Starting prices are ₹69 base, ₹79 egg, ₹89 cheese and ₹99 chicken; chicken cannot exceed ₹100.",
@@ -95,12 +97,20 @@ export default function HelpPage() {
         <p>Short visual walkthroughs explain account setup and the separate delivery pilot. Each guide also includes written steps.</p>
       </header>
       <nav className="help-jump" aria-label="Jump to a help topic">
+        <a href="#admin-authenticator">Administrator sign-in</a>
         {guides.map((guide) => <a key={guide.slug} href={`#${guide.slug}`}>{guide.title}</a>)}
       </nav>
       <div className="help-callout"><strong>Live pilot status:</strong> approved mothers can publish priced three-part menus; customers can reserve one week (3–7 days), cancel eligible days to receive wallet credits, and see nearby kitchens using opted-in pins. Online checkout and real email/SMS/WhatsApp delivery still need provider setup. Admin records only confirmed external payment receipts. Admin accounts are created in the admin panel.</div>
       <section className="help-documents" aria-labelledby="help-documents-title">
         <div><span className="eyebrow">Take Pausstik with you</span><h2 id="help-documents-title">Guides and project documents</h2><p>Download the current user guide or the detailed product and development specification.</p></div>
-        <div className="help-document-actions"><a className="button button-small" href="/docs/Pausstik_User_Guide.pdf" download>Download user guide (PDF)</a><a className="button button-small button-light" href="/docs/Pausstik_Product_and_Development_Specification.pdf" download>Download product and development specification (PDF)</a></div>
+        <div className="help-document-actions"><a className="button button-small" href="/docs/Pausstik_Authenticator_and_Kitchen_Guide.pdf" download>New kitchen &amp; sign-in guide (PDF)</a><a className="button button-small button-light" href="/docs/Paustik_User_Guide.pdf" download>Full pilot guide (PDF)</a><a className="button button-small button-light" href="/docs/Paustik_Product_and_Development_Specification.pdf" download>Product and development specification (PDF)</a></div>
+      </section>
+      <section className="help-callout" id="admin-authenticator" aria-labelledby="admin-authenticator-title">
+        <h2 id="admin-authenticator-title">Administrator sign-in with an authenticator</h2>
+        <p>First create the owner account using the private one-time setup code. Existing administrators can sign in and open Admin security.</p>
+        <ol><li>Enter your password in Admin security, then scan the QR code with your authenticator app or copy the manual key.</li><li>Enter the six-digit code from the app to finish linking it. Save the recovery codes shown once.</li><li>Next time, sign in with your username, password and authenticator code. A saved recovery code can be used once if you lose your phone.</li></ol>
+        <p>Authenticator protection applies to administrators only. Password reset keeps it enabled. Customer, mother and delivery accounts use real SMS or WhatsApp and email confirmation.</p>
+        <Link className="text-link" href="/admin-sign-in">Administrator sign-in</Link><span aria-hidden="true"> · </span><Link className="text-link" href="/admin/security">Admin security</Link>
       </section>
       <section className="help-grid" aria-label="Pausstik video help guides">
         {guides.map((guide, index) => (

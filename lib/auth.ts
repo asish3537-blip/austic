@@ -17,21 +17,28 @@ export type SessionUser = {
   role: AppRole;
   status: "PENDING" | "ACTIVE" | "SUSPENDED" | "REJECTED";
   emailVerifiedAt: Date | null;
+  adminAuthVersion?: number;
 };
 
 function sha256(value: string) {
   return createHash("sha256").update(value).digest("hex");
 }
 
-export async function createSession(userId: string) {
+export async function createSession(userId: string, adminAuthVersion?: number) {
   const rawToken = randomBytes(32).toString("base64url");
   const expiresAt = new Date(Date.now() + SESSION_DAYS * 24 * 60 * 60 * 1000);
   if (isLocalAuthMode()) {
     const local = await import("@/lib/local-auth-db");
     local.createLocalSession(userId, sha256(rawToken), expiresAt);
   } else {
-    await prisma.authSession.create({
-      data: { userId, tokenHash: sha256(rawToken), expiresAt },
+    await prisma.$transaction(async (tx) => {
+      const user = await tx.user.findUniqueOrThrow({ where: { id: userId } });
+      if (user.status === "SUSPENDED" || user.status === "REJECTED") throw new Error("ACCOUNT_UNAVAILABLE");
+      // A concurrent enrollment/reset can only issue a stale, unusable session.
+      if (user.role === "ADMIN" && (adminAuthVersion === undefined || user.adminAuthVersion !== adminAuthVersion)) throw new Error("ADMIN_AUTH_CHANGED");
+      await tx.authSession.create({
+        data: { userId, tokenHash: sha256(rawToken), expiresAt, adminAuthVersion: adminAuthVersion ?? 0 },
+      });
     });
   }
   const cookieStore = await cookies();
@@ -82,6 +89,7 @@ export const getCurrentUser = cache(async (): Promise<SessionUser | null> => {
     include: { user: true },
   });
   if (!session || session.revokedAt || session.expiresAt <= new Date()) return null;
+  if (session.user.role === "ADMIN" && session.adminAuthVersion !== session.user.adminAuthVersion) return null;
   if (session.user.status === "SUSPENDED" || session.user.status === "REJECTED") {
     await prisma.authSession.updateMany({
       where: { userId: session.userId, revokedAt: null },
@@ -96,6 +104,7 @@ export const getCurrentUser = cache(async (): Promise<SessionUser | null> => {
     role: session.user.role as AppRole,
     status: session.user.status,
     emailVerifiedAt: session.user.emailVerifiedAt,
+    adminAuthVersion: session.user.adminAuthVersion,
   };
 });
 

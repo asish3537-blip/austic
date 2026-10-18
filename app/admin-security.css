@@ -1,0 +1,40 @@
+.admin-security-page { max-width: 1050px; }
+.admin-security-panel { margin-top: 24px; padding: clamp(20px, 4vw, 34px); }
+.admin-security-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; flex-wrap: wrap; margin-bottom: 16px; }
+.admin-security-heading h2 { margin: 7px 0 0; font-size: 25px; }
+.admin-security-badge { border: 1px solid var(--line); border-radius: 99px; padding: 7px 12px; color: var(--muted); font-size: 12px; font-weight: 700; }
+.admin-security-badge.is-enabled { border-color: #b5d3c3; background: #edf7ef; color: var(--green); }
+.admin-security-help { max-width: 700px; margin: 0 0 20px; color: var(--muted); font-size: 14px; line-height: 1.7; }
+.admin-security-panel .form-alert, .admin-security-panel .form-success { margin: 0 0 20px; }
+.admin-security-form { display: grid; max-width: 540px; gap: 20px; margin-top: 22px; }
+.admin-security-form .field { min-width: 0; }
+.admin-security-form .field small { line-height: 1.6; }
+.admin-security-actions { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+.admin-security-actions .button { white-space: normal; padding: 12px 18px; }
+.admin-security-danger { color: var(--danger); border-color: #ebcfc7; background: #fffaf7; }
+.admin-security-danger:hover { background: #fff0e9; }
+.admin-security-steps { display: grid; gap: 18px; padding-left: 25px; margin: 25px 0; font-size: 14px; line-height: 1.65; }
+.admin-security-steps li { padding-left: 7px; }
+.admin-security-steps li::marker { color: var(--green); font-weight: 700; }
+.admin-security-steps p { color: var(--muted); margin: 5px 0 12px; }
+.admin-security-qr { display: block; width: 230px; height: auto; max-width: 100%; border: 1px solid var(--line); border-radius: 12px; background: white; padding: 8px; margin: 14px 0; }
+.admin-security-manual { max-width: 540px; }
+.admin-security-manual summary { color: var(--green); cursor: pointer; font-weight: 700; padding: 6px 0; }
+.admin-security-secret { display: block; overflow-wrap: anywhere; user-select: all; border: 1px solid var(--line); background: var(--cream); border-radius: 9px; padding: 12px; margin: 8px 0; font-size: 14px; letter-spacing: .06em; }
+.admin-security-expiry { font-size: 12px; color: var(--muted); }
+.admin-security-recovery { border: 1px solid #d6dfd2; border-radius: 15px; background: #f8faf4; padding: clamp(18px, 3vw, 26px); margin: 24px 0 0; }
+.admin-security-recovery h3 { margin: 0 0 10px; font-size: 20px; }
+.admin-security-recovery p { color: var(--muted); font-size: 13px; line-height: 1.7; }
+.admin-security-codes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px 16px; max-width: 580px; padding: 0; margin: 20px 0; list-style: none; }
+.admin-security-codes li { border: 1px solid var(--line); border-radius: 8px; background: white; padding: 10px; text-align: center; }
+.admin-security-codes code { font-size: 14px; overflow-wrap: anywhere; user-select: all; }
+.admin-security-save-check { display: flex; align-items: flex-start; gap: 10px; max-width: 600px; margin: 22px 0 14px; font-size: 13px; line-height: 1.6; }
+.admin-security-save-check input { flex: 0 0 auto; width: 18px; height: 18px; margin: 2px 0 0; accent-color: var(--green); }
+.admin-security-panel button:focus-visible, .admin-security-panel summary:focus-visible, .admin-security-panel input:focus-visible { outline: 3px solid var(--teal); outline-offset: 3px; }
+.admin-security-panel button:disabled { cursor: not-allowed; opacity: .58; }
+@media (max-width: 540px) {
+  .admin-security-actions { align-items: stretch; flex-direction: column; }
+  .admin-security-actions .button { width: 100%; }
+  .admin-security-codes { grid-template-columns: minmax(0, 1fr); }
+  .admin-security-steps { padding-left: 19px; }
+}

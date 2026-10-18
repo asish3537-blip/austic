@@ -163,7 +163,7 @@ export function AdminOwnerSetupForm() {
 
   return <>
     <span className="eyebrow">First administrator setup</span><h2>Create the Pausstik owner account</h2>
-    <p className="auth-intro">This one-time setup replaces admin access for the recovery. Existing admin records stay in the audit history and their sessions are revoked.</p>
+    <p className="auth-intro">Use the private owner setup code provided to you; it is not an SMS code or an authenticator code. This recovery creates your owner access and revokes other admin sessions. After creating the account, link Google Authenticator or Microsoft Authenticator from Admin security. The app then creates a new six-digit sign-in code every 30 seconds.</p>
     {error && <Message>{error}</Message>}
     <form onSubmit={submit}>
       <div className="form-grid">
