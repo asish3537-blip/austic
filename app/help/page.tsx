@@ -97,6 +97,7 @@ export default function HelpPage() {
         <p>Short visual walkthroughs explain account setup and the separate delivery pilot. Each guide also includes written steps.</p>
       </header>
       <nav className="help-jump" aria-label="Jump to a help topic">
+        <a href="#install-app">Install the app</a>
         <a href="#admin-authenticator">Administrator sign-in</a>
         {guides.map((guide) => <a key={guide.slug} href={`#${guide.slug}`}>{guide.title}</a>)}
       </nav>
@@ -104,6 +105,19 @@ export default function HelpPage() {
       <section className="help-documents" aria-labelledby="help-documents-title">
         <div><span className="eyebrow">Take Pausstik with you</span><h2 id="help-documents-title">Guides and project documents</h2><p>Download the current user guide or the detailed product and development specification.</p></div>
         <div className="help-document-actions"><a className="button button-small" href="/docs/Pausstik_Authenticator_and_Kitchen_Guide.pdf" download>New kitchen &amp; sign-in guide (PDF)</a><a className="button button-small button-light" href="/docs/Paustik_User_Guide.pdf" download>Full pilot guide (PDF)</a><a className="button button-small button-light" href="/docs/Paustik_Product_and_Development_Specification.pdf" download>Product and development specification (PDF)</a></div>
+      </section>
+      <section className="help-callout" id="install-app" aria-labelledby="install-app-title">
+        <span className="eyebrow">Pausstik on your home screen</span>
+        <h2 id="install-app-title">Install directly from this website</h2>
+        <p>Open the installation page on your phone and follow the steps for your device. Installation is free; meals and delivery are charged according to your selected plan.</p>
+        <ol>
+          <li><strong>Android:</strong> open the installation page in Chrome and tap Install. If no prompt appears, use the browser menu and choose Install app or Add to Home screen.</li>
+          <li><strong>iPhone or iPad:</strong> open the page in Safari, tap Share, then Add to Home Screen. Keep Open as Web App enabled if offered and tap Add.</li>
+          <li><strong>Computer:</strong> use the installation button in Chrome or Edge. If installation is unavailable, Open app works in your browser.</li>
+          <li>Open the Pausstik icon and sign in with your existing account. Your role determines your workspace; administrator sign-in stays separate.</li>
+        </ol>
+        <p>An internet connection is required for sign-in, menus, orders, payments and delivery tracking. Keep the courier app open while sharing location. The sample preview does not create real orders or take payments. Removing the installed app does not cancel your account or subscriptions.</p>
+        <div className="install-help-actions"><Link className="button button-small" href="/install">Installation guide</Link><Link className="button button-small button-light" href="/app">Open app</Link><Link className="text-link" href="/">Go to website</Link></div>
       </section>
       <section className="help-callout" id="admin-authenticator" aria-labelledby="admin-authenticator-title">
         <h2 id="admin-authenticator-title">Administrator sign-in with an authenticator</h2>

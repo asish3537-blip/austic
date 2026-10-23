@@ -1,0 +1,101 @@
+.install-page { max-width: 1200px; margin: 0 auto; padding: 0 28px; }
+.install-hero { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(320px, .85fr); gap: clamp(32px, 6vw, 82px); align-items: center; padding: 76px 0 72px; }
+.install-hero h1 { margin: 24px 0 22px; font-size: clamp(38px, 4.7vw, 62px); line-height: 1.1; letter-spacing: -.055em; }
+.install-hero h1 em { color: var(--green); font-style: normal; }
+.install-hero-copy > p { max-width: 510px; margin: 0; color: #686257; font-size: 17px; line-height: 1.75; }
+.install-highlights { display: grid; gap: 23px; margin: 34px 0 29px; padding: 0; list-style: none; }
+.install-highlights li { display: flex; align-items: flex-start; gap: 16px; }
+.install-highlights li > span { display: grid; flex: 0 0 36px; min-height: 36px; place-items: center; border: 1px solid #dce4d4; border-radius: 12px; background: #f0f4e8; color: var(--green); font-size: 11px; font-weight: 800; }
+.install-highlights strong, .install-highlights small { display: block; }
+.install-highlights strong { margin: 0 0 5px; font-size: 15px; }
+.install-highlights small { max-width: 390px; color: #686257; font-size: 13px; line-height: 1.6; }
+.install-guide-link { display: inline-flex; align-items: center; gap: 14px; min-height: 44px; color: var(--green); font-size: 13px; font-weight: 700; text-decoration: none; }
+.install-guide-link:hover { text-decoration: underline; text-underline-offset: 4px; }
+.install-card { position: relative; overflow: hidden; border: 1px solid #d8dfd1; border-radius: 30px; background: #fffdf7; padding: 27px 30px 0; text-align: center; box-shadow: 0 20px 55px rgba(30,67,44,.08); }
+.install-card-top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 29px; color: #616c5b; font-size: 9px; font-weight: 800; letter-spacing: .08em; }
+.install-free { border-radius: 20px; background: #edf3e7; padding: 7px 9px; color: #315e43; font-size: 10px; letter-spacing: 0; }
+.install-app-icon { display: block; width: 96px; height: 96px; margin: 0 auto 23px; border: 1px solid #e5e0d0; border-radius: 24px; box-shadow: 0 8px 18px rgba(40,65,36,.08); }
+.install-card h2 { margin: 0 0 12px; font-size: 27px; letter-spacing: -.045em; }
+.install-card > p { margin: 0 auto; color: #686257; font-size: 14px; line-height: 1.7; }
+.install-card-actions { display: grid; gap: 10px; margin-top: 27px; }
+.install-card-actions .button { width: 100%; min-height: 52px; padding: 10px 14px; }
+.install-card-actions .button-warm { background: var(--green); border-color: var(--green); color: #fffdf8; }
+.install-card-actions .button-warm:hover { background: var(--green-deep); }
+.install-card-actions .pwa-install-help { margin: 12px 0 8px; text-align: left; font-size: 12px; line-height: 1.7; color: #5d6556; }
+.install-card .install-card-note { margin: 15px 0 7px; font-size: 11px; line-height: 1.6; }
+.install-account-links { display: flex; justify-content: center; align-items: center; gap: 14px; margin: 4px 0 20px; font-size: 12px; color: var(--green); }
+.install-account-links a { display: inline-flex; min-height: 44px; align-items: center; font-weight: 700; text-decoration: none; }
+.install-account-links a:hover { text-decoration: underline; }
+.install-card-foot { display: flex; justify-content: center; align-items: center; gap: 9px; margin: 0 -30px; border-top: 1px solid #e1e6da; background: #f1f5eb; padding: 17px 16px; color: #48634a; font-size: 11px; }
+.install-device-section { padding: 52px 0 62px; border-top: 1px solid var(--line); scroll-margin-top: 24px; }
+.install-section-heading { max-width: 590px; margin-bottom: 29px; }
+.install-section-heading h2 { margin: 12px 0; font-size: clamp(27px, 3.6vw, 37px); letter-spacing: -.045em; line-height: 1.2; }
+.install-section-heading p { margin: 0; color: #686257; font-size: 14px; line-height: 1.7; }
+.install-device-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 17px; }
+.install-device-card { min-width: 0; border: 1px solid var(--line); border-radius: 20px; background: var(--paper); padding: 25px 24px 27px; }
+.install-device-number { display: inline-flex; border-radius: 10px; background: #f8eccf; padding: 8px 11px; color: #79551d; font-size: 11px; font-weight: 800; }
+.install-device-card h3 { margin: 20px 0 8px; font-size: 22px; letter-spacing: -.03em; }
+.install-device-card > p { margin: 0; color: var(--green); font-size: 12px; font-weight: 700; }
+.install-device-card ol { display: grid; gap: 17px; margin: 24px 0 0; padding-left: 19px; color: #686257; font-size: 13px; line-height: 1.75; }
+.install-device-card li { padding-left: 5px; }
+.install-device-card li::marker { color: var(--green); font-weight: 700; }
+.install-expectations { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: 45px; border-radius: 26px; background: #1b4e3b; padding: 42px; color: #fffdf4; }
+.install-expectations .eyebrow { color: #e8c783; }
+.install-expectations h2 { margin: 15px 0 0; font-size: clamp(27px, 3vw, 35px); line-height: 1.3; letter-spacing: -.04em; }
+.install-expectation-list { display: grid; gap: 21px; }
+.install-expectation-list h3 { margin: 0 0 7px; font-size: 15px; }
+.install-expectation-list p { margin: 0; color: #d6e4d8; font-size: 13px; line-height: 1.75; }
+.install-faq { max-width: 780px; padding: 65px 0 45px; margin: 0 auto; }
+.install-faq details { border-top: 1px solid var(--line); padding: 0 2px; }
+.install-faq details:last-of-type { border-bottom: 1px solid var(--line); margin-bottom: 14px; }
+.install-faq summary { padding: 21px 0; font-size: 15px; font-weight: 700; cursor: pointer; line-height: 1.6; }
+.install-faq details p { margin: 0 0 23px; color: #686257; font-size: 14px; line-height: 1.8; }
+.install-faq details a { color: var(--green); font-weight: 700; text-underline-offset: 3px; }
+.install-bottom-link { padding: 22px 0 38px; text-align: center; }
+.install-bottom-link p { margin: 0 0 3px; color: #686257; font-size: 12px; }
+.install-bottom-link a { display: inline-flex; align-items: center; gap: 11px; min-height: 44px; color: var(--green); font-size: 14px; font-weight: 700; text-underline-offset: 4px; }
+.install-page a:focus-visible, .install-page button:focus-visible, .install-page summary:focus-visible { outline: 3px solid #b68028; outline-offset: 4px; }
+.install-help-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 18px; }
+@media (min-width: 761px) and (max-width: 1180px) {
+  .site-header .header-inner { flex-wrap: wrap; justify-content: space-between; gap: 12px 20px; padding-top: 12px; padding-bottom: 12px; }
+  .site-header .header-nav { order: 3; width: 100%; justify-content: center; flex-wrap: wrap; gap: 12px 23px; }
+}
+@media (max-width: 900px) {
+  .install-hero { gap: 28px; padding: 48px 0; }
+  .install-card { padding: 24px 21px 0; }
+  .install-card-foot { margin-left: -21px; margin-right: -21px; }
+  .install-card-top { justify-content: center; }
+  .install-device-grid { grid-template-columns: 1fr; }
+  .install-device-card { display: grid; grid-template-columns: 1fr 1.8fr; column-gap: 26px; align-content: start; }
+  .install-device-number { justify-self: start; }
+  .install-device-card h3, .install-device-card > p { grid-column: 1; }
+  .install-device-card ol { grid-column: 2; grid-row: 1 / span 3; margin-top: 0; }
+  .install-expectations { gap: 28px; padding: 32px; }
+}
+@media (max-width: 760px) {
+  .site-header .header-controls { position: relative; }
+  .site-header .mobile-nav { position: static; }
+  .site-header .mobile-nav-panel { max-height: calc(100dvh - 100px); overflow-y: auto; }
+}
+@media (max-width: 680px) {
+  .install-page { padding: 0 20px; }
+  .install-hero { grid-template-columns: 1fr; gap: 32px; padding: 34px 0 40px; }
+  .install-hero h1 { margin: 19px 0 17px; font-size: clamp(34px, 8.7vw, 48px); }
+  .install-hero-copy > p { font-size: 15px; }
+  .install-highlights { gap: 18px; margin: 25px 0 17px; }
+  .install-card { width: 100%; max-width: 440px; justify-self: center; border-radius: 24px; padding: 23px 23px 0; }
+  .install-card-foot { margin-left: -23px; margin-right: -23px; }
+  .install-card-top { justify-content: space-between; }
+  .install-device-section { padding: 35px 0 39px; }
+  .install-device-card { display: block; padding: 23px; }
+  .install-device-card ol { margin-top: 20px; }
+  .install-expectations { grid-template-columns: 1fr; gap: 28px; padding: 28px 23px; border-radius: 22px; }
+  .install-expectation-list { gap: 24px; }
+  .install-faq { padding: 42px 0 21px; }
+  .install-faq summary { font-size: 14px; }
+  .install-bottom-link { padding-bottom: 20px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .install-page .button { transition: none; }
+  .install-page .button:hover { transform: none; }
+}

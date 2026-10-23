@@ -1,10 +1,11 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { PwaRuntime } from "@/components/pwa-runtime";
 import "./globals.css";
 import "./app-demo.css";
 import "./bottom-navigation.css";
+import "./install.css";
 
 export const metadata: Metadata = {
   title: {
@@ -12,9 +13,17 @@ export const metadata: Metadata = {
     template: "%s | Pausstik",
   },
   description: "Discover home-style food from nearby mother-led kitchens. Pausstik is preparing its first neighbourhood marketplace pilot.",
-  icons: { icon: "/icons/pausstik-app-icon.svg", apple: "/icons/pausstik-app-icon.svg" },
+  icons: {
+    icon: "/icons/pausstik-app-icon.svg",
+    apple: [{ url: "/icons/pausstik-apple-touch-180.png", sizes: "180x180", type: "image/png" }],
+  },
   manifest: "/manifest.webmanifest",
   appleWebApp: { capable: true, title: "Pausstik", statusBarStyle: "default" },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#174b3b",
+  viewportFit: "cover",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -33,6 +42,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
               <Link href="/#for-mothers">For mothers</Link>
               <Link href="/#pricing">Pricing</Link>
               <Link href="/app-demo">App preview</Link>
+              <Link href="/install">Get the app</Link>
             </nav>
             <div className="header-controls">
               <details className="mobile-nav">
@@ -43,6 +53,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                   <Link href="/#for-mothers">For mothers</Link>
                   <Link href="/#pricing">Pricing</Link>
                   <Link href="/app-demo">App preview</Link>
+                  <Link href="/install">Install the app</Link>
+                  <Link href="/app">Open app</Link>
                   <Link href="/sign-in">Sign in</Link>
                   <Link href="/admin-sign-in">Admin portal</Link>
                 </nav>
@@ -58,7 +70,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         {children}
         <footer className="site-footer">
           <span>Purity. Hygiene. Delivered.</span>
-          <span className="footer-links"><Link href="/app-demo">Mobile app preview</Link><Link href="/help">Help videos</Link><Link className="footer-admin-link" href="/admin-sign-in">Admin portal</Link><Link href="/admin-setup">Create admin account</Link><Link href="/forgot-password">Reset password</Link></span>
+          <span className="footer-links"><Link href="/install">Install the app</Link><Link href="/app">Open app</Link><Link href="/app-demo">Mobile app preview</Link><Link href="/help">Help videos</Link><Link className="footer-admin-link" href="/admin-sign-in">Admin portal</Link><Link href="/admin-setup">Create admin account</Link><Link href="/forgot-password">Reset password</Link></span>
           <small className="footer-copyright">© 2026 Pausstik. All rights reserved.</small>
         </footer>
       </body>

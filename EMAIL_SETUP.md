@@ -5,16 +5,20 @@ Updated 23 October 2026. Domain confirmed by the owner: **paustik.in**.
 ## Current status
 
 - The app uses Twilio Verify for SMS/WhatsApp and Resend for email.
-- The owner reports Twilio is ready. Actual delivery has not been verified in this session.
-- Resend domain verification, credentials and production delivery are still pending.
-- The current Vercel connector cannot read this project's settings. Browser control also failed to start. No production credentials or DNS records were changed in this update.
+- Twilio is signed in. Its managed Verify Services page requires an account upgrade, but the account's **Try out Verify** panel provides an existing trial service. Its service identifier has been saved to Vercel Production as `TWILIO_VERIFY_SERVICE_SID`; the two existing API key settings were preserved. Provider acceptance and handset delivery have not been verified.
+- This is a limited SMS trial for verified recipients, not unrestricted public SMS/WhatsApp access. The console showed 40 free verifications and seven trial days remaining. WhatsApp Verify still needs activation.
+- `paustik.in` has been added to Resend with sending enabled and receiving disabled. The owner confirmed all three DNS records were added. Resend now shows **Partially Verified**: DKIM and `rsend` are verified; `send` remains pending. Its dashboard says sending is not affected.
+- With the owner's explicit approval, a **Sending access** key restricted to `paustik.in` was created and saved privately as Vercel Production `RESEND_API_KEY`. The key is not stored in the repository or this guide. A new deployment is required after this setting.
+- Vercel Production `EMAIL_FROM` is `Pausstik <accounts@paustik.in>`. Deployment `6cWBC1voxYZgb32wQqDBzF6Gs2YT` reached Ready with the sender and Twilio service settings, before the email key was added.
+- Browser access to Resend, Twilio and Vercel is working. GoDaddy access remains explicitly rejected by a saved browser permission or managed policy. DNS changes were made by the owner, not the agent.
+- The owner confirmed their GoDaddy product is **Microsoft 365 Email**. Recommendation: preserve that mailbox service and use Resend for the app's automated emails. Direct Microsoft 365 sending requires a separate authenticated integration; the app currently uses Resend only.
 - Administrators continue to use their password and enrolled authenticator. Public signup cannot create an administrator.
 
 ## Finish the email connection
 
-1. Open [Resend Domains](https://resend.com/domains), sign in, and add `paustik.in` for sending.
-2. Choose **Auto Configure** and authorize GoDaddy to add the required sending records. If that option is unavailable, copy the exact records shown by Resend into GoDaddy DNS and select **Verify DNS Records**. Preserve existing website and mailbox records; receiving email is not needed for this app.
-3. Wait for the Resend domain to show **Verified**. Create a key at [Resend API Keys](https://resend.com/api-keys) with **Sending access**, limited to this domain.
+1. Open [the prepared Resend domain](https://resend.com/domains/6edc1667-41ea-4901-9ba0-244b99f3310f). The domain is already added and its verification has started.
+2. The owner has added the DNS records. Allow propagation; if verification continues to report missing records, compare the exact three records with `output/email-setup/Paustik_GoDaddy_DNS_records.md`. Preserve existing website and Microsoft 365 mailbox records; Resend receiving is disabled.
+3. The restricted sending key has been created. Finish the remaining `send` CNAME verification; do not create a duplicate key. Check the domain status and actual email delivery separately.
 4. Open [this project's Vercel environment variables](https://vercel.com/paustik/paustik-vercel-upload-99710b4719064e79b771e4c157b1d215/settings/environment-variables). Save these for **Production**:
 
 | Name | Value |
