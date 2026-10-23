@@ -4,6 +4,8 @@ import Link from "next/link";
 import { AdminPartnerReview } from "@/components/admin-partner-review";
 import { AdminPaymentCapture } from "@/components/admin-payment-capture";
 import { isDemoAuthEnabled } from "@/lib/demo-auth";
+import { isEmailConfigured } from "@/lib/email";
+import { isPhoneOtpConfigured } from "@/lib/phone-otp";
 
 type CurrencyAmount = { currency: string; amount: number };
 type ActivityItem = {
@@ -130,8 +132,8 @@ export default async function AdminDashboardPage() {
     ...recentAdminActions.map((record) => ({ id: `admin-${record.id}`, at: record.createdAt, title: label(record.action), detail: `${label(record.entityType)} · ${record.admin.name}` })),
   ].sort((a, b) => b.at.getTime() - a.at.getTime()).slice(0, 18);
 
-  const phoneOtpReady = Boolean(process.env.TWILIO_API_KEY_SID && process.env.TWILIO_API_KEY_SECRET && process.env.TWILIO_VERIFY_SERVICE_SID);
-  const emailVerificationReady = Boolean(process.env.RESEND_API_KEY && process.env.EMAIL_FROM);
+  const phoneOtpReady = isPhoneOtpConfigured();
+  const emailVerificationReady = isEmailConfigured();
   const demoAuth = isDemoAuthEnabled();
   const orderStatusRows = [...orderGroups].sort((a, b) => b._count._all - a._count._all);
   const deliveryStatusRows = [...deliveryGroups].sort((a, b) => b._count._all - a._count._all);

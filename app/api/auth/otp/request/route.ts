@@ -6,6 +6,7 @@ import { phoneLookupCandidates } from "@/lib/phone-number";
 import { otpRequestSchema } from "@/lib/auth-validation";
 import { rejectCrossOrigin } from "@/lib/http";
 import { isLocalAuthMode } from "@/lib/local-auth-mode";
+import { isEmailConfigured } from "@/lib/email";
 import { attachDemoOtpCookie, createDemoOtp, isDemoAuthEnabled } from "@/lib/demo-auth";
 
 export const runtime = "nodejs";
@@ -30,6 +31,9 @@ export async function POST(request: Request) {
   try { body = await request.json(); } catch { return NextResponse.json({ error: "Enter your phone number." }, { status: 400 }); }
   const parsed = otpRequestSchema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ error: "Enter a valid phone number." }, { status: 400 });
+  if (!localAuth && !demoAuth && parsed.data.purpose === "signup" && !isEmailConfigured()) {
+    return NextResponse.json({ error: "New account registration will open when Pausstik email confirmation is connected. Please try again later; no phone code was sent." }, { status: 503 });
+  }
   const phone = normalizePhoneNumber(parsed.data.phone);
   if (!phone) return NextResponse.json({ error: "Enter a valid phone number with your country code. Indian numbers can use 10 digits or +91." }, { status: 400 });
 

@@ -25,6 +25,10 @@ export async function POST(request: Request) {
       await tx.$queryRaw`SELECT id FROM paustik_marketplace.users WHERE id = ${token.userId}::uuid FOR UPDATE`;
       const consumed = await tx.passwordResetToken.updateMany({ where: { id: token.id, usedAt: null, expiresAt: { gt: now } }, data: { usedAt: now } });
       if (consumed.count !== 1) throw new Error("RESET_TOKEN_INVALID");
+      await tx.passwordResetToken.updateMany({
+        where: { userId: token.userId, usedAt: null },
+        data: { usedAt: now },
+      });
       await tx.user.update({ where: { id: token.userId }, data: { passwordHash, emailVerifiedAt: now, adminAuthVersion: { increment: 1 } } });
       await tx.adminAuthenticator.deleteMany({ where: { userId: token.userId, enabledAt: null } });
       await tx.authSession.updateMany({ where: { userId: token.userId, revokedAt: null }, data: { revokedAt: now } });

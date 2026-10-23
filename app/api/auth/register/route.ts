@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { checkPhoneOtp, isPhoneOtpConfigured, normalizePhoneNumber } from "@/lib/phone-otp";
 import { phoneLookupCandidates } from "@/lib/phone-number";
-import { makeAuthLink, sendAuthEmail } from "@/lib/email";
+import { isEmailConfigured, makeAuthLink, sendAuthEmail } from "@/lib/email";
 import { rejectCrossOrigin } from "@/lib/http";
 import { registrationSchema } from "@/lib/auth-validation";
 import { isLocalAuthMode } from "@/lib/local-auth-mode";
@@ -25,7 +25,12 @@ export async function POST(request: Request) {
   if (originError) return originError;
   const localAuth = isLocalAuthMode();
   const demoAuth = !localAuth && isDemoAuthEnabled();
-  if (!localAuth && (!process.env.DATABASE_URL || !process.env.AUTH_SECRET)) return unavailable();
+  if (!localAuth && (!process.env.DATABASE_URL || !process.env.AUTH_SECRET)) {
+    return NextResponse.json({ error: "Account services are not configured yet. Please try again later." }, { status: 503 });
+  }
+  if (!localAuth && !demoAuth && !isEmailConfigured()) {
+    return NextResponse.json({ error: "New accounts need email confirmation. Pausstik is finishing its email setup; please try again later. Your phone code has not been used." }, { status: 503 });
+  }
 
   let body: unknown;
   try { body = await request.json(); } catch { return NextResponse.json({ error: "Enter the required account details and phone code." }, { status: 400 }); }
@@ -97,6 +102,10 @@ export async function POST(request: Request) {
     const priorAccount = await prisma.user.findFirst({ where: { phone: { in: candidates } }, select: { id: true } });
     if (priorAccount) {
       return NextResponse.json({ error: "This phone number already has a Pausstik account. Sign in with a phone code instead." }, { status: 409 });
+    }
+    const priorEmail = await prisma.user.findUnique({ where: { email }, select: { id: true } });
+    if (priorEmail) {
+      return NextResponse.json({ error: "An account already uses that email address. Sign in or request a fresh email confirmation link." }, { status: 409 });
     }
 
     const failedCodes = await prisma.failedLoginAttempt.count({
@@ -182,6 +191,11 @@ export async function POST(request: Request) {
     const developmentLink = process.env.NODE_ENV !== "production" && !emailSent && verificationToken
       ? makeAuthLink("verify", verificationToken)
       : undefined;
+    if (!emailSent && !developmentLink && verificationToken) {
+      await prisma.emailVerificationToken.deleteMany({
+        where: { userId: user.id, tokenHash: createHash("sha256").update(verificationToken).digest("hex"), usedAt: null },
+      });
+    }
     return NextResponse.json({
       created: true,
       status: user.status,
@@ -190,8 +204,8 @@ export async function POST(request: Request) {
       ...(developmentLink ? { verificationUrl: developmentLink } : {}),
       message: emailSent
         ? input.role === "CUSTOMER"
-          ? "Your account is created and your phone is verified. Check your email to confirm your contact address; you can sign in with your phone code."
-          : "Your application is saved and your phone is verified. Check your email to confirm your contact address; sign in with your phone code while Pausstik reviews your application."
+          ? "Your account is saved and your phone is verified. Open the confirmation link in your email first. Then return to sign in and request a new phone code."
+          : "Your application is saved and your phone is verified. Confirm your email first, then request a new phone code to sign in. Your application will remain pending until Pausstik approves it."
         : "Your account is created and your phone is verified, but Pausstik could not send the email confirmation yet. Request a fresh link after email delivery is configured; sign-in will be available once your email is verified.",
     }, { status: 201 });
   } catch (error) {

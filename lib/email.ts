@@ -1,19 +1,36 @@
 type AuthEmailKind = "verify" | "reset";
 
+function emailConfig() {
+  const apiKey = process.env.RESEND_API_KEY?.trim();
+  const from = process.env.EMAIL_FROM?.trim();
+  if (!apiKey || !from || /[\r\n]/.test(from)) return null;
+  const address = from.includes("<") ? from.match(/^[^<>]+<([^<>]+)>$/)?.[1]?.trim() : from;
+  if (!address || !/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(address)) return null;
+  return { apiKey, from };
+}
+
+// Configuration presence is not proof of sender verification or inbox delivery.
+export function isEmailConfigured() {
+  return emailConfig() !== null;
+}
+
 const siteUrl = () => (process.env.PAUSTIK_PUBLIC_URL || "http://localhost:3000").replace(/\/$/, "");
 
 function emailOrigin(requestOrigin?: string) {
-  const configured = process.env.PAUSTIK_PUBLIC_URL;
-  if (configured) {
+  const candidates = [process.env.PAUSTIK_PUBLIC_URL, requestOrigin];
+  if (process.env.NODE_ENV !== "production") candidates.push(siteUrl());
+  for (const candidate of candidates) {
+    if (!candidate) continue;
     try {
-      const parsed = new URL(configured);
-      const isLocal = parsed.hostname === "localhost" || parsed.hostname === "127.0.0.1";
-      if (process.env.NODE_ENV !== "production" || (parsed.protocol === "https:" && !isLocal)) return parsed.origin;
+      const parsed = new URL(candidate);
+      const isLocal = parsed.hostname === "localhost" || parsed.hostname === "127.0.0.1" || parsed.hostname === "[::1]";
+      const validProtocol = parsed.protocol === "https:" || (process.env.NODE_ENV !== "production" && parsed.protocol === "http:");
+      if (validProtocol && !parsed.username && !parsed.password && (process.env.NODE_ENV !== "production" || !isLocal)) return parsed.origin;
     } catch {
-      // Use the current request origin when an optional URL setting is invalid.
+      // Try the request origin when the optional configured URL is invalid.
     }
   }
-  return requestOrigin || siteUrl();
+  return null;
 }
 
 export function makeAuthLink(kind: AuthEmailKind, token: string, origin = siteUrl()) {
@@ -24,22 +41,26 @@ export function makeAuthLink(kind: AuthEmailKind, token: string, origin = siteUr
 }
 
 export async function sendAuthEmail(email: string, kind: AuthEmailKind, token: string, requestOrigin?: string) {
-  const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.EMAIL_FROM;
-  if (!apiKey || !from) return false;
+  const config = emailConfig();
+  if (!config) return false;
+  const { apiKey, from } = config;
 
   const verification = kind === "verify";
-  const subject = verification ? "Verify your Paustik email" : "Reset your Paustik password";
+  const subject = verification ? "Verify your Pausstik email" : "Reset your Pausstik password";
   const action = verification ? "Verify email" : "Choose a new password";
-  const link = makeAuthLink(kind, token, emailOrigin(requestOrigin));
+  const origin = emailOrigin(requestOrigin);
+  if (!origin) return false;
+  const link = makeAuthLink(kind, token, origin);
   const text = `${action}: ${link}\n\nIf you did not request this, you can ignore this email.`;
-  const html = `<p>${action} for your Paustik account:</p><p><a href="${link}">${action}</a></p><p>If you did not request this, you can ignore this email.</p>`;
+  const safeLink = link.replaceAll("&", "&amp;").replaceAll('"', "&quot;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+  const html = `<p>${action} for your Pausstik account:</p><p><a href="${safeLink}">${action}</a></p><p>If you did not request this, you can ignore this email.</p>`;
 
   try {
     const response = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({ from, to: [email], subject, text, html }),
+      cache: "no-store",
       signal: AbortSignal.timeout(8_000),
     });
     return response.ok;

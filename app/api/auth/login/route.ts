@@ -64,7 +64,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "That code is incorrect or expired. Request a new code and try again." }, { status: 401 });
     }
     if (!demoAuth && !user.emailVerifiedAt) {
-      return NextResponse.json({ error: "Verify the email address on your account before signing in. Request a fresh link below if needed." }, { status: 403 });
+      return NextResponse.json({ error: "Your phone code was accepted, but your email still needs confirmation. Open the email link or request a fresh link below. After confirming, request a new phone code to sign in." }, { status: 403 });
     }
 
     await prisma.$transaction([
