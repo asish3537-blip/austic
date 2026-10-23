@@ -60,6 +60,7 @@ export function SignInForm() {
   }
   return <>
     <span className="eyebrow">Welcome back</span><h2>Sign in to Pausstik</h2>
+    <p className="form-success">Testing without SMS? <Link className="text-link" href="/demo-sign-in">Open a separate demo profile with an on-screen code</Link>.</p>
     <p className="auth-intro">Get a one-time code by SMS or WhatsApp. For your first sign-in, confirm your email before requesting a new phone code.</p>
     {error && <Alert>{error}</Alert>}
     <form onSubmit={submit}>
@@ -178,6 +179,7 @@ export function SignUpForm() {
   }
   return <>
     <span className="eyebrow">Join the neighbourhood table</span><h2>Create your account</h2>
+    <p className="form-success">Just testing? <Link className="text-link" href="/demo-sign-in">Use a separate demo profile with an on-screen code</Link>. No registration needed.</p>
     <p className="auth-intro">Choose your account type, verify your phone by SMS or WhatsApp, then confirm your email. You will need both before your first sign-in.</p>
     {error && <Alert>{error}</Alert>}
     {success && <><Alert success>{success.message}{success.verificationUrl && <><br /><Link href={success.verificationUrl}>Verify this development email</Link></>}</Alert>{!success.verificationUrl && <><p className="form-note">Check your inbox and spam folder at <strong>{success.email}</strong>. If no email arrives, request another link below.</p><ResendVerificationForm initialEmail={success.email} /></>}<p className="form-footer">After confirming your email, <Link className="text-link" href="/sign-in">sign in with a new phone code</Link></p></>}

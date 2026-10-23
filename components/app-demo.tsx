@@ -16,9 +16,9 @@ const demoMenuSeed = [
 ];
 const courierSteps = ["Accepted", "Heading to kitchen", "Picked up", "On the way", "Delivered"];
 
-export function AppDemo() {
-  const [role, setRole] = useState<Role>("customer");
-  const [tab, setTab] = useState("Discover");
+export function AppDemo({ demoRole }: { demoRole?: "customer" | "mother" | "courier" } = {}) {
+  const [role, setRole] = useState<Role>(demoRole ?? "customer");
+  const [tab, setTab] = useState(demoRole === "mother" ? "Menu" : demoRole === "courier" ? "Jobs" : "Discover");
   const [cart, setCart] = useState<string[]>([]);
   const [toast, setToast] = useState("");
   const [menu, setMenu] = useState(demoMenuSeed);
@@ -40,9 +40,9 @@ export function AppDemo() {
   const tabs: Record<Role, string[]> = { customer: ["Discover", "Orders", "Wallet"], mother: ["Today", "Menu", "Earnings"], courier: ["Jobs", "Route", "Earnings"], admin: ["Overview", "Orders", "Income"] };
 
   return <section className="app-demo-preview" aria-label="Interactive Pausstik mobile app preview">
-    <div className="app-demo-role-tabs" role="tablist" aria-label="Preview role">
+    {!demoRole && <div className="app-demo-role-tabs" role="tablist" aria-label="Preview role">
       {(Object.keys(roleNames) as Role[]).map((item) => <button type="button" role="tab" aria-selected={role === item} className={role === item ? "is-active" : ""} key={item} onClick={() => chooseRole(item)}>{roleNames[item]}</button>)}
-    </div>
+    </div>}
     <div className="phone-shell">
       <div className="phone-screen">
         <div className="phone-status"><span>9:41</span><span aria-hidden="true">● ● ▰</span></div>
