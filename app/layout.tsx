@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { PwaRuntime } from "@/components/pwa-runtime";
+import { MobileNavigation } from "@/components/mobile-navigation";
 import "./globals.css";
 import "./app-demo.css";
 import "./bottom-navigation.css";
@@ -45,8 +46,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
               <Link href="/install">Get the app</Link>
             </nav>
             <div className="header-controls">
-              <details className="mobile-nav">
-                <summary aria-label="Open navigation menu"><span className="menu-icon" aria-hidden="true"><i></i><i></i><i></i></span><span>Menu</span></summary>
+              <MobileNavigation>
+                <summary aria-label="Navigation menu"><span className="menu-icon" aria-hidden="true"><i></i><i></i><i></i></span><span>Menu</span></summary>
                 <nav className="mobile-nav-panel" aria-label="Mobile navigation">
                   <Link href="/#how-it-works">How it works</Link>
                   <Link href="/#meal-plans">Meal plans</Link>
@@ -58,7 +59,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                   <Link href="/sign-in">Sign in</Link>
                   <Link href="/admin-sign-in">Admin portal</Link>
                 </nav>
-              </details>
+              </MobileNavigation>
               <div className="header-actions">
                 <Link href="/sign-in">Sign in</Link>
                 <Link className="button button-small" href="/sign-up">Create account</Link>
