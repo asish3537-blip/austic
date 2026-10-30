@@ -6,6 +6,7 @@ type DeliveryJob = {
   deliveryId: string; orderId: string; orderNumber: string; deliveryStatus: string; orderStatus: string;
   trackingReference: string | null; pickup: string; dropoff: string; items: string[]; scheduledFor: string;
   pickupPinned: boolean; dropoffPinned: boolean; isSharingLocation: boolean;
+  pickupNavigation: string | null; dropoffNavigation: string | null;
 };
 type Jobs = { available: DeliveryJob[]; assigned: DeliveryJob[] };
 const nextAction: Record<string, { status: string; label: string }> = {
@@ -158,6 +159,11 @@ export function DeliveryWorkspace() {
             <div className="workspace-record-head"><strong>{job.orderNumber}</strong><span className="customer-status customer-status-active">{job.deliveryStatus.toLowerCase().replaceAll("_", " ")}</span></div>
             <p>{job.items.join(", ")}</p><small>Pickup: {job.pickup} · Drop-off: {job.dropoff}</small>
             <div className="delivery-pin-status"><span>{job.pickupPinned ? "Pickup geofence ready" : "Pickup pin missing"}</span><span>{job.dropoffPinned ? "Drop-off geofence ready" : "Drop-off pin missing"}</span></div>
+            <div className="delivery-location-actions">
+              {job.pickupNavigation && <a className="button button-quiet" href={`https://www.google.com/maps/dir/?${new URLSearchParams({ api: "1", destination: job.pickupNavigation, dir_action: "navigate" })}`} target="_blank" rel="noopener noreferrer">Google Maps · Kitchen ↗</a>}
+              {job.dropoffNavigation && <a className="button button-quiet" href={`https://www.google.com/maps/dir/?${new URLSearchParams({ api: "1", destination: job.dropoffNavigation, dir_action: "navigate" })}`} target="_blank" rel="noopener noreferrer">Google Maps · Customer ↗</a>}
+            </div>
+            <small>Opening a route shares its destination with Google Maps. Confirm the address before travelling. Navigation does not mark pickup or delivery complete. Keep Pausstik open for location updates; background tracking may pause.</small>
             {job.deliveryStatus !== "DELIVERED" && <div className="delivery-location-actions">
               {watchingId === job.deliveryId ? <button type="button" className="button button-quiet" onClick={() => stopLocation(job)}>Stop sharing</button> : <button type="button" className="button button-quiet" onClick={() => startLocation(job)}>{job.isSharingLocation ? "Resume location sharing" : "Start location sharing"}</button>}
               {job.isSharingLocation && watchingId !== job.deliveryId && <button type="button" className="delivery-revoke-button" onClick={() => stopLocation(job)}>Revoke location sharing</button>}

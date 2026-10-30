@@ -746,3 +746,8 @@ h1, h2, h3, .brand, .display-font { font-family: 'Manrope', 'DM Sans', sans-seri
 .admin-menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 18px; }
 .admin-menu-search { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 24px 0; }
 .admin-menu-search input { min-width: 0; max-width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 10px; }
+.signin-options { border: 1px solid #d8dfd1; border-radius: 16px; background: #f1f6ed; padding: 20px; margin: 18px 0 24px; }
+.signin-options h3 { margin-top: 0; }
+.signin-options p, .signin-options small { line-height: 1.6; }
+.signin-option-actions { display: flex; flex-direction: column; gap: 10px; margin: 16px 0; }
+.signin-option-actions a { text-align: center; white-space: normal; }

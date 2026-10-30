@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
+import { SignInOptions } from "@/components/sign-in-options";
 
 type Role = "CUSTOMER" | "MOTHER" | "DELIVERY_AGENT";
 type VerificationChannel = "sms" | "whatsapp";
@@ -60,8 +61,9 @@ export function SignInForm() {
   }
   return <>
     <span className="eyebrow">Welcome back</span><h2>Sign in to Pausstik</h2>
+    <SignInOptions />
     <p className="form-success">Testing without SMS? <Link className="text-link" href="/demo-sign-in">Open a separate demo profile with an on-screen code</Link>.</p>
-    <p className="auth-intro">Get a one-time code by SMS or WhatsApp. For your first sign-in, confirm your email before requesting a new phone code.</p>
+    <p className="auth-intro">Phone sign-in below will be available once messaging is activated. For now, choose email/password or a demo profile above.</p>
     <p className="auth-intro">Your saved account role opens your customer, mother or delivery dashboard automatically. Partner accounts awaiting approval open their application status.</p>
     {error && <Alert>{error}</Alert>}
     <form onSubmit={submit}>
@@ -71,7 +73,7 @@ export function SignInForm() {
           <div className="phone-otp-row"><input id="signin-phone" name="phone" type="tel" autoComplete="tel" placeholder="+91 98765 43210" value={phone} onChange={(event) => { setPhone(event.target.value); setCodeSent(false); setMessage(""); setDevelopmentCode(""); }} required minLength={7} maxLength={24} /><button className="otp-request-button" type="button" onClick={requestCode} disabled={sending || phone.trim().length < 7}>{sending ? "Sending…" : codeSent ? "Send again" : "Send code"}</button></div>
           <small>Indian numbers can use 10 digits or include +91.</small>
         </div>
-        <div className="field full"><VerificationChannelPicker value={channel} onChange={(next) => { setChannel(next); setCodeSent(false); setMessage(""); setDevelopmentCode(""); }} idPrefix="signin" /><small>Choose a channel you can receive messages on. If WhatsApp is unavailable, try SMS.</small></div>
+        <div className="field full"><VerificationChannelPicker value={channel} onChange={(next) => { setChannel(next); setCodeSent(false); setMessage(""); setDevelopmentCode(""); }} idPrefix="signin" /><small>SMS and WhatsApp delivery are pending activation. Demo codes are available only through the separate demo link above.</small></div>
         {codeSent && <div className="field full"><label htmlFor="signin-otp">6-digit verification code</label><input id="signin-otp" name="otp" type="text" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" maxLength={6} required /></div>}
       </div>
       {message && <Alert success>{message}{developmentCode && <><br /><strong>Pausstik preview code: {developmentCode}</strong></>}</Alert>}
@@ -180,6 +182,7 @@ export function SignUpForm() {
   }
   return <>
     <span className="eyebrow">Join the neighbourhood table</span><h2>Create your account</h2>
+    <SignInOptions signup />
     <p className="form-success">Just testing? <Link className="text-link" href="/demo-sign-in">Use a separate demo profile with an on-screen code</Link>. No registration needed.</p>
     <p className="auth-intro">Choose your account type, verify your phone by SMS or WhatsApp, then confirm your email. You will need both before your first sign-in.</p>
     {error && <Alert>{error}</Alert>}
@@ -191,7 +194,7 @@ export function SignUpForm() {
       <div className="form-grid" style={{ marginTop: 16 }}>
         <div className="field"><label htmlFor="signup-name">Full name</label><input id="signup-name" name="name" autoComplete="name" required minLength={2} maxLength={100} /></div>
         <div className="field"><label htmlFor="signup-phone">Phone number</label><div className="phone-otp-row"><input id="signup-phone" name="phone" autoComplete="tel" type="tel" placeholder="+91 98765 43210" value={phone} onChange={(event) => { setPhone(event.target.value); setCodeSent(false); setMessage(""); setDevelopmentCode(""); }} required minLength={7} maxLength={24} /><button className="otp-request-button" type="button" onClick={requestCode} disabled={sending || phone.trim().length < 7}>{sending ? "Sending…" : codeSent ? "Send again" : "Send code"}</button></div><small>Indian numbers can use 10 digits or include +91.</small></div>
-        <div className="field"><VerificationChannelPicker value={channel} onChange={(next) => { setChannel(next); setCodeSent(false); setMessage(""); setDevelopmentCode(""); }} idPrefix="signup" /><small>Choose a channel you can receive messages on. If WhatsApp is unavailable, try SMS.</small></div>
+        <div className="field"><VerificationChannelPicker value={channel} onChange={(next) => { setChannel(next); setCodeSent(false); setMessage(""); setDevelopmentCode(""); }} idPrefix="signup" /><small>SMS and WhatsApp delivery are pending activation. Demo codes are available only through the separate demo link above.</small></div>
         <div className="field full"><label htmlFor="signup-email">Email address for account updates</label><input id="signup-email" name="email" autoComplete="email" type="email" required maxLength={254} /></div>
         {codeSent && <div className="field full"><label htmlFor="signup-otp">6-digit verification code</label><input id="signup-otp" name="otp" type="text" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" maxLength={6} required /></div>}
         {role === "MOTHER" && <><div className="field"><label htmlFor="signup-kitchen">Kitchen name</label><input id="signup-kitchen" name="kitchenName" required minLength={2} maxLength={120} /></div><div className="field"><label htmlFor="signup-cuisine">Cooking specialties</label><input id="signup-cuisine" name="cuisine" placeholder="e.g. Odia home cooking, vegetarian thalis" required minLength={2} maxLength={80} /></div><div className="field"><label htmlFor="signup-capacity">Meals you can prepare per day</label><input id="signup-capacity" name="capacityPerDay" type="number" min={1} max={300} required /></div><div className="field"><label htmlFor="signup-days">Available lunch days</label><input id="signup-days" name="availableDays" placeholder="Monday, Tuesday, Wednesday" required minLength={2} maxLength={120} /><small>Separate days with commas.</small></div><div className="field full"><label htmlFor="signup-lunch-window">Lunch service window</label><input id="signup-lunch-window" name="lunchWindow" placeholder="11:30 AM to 2:00 PM" required minLength={3} maxLength={80} /></div></>}

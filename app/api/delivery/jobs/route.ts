@@ -39,8 +39,14 @@ export async function GET() {
       pickupPinned: delivery.order.kitchen.latitude !== null && delivery.order.kitchen.longitude !== null,
       dropoffPinned: delivery.order.address.latitude !== null && delivery.order.address.longitude !== null,
       isSharingLocation: Boolean(delivery.locationConsentAt),
+      pickupNavigation: !isAssigned ? null : delivery.order.kitchen.latitude !== null && delivery.order.kitchen.longitude !== null
+        ? `${delivery.order.kitchen.latitude},${delivery.order.kitchen.longitude}`
+        : [delivery.order.kitchen.addressLine1, delivery.order.kitchen.locality, delivery.order.kitchen.city, delivery.order.kitchen.pinCode].join(", "),
+      dropoffNavigation: !isAssigned ? null : delivery.order.address.latitude !== null && delivery.order.address.longitude !== null
+        ? `${delivery.order.address.latitude},${delivery.order.address.longitude}`
+        : [delivery.order.address.addressLine1, delivery.order.address.locality, delivery.order.address.city, delivery.order.address.pinCode].join(", "),
     });
-    return NextResponse.json({ available: available.map((delivery) => mapJob(delivery, false)), assigned: assigned.map((delivery) => mapJob(delivery, true)) });
+    return NextResponse.json({ available: available.map((delivery) => mapJob(delivery, false)), assigned: assigned.map((delivery) => mapJob(delivery, true)) }, { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) {
     console.error("Pausstik delivery jobs could not load.", error instanceof Error ? error.name : "unknown error");
     return serviceUnavailable();
