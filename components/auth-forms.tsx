@@ -13,7 +13,7 @@ function Alert({ children, success = false }: { children: React.ReactNode; succe
 function VerificationChannelPicker({ value, onChange, idPrefix }: { value: VerificationChannel; onChange: (channel: VerificationChannel) => void; idPrefix: string }) {
   return <fieldset className="verification-channel">
     <legend>Send code using</legend>
-    {(["sms", "whatsapp"] as const).map((channel) => <label key={channel} className="verification-channel-option">
+    {(["whatsapp", "sms"] as const).map((channel) => <label key={channel} className="verification-channel-option">
       <input type="radio" name={`${idPrefix}-channel`} value={channel} checked={value === channel} onChange={() => onChange(channel)} />
       <span>{channel === "sms" ? "SMS" : "WhatsApp"}</span>
     </label>)}
@@ -25,7 +25,7 @@ export function SignInForm() {
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
   const [phone, setPhone] = useState("");
-  const [channel, setChannel] = useState<VerificationChannel>("sms");
+  const [channel, setChannel] = useState<VerificationChannel>("whatsapp");
   const [codeSent, setCodeSent] = useState(false);
   const [message, setMessage] = useState("");
   const [developmentCode, setDevelopmentCode] = useState("");
@@ -62,6 +62,7 @@ export function SignInForm() {
     <span className="eyebrow">Welcome back</span><h2>Sign in to Pausstik</h2>
     <p className="form-success">Testing without SMS? <Link className="text-link" href="/demo-sign-in">Open a separate demo profile with an on-screen code</Link>.</p>
     <p className="auth-intro">Get a one-time code by SMS or WhatsApp. For your first sign-in, confirm your email before requesting a new phone code.</p>
+    <p className="auth-intro">Your saved account role opens your customer, mother or delivery dashboard automatically. Partner accounts awaiting approval open their application status.</p>
     {error && <Alert>{error}</Alert>}
     <form onSubmit={submit}>
       <div className="form-grid">
@@ -132,7 +133,7 @@ export function SignUpForm() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState<{ message: string; email: string; emailSent: boolean; verificationUrl?: string } | null>(null);
   const [phone, setPhone] = useState("");
-  const [channel, setChannel] = useState<VerificationChannel>("sms");
+  const [channel, setChannel] = useState<VerificationChannel>("whatsapp");
   const [codeSent, setCodeSent] = useState(false);
   const [message, setMessage] = useState("");
   const [developmentCode, setDevelopmentCode] = useState("");

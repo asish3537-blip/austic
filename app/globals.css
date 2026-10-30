@@ -741,3 +741,8 @@ h1, h2, h3, .brand, .display-font { font-family: 'Manrope', 'DM Sans', sans-seri
   .mobile-nav summary > span:last-child { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
   .header-actions .button-small { min-height: 36px; padding: 0 8px; font-size: 10px; }
 }
+.admin-workspace-nav { display: flex; flex-wrap: wrap; gap: 12px; padding: 18px 24px; border-bottom: 1px solid var(--line); }
+.admin-workspace-nav a { color: var(--green-deep); padding: 8px 10px; border-radius: 8px; background: #eef3eb; font-size: 14px; }
+.admin-menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 18px; }
+.admin-menu-search { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 24px 0; }
+.admin-menu-search input { min-width: 0; max-width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 10px; }
