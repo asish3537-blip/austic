@@ -37,6 +37,11 @@ export async function loadCustomerKitchenDiscovery(customerId: string) {
     ? { latitude: Number(address.latitude), longitude: Number(address.longitude) }
     : undefined;
   const favoriteIds = new Set(favorites.map((favorite) => favorite.kitchenId));
+  const kitchens = await publishedKitchens(address?.city, customerPin, favoriteIds);
+  return { kitchens, hasDeliveryPin: Boolean(customerPin), deliveryArea: address ? [address.locality, address.city].filter(Boolean).join(", ") : "", available: true };
+}
+
+async function publishedKitchens(city: string | null | undefined, customerPin?: { latitude: number; longitude: number }, favoriteIds = new Set<string>()) {
   const now = new Date();
   const today = new Date(now);
   today.setUTCHours(0, 0, 0, 0);
@@ -46,7 +51,7 @@ export async function loadCustomerKitchenDiscovery(customerId: string) {
     where: {
       verificationStatus: "APPROVED", isAcceptingOrders: true, mother: { user: { status: "ACTIVE" } },
       // Match the order APIs' city rule, then check each kitchen's actual service radius.
-      ...(address?.city ? { city: { equals: address.city, mode: "insensitive" as const } } : {}),
+      ...(city ? { city: { equals: city, mode: "insensitive" as const } } : {}),
       latitude: { not: null }, longitude: { not: null }, menus: { some: menuWhere },
     },
     orderBy: [{ mother: { rating: "desc" } }, { name: "asc" }],
@@ -69,5 +74,12 @@ export async function loadCustomerKitchenDiscovery(customerId: string) {
   })).filter((kitchen) => kitchen.meals.length > 0 && (kitchen.distanceKm === undefined || kitchen.distanceKm <= kitchen.marketplaceRadiusKm!))
     .sort((a, b) => Number(Boolean(b.isFavorite)) - Number(Boolean(a.isFavorite)) || (a.distanceKm !== undefined && b.distanceKm !== undefined ? a.distanceKm - b.distanceKm : b.rating - a.rating));
 
-  return { kitchens, hasDeliveryPin: Boolean(customerPin), deliveryArea: address ? [address.locality, address.city].filter(Boolean).join(", ") : "", available: true };
+  return kitchens;
+}
+export async function loadKitchenDirectory(city: string) {
+  const rows = await publishedKitchens(city);
+  return rows.map(({ id, name, locality, cuisine, meals }) => ({
+    id, name, locality, cuisine,
+    meals: meals.map(({ name, components, price, serviceDate, deliveryTime }) => ({ name, components, price, serviceDate, deliveryTime })),
+  }));
 }

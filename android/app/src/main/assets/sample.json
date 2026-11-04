@@ -1,0 +1,107 @@
+[
+  {
+    "id": "sample-ananya",
+    "name": "Ananya’s Home Kitchen",
+    "motherName": "Ananya",
+    "locality": "Patia",
+    "city": "Bhubaneswar",
+    "cuisine": "Odia · Home-style",
+    "rating": 4.9,
+    "meals": [
+      {
+        "id": "dalma",
+        "name": "Dalma comfort meal",
+        "category": "VEGETARIAN",
+        "tier": "BASE",
+        "components": [
+          "Rice",
+          "Dalma",
+          "Seasonal greens"
+        ],
+        "price": 69
+      },
+      {
+        "id": "egg",
+        "name": "Egg curry lunch",
+        "category": "NON_VEGETARIAN",
+        "tier": "EGG",
+        "components": [
+          "Rice",
+          "Egg curry",
+          "Seasonal vegetables"
+        ],
+        "price": 79
+      }
+    ]
+  },
+  {
+    "id": "sample-sabita",
+    "name": "Sabita’s Rasoi",
+    "motherName": "Sabita",
+    "locality": "Sailashree Vihar",
+    "city": "Bhubaneswar",
+    "cuisine": "Odia · Comfort meals",
+    "rating": 4.8,
+    "meals": [
+      {
+        "id": "cheese",
+        "name": "Seasonal cheese meal",
+        "category": "VEGETARIAN",
+        "tier": "CHEESE",
+        "components": [
+          "Rice",
+          "Cheese curry",
+          "Seasonal vegetables"
+        ],
+        "price": 89
+      },
+      {
+        "id": "chicken",
+        "name": "Chicken curry lunch",
+        "category": "NON_VEGETARIAN",
+        "tier": "CHICKEN",
+        "components": [
+          "Rice",
+          "Chicken curry",
+          "Seasonal vegetables"
+        ],
+        "price": 99
+      }
+    ]
+  },
+  {
+    "id": "sample-meera",
+    "name": "Meera’s Neighbourhood Kitchen",
+    "motherName": "Meera",
+    "locality": "Chandrasekharpur",
+    "city": "Bhubaneswar",
+    "cuisine": "North Indian · Home-style",
+    "rating": 4.7,
+    "meals": [
+      {
+        "id": "paneer",
+        "name": "Cheese meal box",
+        "category": "VEGETARIAN",
+        "tier": "CHEESE",
+        "components": [
+          "Rice",
+          "Cheese curry",
+          "Salad"
+        ],
+        "price": 89
+      },
+      {
+        "id": "egg",
+        "name": "Egg curry meal box",
+        "category": "NON_VEGETARIAN",
+        "tier": "EGG",
+        "components": [
+          "Rice",
+          "Egg curry",
+          "Seasonal vegetables"
+        ],
+        "price": 79
+      }
+    ]
+  }
+]

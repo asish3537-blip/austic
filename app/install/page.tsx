@@ -66,17 +66,18 @@ export default function InstallPage() {
           <h2 id="install-card-title">A place for good food.</h2>
           <p>One app for customers, mothers and delivery partners. Your account opens the right workspace for you.</p>
           <div className="install-card-actions">
+            <a className="button button-warm" href="/downloads/Pausstik-1.0.0.apk" download>Download Android APK · v1.0</a>
             <PwaInstallButton />
             <Link className="button button-light" href="/app">Open app <span aria-hidden="true">→</span></Link>
           </div>
-          <p className="install-card-note">Installed already? Open the Pausstik icon on your device, or use Open app.</p>
+          <p className="install-card-note">Android 7 or newer: download the APK, open the file and follow the installation prompts. The native app browses kitchen menus and opens your browser for account and order actions.</p>
           <div className="install-account-links"><Link href="/sign-in">Sign in</Link><span aria-hidden="true">·</span><Link href="/sign-up">Create account</Link></div>
           <div className="install-card-foot"><span aria-hidden="true">✓</span> Your existing Pausstik account works here.</div>
         </aside>
       </section>
 
       <section className="install-device-section" id="installation-steps" aria-labelledby="installation-steps-title">
-        <div className="install-section-heading"><span className="eyebrow">A few simple steps</span><h2 id="installation-steps-title">Make room for Pausstik.</h2><p>Choose your device below. The install option is provided by your browser.</p></div>
+        <div className="install-section-heading"><span className="eyebrow">A few simple steps</span><h2 id="installation-steps-title">Make room for Pausstik.</h2><p>For the web app, choose your device below. For the native Android app, use Download Android APK above.</p></div>
         <div className="install-device-grid">
           {deviceGuides.map((guide) => (
             <article className="install-device-card" key={guide.id} id={`install-${guide.id}`}>
