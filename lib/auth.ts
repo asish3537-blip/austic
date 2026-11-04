@@ -115,13 +115,17 @@ export function roleHome(user: Pick<SessionUser, "role" | "status">) {
     case "CUSTOMER": return "/customer/dashboard";
     case "MOTHER": return "/mother/dashboard";
     case "DELIVERY_AGENT": return "/delivery/dashboard";
-    case "ADMIN": return "/admin/dashboard";
+    case "ADMIN": return "/admin/paustik-admin";
   }
 }
 
 export async function requireAuthenticatedUser() {
   const user = await getCurrentUser();
-  if (!user) redirect(signInLink("/sign-in", (await headers()).get("x-pausstik-kitchen") ?? undefined));
+  if (!user) {
+    const requestHeaders = await headers();
+    if (requestHeaders.get("x-pausstik-admin") === "true") redirect("/admin-sign-in");
+    redirect(signInLink("/sign-in", requestHeaders.get("x-pausstik-kitchen") ?? undefined));
+  }
   return user;
 }
 

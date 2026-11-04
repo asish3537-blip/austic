@@ -1,0 +1,13 @@
+"use client";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+const links = [
+  ["Overview", "/admin/paustik-admin", "▦"], ["Orders", "/admin/orders", "▤"],
+  ["Analytics", "/admin/analytics", "↗"], ["Operations map", "/admin/map", "⌖"], ["Kitchens & menus", "/admin/menus", "☷"],
+  ["Finance & activity", "/admin/dashboard", "₹"], ["Accounts & roles", "/admin/accounts", "♙"],
+  ["Payment settings", "/admin/payment-setup", "↗"], ["Security", "/admin/security", "◇"],
+];
+export function AdminConsoleNav() {
+  const path = usePathname();
+  return <nav className="console-nav" aria-label="Admin sections">{links.map(([name, href, icon]) => <Link key={href} href={href} aria-current={path === href ? "page" : undefined}><span aria-hidden="true">{icon}</span>{name}</Link>)}</nav>;
+}

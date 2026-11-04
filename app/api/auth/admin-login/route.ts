@@ -38,7 +38,7 @@ export async function POST(request: Request) {
       return { version: current.adminAuthVersion, enabled };
     });
     await createSession(user.id, result.version);
-    return NextResponse.json({ destination: result.enabled ? "/admin/dashboard" : "/admin/security?setup=1" }, { headers: { "Cache-Control": "no-store" } });
+    return NextResponse.json({ destination: result.enabled ? "/admin/paustik-admin" : "/admin/security?setup=1" }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     if (error instanceof AdminAuthError) return NextResponse.json({ error: error.message, requiresAuthenticator: error.requiresAuthenticator }, { status: error.status, headers: { "Cache-Control": "no-store" } });
     console.error("Pausstik administrator sign-in failed.", error instanceof Error ? error.name : "unknown error");

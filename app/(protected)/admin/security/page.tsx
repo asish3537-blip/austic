@@ -9,7 +9,7 @@ export default async function AdminSecurityPage() {
   return <main className="dashboard-shell admin-dashboard admin-security-page">
     <div className="dashboard-head admin-dashboard-head">
       <div><span className="eyebrow">Your admin account</span><h1>Admin security</h1><p>Add an authenticator app to protect your administrator sign-in.</p></div>
-      <Link className="button button-light" href="/admin/dashboard">Back to overview</Link>
+      <Link className="button button-light" href="/admin/paustik-admin">Back to overview</Link>
     </div>
     <AdminAuthenticatorSettings />
   </main>;

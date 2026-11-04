@@ -9,6 +9,7 @@ import "./bottom-navigation.css";
 import "./install.css";
 import "./simple.css";
 import "./brand-theme.css";
+import "./admin-console.css";
 
 export const metadata: Metadata = {
   title: {
@@ -54,7 +55,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <PwaRuntime />
         {children}
         <footer className="site-footer">
-          <span className="footer-links"><Link href="/">Website</Link><Link href="/help">Help</Link><Link href="/admin-sign-in">Admin</Link></span>
+          <span className="footer-links"><Link href="/">Website</Link><Link href="/help">Help</Link><span className="admin-footer-entry"><Link href="/admin-sign-in">Admin</Link><span className="admin-footer-menu"><Link href="/admin/paustik-admin">Admin dashboard</Link><Link href="/admin-sign-in">Admin sign in</Link></span></span></span>
           <small className="footer-copyright">© 2026 Pausstik. All rights reserved.</small>
         </footer>
       </body>

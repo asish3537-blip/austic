@@ -1,0 +1,93 @@
+body:has(.admin-console) { background:#f6f7f5; }
+body:has(.admin-console)>.site-header,body:has(.admin-console)>.site-footer,body:has(.admin-console)>.dashboard-topline,body:has(.admin-console)>.app-bottom-nav { display:none; }
+.admin-console { display:grid; grid-template-columns:244px minmax(0,1fr); min-height:100vh; color:#26352e; font-size:14px; }
+.console-sidebar { background:#fffdf8; border-right:1px solid #e3e7df; padding:22px 16px; position:sticky; top:0; height:100vh; overflow:auto; display:flex; flex-direction:column; }
+.console-logo { display:block; padding:0 14px; margin-bottom:22px; }
+.console-logo img { width:176px; height:85px; object-fit:contain; }
+.console-label { font-size:10px; font-weight:800; letter-spacing:.15em; color:#849084; display:block; }
+.console-sidebar>.console-label { padding:0 16px; margin-bottom:15px; }
+.console-nav { display:flex; flex-direction:column; gap:6px; }
+.console-nav a { display:flex; align-items:center; gap:14px; padding:13px 16px; border-radius:10px; text-decoration:none; color:#556158; font-weight:600; font-size:13px; }
+.console-nav a>span { width:19px; font-size:20px; color:#789080; }
+.console-nav a:hover,.console-nav a:focus-visible { background:#f2f3ed; }
+.console-nav a[aria-current=page] { background:#fbeae3; color:#a4282c; }
+.console-nav a[aria-current=page]>span { color:#b52c2e; }
+.console-sidebar-footer { display:grid; gap:14px; margin-top:auto; padding:32px 16px 8px; }
+.console-sidebar-footer a { color:#667565; text-decoration:none; font-size:12px; }
+.console-main { min-width:0; }
+.console-topbar { height:84px; background:#fffdf8; border-bottom:1px solid #e3e7df; display:flex; align-items:center; justify-content:space-between; gap:16px; padding:16px 32px; }
+.console-topbar strong { display:block; margin-top:5px; font-size:13px; font-weight:600; }
+.console-account { display:flex; align-items:center; gap:24px; font-size:13px; font-weight:600; }
+.console-account small { display:block; color:#819080; font-size:10px; margin-top:3px; }
+.console-account .plain-button { font-size:12px; color:#a4282c; }
+.console-page { max-width:1600px; margin:auto; padding:36px 32px 56px; }
+.console-page-head { display:flex; align-items:center; justify-content:space-between; gap:20px; margin-bottom:14px; }
+.console-page h1 { font-size:32px; line-height:1.2; margin:9px 0; letter-spacing:-.035em; color:#243b2d; }
+.console-page .eyebrow { color:#b52c2e; font-size:10px; }
+.console-page p { color:#7c887c; line-height:1.6; font-size:12px; margin:6px 0 16px; }
+.console-freshness { font-size:10px!important; margin-bottom:24px!important; }
+.console-freshness a { color:#286640; }
+.console-period { display:flex; gap:4px; background:#fffdf8; border:1px solid #e2e6dd; padding:4px; border-radius:10px; width:max-content; max-width:100%; flex-wrap:wrap; }
+.console-period a,.console-period button { padding:9px 13px; font-size:11px; color:#687665; font-weight:600; border:0; border-radius:7px; text-decoration:none; background:transparent; cursor:pointer; }
+.console-period [aria-current=page],.console-period [aria-pressed=true] { background:#286640; color:white; }
+.console-metrics { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; margin-bottom:24px; }
+.console-metrics article { background:#fffdf8; border:1px solid #e3e7df; border-radius:14px; padding:22px; border-top:3px solid #d5dfcf; }
+.console-metrics article:first-child { border-top-color:#b52c2e; }
+.console-metrics article>span { color:#71806e; font-size:11px; font-weight:600; }
+.console-metrics strong { display:block; font-size:30px; margin:12px 0 8px; color:#233e2d; letter-spacing:-.04em; }
+.console-metrics small { color:#8a9384; font-size:10px; line-height:1.6; display:block; }
+.console-two-col { display:grid; grid-template-columns:minmax(0,1.65fr) minmax(0,1fr); gap:22px; margin-bottom:22px; }
+.console-card { background:#fffdf8; border:1px solid #e3e7df; border-radius:14px; padding:24px; min-width:0; }
+.console-card h2 { font-size:16px; color:#2b4031; margin:0 0 6px; letter-spacing:-.02em; }
+.console-card-head { display:flex; justify-content:space-between; align-items:flex-start; gap:16px; margin-bottom:12px; }
+.console-text-link { font-size:11px; color:#a4282c; text-decoration:none; white-space:nowrap; font-weight:700; }
+.console-chart { height:170px; display:flex; align-items:stretch; gap:3px; border-bottom:1px solid #dce4d7; margin:25px 0 10px; padding:0 8px; }
+.console-chart>div { position:relative; flex:1; min-width:1px; display:flex; align-items:flex-end; }
+.console-chart i { width:100%; display:block; background:#6d9674; border-radius:3px 3px 0 0; min-height:1px; }
+.console-chart>div:hover i,.console-chart>div:focus i { background:#b52c2e; }
+.console-chart>div>span { display:none; position:absolute; bottom:100%; left:50%; transform:translateX(-50%); background:#233e2d; color:#fff; padding:6px; border-radius:6px; white-space:nowrap; font-size:10px; z-index:2; }
+.console-chart>div:hover>span,.console-chart>div:focus>span { display:block; }
+.console-chart-axis { display:flex; justify-content:space-between; gap:5px; font-size:9px; color:#8c9688; }
+.console-task { display:flex; justify-content:space-between; align-items:center; padding:17px 0; text-decoration:none; color:#334732; border-bottom:1px solid #edf0e8; font-size:12px; }
+.console-task small { display:block; margin-top:5px; color:#8a9384; font-size:10px; }
+.console-task b { color:#b52c2e; }
+.console-status-row { display:flex; gap:14px; align-items:center; margin:14px 0; font-size:11px; text-transform:capitalize; }
+.console-status-row>span { width:125px; flex-shrink:0; }
+.console-status-row meter { flex:1; height:10px; accent-color:#598565; }
+.console-community { display:flex; align-items:center; justify-content:space-between; padding:10px 0; font-size:12px; text-transform:capitalize; border-bottom:1px solid #edf0e8; }
+.console-community:last-of-type { margin-bottom:16px; }
+.console-table-wrap { width:100%; overflow:auto; }
+.console-table { width:100%; border-collapse:collapse; text-align:left; font-size:11px; }
+.console-table th { padding:13px 12px; color:#85917e; font-weight:600; white-space:nowrap; border-bottom:1px solid #e5eadd; }
+.console-table td { padding:16px 12px; color:#586951; border-bottom:1px solid #edf0e8; }
+.console-table td:first-child { color:#334b35; }
+.console-table td small { display:block; color:#8a9384; font-size:10px; margin-top:6px; }
+.console-pill { display:inline-block; border-radius:20px; background:#edf3e8; padding:5px 9px; color:#49724d; font-size:10px; text-transform:capitalize; white-space:nowrap; }
+.console-empty { text-align:center; padding:28px 10px; }
+.console-filter { display:flex; align-items:end; gap:16px; margin:25px 0; flex-wrap:wrap; }
+.console-filter label { display:grid; gap:8px; font-size:11px; color:#64785b; }
+.console-filter input,.console-filter select { padding:12px 14px; background:white; border:1px solid #dce3d4; border-radius:8px; max-width:100%; }
+.console-filter>label:first-child { flex:1; min-width:180px; }
+.console-filter a { padding-bottom:12px; font-size:12px; }
+.console-pagination { display:flex; justify-content:center; gap:24px; font-size:12px; padding-top:20px; }
+.console-map-grid { display:grid; grid-template-columns:260px minmax(0,1fr); gap:20px; margin-top:20px; }
+.console-location-list { max-height:490px; overflow:auto; display:flex; flex-direction:column; gap:8px; }
+.console-location-list button { text-align:left; padding:15px; border:1px solid #e2e7da; background:#fffdf8; border-radius:10px; cursor:pointer; color:#53634d; }
+.console-location-list button[aria-pressed=true] { border-color:#b52c2e; background:#fff3eb; }
+.console-location-list strong,.console-location-list small,.console-location-list span { display:block; }
+.console-location-list strong { margin:7px 0; color:#314b34; }
+.console-location-list small { font-size:9px; color:#8a9384; }
+.console-location-list span { font-size:11px; line-height:1.5; }
+.console-map-view { border:1px solid #dce5d4; border-radius:12px; overflow:hidden; min-width:0; }
+.console-coordinate-map { width:100%; display:block; min-height:260px; }
+.console-map-caption { display:flex; justify-content:space-between; gap:15px; padding:18px; font-size:13px; }
+.console-map-caption small { display:block; font-size:10px; color:#85917e; margin-top:6px; }
+.console-map-empty { min-height:320px; display:flex; flex-direction:column; justify-content:center; align-items:center; padding:32px; background:#eff3e9; text-align:center; }
+.console-footnote { font-size:10px!important; margin-top:18px!important; }
+.admin-console .dashboard-shell,.admin-console .dashboard-page { width:100%; max-width:1500px; padding:32px; margin:auto; }
+.admin-console :focus-visible { outline:3px solid #b52c2e; outline-offset:3px; }
+.admin-footer-entry { position:relative; display:inline-block; }
+.admin-footer-menu { display:none; position:absolute; bottom:100%; right:0; min-width:170px; padding:12px; background:#fffdf8; border:1px solid #e7d6c6; border-radius:10px; box-shadow:0 10px 30px #34201815; }
+.admin-footer-entry:hover .admin-footer-menu,.admin-footer-entry:focus-within .admin-footer-menu { display:grid; gap:12px; }
+@media(max-width:1100px) { .admin-console { grid-template-columns:205px minmax(0,1fr); } .console-page { padding:28px 22px; } .console-topbar { padding:16px 22px; } .console-metrics { grid-template-columns:repeat(2,minmax(0,1fr)); } .console-two-col { grid-template-columns:1fr; } .console-map-grid { grid-template-columns:210px minmax(0,1fr); } }
+@media(max-width:700px) { .admin-console { display:block; } .console-sidebar { position:static; height:auto; padding:12px 16px; border-right:0; border-bottom:1px solid #e3e7df; } .console-logo { margin:0; padding:0; } .console-logo img { width:124px; height:59px; } .console-sidebar>.console-label,.console-sidebar-footer { display:none; } .console-nav { flex-direction:row; overflow:auto; gap:4px; padding:10px 0 4px; } .console-nav a { white-space:nowrap; padding:10px; font-size:11px; } .console-nav a>span { display:none; } .console-topbar { height:auto; padding:16px; } .console-topbar strong { font-size:11px; } .console-topbar .console-label { font-size:8px; } .console-account { gap:12px; font-size:11px; } .console-page { padding:24px 16px; } .console-page h1 { font-size:26px; } .console-page-head { align-items:flex-start; flex-direction:column; } .console-metrics { gap:10px; } .console-metrics article { padding:15px; } .console-metrics strong { font-size:25px; } .console-card { padding:18px; } .console-card-head { flex-wrap:wrap; } .console-chart-axis { font-size:8px; } .console-map-grid { grid-template-columns:1fr; } .console-location-list { max-height:190px; } .console-status-row>span { width:110px; } .admin-console .dashboard-shell,.admin-console .dashboard-page { padding:22px 16px; } }
