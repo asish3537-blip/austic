@@ -63,6 +63,11 @@ export async function sendAuthEmail(email: string, kind: AuthEmailKind, token: s
       cache: "no-store",
       signal: AbortSignal.timeout(8_000),
     });
+    if (!response.ok) {
+      const rejected = await response.json().catch(() => null) as { name?: string } | null;
+      const allowed = ["validation_error", "missing_api_key", "invalid_api_key", "restricted_api_key", "rate_limit_exceeded", "application_error"];
+      console.error("Pausstik mail provider rejected message.", { kind, status: response.status, reason: allowed.includes(rejected?.name || "") ? rejected!.name : "provider_error" });
+    }
     return response.ok;
   } catch {
     return false;
