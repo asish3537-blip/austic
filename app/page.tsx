@@ -7,7 +7,7 @@ export default function HomePage() {
       <div><span className="eyebrow">Neighbourhood kitchens</span>
         <h1>Home-cooked lunch,<br /><em>close to home.</em></h1>
         <p>Choose a local mother’s kitchen and plan your lunches for the week.</p>
-        <div className="hero-actions"><Link className="button" href="/app">Explore kitchens →</Link><Link className="text-link" href="/install">Get the app</Link></div>
+        <div className="hero-actions"><Link className="button" href="/app">Open app →</Link><a className="button button-light" href="/downloads/Pausstik-1.1.0.apk" download>Download for Android</a></div>
       </div>
       <Image src="/assets/mother-child-meal.svg" alt="Mother and child sharing lunch" width={560} height={444} priority />
     </section>

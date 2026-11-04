@@ -26,6 +26,19 @@
           "value": "DENY"
         }
       ]
+    },
+    {
+      "source": "/downloads/Pausstik-1.1.0.apk",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/vnd.android.package-archive"
+        },
+        {
+          "key": "Content-Disposition",
+          "value": "attachment"
+        }
+      ]
     }
   ]
 }
