@@ -73,7 +73,7 @@ export async function GET() {
       currency: "INR",
     });
   } catch (error) {
-    console.error("Pausstik mother workspace could not load.", error instanceof Error ? error.name : "unknown error");
+    console.error("Paustik mother workspace could not load.", error instanceof Error ? error.name : "unknown error");
     return serviceUnavailable();
   }
 }
@@ -141,7 +141,7 @@ export async function POST(request: Request) {
     });
     return NextResponse.json({ created: true, menuId: menu.id, published: publish, message: publish ? "Meal added to your live menu." : "Meal saved as a draft. Kitchen approval and a pickup pin are needed before customers can order." }, { status: 201 });
   } catch (error) {
-    console.error("Pausstik mother menu save failed.", error instanceof Error ? error.name : "unknown error");
+    console.error("Paustik mother menu save failed.", error instanceof Error ? error.name : "unknown error");
     return serviceUnavailable();
   }
 }

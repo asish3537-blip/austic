@@ -7,14 +7,14 @@ import { rejectCrossOrigin, serviceUnavailable } from "@/lib/http";
 import { AdminAuthError, reserveAdminAttempt } from "@/lib/admin-authenticator";
 
 export const runtime = "nodejs";
-const genericMessage = "If a Pausstik account uses that email and can receive messages, check your inbox for password reset instructions. If no email arrives, check spam and try again. An earlier reset link stays valid until a replacement is sent or your password is changed.";
+const genericMessage = "If a Paustik account uses that email and can receive messages, check your inbox for password reset instructions. If no email arrives, check spam and try again. An earlier reset link stays valid until a replacement is sent or your password is changed.";
 
 export async function POST(request: Request) {
   const originError = rejectCrossOrigin(request);
   if (originError) return originError;
   if (!process.env.DATABASE_URL || !process.env.AUTH_SECRET) return serviceUnavailable();
   if (!isEmailConfigured()) {
-    return NextResponse.json({ error: "Password reset email is not connected yet. Configure the Pausstik email sender, then request a new link." }, { status: 503 });
+    return NextResponse.json({ error: "Password reset email is not connected yet. Configure the Paustik email sender, then request a new link." }, { status: 503 });
   }
   let body: unknown;
   try { body = await request.json(); } catch { return NextResponse.json({ error: "Enter your email address." }, { status: 400 }); }
@@ -39,7 +39,7 @@ export async function POST(request: Request) {
     const emailSent = await sendAuthEmail(email, "reset", rawToken, new URL(request.url).origin).catch(() => false);
     if (!emailSent) {
       await prisma.passwordResetToken.deleteMany({ where: { userId: user.id, tokenHash, usedAt: null } });
-      console.error("Pausstik password reset email was not accepted for delivery.");
+      console.error("Paustik password reset email was not accepted for delivery.");
     } else {
       await prisma.passwordResetToken.updateMany({
         where: { userId: user.id, tokenHash: { not: tokenHash }, usedAt: null, createdAt: { lt: issued.createdAt } },
@@ -51,7 +51,7 @@ export async function POST(request: Request) {
     if (error instanceof AdminAuthError) {
       return NextResponse.json({ error: error.message }, { status: error.status, headers: { "Retry-After": "900" } });
     }
-    console.error("Pausstik password reset request failed.", error instanceof Error ? error.name : "unknown error");
+    console.error("Paustik password reset request failed.", error instanceof Error ? error.name : "unknown error");
     return serviceUnavailable();
   }
 }

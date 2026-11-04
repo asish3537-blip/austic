@@ -1,0 +1,18 @@
+"use client";
+import { UiText } from "@/components/ui-language";
+import { useEffect, useState } from "react";
+import { distanceMeters } from "@/lib/marketplace-rules";
+type Tracking = { orderStatus: string; deliveryStatus: string | null; scheduledFor: string; courierName: string | null; events: { status: string; at: string }[]; dropoff: { latitude: number; longitude: number } | null; location: { latitude: number; longitude: number; accuracyMeters: number; updatedAt: string } | null };
+const label = (s: string) => s.toLowerCase().replaceAll("_", " ");
+const time = (s: string) => new Date(s).toLocaleString("en-IN", { timeZone: "Asia/Kolkata", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+export function OrderTracking({ orderId, orderNumber }: { orderId: string; orderNumber: string }) {
+  const [open, setOpen] = useState(false); const [tracking, setTracking] = useState<Tracking | null>(null); const [error, setError] = useState(""); const [checked, setChecked] = useState(0);
+  useEffect(() => {
+    if (!open) return; let active = true;
+    async function refresh() { try { const r = await fetch("/api/marketplace/tracking?orderId=" + encodeURIComponent(orderId), { cache: "no-store" }); const d = await r.json(); if (!r.ok) throw new Error(d.error || "Tracking could not load."); if (active) { setTracking(d); setError(""); } } catch (e) { if (active) setError(e instanceof Error ? e.message : "Tracking could not load."); } finally { if (active) setChecked(Date.now()); } }
+    void refresh(); const timer = setInterval(refresh, 15000); return () => { active = false; clearInterval(timer); };
+  }, [open, orderId]);
+  const point = tracking?.location && checked - new Date(tracking.location.updatedAt).getTime() <= 120000 ? tracking.location : null;
+  const distance = point && tracking?.dropoff ? distanceMeters(point, tracking.dropoff) : null;
+  return <details className="order-tracking" onToggle={e => setOpen(e.currentTarget.open)}><summary><UiText text="Track order"/> · {orderNumber}</summary>{error && <p role="alert">{error} Updates retry every 15 seconds while this panel is open.</p>}{!tracking && !error && <p role="status">Loading your order timeline…</p>}{tracking && <div><strong className="tracking-stage"><UiText text={label(tracking.orderStatus)}/></strong><p>Scheduled delivery: {time(tracking.scheduledFor)} IST</p><p>{tracking.courierName ? `Courier: ${tracking.courierName}` : "Waiting for a courier assignment."}</p><ol className="order-timeline">{tracking.events.map((event, i) => <li key={`${event.at}-${i}`}><span><UiText text={label(event.status)}/></span><time dateTime={event.at}>{time(event.at)} IST</time></li>)}</ol>{point ? <div className="order-gps"><strong><UiText text="Courier GPS available"/></strong><p>{distance === null ? "Current courier position is available." : `${(distance / 1000).toFixed(2)} km from your delivery pin in a straight line.`}</p><small>GPS accuracy ±{Math.round(point.accuracyMeters)} m · Updated {time(point.updatedAt)} IST</small><p className="tracking-location">Courier: {point.latitude.toFixed(5)}, {point.longitude.toFixed(5)}</p><small>This is a GPS update, not a road route or traffic-based arrival estimate.</small></div> : <p>{["DELIVERED", "CANCELLED", "FAILED"].includes(tracking.orderStatus) ? "Tracking has ended. Courier location is no longer shared." : "Live GPS appears after pickup when the courier shares an accurate, recent location. Your order status is still tracked while GPS is unavailable."}</p>}<small>Refreshes every 15 seconds while open.</small></div>}</details>;
+}

@@ -5,6 +5,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { rejectCrossOrigin, serviceUnavailable } from "@/lib/http";
 import { CANCELLATION_CUTOFF_HOURS, CANCELLATION_OPERATION_FEE_INR, DELIVERY_FEE_INR, distanceMeters, lockWallet, mealDeliveryInstant, mealPriceAllowed, walletBalance } from "@/lib/marketplace-rules";
 import { prisma } from "@/lib/prisma";
+import { ensurePilotWallet } from "@/lib/pilot-wallet";
 
 export const runtime = "nodejs";
 const subscriptionSchema = z.object({ menuIds: z.array(z.string().uuid()).min(3).max(7), quantity: z.number().int().min(1).max(6).default(1) });
@@ -21,7 +22,7 @@ export async function POST(request: Request) {
   let body: unknown;
   try { body = await request.json(); } catch { return NextResponse.json({ error: "Choose at least three available menu days." }, { status: 400 }); }
   const parsed = subscriptionSchema.safeParse(body);
-  if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0]?.message || "Choose 3 to 7 days from one kitchen." }, { status: 400 });
+  if (!parsed.success) return NextResponse.json({ error: "Choose meals on 3 to 7 different days. Five servings on one day still count as one meal day." }, { status: 400 });
 
   try {
     const [address, menus] = await Promise.all([
@@ -56,6 +57,7 @@ export async function POST(request: Request) {
     const dayNames = sorted.map((menu) => new Intl.DateTimeFormat("en-IN", { weekday: "long", timeZone: "UTC" }).format(menu.serviceDate));
     const result = await prisma.$transaction(async (tx) => {
       await lockWallet(tx, user.id);
+      await ensurePilotWallet(tx, user.id);
       let remainingWallet = await walletBalance(tx, user.id);
       const plan = await tx.mealPlan.create({ data: {
         name: kitchen.name + " · " + sorted.length + " day plan",
@@ -105,7 +107,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ created: true, ...result, message: "Your one-week plan is saved for " + sorted.length + " delivery days. Renew manually next week; no automatic payment is scheduled." }, { status: 201 });
   } catch (error) {
     if (error instanceof Error && error.message === "MENU_SOLD_OUT") return NextResponse.json({ error: "One selected day sold out while the plan was being saved. Refresh the menu and try again." }, { status: 409 });
-    console.error("Pausstik weekly subscription creation failed.", error instanceof Error ? error.name : "unknown error");
+    console.error("Paustik weekly subscription creation failed.", error instanceof Error ? error.name : "unknown error");
     return serviceUnavailable();
   }
 }

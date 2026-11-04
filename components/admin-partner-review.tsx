@@ -1,5 +1,6 @@
 "use client";
 
+import { UiText } from "@/components/ui-language";
 import { useCallback, useEffect, useState } from "react";
 
 type Partner = {
@@ -57,7 +58,7 @@ export function AdminPartnerReview() {
     {message && <p className="workspace-message" role="status">{message}</p>}
     {loading ? <p className="admin-empty-inline">Loading applications…</p> : partners.length ? <div className="admin-partner-list">{partners.map((partner) => <article key={partner.userId}>
       <span className="admin-person-mark" aria-hidden="true">{partner.name.slice(0, 1).toUpperCase()}</span>
-      <div className="admin-partner-copy"><strong>{partner.name} · {partner.role === "MOTHER" ? "Mother entrepreneur" : "Delivery partner"}</strong>
+      <div className="admin-partner-copy"><strong>{partner.name} · {partner.role === "MOTHER" ? <UiText text="Mother entrepreneur"/> : "Delivery partner"}</strong>
         {partner.kitchen ? <span>{partner.kitchen.name} · {partner.kitchen.location} · {partner.cuisine} · capacity {partner.kitchen.capacityPerDay}/day</span> : <span>{partner.vehicleType || "Vehicle not provided"} · {partner.location || "Service area not provided"}</span>}
         <small>Applied {new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeZone: "Asia/Kolkata" }).format(new Date(partner.createdAt))}</small>
       </div>

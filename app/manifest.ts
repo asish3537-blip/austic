@@ -4,8 +4,8 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     // Preserve the identity used by earlier installations when id was omitted.
     id: "/app-demo?source=install",
-    name: "Pausstik · Home-style meals",
-    short_name: "Pausstik",
+    name: "Paustik · Home-style meals",
+    short_name: "Paustik",
     description: "Find nearby mother-led kitchens, choose home-style meals and follow local delivery.",
     start_url: "/app",
     scope: "/",
@@ -14,14 +14,14 @@ export default function manifest(): MetadataRoute.Manifest {
     theme_color: "#b52c2e",
     categories: ["food", "lifestyle", "shopping"],
     icons: [
-      { src: "/icons/pausstik-app-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
-      { src: "/icons/pausstik-app-512.png", sizes: "512x512", type: "image/png", purpose: "any" },
-      { src: "/icons/pausstik-maskable-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+      { src: "/icons/pausstik-app-192.png?v=4", sizes: "192x192", type: "image/png", purpose: "any" },
+      { src: "/icons/pausstik-app-512.png?v=4", sizes: "512x512", type: "image/png", purpose: "any" },
+      { src: "/icons/pausstik-maskable-512.png?v=4", sizes: "512x512", type: "image/png", purpose: "maskable" },
     ],
     shortcuts: [
-      { name: "Open Pausstik", short_name: "My app", url: "/app" },
+      { name: "Open Paustik", short_name: "My app", url: "/app" },
       { name: "Help and guides", short_name: "Help", url: "/help" },
-      { name: "Pausstik website", short_name: "Website", url: "/" },
+      { name: "Paustik website", short_name: "Website", url: "/" },
     ],
   };
 }

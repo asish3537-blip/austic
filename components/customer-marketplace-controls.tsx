@@ -1,5 +1,6 @@
 "use client";
 
+import { UiText } from "@/components/ui-language";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -42,7 +43,8 @@ export function CustomerDeliveryPin({ initialPinned = false }: { initialPinned?:
         if (!response.ok) throw new Error(data.error || "Could not save the delivery pin.");
         setState("ready");
         setMessage(data.message);
-        router.refresh();
+        window.dispatchEvent(new Event("paustik-wallet-updated"));
+      router.refresh();
       } catch (error) {
         setState("error");
         setMessage(error instanceof Error ? error.message : "Could not save the delivery pin.");
@@ -78,6 +80,7 @@ export function PlaceOrderButton({ menuId, servings }: { menuId: string; serving
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Could not place this order.");
       setMessage(data.amountDue > 0 ? "Order " + data.orderNumber + " saved. ₹" + data.amountDue + " remains due; no payment was taken." : "Order " + data.orderNumber + " saved using wallet credit.");
+      window.dispatchEvent(new Event("paustik-wallet-updated"));
       router.refresh();
     } catch (cause) {
       setError(true);
@@ -89,30 +92,16 @@ export function PlaceOrderButton({ menuId, servings }: { menuId: string; serving
 
   return <div className="customer-order-action">
     <div className="customer-order-controls">
-      <label>Servings <select aria-label="Servings" value={quantity} onChange={(event) => setQuantity(Number(event.target.value))}>
+      <label><UiText text="Servings"/><select aria-label="Servings" value={quantity} onChange={(event) => setQuantity(Number(event.target.value))}>
         {Array.from({ length: Math.min(8, servings) }, (_, index) => <option key={index + 1} value={index + 1}>{index + 1}</option>)}
       </select></label>
-      <button type="button" className="button button-small" onClick={placeOrder} disabled={busy || servings < 1}>{busy ? "Saving…" : "Order meal"}</button>
+      <button type="button" className="button button-small" onClick={placeOrder} disabled={busy || servings < 1}>{busy ? "Saving…" : <UiText text="Order meal"/>}</button>
     </div>
     {message && <p className={"customer-order-message " + (error ? "is-error" : "")}>{message}</p>}
   </div>;
 }
 
-export function CustomerWallet() {
-  const [wallet, setWallet] = useState<{ balance: number; entries: { id: string; direction: string; amount: number; description: string; createdAt: string }[] } | null>(null);
-  useEffect(() => {
-    let active = true;
-    fetch("/api/customer/wallet", { cache: "no-store" }).then(async (response) => {
-      const data = await response.json();
-      if (active && response.ok) setWallet(data);
-    }).catch(() => {});
-    return () => { active = false; };
-  }, []);
-  return <section className="customer-wallet" id="wallet-section" aria-label="Pausstik wallet">
-    <div className="customer-wallet-heading"><div><span className="eyebrow">Meal day adjustments</span><h2>Your Pausstik wallet</h2><p>Eligible early cancellations return to wallet after the ₹5 processing fee. Wallet credit can pay for a later order.</p></div><strong>₹{(wallet?.balance ?? 0).toFixed(0)}</strong></div>
-    {wallet?.entries.length ? <ul>{wallet.entries.slice(0, 4).map((entry) => <li key={entry.id}><span>{entry.description}</span><b className={entry.direction === "CREDIT" ? "wallet-credit" : "wallet-debit"}>{entry.direction === "CREDIT" ? "+" : "−"}₹{entry.amount.toFixed(0)}</b></li>)}</ul> : <p className="customer-wallet-empty">Wallet activity will appear here when credits or order payments are recorded.</p>}
-  </section>;
-}
+export { PilotCustomerWallet as CustomerWallet } from "@/components/pilot-customer-wallet";
 
 export function FavoriteKitchenButton({ kitchenId, initiallySaved = false }: { kitchenId: string; initiallySaved?: boolean }) {
   const router = useRouter();
@@ -127,6 +116,7 @@ export function FavoriteKitchenButton({ kitchenId, initiallySaved = false }: { k
       if (!response.ok) throw new Error(data.error || "Could not update your favourite kitchens.");
       setSaved(data.saved);
       setMessage(data.message);
+      window.dispatchEvent(new Event("paustik-wallet-updated"));
       router.refresh();
     } catch (cause) { setMessage(cause instanceof Error ? cause.message : "Could not update your favourite kitchens."); }
     finally { setBusy(false); }
@@ -142,13 +132,14 @@ export function CancelOrderButton({ orderId, scheduledFor, orderStatus }: { orde
   if (!eligible) return null;
   const cutoffAt = new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata" }).format(new Date(new Date(scheduledFor).getTime() - 5 * 60 * 60 * 1000));
   async function cancelDay() {
-    if (!window.confirm("Cancel this meal day? Eligible paid value will return to your Pausstik wallet after a ₹5 processing fee.")) return;
+    if (!window.confirm("Cancel this meal day? Eligible paid value will return to your Paustik wallet after a ₹5 processing fee.")) return;
     setBusy(true); setMessage("");
     try {
       const response = await fetch("/api/customer/orders/" + encodeURIComponent(orderId) + "/cancel", { method: "POST" });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Could not cancel this meal day.");
       setMessage(data.message);
+      window.dispatchEvent(new Event("paustik-wallet-updated"));
       router.refresh();
     } catch (cause) { setMessage(cause instanceof Error ? cause.message : "Could not cancel this meal day."); }
     finally { setBusy(false); }
@@ -156,35 +147,4 @@ export function CancelOrderButton({ orderId, scheduledFor, orderStatus }: { orde
   return <div className="customer-cancel-action"><small>Cancel by {cutoffAt}</small><button type="button" onClick={cancelDay} disabled={busy}>{busy ? "Cancelling…" : "Cancel this day"}</button>{message && <small role="status">{message}</small>}</div>;
 }
 
-type TrackingData = {
-  orderStatus: string;
-  deliveryStatus: string | null;
-  location: { latitude: number; longitude: number; accuracyMeters: number; updatedAt: string } | null;
-};
-
-export function CustomerDeliveryTracking({ orderId, orderNumber }: { orderId: string; orderNumber: string }) {
-  const [tracking, setTracking] = useState<TrackingData | null>(null);
-
-  useEffect(() => {
-    let active = true;
-    async function refresh() {
-      try {
-        const response = await fetch("/api/marketplace/tracking?orderId=" + encodeURIComponent(orderId), { cache: "no-store" });
-        const data = await response.json();
-        if (active && response.ok) setTracking(data);
-      } catch { /* A later polling cycle can refresh a temporary network failure. */ }
-    }
-    void refresh();
-    const timer = window.setInterval(refresh, 15000);
-    return () => { active = false; window.clearInterval(timer); };
-  }, [orderId]);
-
-  if (!tracking) return <div className="customer-tracking"><span className="tracking-pulse" />Checking delivery updates for {orderNumber}…</div>;
-  const mapUrl = tracking.location
-    ? "https://www.openstreetmap.org/?mlat=" + tracking.location.latitude + "&mlon=" + tracking.location.longitude + "#map=16/" + tracking.location.latitude + "/" + tracking.location.longitude
-    : null;
-  return <div className="customer-tracking">
-    <div className="customer-tracking-copy"><span className="tracking-pulse" /><div><strong>{tracking.deliveryStatus ? tracking.deliveryStatus.toLowerCase().replaceAll("_", " ") : "Kitchen is preparing your order"}</strong><span>{tracking.location ? "Courier location updated " + new Date(tracking.location.updatedAt).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }) : "Courier location appears after pickup when the courier opts in to GPS sharing."}</span></div></div>
-    {mapUrl && <a href={mapUrl} target="_blank" rel="noreferrer">Open map (shares this point with OpenStreetMap)</a>}
-  </div>;
-}
+export { OrderTracking as CustomerDeliveryTracking } from "@/components/order-tracking";

@@ -30,7 +30,7 @@ export async function POST(request: Request) {
   const originError = rejectCrossOrigin(request);
   if (originError) return originError;
   if (!process.env.DATABASE_URL || !process.env.AUTH_SECRET) return serviceUnavailable();
-  if (Date.now() >= OWNER_SETUP_EXPIRES_AT) return NextResponse.json({ error: "The one-time admin setup link has expired. Contact Pausstik support." }, { status: 410 });
+  if (Date.now() >= OWNER_SETUP_EXPIRES_AT) return NextResponse.json({ error: "The one-time admin setup link has expired. Contact Paustik support." }, { status: 410 });
 
   let body: unknown;
   try { body = await request.json(); } catch { return NextResponse.json({ error: "Enter the one-time setup code and admin account details." }, { status: 400 }); }
@@ -121,7 +121,7 @@ export async function POST(request: Request) {
     if (error instanceof Error && error.message === "OWNER_SETUP_ACCOUNT_CONFLICT") {
       return NextResponse.json({ error: "That username or email belongs to another account. Choose different details and try again." }, { status: 409 });
     }
-    console.error("Pausstik admin owner setup failed.", error instanceof Error ? error.name : "unknown error");
+    console.error("Paustik admin owner setup failed.", error instanceof Error ? error.name : "unknown error");
     return serviceUnavailable();
   }
 }

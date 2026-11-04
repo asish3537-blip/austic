@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.INTERNET"/>
-    <application android:label="Pausstik" android:icon="@drawable/pausstik" android:theme="@android:style/Theme.Material.Light.NoActionBar" android:allowBackup="false" android:usesCleartextTraffic="false">
+    <application android:label="Paustik" android:icon="@drawable/pausstik" android:theme="@android:style/Theme.Material.Light.NoActionBar" android:allowBackup="false" android:usesCleartextTraffic="false">
         <activity android:name="in.paustik.mobile.KitchenActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

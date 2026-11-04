@@ -15,7 +15,7 @@ import { createSession, roleHome } from "@/lib/auth";
 export const runtime = "nodejs";
 
 function unavailable() {
-  return NextResponse.json({ error: "Pausstik could not complete account creation. Please try again." }, { status: 503 });
+  return NextResponse.json({ error: "Paustik could not complete account creation. Please try again." }, { status: 503 });
 }
 
 export async function POST(request: Request) {
@@ -51,7 +51,7 @@ export async function POST(request: Request) {
     try {
       const local = await import("@/lib/local-auth-db");
       if (local.findLocalUserByPhone(candidates)) {
-        return NextResponse.json({ error: "This phone number already has a local Pausstik account. Request a fresh code to sign in." }, { status: 409 });
+        return NextResponse.json({ error: "This phone number already has a local Paustik account. Request a fresh code to sign in." }, { status: 409 });
       }
       if (local.findLocalUserByEmail(email)) {
         return NextResponse.json({ error: "An account already uses that email address. Sign in with its phone number." }, { status: 409 });
@@ -85,13 +85,13 @@ export async function POST(request: Request) {
         created: true,
         status: user.status,
         destination: "/account/local-demo",
-        message: "Your local Pausstik account is saved. No email or SMS was sent; the in-app code was for this local preview.",
+        message: "Your local Paustik account is saved. No email or SMS was sent; the in-app code was for this local preview.",
       }, { status: 201 });
     } catch (error) {
       if (error instanceof Error && error.message.includes("UNIQUE constraint failed")) {
         return NextResponse.json({ error: "An account already uses that email or phone number. Sign in with its phone number." }, { status: 409 });
       }
-      console.error("Pausstik local account creation failed.", error instanceof Error ? error.name : "unknown error");
+      console.error("Paustik local account creation failed.", error instanceof Error ? error.name : "unknown error");
       return unavailable();
     }
   }
@@ -106,7 +106,7 @@ export async function POST(request: Request) {
     }
     const priorAccount = !emailSignup && await prisma.user.findFirst({ where: { phone: { in: candidates } }, select: { id: true } });
     if (priorAccount) {
-      return NextResponse.json({ error: "This phone number already has a Pausstik account. Sign in with a phone code instead." }, { status: 409 });
+      return NextResponse.json({ error: "This phone number already has a Paustik account. Sign in with a phone code instead." }, { status: 409 });
     }
     const priorEmail = await prisma.user.findUnique({ where: { email }, select: { id: true } });
     if (priorEmail) {
@@ -187,14 +187,14 @@ export async function POST(request: Request) {
         created: true,
         status: user.status,
         destination: roleHome({ role: user.role, status: user.status }),
-        message: "Your account is ready. No email or SMS was sent; this temporary code is for the Pausstik preview only.",
+        message: "Your account is ready. No email or SMS was sent; this temporary code is for the Paustik preview only.",
       }, { status: 201, headers: { "Cache-Control": "no-store" } });
       clearDemoOtpCookie(response);
       return response;
     }
     const emailSent = verificationToken ? await sendAuthEmail(email, "verify", verificationToken, new URL(request.url).origin) : false;
     const developmentLink = process.env.NODE_ENV !== "production" && !emailSent && verificationToken
-      ? makeAuthLink("verify", verificationToken)
+      ? makeAuthLink("verify", verificationToken, new URL(request.url).origin)
       : undefined;
     if (!emailSent && !developmentLink && verificationToken) {
       await prisma.emailVerificationToken.deleteMany({
@@ -214,7 +214,7 @@ export async function POST(request: Request) {
     if (error && typeof error === "object" && "code" in error && error.code === "P2002") {
       return NextResponse.json({ error: "An account already uses that email or phone number. Sign in or reset your password." }, { status: 409 });
     }
-    console.error("Pausstik account creation failed.", error instanceof Error ? error.name : "unknown error");
+    console.error("Paustik account creation failed.", error instanceof Error ? error.name : "unknown error");
     return unavailable();
   }
 }

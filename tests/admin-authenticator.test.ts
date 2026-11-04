@@ -215,9 +215,9 @@ test("Authenticator URI encodes the account label and declares interoperable TOT
   const parsed = new URL(uri);
   assert.equal(parsed.protocol, "otpauth:");
   assert.equal(parsed.hostname, "totp");
-  assert.equal(decodeURIComponent(parsed.pathname.slice(1)), `Pausstik:${email}`);
+  assert.equal(decodeURIComponent(parsed.pathname.slice(1)), `Paustik:${email}`);
   assert.equal(parsed.searchParams.get("secret"), RFC_SECRET);
-  assert.equal(parsed.searchParams.get("issuer"), "Pausstik");
+  assert.equal(parsed.searchParams.get("issuer"), "Paustik");
   assert.equal(parsed.searchParams.get("algorithm"), "SHA1");
   assert.equal(parsed.searchParams.get("digits"), "6");
   assert.equal(parsed.searchParams.get("period"), "30");

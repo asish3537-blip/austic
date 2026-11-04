@@ -1,0 +1,262 @@
+{
+  "runId": "pilot-1793818743911",
+  "environment": "Isolated local test system",
+  "capturedAt": "2026-11-04T19:08:25.489Z",
+  "checks": [
+    "Wallet: one-time ₹555, ₹500 cap, idempotent retry and concurrent requests",
+    "Reservation: one date rejected, three dates reserved, wallet debited atomically",
+    "Delivery: all eight events, assigned courier, pickup/drop-off geofences, GPS cleared after delivery",
+    "Feedback: delivery required, ownership enforced, separate food and courier scores",
+    "Fixtures: exactly five completed lifecycle records; rerunning creates no duplicates",
+    "Languages: English, Hindi and Odia controls; preference persists across navigation",
+    "Access: guest/customer blocked from admin reports and screenshot files",
+    "Branding: visible Paustik name; versioned browser and install icons",
+    "Single meal: one-day lunch without subscription and wallet settlement",
+    "Evidence gallery: admin image loads, category filtering and unknown-file rejection"
+  ],
+  "screenshots": [
+    {
+      "id": "01-sign-in",
+      "file": "01-sign-in.png",
+      "title": "Email sign-in",
+      "group": "Access",
+      "note": "Empty sign-in screen. No real credentials appear.",
+      "width": 390,
+      "height": 900
+    },
+    {
+      "id": "02-wallet-starter",
+      "file": "02-wallet-starter.png",
+      "title": "₹555 starter credit",
+      "group": "Wallet",
+      "note": "One-time non-cash test credit, saved in the isolated ledger.",
+      "width": 354,
+      "height": 371
+    },
+    {
+      "id": "03-wallet-limit",
+      "file": "03-wallet-limit.png",
+      "title": "Top-up limit enforced",
+      "group": "Wallet",
+      "note": "₹501 is blocked by the UI; the server independently rejects amounts above ₹500.",
+      "width": 354,
+      "height": 371
+    },
+    {
+      "id": "04-wallet-topup",
+      "file": "04-wallet-topup.png",
+      "title": "₹500 test top-up saved",
+      "group": "Wallet",
+      "note": "Starting ₹555 plus ₹500 extra test credit. No bank payment was taken.",
+      "width": 354,
+      "height": 332
+    },
+    {
+      "id": "05-one-day-rule",
+      "file": "05-one-day-rule.png",
+      "title": "One day is not five days",
+      "group": "Reservations",
+      "note": "Five portions on one date remain one meal day. The minimum is explained next to the disabled action.",
+      "width": 354,
+      "height": 736
+    },
+    {
+      "id": "06-three-days-ready",
+      "file": "06-three-days-ready.png",
+      "title": "Three meal days ready",
+      "group": "Reservations",
+      "note": "Three distinct dates selected, with meal and delivery prices shown.",
+      "width": 354,
+      "height": 682
+    },
+    {
+      "id": "07-reservation-saved",
+      "file": "07-reservation-saved.png",
+      "title": "Reservation confirmed",
+      "group": "Reservations",
+      "note": "The live application API created three saved orders and debited the test wallet once.",
+      "width": 354,
+      "height": 839
+    },
+    {
+      "id": "08-order-placed",
+      "file": "08-order-placed.png",
+      "title": "1 · Order reserved",
+      "group": "Tracking",
+      "note": "Actual saved event timeline using synthetic accounts and simulated GPS.",
+      "width": 236,
+      "height": 351
+    },
+    {
+      "id": "09-confirmed",
+      "file": "09-confirmed.png",
+      "title": "2 · Kitchen confirmed",
+      "group": "Tracking",
+      "note": "Actual saved event timeline using synthetic accounts and simulated GPS.",
+      "width": 247,
+      "height": 364
+    },
+    {
+      "id": "10-preparing",
+      "file": "10-preparing.png",
+      "title": "3 · Food preparation",
+      "group": "Tracking",
+      "note": "Actual saved event timeline using synthetic accounts and simulated GPS.",
+      "width": 251,
+      "height": 380
+    },
+    {
+      "id": "11-ready",
+      "file": "11-ready.png",
+      "title": "4 · Ready for pickup",
+      "group": "Tracking",
+      "note": "Actual saved event timeline using synthetic accounts and simulated GPS.",
+      "width": 218,
+      "height": 486
+    },
+    {
+      "id": "12-assigned",
+      "file": "12-assigned.png",
+      "title": "5 · Courier assigned",
+      "group": "Tracking",
+      "note": "Actual saved event timeline using synthetic accounts and simulated GPS.",
+      "width": 215,
+      "height": 556
+    },
+    {
+      "id": "13-picked-up",
+      "file": "13-picked-up.png",
+      "title": "6 · Pickup verified",
+      "group": "Tracking",
+      "note": "Actual saved event timeline using synthetic accounts and simulated GPS.",
+      "width": 250,
+      "height": 631
+    },
+    {
+      "id": "14-out-for-delivery",
+      "file": "14-out-for-delivery.png",
+      "title": "7 · On the way with GPS",
+      "group": "Tracking",
+      "note": "Actual saved event timeline using synthetic accounts and simulated GPS.",
+      "width": 223,
+      "height": 760
+    },
+    {
+      "id": "15-admin-map",
+      "file": "15-admin-map.png",
+      "title": "Admin courier position",
+      "group": "Admin",
+      "note": "Private coordinate view of the consented simulated GPS, with no external map request.",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "id": "16-delivered",
+      "file": "16-delivered.png",
+      "title": "8 · Delivered; location hidden",
+      "group": "Tracking",
+      "note": "Actual saved event timeline using synthetic accounts and simulated GPS.",
+      "width": 252,
+      "height": 502
+    },
+    {
+      "id": "17-feedback",
+      "file": "17-feedback.png",
+      "title": "Food and delivery ratings saved",
+      "group": "Feedback",
+      "note": "Only the order owner can rate a delivered order. Food 5/5 and delivery 4/5 are saved separately.",
+      "width": 252,
+      "height": 569
+    },
+    {
+      "id": "18-five-lifecycles",
+      "file": "18-five-lifecycles.png",
+      "title": "Five complete test lifecycles",
+      "group": "Admin",
+      "note": "Idempotent, explicitly marked examples with eight events, a delivery, test settlement and two ratings per order.",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "id": "19-hindi",
+      "file": "19-hindi.png",
+      "title": "हिन्दी controls",
+      "group": "Languages",
+      "note": "The chosen language applies to wallet controls and persists between visits.",
+      "width": 354,
+      "height": 189
+    },
+    {
+      "id": "20-odia",
+      "file": "20-odia.png",
+      "title": "ଓଡ଼ିଆ controls",
+      "group": "Languages",
+      "note": "The chosen language applies to wallet controls and persists between visits.",
+      "width": 354,
+      "height": 388
+    },
+    {
+      "id": "21-admin-dashboard",
+      "file": "21-admin-dashboard.png",
+      "title": "Admin overview",
+      "group": "Admin",
+      "note": "Database-backed operations dashboard. Test lifecycle orders are excluded from its business order totals.",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "id": "22-mother-workspace",
+      "file": "22-mother-workspace.png",
+      "title": "Your kitchen",
+      "group": "Roles",
+      "note": "Synthetic mother account workspace after the tested order lifecycle.",
+      "width": 390,
+      "height": 900
+    },
+    {
+      "id": "23-courier-workspace",
+      "file": "23-courier-workspace.png",
+      "title": "Your deliveries",
+      "group": "Roles",
+      "note": "Synthetic courier account workspace after the tested order lifecycle.",
+      "width": 390,
+      "height": 900
+    },
+    {
+      "id": "24-single-lunch",
+      "file": "24-single-lunch.png",
+      "title": "One-day lunch order",
+      "group": "Reservations",
+      "note": "One meal day can be ordered without a subscription through the single-meal endpoint. Wallet credit applies.",
+      "width": 390,
+      "height": 900
+    },
+    {
+      "id": "25-admin-evidence-gallery",
+      "file": "25-admin-evidence-gallery.png",
+      "title": "Protected test evidence panel",
+      "group": "Admin",
+      "note": "Category filters and screenshot downloads checked with admin authentication; guest/customer requests were denied.",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "id": "26-home-hindi",
+      "file": "26-home-hindi.png",
+      "title": "हिन्दी homepage",
+      "group": "Languages",
+      "note": "Homepage, main navigation and key calls to action use the selected language.",
+      "width": 390,
+      "height": 900
+    },
+    {
+      "id": "27-home-odia",
+      "file": "27-home-odia.png",
+      "title": "ଓଡ଼ିଆ homepage",
+      "group": "Languages",
+      "note": "Homepage, main navigation and key calls to action use the selected language.",
+      "width": 390,
+      "height": 900
+    }
+  ]
+}

@@ -17,8 +17,8 @@ async function requestAuthenticator(body?: Record<string, string>, signal?: Abor
     ...(body ? { headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) } : {}),
   });
   const result = await response.json().catch(() => null) as AuthenticatorResponse | null;
-  if (!response.ok) throw new Error(result?.error || "Pausstik could not update your security settings. Please try again.");
-  if (!result) throw new Error("Pausstik returned an incomplete response. Refresh your security settings and try again.");
+  if (!response.ok) throw new Error(result?.error || "Paustik could not update your security settings. Please try again.");
+  if (!result) throw new Error("Paustik returned an incomplete response. Refresh your security settings and try again.");
   return result;
 }
 
@@ -176,7 +176,7 @@ export function AdminAuthenticatorSettings() {
   }
 
   function downloadRecoveryCodes() {
-    const content = ["Pausstik administrator recovery codes", "Each code can be used once with your admin username and password.", "Keep these private and separate from your phone.", "", ...recoveryCodes].join("\n");
+    const content = ["Paustik administrator recovery codes", "Each code can be used once with your admin username and password.", "Keep these private and separate from your phone.", "", ...recoveryCodes].join("\n");
     const url = URL.createObjectURL(new Blob([content], { type: "text/plain;charset=utf-8" }));
     const link = document.createElement("a");
     link.href = url;
@@ -211,8 +211,8 @@ export function AdminAuthenticatorSettings() {
       <ol className="admin-security-steps">
         <li><strong>Open your authenticator app.</strong><p>Choose Add account or the + button, then Scan a QR code. In Microsoft Authenticator, choose Other account.</p></li>
         <li><strong>Scan this private QR code.</strong><p>Keep this setup key private. If you are setting up on the same phone, use the manual key below.</p>
-          <Image className="admin-security-qr" src={setup.qrCodeDataUrl} alt="Scan this QR code in your authenticator app to link your Pausstik admin account" width={230} height={230} unoptimized />
-          <details className="admin-security-manual"><summary>Enter a setup key manually</summary><p>Choose Enter a setup key in your app, name the account Pausstik admin, and select Time based.</p><code className="admin-security-secret">{setup.secret}</code></details>
+          <Image className="admin-security-qr" src={setup.qrCodeDataUrl} alt="Scan this QR code in your authenticator app to link your Paustik admin account" width={230} height={230} unoptimized />
+          <details className="admin-security-manual"><summary>Enter a setup key manually</summary><p>Choose Enter a setup key in your app, name the account Paustik admin, and select Time based.</p><code className="admin-security-secret">{setup.secret}</code></details>
           <p className="admin-security-expiry">Complete setup before {new Date(setup.expiresAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}. An expired setup needs a new key.</p>
         </li>
         <li><strong>Confirm the six-digit code from your app.</strong><p>The authenticator stays off until this code is accepted. If a code is about to change, wait for the next one.</p></li>

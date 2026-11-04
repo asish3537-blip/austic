@@ -63,8 +63,7 @@ export async function PATCH(request: Request, context: { params: Promise<{ order
   } catch (error) {
     if (error instanceof Error && error.message === "PAYMENT_REVIEW_REQUIRED") return NextResponse.json({ error: "This order has a payment or an open checkout. Contact operations for cancellation and refund review." }, { status: 409 });
     if (error instanceof Error && error.message === "ORDER_CHANGED") return NextResponse.json({ error: "The order changed. Refresh the kitchen queue." }, { status: 409 });
-    console.error("Pausstik kitchen order update failed.", error instanceof Error ? error.name : "unknown error");
+    console.error("Paustik kitchen order update failed.", error instanceof Error ? error.name : "unknown error");
     return serviceUnavailable();
   }
 }
-

@@ -30,7 +30,7 @@ export async function POST(request: Request) {
     }
     return NextResponse.json({ saved: parsed.data.favorite, message: parsed.data.favorite ? "Mother saved to your favourites." : "Mother removed from your favourites." });
   } catch (error) {
-    console.error("Pausstik favorite kitchen update failed.", error instanceof Error ? error.name : "unknown error");
+    console.error("Paustik favorite kitchen update failed.", error instanceof Error ? error.name : "unknown error");
     return serviceUnavailable();
   }
 }

@@ -25,7 +25,7 @@ export default async function KitchenPage({ params }: { params: Promise<{ kitche
       hasDeliveryPin = discovery.hasDeliveryPin;
     } catch (error) {
       available = false;
-      console.error("Pausstik kitchen menu could not load.", error instanceof Error ? error.name : "unknown error");
+      console.error("Paustik kitchen menu could not load.", error instanceof Error ? error.name : "unknown error");
     }
   }
 
@@ -48,6 +48,6 @@ export default async function KitchenPage({ params }: { params: Promise<{ kitche
       <div className="kitchen-section-heading"><div><span className="eyebrow">Make it your everyday kitchen</span><h2 id="kitchen-subscription-title">Build your subscription</h2><p>Choose 3–7 days from this mother’s available menu. Your meals, your days, one kitchen.</p></div><span className="kitchen-minimum-tag">3 days minimum</span></div>
       <WeeklyPlanPicker kitchenName={kitchen.name} preview={sample} canReserve={hasDeliveryPin} menus={kitchen.meals.map((meal) => ({ menuId: meal.menuId ?? meal.id, name: meal.name, serviceDate: meal.serviceDate, price: meal.price, servings: meal.servings, category: meal.category, components: meal.components, deliveryTime: meal.deliveryTime }))} />
     </section>
-    <aside className="kitchen-policy"><h2>Good to know before you reserve</h2><div><p><strong>A flexible week</strong>Subscriptions cover your selected 3–7 days in one week. Renew manually when you are ready.</p><p><strong>Need to skip a day?</strong>Cancel at least five hours before delivery. Eligible paid value, less the ₹5 processing fee, returns to your Pausstik wallet.</p><p><strong>Pilot payments</strong>Existing wallet credit is used first. Online checkout is not connected; any remaining amount is due outside the app.</p></div><Link className="text-link" href="/help#customer-workspace">Need help with your subscription? →</Link></aside>
+    <aside className="kitchen-policy"><h2>Good to know before you reserve</h2><div><p><strong>A flexible week</strong>Subscriptions cover your selected 3–7 days in one week. Renew manually when you are ready.</p><p><strong>Need to skip a day?</strong>Cancel at least five hours before delivery. Eligible paid value, less the ₹5 processing fee, returns to your Paustik wallet.</p><p><strong>Pilot payments</strong>Existing wallet credit is used first. Online checkout is not connected; any remaining amount is due outside the app.</p></div><Link className="text-link" href="/help#customer-workspace">Need help with your subscription? →</Link></aside>
   </main>;
 }

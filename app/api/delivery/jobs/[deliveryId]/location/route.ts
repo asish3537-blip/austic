@@ -52,7 +52,7 @@ export async function POST(request: Request, context: { params: Promise<{ delive
     } });
     return NextResponse.json({ saved: true, updatedAt: now.toISOString() });
   } catch (error) {
-    console.error("Pausstik courier location update failed.", error instanceof Error ? error.name : "unknown error");
+    console.error("Paustik courier location update failed.", error instanceof Error ? error.name : "unknown error");
     return serviceUnavailable();
   }
 }
@@ -73,7 +73,7 @@ export async function DELETE(request: Request, context: { params: Promise<{ deli
     if (!result.count) return NextResponse.json({ error: "This delivery is closed or not assigned to your account." }, { status: 404 });
     return NextResponse.json({ stopped: true });
   } catch (error) {
-    console.error("Pausstik courier location sharing stop failed.", error instanceof Error ? error.name : "unknown error");
+    console.error("Paustik courier location sharing stop failed.", error instanceof Error ? error.name : "unknown error");
     return serviceUnavailable();
   }
 }

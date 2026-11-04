@@ -1,8 +1,10 @@
+import { UiText } from "@/components/ui-language";
 import type { Metadata, Viewport } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { PwaRuntime } from "@/components/pwa-runtime";
 import { MobileNavigation } from "@/components/mobile-navigation";
+import { LanguageProvider, LanguageSelector } from "@/components/ui-language";
 import "./globals.css";
 import "./app-demo.css";
 import "./bottom-navigation.css";
@@ -10,19 +12,21 @@ import "./install.css";
 import "./simple.css";
 import "./brand-theme.css";
 import "./admin-console.css";
+import "./pilot-ui.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "Pausstik — Purity. Hygiene. Delivered.",
-    template: "%s | Pausstik",
+    default: "Paustik — Purity. Hygiene. Delivered.",
+    template: "%s | Paustik",
   },
-  description: "Discover home-style food from nearby mother-led kitchens. Pausstik is preparing its first neighbourhood marketplace pilot.",
+  description: "Discover home-style food from nearby mother-led kitchens. Paustik is preparing its first neighbourhood marketplace pilot.",
   icons: {
-    icon: "/icons/pausstik-app-192.png",
-    apple: [{ url: "/icons/pausstik-apple-touch-180.png", sizes: "180x180", type: "image/png" }],
+    icon: [{ url: "/icons/pausstik-app-192.png?v=4", type: "image/png", sizes: "192x192" }],
+    shortcut: "/icons/pausstik-app-192.png?v=4",
+    apple: [{ url: "/icons/pausstik-apple-touch-180.png?v=4", sizes: "180x180", type: "image/png" }],
   },
   manifest: "/manifest.webmanifest",
-  appleWebApp: { capable: true, title: "Pausstik", statusBarStyle: "default" },
+  appleWebApp: { capable: true, title: "Paustik", statusBarStyle: "default" },
 };
 
 export const viewport: Viewport = {
@@ -34,20 +38,22 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en">
       <body>
+        <LanguageProvider>
         <header className="site-header">
           <div className="header-inner">
-            <Link className="brand" href="/" aria-label="Pausstik home">
+            <Link className="brand" href="/" aria-label="Paustik home">
               <Image className="brand-wordmark" src="/assets/paustik-mother-wordmark.webp" alt="Paustik" width={640} height={310} priority />
               
             </Link>
-            <nav className="header-nav" aria-label="Main navigation"><Link href="/#meal-plans">Meals</Link><Link href="/install">Get the app</Link></nav>
+            <nav className="header-nav" aria-label="Main navigation"><Link href="/#meal-plans"><UiText text="Meals"/></Link><Link href="/install"><UiText text="Get the app"/></Link></nav>
             <div className="header-controls">
+              <LanguageSelector />
               <MobileNavigation>
-                <summary aria-label="Navigation menu"><span className="menu-icon" aria-hidden="true"><i></i><i></i><i></i></span><span>Menu</span></summary>
-                <nav className="mobile-nav-panel" aria-label="Mobile navigation"><Link href="/#meal-plans">Meals</Link><Link href="/install">Get the app</Link><Link href="/help">Help</Link></nav>
+                <summary aria-label="Navigation menu"><span className="menu-icon" aria-hidden="true"><i></i><i></i><i></i></span><span><UiText text="Menu"/></span></summary>
+                <nav className="mobile-nav-panel" aria-label="Mobile navigation"><Link href="/#meal-plans"><UiText text="Meals"/></Link><Link href="/install"><UiText text="Get the app"/></Link><Link href="/help"><UiText text="Help"/></Link></nav>
               </MobileNavigation>
               <div className="header-actions">
-                <Link className="button button-small" href="/app">Open app</Link>
+                <Link className="button button-small" href="/app"><UiText text="Open app"/></Link>
               </div>
             </div>
           </div>
@@ -55,9 +61,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <PwaRuntime />
         {children}
         <footer className="site-footer">
-          <span className="footer-links"><Link href="/">Website</Link><Link href="/help">Help</Link><span className="admin-footer-entry"><Link href="/admin-sign-in">Admin</Link><span className="admin-footer-menu"><Link href="/admin/paustik-admin">Admin dashboard</Link><Link href="/admin-sign-in">Admin sign in</Link></span></span></span>
-          <small className="footer-copyright">© 2026 Pausstik. All rights reserved.</small>
+          <span className="footer-links"><Link href="/"><UiText text="Website"/></Link><Link href="/help"><UiText text="Help"/></Link><span className="admin-footer-entry"><Link href="/admin-sign-in"><UiText text="Admin"/></Link><span className="admin-footer-menu"><Link href="/admin/paustik-admin"><UiText text="Admin dashboard"/></Link><Link href="/admin-sign-in"><UiText text="Admin sign in"/></Link></span></span></span>
+          <small className="footer-copyright">© 2026 Paustik. All rights reserved.</small>
         </footer>
+        </LanguageProvider>
       </body>
     </html>
   );

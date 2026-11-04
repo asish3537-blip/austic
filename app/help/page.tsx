@@ -1,3 +1,4 @@
+import { UiText } from "@/components/ui-language";
 import Link from "next/link";
 
 const guides = [
@@ -11,7 +12,7 @@ const guides = [
       "Choose SMS or WhatsApp, enter your number, and request a 6-digit code. The live site sends a real code through the configured provider.",
       "Production SMS and WhatsApp codes need Twilio Verify credentials in Vercel. WhatsApp also needs a Twilio Verify service with an approved WhatsApp sender.",
       "Enter the code delivered by your selected method, then confirm your email using the link in your inbox before signing in.",
-      "Mother and courier accounts wait for Pausstik approval; active customers open their workspace.",
+      "Mother and courier accounts wait for Paustik approval; active customers open their workspace.",
       "Admin accounts are not available on public sign-up. An active admin creates them in the admin panel.",
     ],
   },
@@ -21,14 +22,14 @@ const guides = [
     status: "Kitchen discovery, daily menus and one-week subscriptions · online payment pending",
     text: "Choose a nearby mother-led kitchen, open its daily menu, then build a 3–7-day subscription with a clear price breakdown.",
     steps: [
-      "Create a Customer account and sign in using the code delivered by SMS or WhatsApp. Real code delivery requires Pausstik’s messaging provider to be connected.",
-      "Use my location to save your drop-off pin. Pausstik uses it to calculate nearby kitchens and shares it with the assigned courier for an order.",
+      "Create a Customer account and sign in using the code delivered by SMS or WhatsApp. Real code delivery requires Paustik’s messaging provider to be connected.",
+      "Use my location to save your drop-off pin. Paustik uses it to calculate nearby kitchens and shares it with the assigned courier for an order.",
       "Browse the kitchen list. Search by a mother’s name, cuisine or dish, filter vegetarian or non-vegetarian menus, and save favourite kitchens. With a delivery pin, the list shows kitchens whose 5–10 km service area reaches you.",
       "Open View menu on a kitchen to see that mother’s dated menu, three meal components, price, delivery time and available servings. Choose a date to browse its meals. Sample kitchens are labelled and cannot create real orders.",
       "Select Build my subscription. Choose 3–7 days, one meal per day and your number of servings. The 3, 5, 6 and 7-day shortcuts select the first available days; review or change each meal before reserving. Meals and ₹30-per-day delivery are itemised in the summary. Plans cover one week and renew manually.",
       "For a single meal, expand Prefer this meal for one day beneath that dish. Your saved orders and subscriptions appear in the customer workspace. OpenStreetMap links share coordinates with that map provider.",
-      "Online checkout is not connected. No payment is taken here; use the pilot collection process with Pausstik admin if a payment is collected outside the app.",
-      "Cancel a meal day at least five hours before its scheduled delivery. The eligible amount already paid, minus the ₹5 processing fee, is credited to your Pausstik wallet. No credit is issued for an unpaid amount.",
+      "Online checkout is not connected. No payment is taken here; use the pilot collection process with Paustik admin if a payment is collected outside the app.",
+      "Cancel a meal day at least five hours before its scheduled delivery. The eligible amount already paid, minus the ₹5 processing fee, is credited to your Paustik wallet. No credit is issued for an unpaid amount.",
       "Track kitchen and courier status in Recent orders. A current courier point appears after pickup when the courier has opted in to GPS sharing.",
     ],
   },
@@ -36,7 +37,7 @@ const guides = [
     slug: "mother-onboarding",
     title: "Mother entrepreneur onboarding",
     status: "Kitchen application, weekly menu and order queue available",
-    text: "After Pausstik approval, save your kitchen pin, choose a 5–10 km customer service radius, publish dated three-part meals, and prepare customer orders.",
+    text: "After Paustik approval, save your kitchen pin, choose a 5–10 km customer service radius, publish dated three-part meals, and prepare customer orders.",
     steps: [
       "Choose Mother entrepreneur and enter your kitchen name, cooking specialties, daily meal capacity, lunch days, and service window.",
       "Verify your phone with a real SMS or WhatsApp code, then confirm your email with the link sent to your inbox.",
@@ -55,7 +56,7 @@ const guides = [
       "Choose Delivery agent and add your contact, address, and vehicle type.",
       "Wait for an administrator to approve your partner application.",
       "Claim a ready delivery. Exact customer address details appear after you accept the job.",
-      "Start location sharing when you are ready. Pausstik stores one latest point, checks GPS accuracy and speed, and verifies pickup/drop-off within 150 m of the saved pins.",
+      "Start location sharing when you are ready. Paustik stores one latest point, checks GPS accuracy and speed, and verifies pickup/drop-off within 150 m of the saved pins.",
       "Move through pickup, out-for-delivery and delivered in order. GPS location is cleared after handover or when you revoke sharing; a daily cleanup removes stale points.",
     ],
   },
@@ -68,7 +69,7 @@ const guides = [
       "A delivery task is created when the mother marks an order ready for pickup.",
       "An approved courier claims the task. The customer address is only revealed to that assigned courier.",
       "The courier chooses Start location sharing and allows browser GPS. A fresh accurate point is needed to confirm pickup and delivery inside the 150 m geofences.",
-      "The assigned customer sees the courier's current point while the order is in transit. Pausstik stores no route history and clears the point at delivery or when the courier stops sharing.",
+      "The assigned customer sees the courier's current point while the order is in transit. Paustik stores no route history and clears the point at delivery or when the courier stops sharing.",
     ],
   },
   {
@@ -92,7 +93,7 @@ export default function HelpPage() {
   return (
     <main className="help-shell">
       <header className="help-heading">
-        <span className="eyebrow">Pausstik help centre</span>
+        <span className="eyebrow">Paustik help centre</span>
         <h1>Short guides for every role.</h1>
         <p>Short visual walkthroughs explain account setup and the separate delivery pilot. Each guide also includes written steps.</p>
       </header>
@@ -103,21 +104,21 @@ export default function HelpPage() {
       </nav>
       <div className="help-callout"><strong>Live pilot status:</strong> approved mothers can publish priced three-part menus; customers can reserve one week (3–7 days), cancel eligible days to receive wallet credits, and see nearby kitchens using opted-in pins. Online checkout and real email/SMS/WhatsApp delivery still need provider setup. Admin records only confirmed external payment receipts. Admin accounts are created in the admin panel.</div>
       <section className="help-documents" aria-labelledby="help-documents-title">
-        <div><span className="eyebrow">Take Pausstik with you</span><h2 id="help-documents-title">Guides and project documents</h2><p>Download the current user guide or the detailed product and development specification.</p></div>
-        <div className="help-document-actions"><a className="button button-small" href="/docs/Pausstik_Authenticator_and_Kitchen_Guide.pdf" download>New kitchen &amp; sign-in guide (PDF)</a><a className="button button-small button-light" href="/docs/Paustik_User_Guide.pdf" download>Full pilot guide (PDF)</a><a className="button button-small button-light" href="/docs/Paustik_Product_and_Development_Specification.pdf" download>Product and development specification (PDF)</a></div>
+        <div><span className="eyebrow">Take Paustik with you</span><h2 id="help-documents-title">Guides and project documents</h2><p>Download the current user guide or the detailed product and development specification.</p></div>
+        <div className="help-document-actions"><a className="button button-small" href="/docs/Paustik_Authenticator_and_Kitchen_Guide.pdf" download>New kitchen &amp; sign-in guide (PDF)</a><a className="button button-small button-light" href="/docs/Paustik_User_Guide.pdf" download>Full pilot guide (PDF)</a><a className="button button-small button-light" href="/docs/Paustik_Product_and_Development_Specification.pdf" download>Product and development specification (PDF)</a></div>
       </section>
       <section className="help-callout" id="install-app" aria-labelledby="install-app-title">
-        <span className="eyebrow">Pausstik on your home screen</span>
+        <span className="eyebrow">Paustik on your home screen</span>
         <h2 id="install-app-title">Install directly from this website</h2>
         <p>Open the installation page on your phone and follow the steps for your device. Installation is free; meals and delivery are charged according to your selected plan.</p>
         <ol>
           <li><strong>Android:</strong> open the installation page in Chrome and tap Install. If no prompt appears, use the browser menu and choose Install app or Add to Home screen.</li>
           <li><strong>iPhone or iPad:</strong> open the page in Safari, tap Share, then Add to Home Screen. Keep Open as Web App enabled if offered and tap Add.</li>
           <li><strong>Computer:</strong> use the installation button in Chrome or Edge. If installation is unavailable, Open app works in your browser.</li>
-          <li>Open the Pausstik icon and sign in with your existing account. Your role determines your workspace; administrator sign-in stays separate.</li>
+          <li>Open the Paustik icon and sign in with your existing account. Your role determines your workspace; administrator sign-in stays separate.</li>
         </ol>
         <p>An internet connection is required for sign-in, menus, orders, payments and delivery tracking. Keep the courier app open while sharing location. The sample preview does not create real orders or take payments. Removing the installed app does not cancel your account or subscriptions.</p>
-        <div className="install-help-actions"><Link className="button button-small" href="/install">Installation guide</Link><Link className="button button-small button-light" href="/app">Open app</Link><Link className="text-link" href="/">Go to website</Link></div>
+        <div className="install-help-actions"><Link className="button button-small" href="/install">Installation guide</Link><Link className="button button-small button-light" href="/app"><UiText text="Open app"/></Link><Link className="text-link" href="/">Go to website</Link></div>
       </section>
       <section className="help-callout" id="admin-authenticator" aria-labelledby="admin-authenticator-title">
         <h2 id="admin-authenticator-title">Administrator sign-in with an authenticator</h2>
@@ -126,7 +127,7 @@ export default function HelpPage() {
         <p>Authenticator protection applies to administrators only. Password reset keeps it enabled. Customer, mother and delivery accounts use real SMS or WhatsApp and email confirmation.</p>
         <Link className="text-link" href="/admin-sign-in">Administrator sign-in</Link><span aria-hidden="true"> · </span><Link className="text-link" href="/admin/security">Admin security</Link>
       </section>
-      <section className="help-grid" aria-label="Pausstik video help guides">
+      <section className="help-grid" aria-label="Paustik video help guides">
         {guides.map((guide, index) => (
           <article className="help-card" id={guide.slug} key={guide.slug}>
             <video className="help-video" controls playsInline preload="none" poster={`/assets/help-${guide.slug}.png`} aria-label={`${guide.title} help video`}>
@@ -145,7 +146,7 @@ export default function HelpPage() {
           </article>
         ))}
       </section>
-      <footer className="help-footer"><span>Need an account?</span><Link className="text-link" href="/sign-up">Create a Pausstik account</Link><span aria-hidden="true">·</span><Link className="text-link" href="/sign-in">Sign in</Link></footer>
+      <footer className="help-footer"><span>Need an account?</span><Link className="text-link" href="/sign-up">Create a Paustik account</Link><span aria-hidden="true">·</span><Link className="text-link" href="/sign-in"><UiText text="Sign in"/></Link></footer>
     </main>
   );
 }

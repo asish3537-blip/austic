@@ -37,7 +37,7 @@ export async function POST(request: Request) {
         await tx.passwordResetToken.updateMany({ where: { userId: user.id, usedAt: null }, data: { usedAt: now } });
         await tx.adminActivityLog.create({ data: { adminId: user.id, action: "APPROVED_OWNER_RESTORATION", entityType: "USER", entityId: user.id, previousValue, newValue: { role: "ADMIN", status: "PENDING" } } });
       }
-      if (!user) user = await tx.user.create({ data: { email, name: "Pausstik owner", passwordHash, role: "ADMIN", status: "PENDING" } });
+      if (!user) user = await tx.user.create({ data: { email, name: "Paustik owner", passwordHash, role: "ADMIN", status: "PENDING" } });
       await tx.passwordResetToken.create({ data: { userId: user.id, tokenHash: hash, expiresAt: new Date(Date.now() + 3600000) } });
       return user.id;
     });
@@ -45,13 +45,14 @@ export async function POST(request: Request) {
       const sent = await sendAuthEmail(email, "reset", token, new URL(request.url).origin);
       if (!sent) {
         await prisma.passwordResetToken.deleteMany({ where: { userId, tokenHash: hash, usedAt: null } });
-        console.error("Pausstik owner setup email was not accepted.");
-      } else console.info("Pausstik owner setup email accepted by provider.");
-    } else console.warn("Pausstik owner setup requires account role review.");
+        console.error("Paustik owner setup email was not accepted.");
+      } else console.info("Paustik owner setup email accepted by provider.");
+    } else console.warn("Paustik owner setup requires account role review.");
     return NextResponse.json({ message }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     if (error instanceof AdminAuthError) return NextResponse.json({ error: error.message }, { status: error.status });
-    console.error("Pausstik owner email setup failed.", error instanceof Error ? error.name : "unknown");
+    console.error("Paustik owner email setup failed.", error instanceof Error ? error.name : "unknown");
     return NextResponse.json({ error: "Could not request the setup email. Please try again." }, { status: 503 });
   }
 }
+

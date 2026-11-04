@@ -14,7 +14,7 @@ export async function GET() {
     const address = await prisma.address.findFirst({ where: { userId: user.id }, orderBy: [{ isDefault: "desc" }, { createdAt: "asc" }], select: { id: true, latitude: true, longitude: true, locality: true, city: true } });
     return NextResponse.json({ pinned: Boolean(address?.latitude !== null && address?.latitude !== undefined && address?.longitude !== null && address?.longitude !== undefined), address: address ? address.locality + ", " + address.city : null });
   } catch (error) {
-    console.error("Pausstik customer delivery pin could not load.", error instanceof Error ? error.name : "unknown error");
+    console.error("Paustik customer delivery pin could not load.", error instanceof Error ? error.name : "unknown error");
     return serviceUnavailable();
   }
 }
@@ -34,7 +34,7 @@ export async function POST(request: Request) {
     await prisma.address.update({ where: { id: address.id }, data: { latitude: parsed.data.latitude, longitude: parsed.data.longitude } });
     return NextResponse.json({ saved: true, message: "Delivery pin saved. It will be shared with the courier assigned to your order." });
   } catch (error) {
-    console.error("Pausstik customer delivery pin save failed.", error instanceof Error ? error.name : "unknown error");
+    console.error("Paustik customer delivery pin save failed.", error instanceof Error ? error.name : "unknown error");
     return serviceUnavailable();
   }
 }

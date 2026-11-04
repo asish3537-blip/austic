@@ -55,7 +55,7 @@ export async function PATCH(request: Request, context: { params: Promise<{ menuI
     ]);
     return NextResponse.json({ updated: true, published: canPublish });
   } catch (error) {
-    console.error("Pausstik menu update failed.", error instanceof Error ? error.name : "unknown error");
+    console.error("Paustik menu update failed.", error instanceof Error ? error.name : "unknown error");
     return serviceUnavailable();
   }
 }
@@ -74,7 +74,7 @@ export async function DELETE(request: Request, context: { params: Promise<{ menu
     await prisma.menu.update({ where: { id: menu.id }, data: { isAvailable: false, stockCount: 0 } });
     return NextResponse.json({ removed: true });
   } catch (error) {
-    console.error("Pausstik menu item removal failed.", error instanceof Error ? error.name : "unknown error");
+    console.error("Paustik menu item removal failed.", error instanceof Error ? error.name : "unknown error");
     return serviceUnavailable();
   }
 }

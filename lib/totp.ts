@@ -1,7 +1,7 @@
 import { createCipheriv, createDecipheriv, createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 
 const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
-const ISSUER = "Pausstik";
+const ISSUER = "Paustik";
 
 function authKey(context: string) {
   const key = process.env.AUTH_SECRET;

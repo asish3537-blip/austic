@@ -39,7 +39,7 @@ export async function POST(request: Request) {
     if (error instanceof Error && error.message === "RESET_TOKEN_INVALID") {
       return NextResponse.json({ error: "This reset link is expired or has already been used." }, { status: 400 });
     }
-    console.error("Pausstik password update failed.", error instanceof Error ? error.name : "unknown error");
+    console.error("Paustik password update failed.", error instanceof Error ? error.name : "unknown error");
     return serviceUnavailable();
   }
 }

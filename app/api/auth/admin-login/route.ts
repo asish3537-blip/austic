@@ -41,7 +41,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ destination: result.enabled ? "/admin/paustik-admin" : "/admin/security?setup=1" }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     if (error instanceof AdminAuthError) return NextResponse.json({ error: error.message, requiresAuthenticator: error.requiresAuthenticator }, { status: error.status, headers: { "Cache-Control": "no-store" } });
-    console.error("Pausstik administrator sign-in failed.", error instanceof Error ? error.name : "unknown error");
+    console.error("Paustik administrator sign-in failed.", error instanceof Error ? error.name : "unknown error");
     return serviceUnavailable();
   }
 }

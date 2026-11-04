@@ -22,7 +22,7 @@ export async function POST(request: Request) {
     await prisma.kitchen.update({ where: { id: profile.kitchen.id }, data: { latitude: parsed.data.latitude, longitude: parsed.data.longitude, serviceRadiusMeters: 150, marketplaceRadiusMeters: Math.round(parsed.data.marketplaceRadiusKm * 1000) } });
     return NextResponse.json({ saved: true, message: "Kitchen pin saved. Customers within " + parsed.data.marketplaceRadiusKm + " km can discover your menu. The courier geofence stays at 150 m." });
   } catch (error) {
-    console.error("Pausstik kitchen location save failed.", error instanceof Error ? error.name : "unknown error");
+    console.error("Paustik kitchen location save failed.", error instanceof Error ? error.name : "unknown error");
     return serviceUnavailable();
   }
 }

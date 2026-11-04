@@ -1,5 +1,5 @@
 const CACHE_PREFIX = "pausstik-shell-";
-const CACHE_NAME = `${CACHE_PREFIX}v3`;
+const CACHE_NAME = `${CACHE_PREFIX}v4`;
 const SHELL_FILES = [
   "/offline.html",
   "/icons/pausstik-app-192.png",

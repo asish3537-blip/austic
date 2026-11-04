@@ -1,5 +1,6 @@
 "use client";
 
+import { UiText } from "@/components/ui-language";
 import { useState } from "react";
 
 type Role = "customer" | "mother" | "courier" | "admin";
@@ -39,7 +40,7 @@ export function AppDemo({ demoRole }: { demoRole?: "customer" | "mother" | "cour
   const cartTotal = cart.reduce((total, id) => total + (sampleMeals.find((meal) => meal.id === id)?.price ?? 0), 0);
   const tabs: Record<Role, string[]> = { customer: ["Discover", "Orders", "Wallet"], mother: ["Today", "Menu", "Earnings"], courier: ["Jobs", "Route", "Earnings"], admin: ["Overview", "Orders", "Income"] };
 
-  return <section className="app-demo-preview" aria-label="Interactive Pausstik mobile app preview">
+  return <section className="app-demo-preview" aria-label="Interactive Paustik mobile app preview">
     {!demoRole && <div className="app-demo-role-tabs" role="tablist" aria-label="Preview role">
       {(Object.keys(roleNames) as Role[]).map((item) => <button type="button" role="tab" aria-selected={role === item} className={role === item ? "is-active" : ""} key={item} onClick={() => chooseRole(item)}>{roleNames[item]}</button>)}
     </div>}
@@ -47,7 +48,7 @@ export function AppDemo({ demoRole }: { demoRole?: "customer" | "mother" | "cour
       <div className="phone-screen">
         <div className="phone-status"><span>9:41</span><span aria-hidden="true">● ● ▰</span></div>
         <header className="phone-app-header">
-          <div className="phone-app-brand"><span className="phone-brand-mark" aria-hidden="true">♨</span><div><strong>Pausstik</strong><small>{roleNames[role]} workspace</small></div></div>
+          <div className="phone-app-brand"><span className="phone-brand-mark" aria-hidden="true">♨</span><div><strong>Paustik</strong><small>{roleNames[role]} workspace</small></div></div>
           <button type="button" className="phone-avatar" aria-label="Profile menu" onClick={() => showToast("Profile settings open after sign in.")}>{role === "customer" ? "A" : role === "mother" ? "S" : role === "courier" ? "R" : "P"}</button>
         </header>
         <div className="phone-content">
@@ -60,7 +61,7 @@ export function AppDemo({ demoRole }: { demoRole?: "customer" | "mother" | "cour
         </div>
         <nav className="phone-bottom-nav" aria-label={`${roleNames[role]} sample navigation`}>
           {tabs[role].map((item, index) => <button type="button" key={item} className={tab === item ? "is-active" : ""} onClick={() => setTab(item)}><span aria-hidden="true">{role === "customer" ? ["⌖", "▤", "₹"][index] : role === "mother" ? ["⌂", "☷", "₹"][index] : role === "courier" ? ["▣", "↗", "₹"][index] : ["▦", "▤", "₹"][index]}</span>{item}</button>)}
-          <a href="/" aria-label="Go to Pausstik website"><span aria-hidden="true">⌂</span>Website</a>
+          <a href="/" aria-label="Go to Paustik website"><span aria-hidden="true">⌂</span><UiText text="Website"/></a>
         </nav>
       </div>
     </div>
@@ -90,7 +91,7 @@ function CourierPreview({ tab, deliveryStep, setDeliveryStep, showToast }: { tab
 }
 
 function AdminPreview({ tab, showToast }: { tab: string; showToast: (message: string) => void }) {
-  if (tab === "Orders") return <div className="phone-view"><span className="phone-eyebrow">LIVE OPERATIONS · EXAMPLE DATA</span><h2>Order activity</h2><div className="phone-admin-order"><div><strong>#PSK-2048</strong><span className="phone-status-chip">On the way</span></div><p>Dalma lunch · Sunita’s kitchen · ₹99</p><small>Courier Raj · updated 2 min ago</small></div><div className="phone-admin-order"><div><strong>#PSK-2047</strong><span className="delivered-chip">Delivered</span></div><p>Egg lunch box · Sabita’s Rasoi · ₹109</p><small>Courier Meera · today at 12:38</small></div><button className="phone-secondary-action" type="button" onClick={() => showToast("Detailed order controls are available after admin sign in.")}>Open order controls <span>→</span></button></div>;
+  if (tab === "Orders") return <div className="phone-view"><span className="phone-eyebrow">LIVE OPERATIONS · EXAMPLE DATA</span><h2>Order activity</h2><div className="phone-admin-order"><div><strong>#PSK-2048</strong><span className="phone-status-chip">On the way</span></div><p>Dalma lunch · Sunita’s kitchen · ₹99</p><small>Courier Raj · updated 2 min ago</small></div><div className="phone-admin-order"><div><strong>#PSK-2047</strong><span className="delivered-chip"><UiText text="Delivered"/></span></div><p>Egg lunch box · Sabita’s Rasoi · ₹109</p><small>Courier Meera · today at 12:38</small></div><button className="phone-secondary-action" type="button" onClick={() => showToast("Detailed order controls are available after admin sign in.")}>Open order controls <span>→</span></button></div>;
   if (tab === "Income") return <div className="phone-view"><span className="phone-eyebrow">FINANCE · THIS WEEK</span><h2>Every rupee accounted for.</h2><div className="phone-admin-income"><small>RECORDED COLLECTIONS</small><strong>₹24,860</strong><span>Illustrative sample figures</span><div><i style={{ height: "46%" }}/><i style={{ height: "65%" }}/><i style={{ height: "56%" }}/><i style={{ height: "86%" }}/><i style={{ height: "67%" }}/><i style={{ height: "100%" }}/><i style={{ height: "75%" }}/></div><small>MON <span>WEEKLY TREND</span> SUN</small></div><div className="phone-ledger-row"><span><b>Mother earnings</b><small>Awaiting payout</small></span><strong>₹18,240</strong></div><div className="phone-ledger-row"><span><b>Courier earnings</b><small>Awaiting payout</small></span><strong>₹4,200</strong></div><p className="phone-hint">These numbers are examples only, never your live financial data.</p></div>;
   return <div className="phone-view"><span className="phone-eyebrow">PAUSSTIK OPERATIONS</span><h2>Good morning, admin.</h2><div className="phone-admin-stats"><article><span>Accounts</span><b>128</b><small>All roles</small></article><article><span>Orders today</span><b>36</b><small>8 in progress</small></article><article><span>Partners</span><b>24</b><small>3 to review</small></article><article><span>Deliveries</span><b>31</b><small>5 on the road</small></article></div><div className="phone-activity-card"><div><b>Recent activity</b><button type="button" onClick={() => showToast("All live activity is in your admin dashboard.")}>View all</button></div><p><i/>New mother application<small>Sunita Das · 8 min ago</small></p><p><i/>Order picked up<small>PSK-2048 · 12 min ago</small></p><p><i/>Delivery completed<small>PSK-2042 · 24 min ago</small></p></div><p className="phone-hint">Demo activity only. Sign in as admin for live records.</p></div>;
 }

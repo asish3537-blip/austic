@@ -1,3 +1,4 @@
+import { UiText } from "@/components/ui-language";
 import { requireRole } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
@@ -71,18 +72,18 @@ export default async function AdminDashboardPage() {
     pendingMealChanges,
     ordersNeedingPayment,
   ] = await Promise.all([
-    prisma.user.groupBy({ by: ["role", "status"], _count: { _all: true } }),
-    prisma.order.groupBy({ by: ["status"], _count: { _all: true } }),
-    prisma.delivery.groupBy({ by: ["status"], _count: { _all: true } }),
+    prisma.user.groupBy({ by: ["role", "status"], where: { email: { not: { endsWith: "@paustik.invalid" } } }, _count: { _all: true } }),
+    prisma.order.groupBy({ by: ["status"], where: { orderNumber: { not: { startsWith: "TEST-LIFE-" } } }, _count: { _all: true } }),
+    prisma.delivery.groupBy({ by: ["status"], where: { order: { orderNumber: { not: { startsWith: "TEST-LIFE-" } } } }, _count: { _all: true } }),
     prisma.payment.groupBy({ by: ["status", "currency"], _sum: { amount: true }, _count: { _all: true } }),
     prisma.paymentLedgerEntry.groupBy({ by: ["category", "currency"], _sum: { amount: true }, _count: { _all: true } }),
     prisma.earning.groupBy({ by: ["beneficiaryRole", "status", "currency"], _sum: { netAmount: true }, _count: { _all: true } }),
     prisma.payout.groupBy({ by: ["status", "currency"], _sum: { amount: true }, _count: { _all: true } }),
-    prisma.user.findMany({ where: { role: { not: "ADMIN" } }, orderBy: { createdAt: "desc" }, take: 8, select: { id: true, name: true, role: true, status: true, createdAt: true } }),
+    prisma.user.findMany({ where: { role: { not: "ADMIN" }, email: { not: { endsWith: "@paustik.invalid" } } }, orderBy: { createdAt: "desc" }, take: 8, select: { id: true, name: true, role: true, status: true, createdAt: true } }),
     prisma.user.findMany({ where: { lastLoginAt: { not: null } }, orderBy: { lastLoginAt: "desc" }, take: 8, select: { id: true, name: true, role: true, lastLoginAt: true } }),
-    prisma.orderEvent.findMany({ orderBy: { createdAt: "desc" }, take: 8, include: { order: { select: { orderNumber: true } }, actorUser: { select: { name: true } } } }),
+    prisma.orderEvent.findMany({ where: { order: { orderNumber: { not: { startsWith: "TEST-LIFE-" } } } }, orderBy: { createdAt: "desc" }, take: 8, include: { order: { select: { orderNumber: true } }, actorUser: { select: { name: true } } } }),
     prisma.payment.findMany({ orderBy: { createdAt: "desc" }, take: 8, include: { order: { select: { orderNumber: true } } } }),
-    prisma.delivery.findMany({ orderBy: { updatedAt: "desc" }, take: 8, include: { order: { select: { orderNumber: true } }, agent: { select: { user: { select: { name: true } } } } } }),
+    prisma.delivery.findMany({ where: { order: { orderNumber: { not: { startsWith: "TEST-LIFE-" } } } }, orderBy: { updatedAt: "desc" }, take: 8, include: { order: { select: { orderNumber: true } }, agent: { select: { user: { select: { name: true } } } } } }),
     prisma.payout.findMany({ orderBy: { requestedAt: "desc" }, take: 6, include: { user: { select: { name: true } } } }),
     prisma.adminActivityLog.findMany({ orderBy: { createdAt: "desc" }, take: 8, include: { admin: { select: { name: true } } } }),
     prisma.complaint.count({ where: { status: { in: ["OPEN", "IN_REVIEW"] } } }),
@@ -140,7 +141,7 @@ export default async function AdminDashboardPage() {
 
   return <main className="dashboard-shell admin-dashboard">
     <div className="dashboard-head admin-dashboard-head" style={{ flexWrap: "wrap" }}>
-      <div><span className="eyebrow">Pausstik operations</span><h1>Admin overview</h1><p>Track accounts, orders, deliveries and recorded money movement.</p></div>
+      <div><span className="eyebrow">Paustik operations</span><h1>Admin overview</h1><p>Track accounts, orders, deliveries and recorded money movement.</p></div>
       <Link className="button button-light" href="/admin/accounts">Manage admin accounts</Link>
       <Link className="button button-light" href="/admin/security">Admin security</Link>
       <div className="admin-live-badge"><span aria-hidden="true" /> Live database · {timestamp(new Date())}</div>
@@ -160,10 +161,10 @@ export default async function AdminDashboardPage() {
     <section className="admin-section" aria-label="Partner onboarding review"><AdminPartnerReview /></section>
 
     <section className="admin-section" aria-labelledby="admin-finance-title">
-      <div className="admin-section-heading"><div><span className="eyebrow">Finance</span><h2 id="admin-finance-title">Income and payouts</h2></div><span className="admin-section-note">Amounts come from saved Pausstik payment and ledger records.</span></div>
+      <div className="admin-section-heading"><div><span className="eyebrow">Finance</span><h2 id="admin-finance-title">Income and payouts</h2></div><span className="admin-section-note">Amounts come from saved Paustik payment and ledger records.</span></div>
       <div className="admin-finance-grid">
         <article className="admin-panel"><h3>Captured customer payments</h3><MoneyRows rows={capturedPayments} empty="No captured payments yet." /></article>
-        <article className="admin-panel"><h3>Pausstik platform fees</h3><MoneyRows rows={platformFees} empty="No platform fees recorded yet." /></article>
+        <article className="admin-panel"><h3>Paustik platform fees</h3><MoneyRows rows={platformFees} empty="No platform fees recorded yet." /></article>
         <article className="admin-panel"><h3>Mother earnings awaiting payout</h3><MoneyRows rows={unpaidEarnings("MOTHER")} empty="No unpaid mother earnings." /></article>
         <article className="admin-panel"><h3>Courier earnings awaiting payout</h3><MoneyRows rows={unpaidEarnings("DELIVERY_AGENT")} empty="No unpaid courier earnings." /></article>
         <article className="admin-panel"><h3>Payouts completed</h3><MoneyRows rows={paidPayouts} empty="No completed payouts yet." /></article>
@@ -181,7 +182,7 @@ export default async function AdminDashboardPage() {
       <article className="admin-panel admin-status-panel">
         <div className="admin-section-heading"><div><span className="eyebrow">Operations</span><h2>Order and delivery status</h2></div></div>
         <div className="admin-status-columns">
-          <div><h3>Orders</h3>{orderStatusRows.length ? <ul className="admin-status-list">{orderStatusRows.map((row) => <li key={row.status}><span>{label(row.status)}</span><strong>{row._count._all}</strong></li>)}</ul> : <p className="admin-empty-inline">No orders recorded yet.</p>}</div>
+          <div><h3><UiText text="Orders"/></h3>{orderStatusRows.length ? <ul className="admin-status-list">{orderStatusRows.map((row) => <li key={row.status}><span>{label(row.status)}</span><strong>{row._count._all}</strong></li>)}</ul> : <p className="admin-empty-inline">No orders recorded yet.</p>}</div>
           <div><h3>Deliveries</h3>{deliveryStatusRows.length ? <ul className="admin-status-list">{deliveryStatusRows.map((row) => <li key={row.status}><span>{label(row.status)}</span><strong>{row._count._all}</strong></li>)}</ul> : <p className="admin-empty-inline">No delivery jobs recorded yet.</p>}</div>
         </div>
         <div className="admin-attention-row"><span>Open complaints <strong>{openComplaints}</strong></span><span>Cancellation requests <strong>{pendingCancellations}</strong></span><span>Meal changes <strong>{pendingMealChanges}</strong></span></div>

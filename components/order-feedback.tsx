@@ -1,0 +1,13 @@
+"use client";
+import { UiText, useUiLanguage } from "@/components/ui-language";
+import { useState, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
+export function OrderFeedback({ orderId, initial }: { orderId: string; initial?: { mealScore: number | null; deliveryScore: number | null } }) {
+  const { t } = useUiLanguage();
+  const [busy, setBusy] = useState(false); const [message, setMessage] = useState(""); const [error, setError] = useState(""); const router = useRouter();
+  async function save(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault(); const form = new FormData(e.currentTarget); setBusy(true); setMessage(""); setError("");
+    try { const r = await fetch(`/api/customer/orders/${orderId}/feedback`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ mealScore: Number(form.get("mealScore")), deliveryScore: Number(form.get("deliveryScore")), foodComment: form.get("foodComment"), deliveryComment: form.get("deliveryComment") }) }); const d = await r.json(); if (!r.ok) throw new Error(d.error || "Feedback could not save."); setMessage(d.message); router.refresh(); } catch (cause) { setError(cause instanceof Error ? cause.message : "Feedback could not save."); } finally { setBusy(false); }
+  }
+  return <details className="order-feedback"><summary>{initial?.mealScore ? `Your rating · Food ${initial.mealScore}/5 · Delivery ${initial.deliveryScore ?? "—"}/5 · Edit` : <UiText text="Rate your food & delivery"/>}</summary><form onSubmit={save}><fieldset disabled={busy}><legend><UiText text="How was this order?"/></legend><label><UiText text="Food rating"/><select aria-label={t("Food rating")} name="mealScore" required defaultValue={initial?.mealScore ?? ""}><option value="" disabled>Select a score</option>{[5,4,3,2,1].map(n => <option key={n} value={n}>{n} / 5</option>)}</select></label><label><UiText text="Delivery rating"/><select aria-label={t("Delivery rating")} name="deliveryScore" required defaultValue={initial?.deliveryScore ?? ""}><option value="" disabled>Select a score</option>{[5,4,3,2,1].map(n => <option key={n} value={n}>{n} / 5</option>)}</select></label><label><UiText text="Food feedback (optional)"/><textarea name="foodComment" maxLength={1000} rows={2} placeholder="Taste, portions, freshness…"/></label><label><UiText text="Delivery feedback (optional)"/><textarea name="deliveryComment" maxLength={1000} rows={2} placeholder="Timing, packaging, handover…"/></label><button className="button button-small" type="submit">{busy ? "Saving…" : <UiText text="Save feedback"/>}</button></fieldset>{message && <p role="status">{message}</p>}{error && <p role="alert">{error}</p>}</form></details>;
+}

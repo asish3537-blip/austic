@@ -3,6 +3,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   output: "standalone",
+  outputFileTracingIncludes: { "/api/admin/test-evidence/*": ["./test-artifacts/screenshots/*.png"] },
   async headers() {
     return [
       {

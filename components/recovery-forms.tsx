@@ -1,5 +1,6 @@
 "use client";
 
+import { UiText } from "@/components/ui-language";
 import { useState, type FormEvent } from "react";
 import { afterSignIn } from "@/lib/kitchen-handoff";
 import { ResendVerificationForm } from "@/components/auth-forms";
@@ -11,7 +12,7 @@ function Message({ children, success = false }: { children: React.ReactNode; suc
 
 async function readResponse(response: Response) {
   const result = await response.json();
-  if (!response.ok) throw new Error(result.error || "Pausstik could not complete that request.");
+  if (!response.ok) throw new Error(result.error || "Paustik could not complete that request.");
   return result;
 }
 
@@ -33,25 +34,25 @@ export function PasswordSignInForm({ kitchen }: { kitchen?: string }) {
       }));
       window.location.assign(afterSignIn(result.destination, kitchen));
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Pausstik could not sign you in.");
+      setError(cause instanceof Error ? cause.message : "Paustik could not sign you in.");
       setBusy(false);
     }
   }
 
   return <>
-    <span className="eyebrow">Email sign in</span><h2>Sign in</h2>
+    <span className="eyebrow">Email sign in</span><h2><UiText text="Sign in"/></h2>
     {kitchen && <p className="form-note">After customer sign-in, your selected kitchen will reopen.</p>}
 
     {error && <Message>{error}</Message>}
     <form onSubmit={submit}>
       <div className="form-grid">
-        <div className="field full"><label htmlFor="password-login-email">Email address</label><input id="password-login-email" name="email" type="email" autoComplete="email" required maxLength={254} /></div>
-        <div className="field full"><label htmlFor="password-login-password">Password</label><input id="password-login-password" name="password" type="password" autoComplete="current-password" required minLength={8} maxLength={72} /></div>
+        <div className="field full"><label htmlFor="password-login-email"><UiText text="Email address"/></label><input id="password-login-email" name="email" type="email" autoComplete="email" required maxLength={254} /></div>
+        <div className="field full"><label htmlFor="password-login-password"><UiText text="Password"/></label><input id="password-login-password" name="password" type="password" autoComplete="current-password" required minLength={8} maxLength={72} /></div>
       </div>
-      <div className="auth-links"><Link className="text-link" href="/forgot-password">Forgot password?</Link></div>
-      <button className="button form-submit" type="submit" disabled={busy}>{busy ? "Signing in…" : "Sign in"}<span aria-hidden="true">→</span></button>
+      <div className="auth-links"><Link className="text-link" href="/forgot-password"><UiText text="Forgot password?"/></Link></div>
+      <button className="button form-submit" type="submit" disabled={busy}>{busy ? "Signing in…" : <UiText text="Sign in"/>}<span aria-hidden="true">→</span></button>
     </form>
-    <p className="form-footer"><Link href="/sign-up">Create account</Link> · <Link href="/admin-sign-in">Admin sign-in</Link></p>
+    <p className="form-footer"><Link href="/sign-up"><UiText text="Create account"/></Link> · <Link href="/admin-sign-in">Admin sign-in</Link></p>
     <details><summary>Resend confirmation email</summary><ResendVerificationForm /></details>
 
   </>;
@@ -88,10 +89,10 @@ export function ForgotPasswordForm() {
     {error && <Message>{error}</Message>}
     {sent && <Message success>If the account can receive email, a password reset link is on its way. Check spam too.</Message>}
     <form onSubmit={submit}>
-      <div className="form-grid"><div className="field full"><label htmlFor="forgot-email">Email address</label><input id="forgot-email" name="email" type="email" autoComplete="email" required maxLength={254} /></div></div>
+      <div className="form-grid"><div className="field full"><label htmlFor="forgot-email"><UiText text="Email address"/></label><input id="forgot-email" name="email" type="email" autoComplete="email" required maxLength={254} /></div></div>
       <button className="button form-submit" type="submit" disabled={busy}>{busy ? "Sending…" : "Email reset link"}<span aria-hidden="true">→</span></button>
     </form>
-    <p className="form-footer"><Link className="text-link" href="/password-sign-in">Back to password sign in</Link> · <Link className="text-link" href="/admin-sign-in">Admin sign in</Link></p>
+    <p className="form-footer"><Link className="text-link" href="/password-sign-in">Back to password sign in</Link> · <Link className="text-link" href="/admin-sign-in"><UiText text="Admin sign in"/></Link></p>
   </>;
 }
 
@@ -131,8 +132,8 @@ export function ResetPasswordForm({ token }: { token: string }) {
     {error && <Message>{error}</Message>}
     {complete ? <Message success>Your password has been changed and other sessions have been signed out. <Link href="/password-sign-in">Sign in with your new password</Link> or <Link href="/admin-sign-in">open admin sign-in</Link>.</Message> : !token ? <Message>This reset link is incomplete. Request a fresh link and try again.</Message> : <form onSubmit={submit}>
       <div className="form-grid">
-        <div className="field full"><label htmlFor="reset-password">New password</label><input id="reset-password" name="password" type="password" autoComplete="new-password" required minLength={8} maxLength={72} /></div>
-        <div className="field full"><label htmlFor="reset-password-confirm">Confirm password</label><input id="reset-password-confirm" name="confirmPassword" type="password" autoComplete="new-password" required minLength={8} maxLength={72} /></div>
+        <div className="field full"><label htmlFor="reset-password"><UiText text="New password"/></label><input id="reset-password" name="password" type="password" autoComplete="new-password" required minLength={8} maxLength={72} /></div>
+        <div className="field full"><label htmlFor="reset-password-confirm"><UiText text="Confirm password"/></label><input id="reset-password-confirm" name="confirmPassword" type="password" autoComplete="new-password" required minLength={8} maxLength={72} /></div>
       </div>
       <button className="button form-submit" type="submit" disabled={busy}>{busy ? "Saving…" : "Save new password"}<span aria-hidden="true">→</span></button>
     </form>}
@@ -168,17 +169,17 @@ export function AdminOwnerSetupForm({ localPreview = false }: { localPreview?: b
   }
 
   return <>
-    <span className="eyebrow">{localPreview ? "Local test environment" : "First administrator setup"}</span><h2>{localPreview ? "Create a local test admin" : "Create the Pausstik owner account"}</h2>
+    <span className="eyebrow">{localPreview ? "Local test environment" : "First administrator setup"}</span><h2>{localPreview ? "Create a local test admin" : "Create the Paustik owner account"}</h2>
     {localPreview && <p className="form-note">This creates an administrator in the isolated local test database. Use at least eight password characters with uppercase, lowercase and a number.</p>}
     {!localPreview && <p className="auth-intro">Use the private owner setup code provided to you; it is not an SMS code or an authenticator code. This recovery creates your owner access and revokes other admin sessions. After creating the account, link Google Authenticator or Microsoft Authenticator from Admin security. The app then creates a new six-digit sign-in code every 30 seconds.</p>}
     {error && <Message>{error}</Message>}
     <form onSubmit={submit}>
       <div className="form-grid">
         {!localPreview && <div className="field full"><label htmlFor="admin-setup-code">One-time setup code</label><input id="admin-setup-code" name="setupCode" type="password" autoComplete="one-time-code" required minLength={32} maxLength={128} /></div>}
-        <div className="field"><label htmlFor="owner-name">Full name</label><input id="owner-name" name="name" autoComplete="name" required minLength={2} maxLength={100} /></div>
+        <div className="field"><label htmlFor="owner-name"><UiText text="Full name"/></label><input id="owner-name" name="name" autoComplete="name" required minLength={2} maxLength={100} /></div>
         <div className="field"><label htmlFor="owner-username">Admin username</label><input id="owner-username" name="username" autoComplete="username" required minLength={3} maxLength={32} pattern="[A-Za-z0-9._-]+" /></div>
         <div className="field full"><label htmlFor="owner-email">Admin email</label><input id="owner-email" name="email" type="email" autoComplete="email" required maxLength={254} /></div>
-        <div className="field full"><label htmlFor="owner-password">New password</label><input id="owner-password" name="password" type="password" autoComplete="new-password" required minLength={8} maxLength={72} /><small>At least 8 characters with uppercase, lowercase and a number.</small></div>
+        <div className="field full"><label htmlFor="owner-password"><UiText text="New password"/></label><input id="owner-password" name="password" type="password" autoComplete="new-password" required minLength={8} maxLength={72} /><small>At least 8 characters with uppercase, lowercase and a number.</small></div>
       </div>
       <button className="button form-submit" type="submit" disabled={busy}>{busy ? "Creating account…" : localPreview ? "Create test admin" : "Create owner account"}<span aria-hidden="true">→</span></button>
     </form>

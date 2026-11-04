@@ -1,5 +1,6 @@
 "use client";
 
+import { UiText, useUiLanguage } from "@/components/ui-language";
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -7,6 +8,7 @@ import { kitchenMenuDate, kitchenMoney, mealCategoryLabel } from "@/lib/customer
 import { groupPlanMenus, planTotals, selectedPlanMenus, togglePlanMenu, type PlanMenu } from "@/lib/customer-plan-selection";
 
 export function WeeklyPlanPicker({ menus, kitchenName, preview = false, canReserve = true }: { menus: PlanMenu[]; kitchenName: string; preview?: boolean; canReserve?: boolean }) {
+  const { t } = useUiLanguage();
   const router = useRouter();
   const [selected, setSelected] = useState<string[]>([]);
   const [quantity, setQuantity] = useState(1);
@@ -40,6 +42,7 @@ export function WeeklyPlanPicker({ menus, kitchenName, preview = false, canReser
       if (!response.ok) throw new Error(data.error || "Could not reserve those meal days.");
       setMessage(data.message + (data.orders.some((order: { amountDue: number }) => order.amountDue > 0) ? " Any amount not covered by your wallet remains due; no online payment was taken." : " Wallet credit covered each day."));
       setSelected([]);
+      window.dispatchEvent(new Event("paustik-wallet-updated"));
       router.refresh();
     } catch (cause) { setError(true); setMessage(cause instanceof Error ? cause.message : "Could not reserve those meal days."); }
     finally { setBusy(false); }
@@ -47,9 +50,9 @@ export function WeeklyPlanPicker({ menus, kitchenName, preview = false, canReser
 
   return <div className="kitchen-plan-builder">
     <div className="kitchen-plan-selection">
-      <div className="kitchen-plan-settings"><div><h3>1. Choose your days and meals</h3><p>Select one meal per day. You can change each choice before reserving.</p></div><label>Servings per day<select value={quantity} disabled={busy} onChange={(event) => { const count = Number(event.target.value); setQuantity(count); setSelected(selectedPlanMenus(menus, selected, count).map((menu) => menu.menuId)); setMessage(""); }}>{[1, 2, 3, 4, 5, 6].map((count) => <option key={count} value={count}>{count}</option>)}</select></label></div>
+      <div className="kitchen-plan-settings"><div><h3><UiText text="1. Choose your days and meals"/></h3><p>Select one meal per day. You can change each choice before reserving.</p></div><label><UiText text="Servings per day"/><select aria-label={t("Servings per day")} value={quantity} disabled={busy} onChange={(event) => { const count = Number(event.target.value); setQuantity(count); setSelected(selectedPlanMenus(menus, selected, count).map((menu) => menu.menuId)); setMessage(""); }}>{[1, 2, 3, 4, 5, 6].map((count) => <option key={count} value={count}>{count}</option>)}</select></label></div>
       <div className="kitchen-plan-mobile-review"><span><strong>{chosen.length} {chosen.length === 1 ? "day" : "days"} selected</strong><small>{kitchenMoney(totals.total)} including delivery</small></span><a href="#plan-summary-title">Review plan ↓</a></div>
-      <div className="kitchen-plan-presets" role="group" aria-label="Quick selection"><span>Select first available days:</span>{[3, 5, 6, 7].map((count) => <button key={count} type="button" disabled={busy || availableDays.length < count} onClick={() => selectFirstDays(count)}>{count} days</button>)}<button type="button" disabled={busy || chosen.length === 0} onClick={() => { setSelected([]); setMessage(""); }}>Clear</button></div>
+      <div className="kitchen-plan-presets" role="group" aria-label="Quick selection"><span>Select first available days:</span>{[3, 5, 6, 7].map((count) => <button key={count} type="button" disabled={busy || availableDays.length < count} onClick={() => selectFirstDays(count)}>{count} days</button>)}<button type="button" disabled={busy || chosen.length === 0} onClick={() => { setSelected([]); setMessage(""); }}><UiText text="Clear"/></button></div>
       {availableDays.length < 3 && <p className="kitchen-plan-notice">This kitchen currently has {availableDays.length} available {availableDays.length === 1 ? "day" : "days"} for {quantity} {quantity === 1 ? "serving" : "servings"}. A subscription needs at least three days. Try fewer servings or order an available meal for one day.</p>}
       <div className="kitchen-plan-days">{groups.map(([day, dayMenus]) => <fieldset key={day} className="kitchen-plan-day" disabled={busy}><legend>{kitchenMenuDate(day)}</legend><div>{dayMenus.map((menu) => {
         const checked = chosenIds.includes(menu.menuId);
@@ -58,13 +61,14 @@ export function WeeklyPlanPicker({ menus, kitchenName, preview = false, canReser
       })}</div></fieldset>)}</div>
     </div>
     <aside className="kitchen-plan-summary" aria-labelledby="plan-summary-title">
-      <span className="eyebrow">Your weekly table</span><h3 id="plan-summary-title">2. Review your subscription</h3><p>{kitchenName}</p>
+      <span className="eyebrow">Your weekly table</span><h3 id="plan-summary-title"><UiText text="2. Review your subscription"/></h3><p>{kitchenName}</p>
       <div className="kitchen-plan-progress" role="status"><strong>{chosen.length} of 7 days selected</strong><span>{chosen.length < 3 ? `Choose ${3 - chosen.length} more ${3 - chosen.length === 1 ? "day" : "days"} to reach the minimum` : `${quantity} ${quantity === 1 ? "serving" : "servings"} each day · ready to reserve`}</span></div>
       {chosen.length ? <ul className="kitchen-plan-chosen">{chosen.map((menu) => <li key={menu.menuId}><span><strong>{kitchenMenuDate(menu.serviceDate)}</strong><small>{quantity} × {menu.name}</small></span><b>{kitchenMoney(menu.price * quantity)}</b></li>)}</ul> : <p className="kitchen-plan-placeholder">Your chosen meals and total will appear here.</p>}
-      <dl className="kitchen-plan-totals"><div><dt>Meals · {chosen.length * quantity} servings</dt><dd>{kitchenMoney(totals.meals)}</dd></div><div><dt>Delivery · {chosen.length} × ₹30</dt><dd>{kitchenMoney(totals.delivery)}</dd></div><div className="kitchen-plan-total"><dt>Total before wallet credit</dt><dd>{kitchenMoney(totals.total)}</dd></div></dl>
+      <dl className="kitchen-plan-totals"><div><dt>Meals · {chosen.length * quantity} servings</dt><dd>{kitchenMoney(totals.meals)}</dd></div><div><dt>Delivery · {chosen.length} × ₹30</dt><dd>{kitchenMoney(totals.delivery)}</dd></div><div className="kitchen-plan-total"><dt><UiText text="Total before wallet credit"/></dt><dd>{kitchenMoney(totals.total)}</dd></div></dl>
       <p className="kitchen-plan-payment">{preview ? "Preview total only. No booking or payment is created." : "Wallet credit is applied when you reserve. Any remaining balance is due outside the app; no online payment is taken."}</p>
       {!preview && !canReserve && <p className="kitchen-plan-notice">Set your delivery pin above to confirm delivery before reserving.</p>}
-      <button className="button" type="button" disabled={busy || !enoughDays || preview || !canReserve} onClick={createPlan}>{preview ? "Sample subscription" : busy ? "Reserving your meals…" : `Reserve ${chosen.length || "your"} meal days`}</button>
+      {!preview && !enoughDays && <p className="kitchen-plan-notice" id="reservation-minimum"><UiText text="A subscription requires at least three different days; multiple servings on one day still count as one day."/>{availableDays.length >= 3 && <button type="button" className="button button-light" disabled={busy} onClick={() => selectFirstDays(3)}><UiText text="Select first 3 available days"/></button>}</p>}
+      <button className="button" type="button" aria-describedby={!enoughDays ? "reservation-minimum" : undefined} disabled={busy || !enoughDays || preview || !canReserve} onClick={createPlan}>{preview ? "Sample subscription" : busy ? "Reserving your meals…" : !enoughDays ? <UiText text="Choose at least 3 days"/> : <UiText text="Reserve selected meal days"/>}</button>
       <small className="kitchen-plan-terms">One week only. No automatic renewal. Cancel a day 5+ hours before delivery; eligible paid value less ₹5 returns to your wallet.</small>
       {message && <div className={"kitchen-plan-message " + (error ? "is-error" : "")} role={error ? "alert" : "status"}><p>{message}</p>{!error && <Link href="/customer/dashboard#order-history">View my orders and plans →</Link>}</div>}
     </aside>

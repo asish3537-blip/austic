@@ -50,7 +50,7 @@ export async function POST(request: Request) {
         adminId: admin.id, action: "PILOT_PAYMENT_CAPTURED", entityType: "ORDER", entityId: order.id,
         newValue: { amountINR: due, channel: parsed.data.provider, reference: parsed.data.reference },
       } });
-      await tx.notification.create({ data: { userId: order.customerId, title: "Payment recorded", body: "Your " + parsed.data.provider + " payment for order " + order.orderNumber + " was recorded by Pausstik.", kind: "PAYMENT", entityId: order.id } });
+      await tx.notification.create({ data: { userId: order.customerId, title: "Payment recorded", body: "Your " + parsed.data.provider + " payment for order " + order.orderNumber + " was recorded by Paustik.", kind: "PAYMENT", entityId: order.id } });
       return { orderNumber: order.orderNumber, amount: due, currency: order.currency };
     });
     return NextResponse.json({ captured: true, ...result, message: "Payment recorded from the external " + parsed.data.provider + " collection." });
@@ -59,7 +59,7 @@ export async function POST(request: Request) {
     if (code === "ORDER_NOT_FOUND") return NextResponse.json({ error: "Order not found." }, { status: 404 });
     if (code === "ORDER_NOT_PAYABLE" || code === "NO_BALANCE_DUE") return NextResponse.json({ error: "This order has no unpaid balance." }, { status: 409 });
     if (code === "PAYMENT_CHANGED") return NextResponse.json({ error: "The payment changed while you were saving. Refresh the admin dashboard." }, { status: 409 });
-    console.error("Pausstik admin payment record failed.", code || "unknown error");
+    console.error("Paustik admin payment record failed.", code || "unknown error");
     return serviceUnavailable();
   }
 }

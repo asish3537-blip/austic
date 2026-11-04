@@ -7,7 +7,7 @@ export function AvailabilityCheck() {
 
   function checkAvailability(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setMessage("Pausstik has not published launch areas or opened online ordering yet. Your location stays on this device and was not sent or saved.");
+    setMessage("Paustik has not published launch areas or opened online ordering yet. Your location stays on this device and was not sent or saved.");
   }
 
   return (

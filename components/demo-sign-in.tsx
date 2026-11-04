@@ -39,7 +39,7 @@ export function DemoSignIn() {
   }
 
   return <main className="app-demo-page">
-    <div className="app-demo-hero"><div><span className="eyebrow">Separate demo profiles</span><h1>Try Pausstik without SMS.</h1><p>Use a sample customer, mother or delivery profile. No phone number or email is needed.</p></div></div>
+    <div className="app-demo-hero"><div><span className="eyebrow">Separate demo profiles</span><h1>Try Paustik without SMS.</h1><p>Use a sample customer, mother or delivery profile. No phone number or email is needed.</p></div></div>
     <div className="app-demo-layout">
       <section className="app-demo-guide" aria-label="Demo sign-in">
         <div className="preview-label">TEST MODE · SAMPLE DATA ONLY</div>

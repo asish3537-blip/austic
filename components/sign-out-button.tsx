@@ -1,5 +1,6 @@
 "use client";
 
+import { UiText } from "@/components/ui-language";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -11,5 +12,5 @@ export function SignOutButton() {
     try { await fetch("/api/auth/logout", { method: "POST" }); }
     finally { router.replace("/sign-in"); router.refresh(); }
   }
-  return <button className="plain-button" type="button" disabled={busy} onClick={signOut}>{busy ? "Signing out…" : "Sign out"}</button>;
+  return <button className="plain-button" type="button" disabled={busy} onClick={signOut}>{busy ? "Signing out…" : <UiText text="Sign out"/>}</button>;
 }

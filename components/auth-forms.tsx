@@ -1,5 +1,6 @@
 "use client";
 
+import { UiText } from "@/components/ui-language";
 import { useState, type FormEvent } from "react";
 import { afterSignIn, signInLink } from "@/lib/kitchen-handoff";
 import Link from "next/link";
@@ -61,7 +62,7 @@ export function SignInForm({ kitchen }: { kitchen?: string }) {
     }
   }
   return <>
-    <span className="eyebrow">Welcome back</span><h2>Sign in to Pausstik</h2>
+    <span className="eyebrow">Welcome back</span><h2>Sign in to Paustik</h2>
     {kitchen && <p className="form-note">Sign in as a customer to continue with the kitchen you selected.</p>}
     <SignInOptions kitchen={kitchen} />
     <p className="form-success">Testing without SMS? <Link className="text-link" href="/demo-sign-in">Open a separate demo profile with an on-screen code</Link>.</p>
@@ -71,21 +72,21 @@ export function SignInForm({ kitchen }: { kitchen?: string }) {
     <form onSubmit={submit}>
       <div className="form-grid">
         <div className="field full">
-          <label htmlFor="signin-phone">Phone number</label>
-          <div className="phone-otp-row"><input id="signin-phone" name="phone" type="tel" autoComplete="tel" placeholder="+91 98765 43210" value={phone} onChange={(event) => { setPhone(event.target.value); setCodeSent(false); setMessage(""); setDevelopmentCode(""); }} required minLength={7} maxLength={24} /><button className="otp-request-button" type="button" onClick={requestCode} disabled={sending || phone.trim().length < 7}>{sending ? "Sending…" : codeSent ? "Send again" : "Send code"}</button></div>
+          <label htmlFor="signin-phone"><UiText text="Phone number"/></label>
+          <div className="phone-otp-row"><input id="signin-phone" name="phone" type="tel" autoComplete="tel" placeholder="+91 98765 43210" value={phone} onChange={(event) => { setPhone(event.target.value); setCodeSent(false); setMessage(""); setDevelopmentCode(""); }} required minLength={7} maxLength={24} /><button className="otp-request-button" type="button" onClick={requestCode} disabled={sending || phone.trim().length < 7}>{sending ? "Sending…" : codeSent ? "Send again" : <UiText text="Send code"/>}</button></div>
           <small>Indian numbers can use 10 digits or include +91.</small>
         </div>
         <div className="field full"><VerificationChannelPicker value={channel} onChange={(next) => { setChannel(next); setCodeSent(false); setMessage(""); setDevelopmentCode(""); }} idPrefix="signin" /><small>SMS and WhatsApp delivery are pending activation. Demo codes are available only through the separate demo link above.</small></div>
         {codeSent && <div className="field full"><label htmlFor="signin-otp">6-digit verification code</label><input id="signin-otp" name="otp" type="text" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" maxLength={6} required /></div>}
       </div>
-      {message && <Alert success>{message}{developmentCode && <><br /><strong>Pausstik preview code: {developmentCode}</strong></>}</Alert>}
+      {message && <Alert success>{message}{developmentCode && <><br /><strong>Paustik preview code: {developmentCode}</strong></>}</Alert>}
       <div className="auth-links"><span>Codes expire shortly and can be used once.</span></div>
-      <button className="button form-submit" type="submit" disabled={busy}>{busy ? "Signing in…" : "Sign in"}<span aria-hidden="true">→</span></button>
+      <button className="button form-submit" type="submit" disabled={busy}>{busy ? "Signing in…" : <UiText text="Sign in"/>}<span aria-hidden="true">→</span></button>
     </form>
-    <p className="form-footer">Prefer a password? <Link className="text-link" href={signInLink("/password-sign-in", kitchen)}>Sign in with email</Link> · <Link className="text-link" href="/forgot-password">Reset password</Link></p>
+    <p className="form-footer">Prefer a password? <Link className="text-link" href={signInLink("/password-sign-in", kitchen)}>Sign in with email</Link> · <Link className="text-link" href="/forgot-password"><UiText text="Reset password"/></Link></p>
     <details className="verification-help"><summary>Need a fresh email verification link?</summary><ResendVerificationForm /></details>
-    <p className="form-footer">Administrator? <Link className="text-link" href="/admin-sign-in">Admin sign in</Link></p>
-    <p className="form-footer">New to Pausstik? <Link className="text-link" href="/sign-up">Create an account</Link></p>
+    <p className="form-footer">Administrator? <Link className="text-link" href="/admin-sign-in"><UiText text="Admin sign in"/></Link></p>
+    <p className="form-footer">New to Paustik? <Link className="text-link" href="/sign-up">Create an account</Link></p>
   </>;
 }
 
@@ -167,10 +168,10 @@ export function SignUpForm({ initialRole = "CUSTOMER" }: { initialRole?: Role })
         {roles.map((item) => <label className="role-option" key={item.id}><input type="radio" name="role-choice" value={item.id} checked={role === item.id} onChange={() => setRole(item.id)} /><span><b>{item.name}</b><small>{item.note}</small></span></label>)}
       </div>
       <div className="form-grid" style={{ marginTop: 16 }}>
-        <div className="field"><label htmlFor="signup-name">Full name</label><input id="signup-name" name="name" autoComplete="name" required minLength={2} maxLength={100} /></div>
+        <div className="field"><label htmlFor="signup-name"><UiText text="Full name"/></label><input id="signup-name" name="name" autoComplete="name" required minLength={2} maxLength={100} /></div>
         <div className="field"><label htmlFor="signup-phone">Delivery contact number</label><input id="signup-phone" name="phone" type="tel" autoComplete="tel" required maxLength={24} /></div>
         <div className="field"><label htmlFor="signup-email">Email</label><input id="signup-email" name="email" type="email" autoComplete="email" required maxLength={254} /></div>
-        <div className="field"><label htmlFor="signup-password">Password</label><input id="signup-password" name="password" type="password" autoComplete="new-password" required minLength={8} maxLength={72} aria-describedby="signup-password-help" /><small id="signup-password-help">8+ characters with uppercase, lowercase and a number.</small></div>
+        <div className="field"><label htmlFor="signup-password"><UiText text="Password"/></label><input id="signup-password" name="password" type="password" autoComplete="new-password" required minLength={8} maxLength={72} aria-describedby="signup-password-help" /><small id="signup-password-help">8+ characters with uppercase, lowercase and a number.</small></div>
         {role === "MOTHER" && <><div className="field"><label htmlFor="signup-kitchen">Kitchen name</label><input id="signup-kitchen" name="kitchenName" required minLength={2} maxLength={120} /></div><div className="field"><label htmlFor="signup-cuisine">Cooking specialties</label><input id="signup-cuisine" name="cuisine" placeholder="e.g. Odia home cooking, vegetarian thalis" required minLength={2} maxLength={80} /></div><div className="field"><label htmlFor="signup-capacity">Meals you can prepare per day</label><input id="signup-capacity" name="capacityPerDay" type="number" min={1} max={300} required /></div><div className="field"><label htmlFor="signup-days">Available lunch days</label><input id="signup-days" name="availableDays" placeholder="Monday, Tuesday, Wednesday" required minLength={2} maxLength={120} /><small>Separate days with commas.</small></div><div className="field full"><label htmlFor="signup-lunch-window">Lunch service window</label><input id="signup-lunch-window" name="lunchWindow" placeholder="11:30 AM to 2:00 PM" required minLength={3} maxLength={80} /></div></>}
         {role === "DELIVERY_AGENT" && <div className="field full"><label htmlFor="signup-vehicle">Vehicle type</label><select id="signup-vehicle" name="vehicleType" required defaultValue=""><option value="" disabled>Select vehicle</option><option>Bicycle</option><option>Scooter</option><option>Motorcycle</option><option>Car</option><option>Other</option></select></div>}
         <div className="field full"><label htmlFor="signup-address">Street address</label><input id="signup-address" name="addressLine1" autoComplete="street-address" required minLength={3} maxLength={160} /></div>
@@ -179,8 +180,8 @@ export function SignUpForm({ initialRole = "CUSTOMER" }: { initialRole?: Role })
         <div className="field"><label htmlFor="signup-pin">PIN code</label><input id="signup-pin" name="pinCode" autoComplete="postal-code" required minLength={4} maxLength={12} /></div>
       </div>
       {role !== "CUSTOMER" && <p className="form-note">Your application will be reviewed after email confirmation.</p>}
-      <button className="button form-submit" type="submit" disabled={busy}>{busy ? "Creating account…" : "Create account"}<span aria-hidden="true">→</span></button>
+      <button className="button form-submit" type="submit" disabled={busy}>{busy ? "Creating account…" : <UiText text="Create account"/>}<span aria-hidden="true">→</span></button>
     </form>}
-    <p className="form-footer">Already registered? <Link className="text-link" href="/sign-in">Sign in</Link></p>
+    <p className="form-footer">Already registered? <Link className="text-link" href="/sign-in"><UiText text="Sign in"/></Link></p>
   </>;
 }

@@ -12,7 +12,7 @@ import { attachDemoOtpCookie, createDemoOtp, isDemoAuthEnabled } from "@/lib/dem
 export const runtime = "nodejs";
 
 function phoneOtpUnavailable() {
-  return NextResponse.json({ error: "Phone verification is not connected yet. Pausstik needs its Twilio Verify service configured before it can send codes." }, { status: 503 });
+  return NextResponse.json({ error: "Phone verification is not connected yet. Paustik needs its Twilio Verify service configured before it can send codes." }, { status: 503 });
 }
 
 function hashIdentifier(value: string) {
@@ -24,7 +24,7 @@ export async function POST(request: Request) {
   if (originError) return originError;
   const localAuth = isLocalAuthMode();
   const demoAuth = !localAuth && isDemoAuthEnabled();
-  if (!localAuth && (!process.env.DATABASE_URL || !process.env.AUTH_SECRET)) return NextResponse.json({ error: "Account sign-in is not configured yet. Please contact Pausstik support." }, { status: 503 });
+  if (!localAuth && (!process.env.DATABASE_URL || !process.env.AUTH_SECRET)) return NextResponse.json({ error: "Account sign-in is not configured yet. Please contact Paustik support." }, { status: 503 });
   if (!localAuth && !demoAuth && !isPhoneOtpConfigured()) return phoneOtpUnavailable();
 
   let body: unknown;
@@ -32,7 +32,7 @@ export async function POST(request: Request) {
   const parsed = otpRequestSchema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ error: "Enter a valid phone number." }, { status: 400 });
   if (!localAuth && !demoAuth && parsed.data.purpose === "signup" && !isEmailConfigured()) {
-    return NextResponse.json({ error: "New account registration will open when Pausstik email confirmation is connected. Please try again later; no phone code was sent." }, { status: 503 });
+    return NextResponse.json({ error: "New account registration will open when Paustik email confirmation is connected. Please try again later; no phone code was sent." }, { status: 503 });
   }
   const phone = normalizePhoneNumber(parsed.data.phone);
   if (!phone) return NextResponse.json({ error: "Enter a valid phone number with your country code. Indian numbers can use 10 digits or +91." }, { status: 400 });
@@ -50,7 +50,7 @@ export async function POST(request: Request) {
         message: `Local sign-in is enabled because no hosted database is configured. No ${parsed.data.channel === "whatsapp" ? "WhatsApp" : "SMS"} was sent; use the one-time code shown below.`,
       });
     } catch (error) {
-      console.error("Pausstik local phone code could not be created.", error instanceof Error ? error.name : "unknown error");
+      console.error("Paustik local phone code could not be created.", error instanceof Error ? error.name : "unknown error");
       return phoneOtpUnavailable();
     }
   }
@@ -64,12 +64,12 @@ export async function POST(request: Request) {
   try {
     const user = await prisma.user.findFirst({ where: { phone: { in: candidates } }, select: { id: true, status: true, role: true } });
     if (parsed.data.purpose === "signup" && user) {
-      return NextResponse.json({ error: "This phone number already has a Pausstik account. Sign in with a phone code instead." }, { status: 409 });
+      return NextResponse.json({ error: "This phone number already has a Paustik account. Sign in with a phone code instead." }, { status: 409 });
     }
 
     // Keep sign-in responses the same for known and unknown numbers.
     if (parsed.data.purpose === "login" && (!user || user.role === "ADMIN" || user.status === "SUSPENDED" || user.status === "REJECTED")) {
-      return NextResponse.json({ sent: true, message: "If a Pausstik account uses this number, a sign-in code has been sent." });
+      return NextResponse.json({ sent: true, message: "If a Paustik account uses this number, a sign-in code has been sent." });
     }
 
     const phoneAttempts = await prisma.failedLoginAttempt.count({ where: { identifierHash, createdAt: { gte: windowStart } } });
@@ -84,7 +84,7 @@ export async function POST(request: Request) {
     });
     if (demoAuth) {
       if (parsed.data.purpose === "login" && (!user || user.role === "ADMIN")) {
-        return NextResponse.json({ sent: true, message: "If a Pausstik account uses this number, an in-app demo code is ready." }, { headers: { "Cache-Control": "no-store" } });
+        return NextResponse.json({ sent: true, message: "If a Paustik account uses this number, an in-app demo code is ready." }, { headers: { "Cache-Control": "no-store" } });
       }
       const challenge = createDemoOtp(phone, parsed.data.purpose);
       const response = NextResponse.json({
@@ -100,13 +100,13 @@ export async function POST(request: Request) {
       sent: true,
       message: parsed.data.purpose === "signup"
         ? `We sent a 6-digit code by ${parsed.data.channel === "whatsapp" ? "WhatsApp" : "SMS"}. It expires shortly.`
-        : `If a Pausstik account uses this number, a sign-in code has been sent by ${parsed.data.channel === "whatsapp" ? "WhatsApp" : "SMS"}.`,
+        : `If a Paustik account uses this number, a sign-in code has been sent by ${parsed.data.channel === "whatsapp" ? "WhatsApp" : "SMS"}.`,
     });
   } catch (error) {
-    console.error("Pausstik phone verification request failed.", error instanceof Error ? error.name : "unknown error");
+    console.error("Paustik phone verification request failed.", error instanceof Error ? error.name : "unknown error");
     if (parsed.data.channel === "whatsapp" && error && typeof error === "object" && "twilioCode" in error && error.twilioCode === 68008) {
       return NextResponse.json({ error: "WhatsApp verification is not enabled in the Twilio Verify service yet. Configure a WhatsApp sender in Twilio, or choose SMS." }, { status: 503 });
     }
-    return NextResponse.json({ error: "Pausstik could not send a code right now. Check the number and try again shortly." }, { status: 503 });
+    return NextResponse.json({ error: "Paustik could not send a code right now. Check the number and try again shortly." }, { status: 503 });
   }
 }

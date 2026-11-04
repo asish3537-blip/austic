@@ -10,8 +10,12 @@ function emailConfig() {
 }
 
 // Configuration presence is not proof of sender verification or inbox delivery.
+export function isLocalEmailPreview() {
+  return process.env.NODE_ENV !== "production" && process.env.PAUSTIK_LOCAL_EMAIL_PREVIEW === "true";
+}
+
 export function isEmailConfigured() {
-  return emailConfig() !== null;
+  return isLocalEmailPreview() || emailConfig() !== null;
 }
 
 const siteUrl = () => (process.env.PAUSTIK_PUBLIC_URL || "http://localhost:3000").replace(/\/$/, "");
@@ -46,14 +50,14 @@ export async function sendAuthEmail(email: string, kind: AuthEmailKind, token: s
   const { apiKey, from } = config;
 
   const verification = kind === "verify";
-  const subject = verification ? "Verify your Pausstik email" : "Reset your Pausstik password";
+  const subject = verification ? "Verify your Paustik email" : "Reset your Paustik password";
   const action = verification ? "Verify email" : "Choose a new password";
   const origin = emailOrigin(requestOrigin);
   if (!origin) return false;
   const link = makeAuthLink(kind, token, origin);
   const text = `${action}: ${link}\n\nIf you did not request this, you can ignore this email.`;
   const safeLink = link.replaceAll("&", "&amp;").replaceAll('"', "&quot;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
-  const html = `<p>${action} for your Pausstik account:</p><p><a href="${safeLink}">${action}</a></p><p>If you did not request this, you can ignore this email.</p>`;
+  const html = `<p>${action} for your Paustik account:</p><p><a href="${safeLink}">${action}</a></p><p>If you did not request this, you can ignore this email.</p>`;
 
   try {
     const response = await fetch("https://api.resend.com/emails", {
@@ -66,7 +70,7 @@ export async function sendAuthEmail(email: string, kind: AuthEmailKind, token: s
     if (!response.ok) {
       const rejected = await response.json().catch(() => null) as { name?: string } | null;
       const allowed = ["validation_error", "missing_api_key", "invalid_api_key", "restricted_api_key", "rate_limit_exceeded", "application_error"];
-      console.error("Pausstik mail provider rejected message.", { kind, status: response.status, reason: allowed.includes(rejected?.name || "") ? rejected!.name : "provider_error" });
+      console.error("Paustik mail provider rejected message.", { kind, status: response.status, reason: allowed.includes(rejected?.name || "") ? rejected!.name : "provider_error" });
     }
     return response.ok;
   } catch {

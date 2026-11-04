@@ -37,7 +37,7 @@ export async function recordRazorpayReceipt(providerOrderId: string, paymentId: 
     await tx.order.update({ where: { id: row.orderId }, data: { paymentStatus: "CAPTURED" } });
     await tx.paymentLedgerEntry.create({ data: { paymentId: row.id, orderId: row.orderId, category: "CUSTOMER_CHARGE", amount: row.amount, currency: "INR", reference: "razorpay:" + paymentId, metadata: { providerOrderId, refundReviewRequired: closed } } });
     await tx.orderEvent.create({ data: { orderId: row.orderId, status: current.order.status, detail: closed ? "Razorpay receipt confirmed after order closure. Operations must review a refund." : "Razorpay confirmed the captured payment." } });
-    await tx.notification.create({ data: { userId: current.order.customerId, kind: "PAYMENT", entityId: row.orderId, title: closed ? "Payment needs review" : "Payment received", body: closed ? "Payment arrived after this order closed. Contact Pausstik for a refund review." : "Payment received for " + current.order.orderNumber + "." } });
+    await tx.notification.create({ data: { userId: current.order.customerId, kind: "PAYMENT", entityId: row.orderId, title: closed ? "Payment needs review" : "Payment received", body: closed ? "Payment arrived after this order closed. Contact Paustik for a refund review." : "Payment received for " + current.order.orderNumber + "." } });
     return { paid: true, refundReviewRequired: closed };
   });
 }

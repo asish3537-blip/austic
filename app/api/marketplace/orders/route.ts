@@ -4,6 +4,7 @@ import { z } from "zod";
 import { getCurrentUser } from "@/lib/auth";
 import { rejectCrossOrigin, serviceUnavailable } from "@/lib/http";
 import { prisma } from "@/lib/prisma";
+import { ensurePilotWallet } from "@/lib/pilot-wallet";
 import { CANCELLATION_CUTOFF_HOURS, CANCELLATION_OPERATION_FEE_INR, DELIVERY_FEE_INR, distanceMeters, lockWallet, mealDeliveryInstant, mealPriceAllowed, walletBalance } from "@/lib/marketplace-rules";
 
 export const runtime = "nodejs";
@@ -56,6 +57,7 @@ export async function POST(request: Request) {
     const orderNumber = "PS-" + Date.now().toString(36).toUpperCase() + "-" + randomBytes(2).toString("hex").toUpperCase();
     const order = await prisma.$transaction(async (tx) => {
       await lockWallet(tx, user.id);
+      await ensurePilotWallet(tx, user.id);
       const walletUsed = Math.min(await walletBalance(tx, user.id), total);
       const amountDue = total - walletUsed;
       const reserved = await tx.menu.updateMany({
@@ -94,7 +96,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ created: true, orderId: order.id, orderNumber: order.orderNumber, total, walletApplied: Number(walletApplied._sum.amount ?? 0), amountDue: Math.max(0, total - Number(walletApplied._sum.amount ?? 0)), currency: "INR", paymentStatus: order.paymentStatus, message: "Order saved. Online payment is not connected; any remaining balance has not been charged." }, { status: 201 });
   } catch (error) {
     if (error instanceof Error && error.message === "MENU_SOLD_OUT") return NextResponse.json({ error: "That meal just sold out. Refresh the menu to see remaining servings." }, { status: 409 });
-    console.error("Pausstik order creation failed.", error instanceof Error ? error.name : "unknown error");
+    console.error("Paustik order creation failed.", error instanceof Error ? error.name : "unknown error");
     return serviceUnavailable();
   }
 }

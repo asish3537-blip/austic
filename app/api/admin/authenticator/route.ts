@@ -98,7 +98,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ enabled: result.enabled, ...(result.recoveryCodes ? { recoveryCodes: result.recoveryCodes } : {}) }, { headers });
   } catch (error) {
     if (error instanceof AdminAuthError) return NextResponse.json({ error: error.message }, { status: error.status, headers });
-    console.error("Pausstik authenticator request failed.", error instanceof Error ? error.name : "unknown error");
+    console.error("Paustik authenticator request failed.", error instanceof Error ? error.name : "unknown error");
     return serviceUnavailable();
   }
 }

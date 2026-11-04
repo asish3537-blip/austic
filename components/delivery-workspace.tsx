@@ -1,5 +1,6 @@
 "use client";
 
+import { UiText } from "@/components/ui-language";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 type DeliveryJob = {
@@ -140,13 +141,13 @@ export function DeliveryWorkspace() {
 
   if (loading) return <div className="dashboard-banner">Loading delivery board…</div>;
   return <div className="delivery-workspace">
-    <section className="delivery-privacy-note"><strong>GPS is opt-in.</strong> Your location is shared with the customer only while the order is picked up or out for delivery. Pausstik stores one latest point and clears it at handover or when you stop sharing.</section>
+    <section className="delivery-privacy-note"><strong>GPS is opt-in.</strong> Your location is shared with the customer only while the order is picked up or out for delivery. Paustik stores one latest point and clears it at handover or when you stop sharing.</section>
     {message && <p className="workspace-message" role="status">{message}</p>}
     <section className="delivery-jobs-grid" id="delivery-jobs">
       <article className="dashboard-card">
         <div className="workspace-section-heading"><div><span className="eyebrow">Ready nearby</span><h2 id="available-jobs">Available deliveries</h2></div><span className="customer-count">{jobs.available.length}</span></div>
         {jobs.available.length ? <div className="workspace-record-list">{jobs.available.map((job) => <article key={job.deliveryId}>
-          <div className="workspace-record-head"><strong>{job.orderNumber}</strong><span className="customer-status customer-status-active">Ready for pickup</span></div>
+          <div className="workspace-record-head"><strong>{job.orderNumber}</strong><span className="customer-status customer-status-active"><UiText text="Ready for pickup"/></span></div>
           <p>{job.items.join(", ")}</p><small>Pickup: {job.pickup} · Drop-off: {job.dropoff}</small>
           <button className="button button-small" type="button" onClick={() => claim(job)} disabled={busyId === job.deliveryId}>{busyId === job.deliveryId ? "Accepting…" : "Accept delivery"}</button>
         </article>)}</div> : <div className="customer-empty-state"><strong>No ready jobs nearby</strong><span>New deliveries appear after a kitchen marks an order ready for pickup.</span></div>}
@@ -163,7 +164,7 @@ export function DeliveryWorkspace() {
               {job.pickupNavigation && <a className="button button-quiet" href={`https://www.google.com/maps/dir/?${new URLSearchParams({ api: "1", destination: job.pickupNavigation, dir_action: "navigate" })}`} target="_blank" rel="noopener noreferrer">Google Maps · Kitchen ↗</a>}
               {job.dropoffNavigation && <a className="button button-quiet" href={`https://www.google.com/maps/dir/?${new URLSearchParams({ api: "1", destination: job.dropoffNavigation, dir_action: "navigate" })}`} target="_blank" rel="noopener noreferrer">Google Maps · Customer ↗</a>}
             </div>
-            <small>Opening a route shares its destination with Google Maps. Confirm the address before travelling. Navigation does not mark pickup or delivery complete. Keep Pausstik open for location updates; background tracking may pause.</small>
+            <small>Opening a route shares its destination with Google Maps. Confirm the address before travelling. Navigation does not mark pickup or delivery complete. Keep Paustik open for location updates; background tracking may pause.</small>
             {job.deliveryStatus !== "DELIVERED" && <div className="delivery-location-actions">
               {watchingId === job.deliveryId ? <button type="button" className="button button-quiet" onClick={() => stopLocation(job)}>Stop sharing</button> : <button type="button" className="button button-quiet" onClick={() => startLocation(job)}>{job.isSharingLocation ? "Resume location sharing" : "Start location sharing"}</button>}
               {job.isSharingLocation && watchingId !== job.deliveryId && <button type="button" className="delivery-revoke-button" onClick={() => stopLocation(job)}>Revoke location sharing</button>}
@@ -175,6 +176,6 @@ export function DeliveryWorkspace() {
         })}</div> : <div className="customer-empty-state"><strong>No delivery assigned</strong><span>Accept a job when you are ready to take it.</span></div>}
       </article>
     </section>
-    <p className="dashboard-banner">The 150 m pickup and drop-off geofences need accurate kitchen and customer pins. GPS can be inaccurate or spoofed; Pausstik records each handover step for operations review.</p>
+    <p className="dashboard-banner">The 150 m pickup and drop-off geofences need accurate kitchen and customer pins. GPS can be inaccurate or spoofed; Paustik records each handover step for operations review.</p>
   </div>;
 }

@@ -4,7 +4,7 @@ import { isEmailConfigured, makeAuthLink, sendAuthEmail } from "../lib/email";
 
 // Synthetic fixtures only. No environment files, database clients, or real network calls.
 const TEST_KEY = "re_synthetic_test_key_never_use_in_production";
-const TEST_FROM = "Pausstik <no-reply@paustik.example>";
+const TEST_FROM = "Paustik <no-reply@paustik.example>";
 const TEST_ORIGIN = "https://paustik.example";
 const TEST_RECIPIENT = "customer@example.test";
 const TEST_TOKEN = "synthetic-token&with=characters/and+spaces here";
@@ -77,9 +77,9 @@ for (const [label, sender] of [
   ["missing at sign", "no-reply.paustik.example"],
   ["missing domain suffix", "no-reply@paustik"],
   ["spaces in address", "no reply@paustik.example"],
-  ["unclosed display address", "Pausstik <no-reply@paustik.example"],
-  ["multiple addresses", "Pausstik <one@paustik.example>, Other <two@paustik.example>"],
-  ["line break injection", "Pausstik\r\nBcc: other@example.test <no-reply@paustik.example>"],
+  ["unclosed display address", "Paustik <no-reply@paustik.example"],
+  ["multiple addresses", "Paustik <one@paustik.example>, Other <two@paustik.example>"],
+  ["line break injection", "Paustik\r\nBcc: other@example.test <no-reply@paustik.example>"],
 ] as const) {
   test(`malformed sender (${label}) is rejected before sending`, async () => {
     process.env.EMAIL_FROM = sender;
@@ -122,15 +122,15 @@ test("provider timeout returns false without propagating it", async () => {
 });
 
 for (const [kind, route, subject] of [
-  ["verify", "/api/auth/verify-email", "Verify your Pausstik email"],
-  ["reset", "/reset-password", "Reset your Pausstik password"],
+  ["verify", "/api/auth/verify-email", "Verify your Paustik email"],
+  ["reset", "/reset-password", "Reset your Paustik password"],
 ] as const) {
-  test(`${kind} emails use the intended route, encoded token and Pausstik branding`, async () => {
+  test(`${kind} emails use the intended route, encoded token and Paustik branding`, async () => {
     assert.equal(await sendAuthEmail(TEST_RECIPIENT, kind, TEST_TOKEN), true);
     const body = sentBody();
     const link = sentLink();
     assert.equal(body.subject, subject);
-    assert.match(body.html, /your Pausstik account/);
+    assert.match(body.html, /your Paustik account/);
     assert.equal(link.origin, TEST_ORIGIN);
     assert.equal(link.pathname, route);
     assert.equal(link.searchParams.get("token"), TEST_TOKEN);

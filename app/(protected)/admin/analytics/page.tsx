@@ -6,14 +6,14 @@ export const dynamic = "force-dynamic";
 export default async function AdminAnalytics({ searchParams }: { searchParams: Promise<{ days?: string }> }) {
   await requireRole("ADMIN"); const days = reportDays((await searchParams).days); const now = new Date(); const since = new Date(reportStart(days, now)); const period = { gte: since, lte: now };
   const [signups, payments, ledger, earnings, payouts, subscriptions, deliveries, ratings] = await Promise.all([
-    prisma.user.groupBy({ by: ["role"], where: { createdAt: period }, _count: { _all: true } }),
+    prisma.user.groupBy({ by: ["role"], where: { email: { not: { endsWith: "@paustik.invalid" } }, createdAt: period }, _count: { _all: true } }),
     prisma.payment.groupBy({ by: ["status", "currency"], where: { createdAt: period }, _count: { _all: true }, _sum: { amount: true } }),
     prisma.paymentLedgerEntry.groupBy({ by: ["category", "currency"], where: { createdAt: period }, _sum: { amount: true } }),
     prisma.earning.groupBy({ by: ["beneficiaryRole", "status", "currency"], _sum: { netAmount: true } }),
     prisma.payout.groupBy({ by: ["status", "currency"], _sum: { amount: true } }),
     prisma.subscription.groupBy({ by: ["status"], _count: { _all: true } }),
-    prisma.delivery.groupBy({ by: ["status"], _count: { _all: true } }),
-    prisma.rating.aggregate({ where: { createdAt: period }, _avg: { mealScore: true, deliveryScore: true }, _count: { mealScore: true, deliveryScore: true } }),
+    prisma.delivery.groupBy({ by: ["status"], where: { order: { orderNumber: { not: { startsWith: "TEST-LIFE-" } } } }, _count: { _all: true } }),
+    prisma.rating.aggregate({ where: { order: { orderNumber: { not: { startsWith: "TEST-LIFE-" } } }, createdAt: period }, _avg: { mealScore: true, deliveryScore: true }, _count: { mealScore: true, deliveryScore: true } }),
   ]);
   const amount = (n: number, currency: string) => new Intl.NumberFormat("en-IN", { style: "currency", currency: currency.trim(), maximumFractionDigits: 2 }).format(n);
   const score = (n: number | null) => n === null ? "—" : `${n.toFixed(1)} / 5`;

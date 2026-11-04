@@ -53,7 +53,7 @@ export async function POST(request: Request, context: { params: Promise<{ orderI
         if (remaining === 0) await tx.subscription.update({ where: { id: order.subscriptionId }, data: { status: "CANCELLED", cancelledAt: now } });
       }
       await tx.notification.createMany({ data: [
-        { userId: order.customerId, title: "Meal day cancelled", body: credit > 0 ? "₹" + credit.toFixed(0) + " was added to your Pausstik wallet after the ₹5 processing fee.": "Your day was cancelled. No funds had been collected, so no wallet credit was due.", kind: "ORDER", entityId: order.id },
+        { userId: order.customerId, title: "Meal day cancelled", body: credit > 0 ? "₹" + credit.toFixed(0) + " was added to your Paustik wallet after the ₹5 processing fee.": "Your day was cancelled. No funds had been collected, so no wallet credit was due.", kind: "ORDER", entityId: order.id },
         { userId: order.mother.userId, title: "Meal day cancelled", body: "Order " + order.orderNumber + " was cancelled before the five-hour cutoff.", kind: "ORDER", entityId: order.id },
       ] });
       return { walletCredit: credit, balance: await walletBalance(tx, user.id), cutoffAt: cutoffAt.toISOString() };
@@ -62,10 +62,10 @@ export async function POST(request: Request, context: { params: Promise<{ orderI
   } catch (error) {
     const code = error instanceof Error ? error.message : "";
     if (code === "ORDER_NOT_FOUND") return NextResponse.json({ error: "Order not found." }, { status: 404 });
-    if (code === "PREPARATION_STARTED") return NextResponse.json({ error: "This meal is already in preparation and can no longer be cancelled online. Contact Pausstik support." }, { status: 409 });
+    if (code === "PREPARATION_STARTED") return NextResponse.json({ error: "This meal is already in preparation and can no longer be cancelled online. Contact Paustik support." }, { status: 409 });
     if (code === "CUTOFF_PASSED") return NextResponse.json({ error: "Cancellation closes five hours before the scheduled delivery." }, { status: 409 });
     if (code === "ALREADY_CANCELLED") return NextResponse.json({ error: "This order day is already cancelled." }, { status: 409 });
-    console.error("Pausstik customer cancellation failed.", code || "unknown error");
+    console.error("Paustik customer cancellation failed.", code || "unknown error");
     return serviceUnavailable();
   }
 }

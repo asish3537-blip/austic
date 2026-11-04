@@ -45,7 +45,7 @@ export function PwaRuntime() {
     };
     const onInstalled = () => {
       deferredPrompt = null;
-      updateState({ installed: true, available: false, prompting: false, message: "Pausstik has been added to this device." });
+      updateState({ installed: true, available: false, prompting: false, message: "Paustik has been added to this device." });
     };
     const onDisplayModeChange = () => { if (isStandalone()) onInstalled(); };
 
@@ -90,7 +90,7 @@ export function PwaInstallButton() {
       const choice = await prompt.userChoice;
       if (!state.installed) {
         updateState({ message: choice.outcome === "accepted"
-          ? "Installation requested. Finish any steps shown by your browser, then open Pausstik from your device."
+          ? "Installation requested. Finish any steps shown by your browser, then open Paustik from your device."
           : "Installation was dismissed. You can install later from your browser menu." });
       }
     } catch {
@@ -106,7 +106,7 @@ export function PwaInstallButton() {
       disabled={current.installed || current.prompting}
       aria-busy={current.prompting}
       aria-describedby={helpOpen || current.message ? helpId : undefined}>
-      {current.installed ? "App added to this device" : current.prompting ? "Opening installation…" : "Install Pausstik app"}
+      {current.installed ? "App added to this device" : current.prompting ? "Opening installation…" : "Install Paustik app"}
       {!current.installed && !current.prompting && <span aria-hidden="true">↗</span>}
     </button>
     {(helpOpen || current.message) && <div className="pwa-install-help" id={helpId} role="status" aria-live="polite">

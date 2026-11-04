@@ -48,7 +48,7 @@ export async function GET() {
     });
     return NextResponse.json({ available: available.map((delivery) => mapJob(delivery, false)), assigned: assigned.map((delivery) => mapJob(delivery, true)) }, { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) {
-    console.error("Pausstik delivery jobs could not load.", error instanceof Error ? error.name : "unknown error");
+    console.error("Paustik delivery jobs could not load.", error instanceof Error ? error.name : "unknown error");
     return serviceUnavailable();
   }
 }
@@ -74,12 +74,12 @@ export async function POST(request: Request) {
       const delivery = await tx.delivery.findUniqueOrThrow({ where: { id: parsed.data.deliveryId }, include: { order: true } });
       await tx.order.update({ where: { id: delivery.orderId }, data: { status: "DELIVERY_ASSIGNED" } });
       await tx.orderEvent.create({ data: { orderId: delivery.orderId, actorUserId: user.id, status: "DELIVERY_ASSIGNED", detail: "A delivery partner accepted this job." } });
-      await tx.notification.create({ data: { userId: delivery.order.customerId, title: "Courier assigned", body: "A Pausstik delivery partner accepted order " + delivery.order.orderNumber + ".", kind: "DELIVERY", entityId: delivery.orderId } });
+      await tx.notification.create({ data: { userId: delivery.order.customerId, title: "Courier assigned", body: "A Paustik delivery partner accepted order " + delivery.order.orderNumber + ".", kind: "DELIVERY", entityId: delivery.orderId } });
     });
     return NextResponse.json({ accepted: true });
   } catch (error) {
     if (error instanceof Error && error.message === "JOB_ALREADY_CLAIMED") return NextResponse.json({ error: "Another courier accepted this delivery first." }, { status: 409 });
-    console.error("Pausstik delivery claim failed.", error instanceof Error ? error.name : "unknown error");
+    console.error("Paustik delivery claim failed.", error instanceof Error ? error.name : "unknown error");
     return serviceUnavailable();
   }
 }

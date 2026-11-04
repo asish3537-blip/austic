@@ -1,3 +1,4 @@
+import { UiText } from "@/components/ui-language";
 import { razorpayConfig } from "@/lib/razorpay";
 import { RazorpayPayment } from "@/components/razorpay-payment";
 import { UpiPayment } from "@/components/upi-payment";
@@ -9,6 +10,7 @@ import { prisma } from "@/lib/prisma";
 import { CancelOrderButton, CustomerDeliveryPin, CustomerDeliveryTracking, CustomerWallet } from "@/components/customer-marketplace-controls";
 import { KitchenDiscovery } from "@/components/kitchen-discovery";
 import { loadCustomerKitchenDiscovery, sampleCustomerKitchens } from "@/lib/customer-kitchens";
+import { OrderFeedback } from "@/components/order-feedback";
 
 function date(value: Date) {
   return new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeZone: "Asia/Kolkata" }).format(value);
@@ -44,6 +46,7 @@ async function loadCustomerActivity(customerId: string) {
         kitchen: { select: { name: true } },
         items: { select: { mealName: true, quantity: true } },
         delivery: { select: { status: true } },
+        ratings: { where: { authorId: customerId }, select: { mealScore: true, deliveryScore: true } },
       },
     }),
     prisma.subscription.findMany({
@@ -75,20 +78,20 @@ export default async function CustomerDashboardPage() {
       [orders, subscriptions] = await loadCustomerActivity(user.id);
     } catch (error) {
       activityAvailable = false;
-      console.error("Pausstik customer activity could not be loaded.", error instanceof Error ? error.name : "unknown error");
+      console.error("Paustik customer activity could not be loaded.", error instanceof Error ? error.name : "unknown error");
     }
     try {
       discovery = await loadCustomerKitchenDiscovery(user.id);
     } catch (error) {
       discovery.available = false;
-      console.error("Pausstik kitchen discovery could not be loaded.", error instanceof Error ? error.name : "unknown error");
+      console.error("Paustik kitchen discovery could not be loaded.", error instanceof Error ? error.name : "unknown error");
     }
   }
 
 
   return <main className="dashboard-shell customer-dashboard">
     <div className="dashboard-head customer-dashboard-head">
-      <div><span className="eyebrow">Your Pausstik table</span><h1>Your meals</h1></div>
+      <div><span className="eyebrow">Your Paustik table</span><h1><UiText text="Your meals"/></h1></div>
     </div>
 
 
@@ -100,17 +103,17 @@ export default async function CustomerDashboardPage() {
 
     <section className="customer-activity-grid" id="order-history" aria-label="Your orders and meal plans">
       <article className="customer-panel">
-        <div className="customer-panel-heading"><div><span className="eyebrow">Order history</span><h2>Recent orders</h2></div><span className="customer-count">{orders.length}</span></div>
+        <div className="customer-panel-heading"><div><span className="eyebrow">Order history</span><h2><UiText text="Recent orders"/></h2></div><span className="customer-count">{orders.length}</span></div>
         {!activityAvailable ? <p className="customer-empty">We couldn’t load your account activity right now. Refresh this page in a moment.</p> : orders.length ? <ul className="customer-record-list">
           {orders.map((order) => <li key={order.id}>
-            <div className="customer-record-main"><strong>{order.orderNumber}</strong><span>{order.kitchen.name} · {order.items.map((item) => `${item.quantity} × ${item.mealName}`).join(", ")}</span><small>Ordered {date(order.orderedAt)} · For {date(order.scheduledFor)}</small>{order.delivery && order.status !== "DELIVERED" && order.status !== "CANCELLED" && <CustomerDeliveryTracking orderId={order.id} orderNumber={order.orderNumber} />}</div>
+            <div className="customer-record-main"><strong>{order.orderNumber}</strong><span>{order.kitchen.name} · {order.items.map((item) => `${item.quantity} × ${item.mealName}`).join(", ")}</span><small>Ordered {date(order.orderedAt)} · For {date(order.scheduledFor)}</small>{order.status !== "CANCELLED" && <CustomerDeliveryTracking orderId={order.id} orderNumber={order.orderNumber} />}{order.status === "DELIVERED" && <OrderFeedback orderId={order.id} initial={{ mealScore: order.ratings.find(r => r.mealScore !== null)?.mealScore ?? null, deliveryScore: order.ratings.find(r => r.deliveryScore !== null)?.deliveryScore ?? null }} />}</div>
             <div className="customer-record-meta">{(upiReceiver() || razorpayConfig()) && order.paymentStatus === "PENDING" && !["CANCELLED", "FAILED"].includes(order.status) && (razorpayConfig() ? <RazorpayPayment orderId={order.id} /> : <UpiPayment orderId={order.id} />)}<b>{money(Number(order.totalAmount), order.currency)}</b><span className={`customer-status customer-status-${order.status.toLowerCase()}`}>{title(order.status)}</span></div>
           </li>)}
         </ul> : <div className="customer-empty-state"><span className="card-icon" aria-hidden="true">⌑</span><strong>Your first order will show up here</strong><Link className="text-link" href="#customer-discover">Explore kitchens <span aria-hidden="true">→</span></Link></div>}
       </article>
 
       <article className="customer-panel">
-        <div className="customer-panel-heading"><div><span className="eyebrow">Meal plans</span><h2>Your plans</h2></div><span className="customer-count">{subscriptions.length}</span></div>
+        <div className="customer-panel-heading"><div><span className="eyebrow">Meal plans</span><h2><UiText text="Your plans"/></h2></div><span className="customer-count">{subscriptions.length}</span></div>
         {!activityAvailable ? <p className="customer-empty">We couldn’t load your meal plans right now. Refresh this page in a moment.</p> : subscriptions.length ? <ul className="customer-record-list customer-plan-list">
           {subscriptions.map((subscription) => <li key={subscription.id}>
             <div className="customer-record-main"><strong>{subscription.mealPlan.name}</strong><span>{title(subscription.mealPlan.cadence)} · {subscription.mealPlan.mealCount} meals</span><small>Started {date(subscription.startsAt)}{subscription.endsAt ? ` · Ends ${date(subscription.endsAt)}` : ""}{subscription.nextRenewalAt ? ` · Next renewal ${date(subscription.nextRenewalAt)}` : ""}</small></div>
@@ -121,7 +124,7 @@ export default async function CustomerDashboardPage() {
     </section>
 
     {orders.some((order) => ["ORDER_PLACED", "CONFIRMED"].includes(order.status)) && <section className="customer-cancellation-panel" aria-label="Cancel an upcoming meal day">
-      <div><span className="eyebrow">Plans stay flexible</span><h2>Need to skip a meal day?</h2><p>Cancel at least five hours before delivery. Eligible paid value, less the ₹5 processing fee, goes to your Pausstik wallet.</p></div>
+      <div><span className="eyebrow">Plans stay flexible</span><h2>Need to skip a meal day?</h2><p>Cancel at least five hours before delivery. Eligible paid value, less the ₹5 processing fee, goes to your Paustik wallet.</p></div>
       <ul>{orders.filter((order) => ["ORDER_PLACED", "CONFIRMED"].includes(order.status)).map((order) => <li key={order.id}><span><strong>{order.orderNumber}</strong><small>{order.kitchen.name} · {date(order.scheduledFor)}</small></span><CancelOrderButton orderId={order.id} orderStatus={order.status} scheduledFor={order.scheduledFor.toISOString()} /></li>)}</ul>
     </section>}
     <div className="dashboard-banner customer-demo-note"><strong>Pilot plans and payments:</strong> weekly selections reserve one week only and do not auto-renew. Online checkout is not connected, so this page takes no payment. Wallet credits are recorded in your account.</div>

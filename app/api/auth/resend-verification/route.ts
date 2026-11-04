@@ -2,14 +2,14 @@ import { createHash, randomBytes } from "node:crypto";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { emailSchema } from "@/lib/auth-validation";
-import { isEmailConfigured, makeAuthLink, sendAuthEmail } from "@/lib/email";
+import { isEmailConfigured, isLocalEmailPreview, makeAuthLink, sendAuthEmail } from "@/lib/email";
 import { rejectCrossOrigin } from "@/lib/http";
 import { isLocalAuthMode } from "@/lib/local-auth-mode";
 import { AdminAuthError, reserveAdminAttempt } from "@/lib/admin-authenticator";
 
 export const runtime = "nodejs";
 
-const genericMessage = "If an unverified Pausstik account uses that email, check your inbox for a verification link. If no email arrives, check spam and try again in two minutes. You can still use an earlier link until a replacement is sent.";
+const genericMessage = "If an unverified Paustik account uses that email, check your inbox for a verification link. If no email arrives, check spam and try again in two minutes. You can still use an earlier link until a replacement is sent.";
 
 export async function POST(request: Request) {
   const originError = rejectCrossOrigin(request);
@@ -21,7 +21,7 @@ export async function POST(request: Request) {
 
   let body: unknown;
   try { body = await request.json(); } catch {
-    return NextResponse.json({ error: "Enter the email address for your Pausstik account." }, { status: 400 });
+    return NextResponse.json({ error: "Enter the email address for your Paustik account." }, { status: 400 });
   }
   const parsed = emailSchema.safeParse(body);
   if (!parsed.success) {
@@ -50,13 +50,13 @@ export async function POST(request: Request) {
         ...(verificationUrl ? { verificationUrl } : {}),
       });
     } catch (error) {
-      console.error("Pausstik local verification resend failed.", error instanceof Error ? error.name : "unknown error");
+      console.error("Paustik local verification resend failed.", error instanceof Error ? error.name : "unknown error");
       return NextResponse.json({ error: "Could not create a local verification link. Please try again." }, { status: 503 });
     }
   }
 
   if (!isEmailConfigured()) {
-    return NextResponse.json({ error: "Pausstik email delivery is not configured yet. The team must finish email setup before accounts can be verified." }, { status: 503 });
+    return NextResponse.json({ error: "Paustik email delivery is not configured yet. The team must finish email setup before accounts can be verified." }, { status: 503 });
   }
 
   try {
@@ -86,9 +86,10 @@ export async function POST(request: Request) {
     if (!issued) return NextResponse.json({ message: genericMessage });
 
     const emailSent = await sendAuthEmail(email, "verify", token, new URL(request.url).origin).catch(() => false);
-    if (!emailSent) {
+    const previewUrl = !emailSent && isLocalEmailPreview() ? makeAuthLink("verify", token, new URL(request.url).origin) : undefined;
+    if (!emailSent && !previewUrl) {
       await prisma.emailVerificationToken.deleteMany({ where: { userId: user.id, tokenHash, usedAt: null } });
-      console.error("Pausstik verification email was not accepted for delivery.");
+      console.error("Paustik verification email was not accepted for delivery.");
     } else {
       // Never invalidate a working link before its replacement is accepted for delivery.
       await prisma.emailVerificationToken.updateMany({
@@ -101,7 +102,7 @@ export async function POST(request: Request) {
     if (error instanceof AdminAuthError) {
       return NextResponse.json({ error: error.message }, { status: error.status, headers: { "Retry-After": "900" } });
     }
-    console.error("Pausstik verification resend failed.", error instanceof Error ? error.name : "unknown error");
+    console.error("Paustik verification resend failed.", error instanceof Error ? error.name : "unknown error");
     return NextResponse.json({ error: "Could not resend the verification email. Please try again later." }, { status: 503 });
   }
 }

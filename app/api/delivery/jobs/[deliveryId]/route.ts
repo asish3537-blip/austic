@@ -50,7 +50,7 @@ export async function PATCH(request: Request, context: { params: Promise<{ deliv
       const targetLatitude = isPickup ? current.order.kitchen.latitude : current.order.address.latitude;
       const targetLongitude = isPickup ? current.order.kitchen.longitude : current.order.address.longitude;
       if (targetLatitude === null || targetLongitude === null) {
-        return NextResponse.json({ error: isPickup ? "The kitchen pickup pin is missing. Ask Pausstik operations to update it before pickup." : "The customer delivery pin is missing. Ask the customer to set a drop-off pin before handover." }, { status: 409 });
+        return NextResponse.json({ error: isPickup ? "The kitchen pickup pin is missing. Ask Paustik operations to update it before pickup." : "The customer delivery pin is missing. Ask the customer to set a drop-off pin before handover." }, { status: 409 });
       }
       if (!current.locationConsentAt || current.currentLatitude === null || current.currentLongitude === null || current.currentAccuracyMeters === null || !current.locationUpdatedAt || timestamp.getTime() - current.locationUpdatedAt.getTime() > 120_000) {
         return NextResponse.json({ error: "Start location sharing and send a current GPS fix before confirming this geofence step." }, { status: 409 });
@@ -79,7 +79,7 @@ export async function PATCH(request: Request, context: { params: Promise<{ deliv
     });
     return NextResponse.json({ updated: true, status: parsed.data.status });
   } catch (error) {
-    console.error("Pausstik delivery progress update failed.", error instanceof Error ? error.name : "unknown error");
+    console.error("Paustik delivery progress update failed.", error instanceof Error ? error.name : "unknown error");
     return serviceUnavailable();
   }
 }

@@ -28,7 +28,7 @@ export async function GET() {
       location: partner.addresses[0] ? partner.addresses[0].locality + ", " + partner.addresses[0].city : null,
     })) });
   } catch (error) {
-    console.error("Pausstik partner applications could not load.", error instanceof Error ? error.name : "unknown error");
+    console.error("Paustik partner applications could not load.", error instanceof Error ? error.name : "unknown error");
     return serviceUnavailable();
   }
 }
@@ -61,12 +61,12 @@ export async function POST(request: Request) {
         data: { adminId: admin.id, action: approved ? "PARTNER_APPROVED" : "PARTNER_REJECTED", entityType: "USER", entityId: partner.id, newValue: { role: partner.role, status: approved ? "ACTIVE" : "REJECTED" } },
       });
       await tx.notification.create({
-        data: { userId: partner.id, title: approved ? "Pausstik partner access approved" : "Pausstik partner application update", body: approved ? "Your account is approved. Sign in to continue." : "Your partner application was not approved. Contact Pausstik support for details.", kind: "ACCOUNT", entityId: partner.id },
+        data: { userId: partner.id, title: approved ? "Paustik partner access approved" : "Paustik partner application update", body: approved ? "Your account is approved. Sign in to continue." : "Your partner application was not approved. Contact Paustik support for details.", kind: "ACCOUNT", entityId: partner.id },
       });
     });
     return NextResponse.json({ reviewed: true, status: approved ? "ACTIVE" : "REJECTED" });
   } catch (error) {
-    console.error("Pausstik partner review failed.", error instanceof Error ? error.name : "unknown error");
+    console.error("Paustik partner review failed.", error instanceof Error ? error.name : "unknown error");
     return serviceUnavailable();
   }
 }

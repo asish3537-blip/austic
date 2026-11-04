@@ -8,7 +8,7 @@ export async function GET(request: Request) {
   if (!user || user.role !== "ADMIN" || user.status !== "ACTIVE") return NextResponse.json({ error: "Administrator access required." }, { status: 403 });
   const days = reportDays(new URL(request.url).searchParams.get("days") || undefined); const now = new Date(); const since = new Date(reportStart(days, now));
   const [orders, payments, fees] = await Promise.all([
-    prisma.order.groupBy({ by: ["status"], where: { orderedAt: { gte: since, lte: now } }, _count: { _all: true } }),
+    prisma.order.groupBy({ by: ["status"], where: { orderNumber: { not: { startsWith: "TEST-LIFE-" } }, orderedAt: { gte: since, lte: now } }, _count: { _all: true } }),
     prisma.payment.groupBy({ by: ["currency", "status"], where: { capturedAt: { gte: since, lte: now } }, _sum: { amount: true }, _count: { _all: true } }),
     prisma.paymentLedgerEntry.groupBy({ by: ["currency"], where: { category: "PLATFORM_FEE", createdAt: { gte: since, lte: now } }, _sum: { amount: true } }),
   ]);

@@ -84,5 +84,5 @@ test("subscription preview is explicit and cannot submit a live reservation", ()
 test("real subscription prompts for a delivery pin before reserving", () => {
   const html = renderToStaticMarkup(<AppRouterContext.Provider value={mockRouter}><WeeklyPlanPicker menus={menus} kitchenName="Kitchen" canReserve={false} /></AppRouterContext.Provider>);
   assert.match(html, /Set your delivery pin above/);
-  assert.match(html, /disabled=""[^>]*>Reserve your meal days/);
+  assert.match(html, /disabled=""[^>]*>Choose at least 3 days/);
 });

@@ -1,5 +1,6 @@
 "use client";
 
+import { UiText } from "@/components/ui-language";
 import { useCallback, useEffect, useState } from "react";
 import type { FormEvent } from "react";
 
@@ -83,7 +84,7 @@ export function MotherWorkspace() {
 
   async function pinKitchen() {
     setBusyId("location");
-    setMessage("Pausstik uses your kitchen pin to check courier arrival. It is shared with the assigned courier for orders.");
+    setMessage("Paustik uses your kitchen pin to check courier arrival. It is shared with the assigned courier for orders.");
     if (!navigator.geolocation) {
       setMessage("This device cannot provide browser location.");
       setBusyId("");
@@ -169,7 +170,7 @@ export function MotherWorkspace() {
 
   return <div className="mother-workspace">
     <section className="mother-summary-grid" id="kitchen-summary" aria-label="Kitchen status">
-      <article><span>Kitchen</span><strong>{workspace.kitchen.name}</strong><small>{workspace.kitchen.approved ? "Pausstik verified" : "Waiting for Pausstik approval"}</small></article>
+      <article><span><UiText text="Kitchen"/></span><strong>{workspace.kitchen.name}</strong><small>{workspace.kitchen.approved ? "Paustik verified" : "Waiting for Paustik approval"}</small></article>
       <article><span>Menu items</span><strong>{workspace.menus.filter((item) => item.isPublished && item.isAvailable).length}</strong><small>Live and available to customers</small></article>
       <article><span>Recorded earnings</span><strong>{money(workspace.earningsRecorded, workspace.currency)}</strong><small>Recorded after payment; payouts are not connected</small></article>
     </section>
@@ -185,7 +186,7 @@ export function MotherWorkspace() {
     <section className="mother-work-grid" id="mother-orders">
       <article className="dashboard-card mother-menu-editor">
         <div className="workspace-section-heading"><div><span className="eyebrow">Weekly menu</span><h2 id="weekly-menu">{editing ? "Update meal" : "Add a meal"}</h2></div><button className="button button-quiet" type="button" onClick={publishDrafts} disabled={busyId === "publish" || !workspace.kitchen.approved || !workspace.kitchen.hasLocation}>{busyId === "publish" ? "Publishing…" : "Publish menu"}</button></div>
-        {!workspace.kitchen.approved && <p className="mother-gate-note">Pausstik must approve your kitchen before customers can order. You can save meal drafts now.</p>}
+        {!workspace.kitchen.approved && <p className="mother-gate-note">Paustik must approve your kitchen before customers can order. You can save meal drafts now.</p>}
         {workspace.kitchen.approved && !workspace.kitchen.hasLocation && <p className="mother-gate-note">Set your pickup pin before menu publishing. Pickup geofencing needs this verified location.</p>}
         <form className="workspace-form" key={editing?.id || "new-meal"} onSubmit={saveMenu}>
           <label>Meal name<input name="name" required minLength={3} maxLength={90} defaultValue={editing?.name ?? ""} placeholder="e.g. Dalma, rice and seasonal sides" /></label>
@@ -229,13 +230,13 @@ export function MotherWorkspace() {
     </section>
 
     <section className="dashboard-card mother-menu-list">
-      <div className="workspace-section-heading"><div><span className="eyebrow">Your kitchen</span><h2 id="scheduled-menu">Scheduled meals</h2></div><span className="customer-count">{workspace.menus.length}</span></div>
+      <div className="workspace-section-heading"><div><span className="eyebrow"><UiText text="Your kitchen"/></span><h2 id="scheduled-menu">Scheduled meals</h2></div><span className="customer-count">{workspace.menus.length}</span></div>
       {workspace.menus.length ? <div className="workspace-menu-list">{workspace.menus.map((item) => <article key={item.id}>
         <div><span className="meal-type-mark">{item.tier} · {item.category === "NON_VEGETARIAN" ? "NON-VEG" : "VEG"}</span><strong>{item.name}</strong><small>{item.components.join(" · ")} · {dateLabel(item.serviceDate)} · {item.deliveryTime} · {item.servings} servings · {money(item.price, "INR")}</small></div>
         <span className={"customer-status " + (item.isPublished && item.isAvailable ? "customer-status-active" : "customer-status-pending")}>{item.isPublished && item.isAvailable ? "Live" : "Draft"}</span>
         <div className="workspace-record-actions"><button type="button" onClick={() => setEditing(item)}>Edit</button><button type="button" onClick={() => removeMenu(item)} disabled={busyId === item.id}>Remove</button></div>
       </article>)}</div> : <div className="customer-empty-state"><strong>Your menu is empty</strong><span>Add a meal and choose its date, servings and price to build the weekly menu.</span></div>}
     </section>
-    <p className="dashboard-banner">Pausstik records orders and partner earnings. Online payments and bank payouts are not connected yet; this workspace never stores bank details.</p>
+    <p className="dashboard-banner">Paustik records orders and partner earnings. Online payments and bank payouts are not connected yet; this workspace never stores bank details.</p>
   </div>;
 }

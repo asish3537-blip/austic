@@ -18,7 +18,7 @@ export async function POST(request: Request) {
   const demoAuth = !localAuth && isDemoAuthEnabled();
   if (!localAuth && (!process.env.DATABASE_URL || !process.env.AUTH_SECRET)) return serviceUnavailable();
   if (!localAuth && !demoAuth && !isPhoneOtpConfigured()) {
-    return NextResponse.json({ error: "Phone sign-in is not connected yet. Pausstik needs its SMS verification service configured." }, { status: 503 });
+    return NextResponse.json({ error: "Phone sign-in is not connected yet. Paustik needs its SMS verification service configured." }, { status: 503 });
   }
 
   let body: unknown;
@@ -41,7 +41,7 @@ export async function POST(request: Request) {
       await createSession(user.id);
       return NextResponse.json({ destination: "/account/local-demo" });
     } catch (error) {
-      console.error("Pausstik local phone sign-in failed.", error instanceof Error ? error.name : "unknown error");
+      console.error("Paustik local phone sign-in failed.", error instanceof Error ? error.name : "unknown error");
       return serviceUnavailable();
     }
   }
@@ -76,7 +76,7 @@ export async function POST(request: Request) {
     if (demoAuth) clearDemoOtpCookie(response);
     return response;
   } catch (error) {
-    console.error("Pausstik phone sign-in failed.", error instanceof Error ? error.name : "unknown error");
+    console.error("Paustik phone sign-in failed.", error instanceof Error ? error.name : "unknown error");
     return serviceUnavailable();
   }
 }

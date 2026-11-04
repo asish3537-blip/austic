@@ -14,7 +14,7 @@ export async function POST(request: Request) {
     const profile = await prisma.motherProfile.findUnique({ where: { userId: user.id }, include: { kitchen: true } });
     if (!profile?.kitchen) return NextResponse.json({ error: "Kitchen profile not found." }, { status: 404 });
     if (profile.verificationStatus !== "APPROVED" || profile.kitchen.verificationStatus !== "APPROVED" || !profile.kitchen.isAcceptingOrders) {
-      return NextResponse.json({ error: "Pausstik must approve your kitchen before you can publish meals." }, { status: 409 });
+      return NextResponse.json({ error: "Paustik must approve your kitchen before you can publish meals." }, { status: 409 });
     }
     if (profile.kitchen.latitude === null || profile.kitchen.longitude === null) {
       return NextResponse.json({ error: "Set your kitchen pickup pin before publishing so couriers can use pickup geofencing." }, { status: 409 });
@@ -31,7 +31,7 @@ export async function POST(request: Request) {
     ]);
     return NextResponse.json({ published: true, count: futureCycles.length });
   } catch (error) {
-    console.error("Pausstik menu publish failed.", error instanceof Error ? error.name : "unknown error");
+    console.error("Paustik menu publish failed.", error instanceof Error ? error.name : "unknown error");
     return serviceUnavailable();
   }
 }

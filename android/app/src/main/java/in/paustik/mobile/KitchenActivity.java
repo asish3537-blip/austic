@@ -203,7 +203,7 @@ public final class KitchenActivity extends Activity {
             if (!sample) text(meal.optString("serviceDate") + " · " + meal.optString("deliveryTime"), 14, false);
         }
         if (sample) text("Preview only. Find a published kitchen to start a meal plan.", 15, false);
-        else action("Choose a plan on Pausstik", () -> open("/customer/kitchens/" + Uri.encode(row.optString("id"))));
+        else action("Choose a plan on Paustik", () -> open("/customer/kitchens/" + Uri.encode(row.optString("id"))));
     }
 
     private void backToList() {
@@ -217,6 +217,6 @@ public final class KitchenActivity extends Activity {
 
     private void open(String path) {
         try { startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(SITE + path))); }
-        catch (ActivityNotFoundException error) { Toast.makeText(this, "Install a browser to open Pausstik online.", Toast.LENGTH_LONG).show(); }
+        catch (ActivityNotFoundException error) { Toast.makeText(this, "Install a browser to open Paustik online.", Toast.LENGTH_LONG).show(); }
     }
 }

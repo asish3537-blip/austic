@@ -32,7 +32,7 @@ export function RazorpayPayment({ orderId }: { orderId: string }) {
       if (!window.Razorpay) throw new Error("Checkout is unavailable.");
       const checkout = new window.Razorpay({
         key: d.key, amount: d.amount, currency: d.currency, order_id: d.providerOrderId,
-        name: "Pausstik", description: d.description, theme: { color: "#17553e" },
+        name: "Paustik", description: d.description, theme: { color: "#17553e" },
         handler: async (result: Result) => {
           try {
             const confirmation = await request({ action: "confirm", orderId, paymentId: result.razorpay_payment_id, signature: result.razorpay_signature });
