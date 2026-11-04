@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getCurrentUser } from "@/lib/auth";
 import { rejectCrossOrigin, serviceUnavailable } from "@/lib/http";
+import { lockWallet } from "@/lib/marketplace-rules";
 import { prisma } from "@/lib/prisma";
 
 export const runtime = "nodejs";
@@ -23,10 +24,14 @@ export async function POST(request: Request) {
 
   try {
     const result = await prisma.$transaction(async (tx) => {
+      const owner = await tx.order.findUnique({ where: { id: parsed.data.orderId }, select: { customerId: true } });
+      if (!owner) throw new Error("ORDER_NOT_FOUND");
+      await lockWallet(tx, owner.customerId);
       const order = await tx.order.findUnique({ where: { id: parsed.data.orderId }, include: { payments: true } });
       if (!order) throw new Error("ORDER_NOT_FOUND");
       if (order.status === "CANCELLED" || order.status === "FAILED" || order.paymentStatus !== "PENDING") throw new Error("ORDER_NOT_PAYABLE");
       const pending = order.payments.filter((payment) => payment.status === "PENDING");
+      if (pending.some(payment => payment.provider === "razorpay")) throw new Error("PAYMENT_CHANGED");
       const due = pending.reduce((sum, payment) => sum + Number(payment.amount), 0);
       if (due <= 0) throw new Error("NO_BALANCE_DUE");
       const paymentReference = "pilot:" + parsed.data.provider.toLowerCase() + ":" + parsed.data.reference;
