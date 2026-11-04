@@ -8,6 +8,7 @@ export default async function VerifyEmailPage({ searchParams }: { searchParams: 
     <span className="eyebrow">Email verification</span>
     <h2>{verified ? "You’re ready to sign in" : "We couldn’t verify that link"}</h2>
     <p className="auth-intro">{verified ? "Your account email is confirmed." : "Verification links expire after 24 hours and can only be used once."}</p>
-    <Link className="button" href="/sign-in">Go to sign in</Link>
+    <Link className="button" href="/sign-in">Sign in</Link>
+    <p className="form-footer"><Link href="/admin-sign-in">Admin sign-in</Link></p>
   </AuthPanel>;
 }
