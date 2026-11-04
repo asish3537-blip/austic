@@ -35,8 +35,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <header className="site-header">
           <div className="header-inner">
             <Link className="brand" href="/" aria-label="Pausstik home">
-              <span className="brand-icon" aria-hidden="true"><Image src="/assets/paustik-wordmark.png" alt="" width={1274} height={410} priority /></span>
-              <span className="brand-name">Pausstik</span>
+              <Image className="brand-wordmark" src="/assets/paustik-mother-wordmark.webp" alt="Paustik" width={640} height={310} priority />
+              
             </Link>
             <nav className="header-nav" aria-label="Main navigation"><Link href="/#meal-plans">Meals</Link><Link href="/install">Get the app</Link></nav>
             <div className="header-controls">

@@ -1,3 +1,43 @@
 .public-home{max-width:1120px;margin:auto;padding:0 clamp(20px,5vw,64px);color:#282b24}.public-hero,.public-prices,.public-partner{display:grid;grid-template-columns:1.1fr .9fr;align-items:center;gap:clamp(20px,5vw,70px);padding:clamp(32px,6vw,80px) 0}.public-hero h1,.entry-card h1{font-size:clamp(2.4rem,5.6vw,4.6rem);line-height:1.04;letter-spacing:-.055em;margin:.4em 0}.public-hero em{color:#176146}.public-hero img{width:100%;height:auto}.public-home p,.entry-card p{color:#52574e;line-height:1.55}.public-home h2{font-size:clamp(1.6rem,3vw,2.35rem);margin:.25em 0;line-height:1.15}.public-prices,.public-partner{border-top:1px solid #deded0}.public-prices ul{list-style:none;margin:0;padding:0}.public-prices li{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #deded0}.public-partner a{justify-self:start}.entry-card,.simple-auth{width:min(100% - 32px,580px);margin:clamp(22px,6vw,72px) auto}.entry-card,.simple-auth .auth-panel{padding:clamp(20px,5vw,44px);background:#fffdf6;border:1px solid #deded0;border-radius:22px}.entry-links{margin-top:2rem}.simple-auth details{margin:14px 0}.simple-auth summary{cursor:pointer}.simple-auth .auth-panel{width:100%;min-width:0}.simple-auth h1{font-size:1.8rem}.public-home .hero-actions,.entry-card .hero-actions{display:flex;align-items:center;flex-wrap:wrap;gap:16px}@media(max-width:680px){.public-hero,.public-prices,.public-partner{grid-template-columns:1fr;gap:16px}.public-hero img{max-height:200px}.public-hero{padding-bottom:20px}.public-partner{padding-bottom:32px}}
 .install-web-heading{margin-top:2rem}
 body:has(.dashboard-topline) .header-nav,body:has(.dashboard-topline) .header-controls{display:none}
+
+/* Homepage visual refresh */
+.site-header .brand{width:158px;height:76px;flex-shrink:0}
+.site-header .brand-wordmark{display:block;width:100%;height:auto;max-height:76px;object-fit:contain;border-radius:6px}
+.public-home{max-width:1280px}
+.public-hero{grid-template-columns:1fr 1fr;gap:clamp(20px,4vw,64px);padding:54px 0 62px}
+.public-hero>div{min-width:0}
+.public-hero h1{font-size:clamp(3.1rem,6.3vw,6rem);line-height:1;letter-spacing:-.065em}
+.public-hero h1 em{font-family:Georgia,serif;font-weight:400;color:#ba3f33}
+.public-hero-copy>p{max-width:430px;font-size:18px}
+.hero-mini-note{font-size:13px;color:#68705e;margin-top:22px}
+.hero-mini-note span{padding:0 10px}
+.public-hero-picture{position:relative;padding-bottom:24px}
+.public-hero-picture img{width:100%;height:auto;border-radius:28px;display:block}
+.hero-picture-note{position:absolute;bottom:0;left:20px;display:flex;align-items:center;gap:13px;padding:15px 20px;border:1px solid #e7dfcd;border-radius:16px;background:#fffdf6;box-shadow:0 8px 22px #40352012}
+.hero-picture-note>span{color:#b34431;font-size:32px}
+.hero-picture-note strong,.hero-picture-note small{display:block}
+.hero-picture-note small{color:#66705e;margin-top:3px}
+.public-features{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px;padding:30px 0 48px;border-bottom:1px solid #deded0}
+.public-features article>span{font-size:12px;color:#b34431;letter-spacing:.12em}
+.public-features h2{font-size:20px;margin:14px 0 8px}
+.public-features p{font-size:15px;margin:0;max-width:290px}
+.public-prices{border-top:0}
+.public-partner{background:#eaf0e4;border:0;border-radius:24px;padding:36px;margin-bottom:48px}
+@media(max-width:680px){
+.site-header .brand{width:118px;height:58px}
+.site-header .brand-wordmark{max-height:58px}
+.public-hero{grid-template-columns:minmax(0,1fr);padding:30px 0 24px}
+.public-hero h1{font-size:clamp(3.3rem,14vw,4.5rem)}
+.public-hero-copy>p{font-size:16px}
+.public-hero-picture img{max-height:none}
+.public-hero-picture{max-width:480px}
+.hero-picture-note{padding:10px 14px;left:12px}
+.public-features{grid-template-columns:1fr;gap:24px;padding:24px 0}
+.public-features article{display:grid;grid-template-columns:28px 1fr;column-gap:12px}
+.public-features article>span{grid-row:span 2;padding-top:5px}
+.public-features h2{margin:0 0 6px}
+.public-partner{padding:24px}
+}
+
