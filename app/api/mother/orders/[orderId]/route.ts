@@ -3,6 +3,7 @@ import { z } from "zod";
 import { randomBytes } from "node:crypto";
 import { getCurrentUser } from "@/lib/auth";
 import { rejectCrossOrigin, serviceUnavailable } from "@/lib/http";
+import { lockWallet } from "@/lib/marketplace-rules";
 import { prisma } from "@/lib/prisma";
 
 export const runtime = "nodejs";
@@ -32,6 +33,10 @@ export async function PATCH(request: Request, context: { params: Promise<{ order
       return NextResponse.json({ error: "That order can no longer move to the selected status." }, { status: 409 });
     }
     const updated = await prisma.$transaction(async (tx) => {
+      await lockWallet(tx, order.customerId);
+      const live = await tx.order.findUniqueOrThrow({ where: { id: order.id }, include: { payments: true } });
+      if (!transitions[live.status]?.includes(parsed.data.status)) throw new Error("ORDER_CHANGED");
+      if (parsed.data.status === "CANCELLED" && live.payments.some(payment => payment.status === "CAPTURED" || payment.provider === "razorpay")) throw new Error("PAYMENT_REVIEW_REQUIRED");
       if (parsed.data.status === "CANCELLED") {
         for (const item of order.items) {
           await tx.menu.updateMany({
@@ -56,7 +61,10 @@ export async function PATCH(request: Request, context: { params: Promise<{ order
     });
     return NextResponse.json({ updated: true, status: updated.status });
   } catch (error) {
+    if (error instanceof Error && error.message === "PAYMENT_REVIEW_REQUIRED") return NextResponse.json({ error: "This order has a payment or an open checkout. Contact operations for cancellation and refund review." }, { status: 409 });
+    if (error instanceof Error && error.message === "ORDER_CHANGED") return NextResponse.json({ error: "The order changed. Refresh the kitchen queue." }, { status: 409 });
     console.error("Pausstik kitchen order update failed.", error instanceof Error ? error.name : "unknown error");
     return serviceUnavailable();
   }
 }
+
