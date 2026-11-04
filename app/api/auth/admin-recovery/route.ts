@@ -26,7 +26,17 @@ export async function POST(request: Request) {
     const userId = await prisma.$transaction(async tx => {
       await tx.$queryRaw`SELECT 1 FROM pg_advisory_xact_lock(hashtextextended(${"owner:" + owner}, 0))`;
       let user = await tx.user.findUnique({ where: { email } });
-      if (user && (user.role !== "ADMIN" || ["SUSPENDED", "REJECTED"].includes(user.status))) return null;
+      if (user && (user.role !== "ADMIN" || ["SUSPENDED", "REJECTED"].includes(user.status))) {
+        const approved = process.env.PAUSTIK_OWNER_RESTORE_EMAIL?.trim().toLowerCase() === owner;
+        const restored = await tx.adminActivityLog.findFirst({ where: { entityId: user.id, action: "APPROVED_OWNER_RESTORATION" } });
+        if (!approved || restored) return null;
+        const now = new Date();
+        const previousValue = { role: user.role, status: user.status };
+        user = await tx.user.update({ where: { id: user.id }, data: { role: "ADMIN", status: "PENDING", passwordHash, emailVerifiedAt: null, adminAuthVersion: { increment: 1 } } });
+        await tx.authSession.updateMany({ where: { userId: user.id, revokedAt: null }, data: { revokedAt: now } });
+        await tx.passwordResetToken.updateMany({ where: { userId: user.id, usedAt: null }, data: { usedAt: now } });
+        await tx.adminActivityLog.create({ data: { adminId: user.id, action: "APPROVED_OWNER_RESTORATION", entityType: "USER", entityId: user.id, previousValue, newValue: { role: "ADMIN", status: "PENDING" } } });
+      }
       if (!user) user = await tx.user.create({ data: { email, name: "Pausstik owner", passwordHash, role: "ADMIN", status: "PENDING" } });
       await tx.passwordResetToken.create({ data: { userId: user.id, tokenHash: hash, expiresAt: new Date(Date.now() + 3600000) } });
       return user.id;
