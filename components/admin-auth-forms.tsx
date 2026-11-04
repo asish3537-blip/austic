@@ -46,11 +46,11 @@ export function AdminSignInForm() {
 
   return <>
     <span className="eyebrow">Pausstik operations</span><h2>Admin sign in</h2>
-    <p className="auth-intro">Use your admin username and password. If you have linked Google Authenticator or Microsoft Authenticator, enter its current code too.</p>
+    <p className="auth-intro">Enter your username or email and password.</p>
     {error && <Notice>{error}</Notice>}
     <form onSubmit={submit} aria-busy={busy}>
       <div className="form-grid">
-        <div className="field full"><label htmlFor="admin-username">Username</label><input id="admin-username" name="username" autoComplete="username" minLength={3} maxLength={32} required disabled={busy} onChange={() => { setRequiresAuthenticator(false); setError(""); }} /></div>
+        <div className="field full"><label htmlFor="admin-username">Username or email</label><input id="admin-username" name="username" autoComplete="username" minLength={3} maxLength={254} required disabled={busy} onChange={() => { setRequiresAuthenticator(false); setError(""); }} /></div>
         <div className="field full"><label htmlFor="admin-password">Password</label><input id="admin-password" name="password" type="password" autoComplete="current-password" minLength={8} maxLength={72} required disabled={busy} /><small>Use at least 8 characters.</small></div>
         <div className="field full"><label htmlFor="admin-authenticator-code">Authenticator or recovery code{!requiresAuthenticator && " (if linked)"}</label><input id="admin-authenticator-code" name="authenticatorCode" type="text" autoComplete="one-time-code" autoCapitalize="none" spellCheck={false} minLength={6} maxLength={64} required={requiresAuthenticator} disabled={busy} aria-describedby="admin-authenticator-help" /><small id="admin-authenticator-help">Your authenticator app creates a new six-digit code every 30 seconds. You can also enter an unused recovery code.</small></div>
       </div>

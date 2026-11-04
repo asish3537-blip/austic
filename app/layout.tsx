@@ -7,6 +7,7 @@ import "./globals.css";
 import "./app-demo.css";
 import "./bottom-navigation.css";
 import "./install.css";
+import "./simple.css";
 
 export const metadata: Metadata = {
   title: {
@@ -37,32 +38,14 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
               <span className="brand-icon" aria-hidden="true"><Image src="/assets/paustik-wordmark.png" alt="" width={1274} height={410} priority /></span>
               <span className="brand-name">Pausstik</span>
             </Link>
-            <nav className="header-nav" aria-label="Main navigation">
-              <Link href="/#how-it-works">How it works</Link>
-              <Link href="/#meal-plans">Meal plans</Link>
-              <Link href="/#for-mothers">For mothers</Link>
-              <Link href="/#pricing">Pricing</Link>
-              <Link href="/app-demo">App preview</Link>
-              <Link href="/install">Get the app</Link>
-            </nav>
+            <nav className="header-nav" aria-label="Main navigation"><Link href="/#meal-plans">Meals</Link><Link href="/install">Get the app</Link></nav>
             <div className="header-controls">
               <MobileNavigation>
                 <summary aria-label="Navigation menu"><span className="menu-icon" aria-hidden="true"><i></i><i></i><i></i></span><span>Menu</span></summary>
-                <nav className="mobile-nav-panel" aria-label="Mobile navigation">
-                  <Link href="/#how-it-works">How it works</Link>
-                  <Link href="/#meal-plans">Meal plans</Link>
-                  <Link href="/#for-mothers">For mothers</Link>
-                  <Link href="/#pricing">Pricing</Link>
-                  <Link href="/app-demo">App preview</Link>
-                  <Link href="/install">Install the app</Link>
-                  <Link href="/app">Open app</Link>
-                  <Link href="/sign-in">Sign in</Link>
-                  <Link href="/admin-sign-in">Admin portal</Link>
-                </nav>
+                <nav className="mobile-nav-panel" aria-label="Mobile navigation"><Link href="/#meal-plans">Meals</Link><Link href="/install">Get the app</Link><Link href="/help">Help</Link></nav>
               </MobileNavigation>
               <div className="header-actions">
-                <Link href="/sign-in">Sign in</Link>
-                <Link className="button button-small" href="/sign-up">Create account</Link>
+                <Link className="button button-small" href="/app">Open app</Link>
               </div>
             </div>
           </div>
@@ -70,8 +53,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <PwaRuntime />
         {children}
         <footer className="site-footer">
-          <span>Purity. Hygiene. Delivered.</span>
-          <span className="footer-links"><Link href="/install">Install the app</Link><Link href="/app">Open app</Link><Link href="/app-demo">Mobile app preview</Link><Link href="/help">Help videos</Link><Link className="footer-admin-link" href="/admin-sign-in">Admin portal</Link><Link href="/admin-setup">Create admin account</Link><Link href="/forgot-password">Reset password</Link></span>
+          <span className="footer-links"><Link href="/">Website</Link><Link href="/help">Help</Link><Link href="/admin-sign-in">Admin</Link></span>
           <small className="footer-copyright">© 2026 Pausstik. All rights reserved.</small>
         </footer>
       </body>

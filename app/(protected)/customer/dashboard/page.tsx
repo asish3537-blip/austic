@@ -81,20 +81,12 @@ export default async function CustomerDashboardPage() {
     }
   }
 
-  const activePlans = subscriptions.filter((subscription) => subscription.status === "ACTIVE").length;
-  const paidOrderCount = orders.length;
 
   return <main className="dashboard-shell customer-dashboard">
     <div className="dashboard-head customer-dashboard-head">
-      <div><span className="eyebrow">Your Pausstik table</span><h1>Good to see you, {user.name.split(" ")[0]}.</h1><p>Find a nearby mother, choose the meals you like and reserve at least three days with her for the week.</p></div>
-      <Link className="button button-warm customer-menu-cta" href="#customer-discover">Explore kitchens <span aria-hidden="true">→</span></Link>
+      <div><span className="eyebrow">Your Pausstik table</span><h1>Your meals</h1></div>
     </div>
 
-    <section className="customer-stats" aria-label="Your account activity">
-      <article className="customer-stat"><span>Orders</span><strong>{paidOrderCount}</strong><small>Saved to your Pausstik account</small></article>
-      <article className="customer-stat"><span>Active meal plans</span><strong>{activePlans}</strong><small>Plans with an active status</small></article>
-      <article className="customer-stat"><span>Account</span><strong className="customer-stat-active">Active</strong><small>Signed in as a customer</small></article>
-    </section>
 
     <CustomerDeliveryPin initialPinned={discovery.hasDeliveryPin} />
 
@@ -110,7 +102,7 @@ export default async function CustomerDashboardPage() {
             <div className="customer-record-main"><strong>{order.orderNumber}</strong><span>{order.kitchen.name} · {order.items.map((item) => `${item.quantity} × ${item.mealName}`).join(", ")}</span><small>Ordered {date(order.orderedAt)} · For {date(order.scheduledFor)}</small>{order.delivery && order.status !== "DELIVERED" && order.status !== "CANCELLED" && <CustomerDeliveryTracking orderId={order.id} orderNumber={order.orderNumber} />}</div>
             <div className="customer-record-meta"><b>{money(Number(order.totalAmount), order.currency)}</b><span className={`customer-status customer-status-${order.status.toLowerCase()}`}>{title(order.status)}</span></div>
           </li>)}
-        </ul> : <div className="customer-empty-state"><span className="card-icon" aria-hidden="true">⌑</span><strong>Your first order will show up here</strong><span>Choose a nearby kitchen, open its menu and order a meal or reserve a subscription. Your saved orders appear here.</span><Link className="text-link" href="#customer-discover">Explore kitchens <span aria-hidden="true">→</span></Link></div>}
+        </ul> : <div className="customer-empty-state"><span className="card-icon" aria-hidden="true">⌑</span><strong>Your first order will show up here</strong><Link className="text-link" href="#customer-discover">Explore kitchens <span aria-hidden="true">→</span></Link></div>}
       </article>
 
       <article className="customer-panel">

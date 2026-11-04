@@ -29,6 +29,7 @@ export async function GET(request: Request) {
       const consumed = await tx.emailVerificationToken.updateMany({ where: { id: verification.id, usedAt: null, expiresAt: { gt: now } }, data: { usedAt: now } });
       if (consumed.count !== 1) return false;
       await tx.user.update({ where: { id: verification.userId }, data: { emailVerifiedAt: now } });
+      await tx.user.updateMany({ where: { id: verification.userId, role: "ADMIN", status: "PENDING" }, data: { status: "ACTIVE" } });
       return true;
     });
     return NextResponse.redirect(new URL(outcome ? "/verify-email?state=verified" : "/verify-email?state=invalid", request.url));

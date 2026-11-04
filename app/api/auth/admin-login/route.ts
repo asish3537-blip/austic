@@ -20,7 +20,7 @@ export async function POST(request: Request) {
   try {
     const username = parsed.data.username.toLowerCase();
     const attemptHash = await reserveAdminAttempt(`admin-login:${username}`);
-    const user = await prisma.user.findUnique({ where: { username } });
+    const user = await prisma.user.findUnique({ where: username.includes("@") ? { email: username } : { username } });
     const matches = user?.passwordHash ? await bcrypt.compare(parsed.data.password, user.passwordHash) : false;
     if (!user || user.role !== "ADMIN" || user.status !== "ACTIVE" || !matches) throw new AdminAuthError("The username or password is incorrect, or this admin account is unavailable.", 401);
 

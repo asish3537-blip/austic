@@ -12,7 +12,8 @@ export const registrationSchema = z.object({
   name: z.string().trim().min(2).max(100),
   email: z.string().trim().email().max(254),
   phone: z.string().trim().min(7).max(24),
-  otp: z.string().trim().regex(/^\d{6}$/, "Enter the 6-digit code sent to your phone."),
+  otp: z.string().trim().regex(/^\d{6}$/).optional(),
+  password: passwordSchema.optional(),
   role: z.enum(["CUSTOMER", "MOTHER", "DELIVERY_AGENT"]),
   addressLine1: z.string().trim().min(3).max(160),
   locality: z.string().trim().min(2).max(100),
@@ -24,7 +25,7 @@ export const registrationSchema = z.object({
   availableDays: z.string().trim().max(120).optional(),
   lunchWindow: z.string().trim().max(80).optional(),
   vehicleType: z.string().trim().max(40).optional(),
-}).refine((value) => value.role !== "MOTHER" || Boolean(value.kitchenName && value.kitchenName.length >= 2), {
+}).refine((value) => Boolean(value.password) !== Boolean(value.otp), { message: "Enter your password or phone code." }).refine((value) => value.role !== "MOTHER" || Boolean(value.kitchenName && value.kitchenName.length >= 2), {
   message: "Add your kitchen name.",
   path: ["kitchenName"],
 }).refine((value) => value.role !== "MOTHER" || Boolean(value.cuisine && value.cuisine.length >= 2), {
@@ -55,7 +56,7 @@ const adminUsernameSchema = z.string().trim()
   .regex(/^[A-Za-z0-9._-]+$/, "Use letters, numbers, dots, underscores or hyphens.");
 
 export const adminLoginSchema = z.object({
-  username: adminUsernameSchema,
+  username: z.union([adminUsernameSchema, z.string().trim().email().max(254)]),
   password: passwordSchema,
   authenticatorCode: z.string().trim().max(40).optional(),
 });

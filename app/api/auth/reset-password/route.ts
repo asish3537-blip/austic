@@ -30,6 +30,7 @@ export async function POST(request: Request) {
         data: { usedAt: now },
       });
       await tx.user.update({ where: { id: token.userId }, data: { passwordHash, emailVerifiedAt: now, adminAuthVersion: { increment: 1 } } });
+      await tx.user.updateMany({ where: { id: token.userId, role: "ADMIN", status: "PENDING" }, data: { status: "ACTIVE" } });
       await tx.adminAuthenticator.deleteMany({ where: { userId: token.userId, enabledAt: null } });
       await tx.authSession.updateMany({ where: { userId: token.userId, revokedAt: null }, data: { revokedAt: now } });
     });

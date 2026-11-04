@@ -150,7 +150,7 @@ public final class KitchenActivity extends Activity {
     private void directory(String message) {
         page();
         text("Find your kitchen", 30, true);
-        text("Browse menus from mothers in your city. Your delivery address determines which kitchens can serve you.", 16, false);
+        text("Home-cooked meals in your city.", 16, false);
         EditText place = new EditText(this);
         place.setSingleLine();
         place.setHint("City");
@@ -170,11 +170,15 @@ public final class KitchenActivity extends Activity {
             JSONObject row = kitchens.optJSONObject(i);
             if (row != null) action(row.optString("name") + "  ·  " + row.optString("locality"), () -> detail(position));
         }
-        if (!sample) action("Explore sample kitchens", () -> { selected = -1; preview(); });
-        text("Your account", 21, true);
-        action("Sign in · orders & deliveries", () -> open("/app"));
-        action("Create an account", () -> open("/sign-up"));
-        action("Go to website", () -> open("/"));
+        if (!sample && kitchens.length() == 0 && !message.contains("Finding")) action("Preview a sample menu", () -> { selected = -1; preview(); });
+        action("My workspace", () -> open("/app"));
+        TextView website = new TextView(this);
+        website.setText("Go to website ↗");
+        website.setTextColor(GREEN);
+        website.setGravity(android.view.Gravity.CENTER);
+        website.setMinHeight(dp(48));
+        website.setOnClickListener(view -> open("/"));
+        body.addView(website);
     }
 
     private void detail(int index) {

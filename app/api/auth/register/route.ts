@@ -2,10 +2,11 @@ import { createHash, createHmac, randomBytes } from "node:crypto";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
-import { checkPhoneOtp, isPhoneOtpConfigured, normalizePhoneNumber } from "@/lib/phone-otp";
+import { checkPhoneOtp, normalizePhoneNumber } from "@/lib/phone-otp";
 import { phoneLookupCandidates } from "@/lib/phone-number";
 import { isEmailConfigured, makeAuthLink, sendAuthEmail } from "@/lib/email";
 import { rejectCrossOrigin } from "@/lib/http";
+import { AdminAuthError, reserveAdminAttempt } from "@/lib/admin-authenticator";
 import { registrationSchema } from "@/lib/auth-validation";
 import { isLocalAuthMode } from "@/lib/local-auth-mode";
 import { clearDemoOtpCookie, isDemoAuthEnabled, verifyDemoOtp } from "@/lib/demo-auth";
@@ -14,9 +15,6 @@ import { createSession, roleHome } from "@/lib/auth";
 export const runtime = "nodejs";
 
 function unavailable() {
-  if (!isPhoneOtpConfigured() && !isDemoAuthEnabled()) {
-    return NextResponse.json({ error: "Phone sign-up is not connected yet. Configure Pausstik's Twilio Verify service before creating accounts with SMS or WhatsApp." }, { status: 503 });
-  }
   return NextResponse.json({ error: "Pausstik could not complete account creation. Please try again." }, { status: 503 });
 }
 
@@ -24,12 +22,9 @@ export async function POST(request: Request) {
   const originError = rejectCrossOrigin(request);
   if (originError) return originError;
   const localAuth = isLocalAuthMode();
-  const demoAuth = !localAuth && isDemoAuthEnabled();
+
   if (!localAuth && (!process.env.DATABASE_URL || !process.env.AUTH_SECRET)) {
     return NextResponse.json({ error: "Account services are not configured yet. Please try again later." }, { status: 503 });
-  }
-  if (!localAuth && !demoAuth && !isEmailConfigured()) {
-    return NextResponse.json({ error: "New accounts need email confirmation. Pausstik is finishing its email setup; please try again later. Your phone code has not been used." }, { status: 503 });
   }
 
   let body: unknown;
@@ -41,6 +36,11 @@ export async function POST(request: Request) {
   }
 
   const input = parsed.data;
+  const emailSignup = input.password !== undefined;
+  const demoAuth = !emailSignup && !localAuth && isDemoAuthEnabled();
+  if ((emailSignup && localAuth) || (!demoAuth && (emailSignup || !localAuth) && !isEmailConfigured())) {
+    return NextResponse.json({ error: "Email registration is temporarily unavailable. Please try again later." }, { status: 503 });
+  }
   const phone = normalizePhoneNumber(input.phone);
   if (!phone) return NextResponse.json({ error: "Enter a valid phone number with your country code. Indian numbers can use 10 digits or +91." }, { status: 400 });
   const candidates = phoneLookupCandidates(input.phone, phone);
@@ -56,7 +56,7 @@ export async function POST(request: Request) {
       if (local.findLocalUserByEmail(email)) {
         return NextResponse.json({ error: "An account already uses that email address. Sign in with its phone number." }, { status: 409 });
       }
-      if (!local.verifyLocalPhoneCode(phone, input.otp)) {
+      if (!local.verifyLocalPhoneCode(phone, input.otp!)) {
         return NextResponse.json({ error: "That local code is incorrect or expired. Request a new code and try again." }, { status: 401 });
       }
 
@@ -99,7 +99,12 @@ export async function POST(request: Request) {
   const identifierHash = createHmac("sha256", process.env.AUTH_SECRET!).update(`phone-otp-check:${phone}`).digest("hex");
 
   try {
-    const priorAccount = await prisma.user.findFirst({ where: { phone: { in: candidates } }, select: { id: true } });
+    if (emailSignup) {
+      const ip = request.headers.get("x-real-ip") || request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+      await reserveAdminAttempt("email-signup:ip:" + ip, 15);
+      await reserveAdminAttempt("email-signup:" + email, 4);
+    }
+    const priorAccount = !emailSignup && await prisma.user.findFirst({ where: { phone: { in: candidates } }, select: { id: true } });
     if (priorAccount) {
       return NextResponse.json({ error: "This phone number already has a Pausstik account. Sign in with a phone code instead." }, { status: 409 });
     }
@@ -108,26 +113,26 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "An account already uses that email address. Sign in or request a fresh email confirmation link." }, { status: 409 });
     }
 
-    const failedCodes = await prisma.failedLoginAttempt.count({
-      where: { identifierHash, createdAt: { gte: new Date(Date.now() - 15 * 60 * 1000) } },
-    });
-    if (failedCodes >= 8) return NextResponse.json({ error: "Too many code attempts. Request a new code and try again later." }, { status: 429 });
+    if (!emailSignup) {
+      const failedCodes = await prisma.failedLoginAttempt.count({
+        where: { identifierHash, createdAt: { gte: new Date(Date.now() - 15 * 60 * 1000) } },
+      });
+      if (failedCodes >= 8) return NextResponse.json({ error: "Too many code attempts. Request a new code and try again later." }, { status: 429 });
 
-    const approved = demoAuth
-      ? verifyDemoOtp(request, phone, "signup", input.otp)
-      : await checkPhoneOtp(phone, input.otp);
-    if (!approved) {
-      await prisma.failedLoginAttempt.create({ data: { identifierHash } });
-      return NextResponse.json({ error: "That code is incorrect or expired. Request a new code and try again." }, { status: 401 });
+      const approved = demoAuth
+        ? verifyDemoOtp(request, phone, "signup", input.otp!)
+        : await checkPhoneOtp(phone, input.otp!);
+      if (!approved) {
+        await prisma.failedLoginAttempt.create({ data: { identifierHash } });
+        return NextResponse.json({ error: "That code is incorrect or expired. Request a new code and try again." }, { status: 401 });
+      }
+
     }
-
-    // Passwords are no longer used for sign-in. Keep a random, unrecoverable hash
-    // for compatibility with existing records until the schema is migrated.
-    const passwordHash = await bcrypt.hash(randomBytes(32).toString("base64url"), 12);
+    const passwordHash = await bcrypt.hash(input.password ?? randomBytes(32).toString("base64url"), 12);
     const status = input.role === "CUSTOMER" ? "ACTIVE" : "PENDING";
     const user = await prisma.$transaction(async (tx) => {
       const created = await tx.user.create({
-        data: { name: input.name, email, phone, passwordHash, role: input.role, status },
+        data: { name: input.name, email, phone: emailSignup ? null : phone, passwordHash, role: input.role, status },
       });
       await tx.address.create({
         data: {
@@ -175,7 +180,7 @@ export async function POST(request: Request) {
       return created;
     });
 
-    await prisma.failedLoginAttempt.deleteMany({ where: { identifierHash } });
+    if (!emailSignup) await prisma.failedLoginAttempt.deleteMany({ where: { identifierHash } });
     if (demoAuth) {
       await createSession(user.id);
       const response = NextResponse.json({
@@ -202,15 +207,12 @@ export async function POST(request: Request) {
       emailSent,
       email,
       ...(developmentLink ? { verificationUrl: developmentLink } : {}),
-      message: emailSent
-        ? input.role === "CUSTOMER"
-          ? "Your account is saved and your phone is verified. Open the confirmation link in your email first. Then return to sign in and request a new phone code."
-          : "Your application is saved and your phone is verified. Confirm your email first, then request a new phone code to sign in. Your application will remain pending until Pausstik approves it."
-        : "Your account is created and your phone is verified, but Pausstik could not send the email confirmation yet. Request a fresh link after email delivery is configured; sign-in will be available once your email is verified.",
+      message: emailSent ? "Check your inbox and confirm your email to sign in." : "Account saved. Request a fresh confirmation email to finish signing up.",
     }, { status: 201 });
   } catch (error) {
+    if (error instanceof AdminAuthError) return NextResponse.json({ error: error.message }, { status: error.status });
     if (error && typeof error === "object" && "code" in error && error.code === "P2002") {
-      return NextResponse.json({ error: "An account already uses that email or phone number. Sign in with your phone code." }, { status: 409 });
+      return NextResponse.json({ error: "An account already uses that email or phone number. Sign in or reset your password." }, { status: 409 });
     }
     console.error("Pausstik account creation failed.", error instanceof Error ? error.name : "unknown error");
     return unavailable();

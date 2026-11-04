@@ -130,37 +130,13 @@ const roles: { id: Role; name: string; note: string }[] = [
   { id: "DELIVERY_AGENT", name: "Delivery agent", note: "Deliver locally" },
 ];
 
-export function SignUpForm() {
-  const [role, setRole] = useState<Role>("CUSTOMER");
+export function SignUpForm({ initialRole = "CUSTOMER" }: { initialRole?: Role }) {
+  const [role, setRole] = useState<Role>(initialRole);
   const [busy, setBusy] = useState(false);
-  const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState<{ message: string; email: string; emailSent: boolean; verificationUrl?: string } | null>(null);
-  const [phone, setPhone] = useState("");
-  const [channel, setChannel] = useState<VerificationChannel>("whatsapp");
-  const [codeSent, setCodeSent] = useState(false);
-  const [message, setMessage] = useState("");
-  const [developmentCode, setDevelopmentCode] = useState("");
-
-  async function requestCode() {
-    setSending(true); setError(""); setMessage(""); setSuccess(null); setDevelopmentCode("");
-    try {
-      const response = await fetch("/api/auth/otp/request", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone, purpose: "signup", channel }),
-      });
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.error || "Could not send a verification code.");
-      setCodeSent(true); setMessage(result.message || "We sent a 6-digit code to your phone."); setDevelopmentCode(result.developmentCode || "");
-    } catch (cause) {
-      setCodeSent(false);
-      setError(cause instanceof Error ? cause.message : "Could not send a verification code. Please try again.");
-    } finally { setSending(false); }
-  }
-
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); setBusy(true); setError(""); setSuccess(null);
-    if (!codeSent) { setError("Send a phone verification code first."); setBusy(false); return; }
     const form = event.currentTarget;
     const data = new FormData(form);
     try {
@@ -172,33 +148,29 @@ export function SignUpForm() {
         return;
       }
       setSuccess({
-        message: result.message || "Your account is saved. Confirm your email, then request a fresh phone code to sign in.",
+        message: result.message || "Your account is saved. Confirm your email, then sign in.",
         email: String(result.email || data.get("email") || ""),
         emailSent: Boolean(result.emailSent),
         verificationUrl: result.verificationUrl,
       });
-      form.reset(); setRole("CUSTOMER"); setPhone(""); setCodeSent(false); setMessage(""); setDevelopmentCode("");
+      form.reset(); setRole("CUSTOMER");
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Could not create your account. Please try again.");
     } finally { setBusy(false); }
   }
   return <>
     <span className="eyebrow">Join the neighbourhood table</span><h2>Create your account</h2>
-    <SignInOptions signup />
-    <p className="form-success">Just testing? <Link className="text-link" href="/demo-sign-in">Use a separate demo profile with an on-screen code</Link>. No registration needed.</p>
-    <p className="auth-intro">Choose your account type, verify your phone by SMS or WhatsApp, then confirm your email. You will need both before your first sign-in.</p>
     {error && <Alert>{error}</Alert>}
-    {success && <><Alert success>{success.message}{success.verificationUrl && <><br /><Link href={success.verificationUrl}>Verify this development email</Link></>}</Alert>{!success.verificationUrl && <><p className="form-note">Check your inbox and spam folder at <strong>{success.email}</strong>. If no email arrives, request another link below.</p><ResendVerificationForm initialEmail={success.email} /></>}<p className="form-footer">After confirming your email, <Link className="text-link" href="/sign-in">sign in with a new phone code</Link></p></>}
+    {success && <><Alert success>{success.message}{success.verificationUrl && <><br /><Link href={success.verificationUrl}>Verify this development email</Link></>}</Alert>{!success.verificationUrl && <><p className="form-note">Check your inbox and spam folder at <strong>{success.email}</strong>. If no email arrives, request another link below.</p><ResendVerificationForm initialEmail={success.email} /></>}<p className="form-footer">After confirming your email, <Link className="text-link" href="/sign-in">sign in with your password</Link></p></>}
     {!success && <form onSubmit={submit}>
       <div className="role-grid" role="radiogroup" aria-label="Account type">
         {roles.map((item) => <label className="role-option" key={item.id}><input type="radio" name="role-choice" value={item.id} checked={role === item.id} onChange={() => setRole(item.id)} /><span><b>{item.name}</b><small>{item.note}</small></span></label>)}
       </div>
       <div className="form-grid" style={{ marginTop: 16 }}>
         <div className="field"><label htmlFor="signup-name">Full name</label><input id="signup-name" name="name" autoComplete="name" required minLength={2} maxLength={100} /></div>
-        <div className="field"><label htmlFor="signup-phone">Phone number</label><div className="phone-otp-row"><input id="signup-phone" name="phone" autoComplete="tel" type="tel" placeholder="+91 98765 43210" value={phone} onChange={(event) => { setPhone(event.target.value); setCodeSent(false); setMessage(""); setDevelopmentCode(""); }} required minLength={7} maxLength={24} /><button className="otp-request-button" type="button" onClick={requestCode} disabled={sending || phone.trim().length < 7}>{sending ? "Sending…" : codeSent ? "Send again" : "Send code"}</button></div><small>Indian numbers can use 10 digits or include +91.</small></div>
-        <div className="field"><VerificationChannelPicker value={channel} onChange={(next) => { setChannel(next); setCodeSent(false); setMessage(""); setDevelopmentCode(""); }} idPrefix="signup" /><small>SMS and WhatsApp delivery are pending activation. Demo codes are available only through the separate demo link above.</small></div>
-        <div className="field full"><label htmlFor="signup-email">Email address for account updates</label><input id="signup-email" name="email" autoComplete="email" type="email" required maxLength={254} /></div>
-        {codeSent && <div className="field full"><label htmlFor="signup-otp">6-digit verification code</label><input id="signup-otp" name="otp" type="text" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" maxLength={6} required /></div>}
+        <div className="field"><label htmlFor="signup-phone">Delivery contact number</label><input id="signup-phone" name="phone" type="tel" autoComplete="tel" required maxLength={24} /></div>
+        <div className="field"><label htmlFor="signup-email">Email</label><input id="signup-email" name="email" type="email" autoComplete="email" required maxLength={254} /></div>
+        <div className="field"><label htmlFor="signup-password">Password</label><input id="signup-password" name="password" type="password" autoComplete="new-password" required minLength={8} maxLength={72} aria-describedby="signup-password-help" /><small id="signup-password-help">8+ characters with uppercase, lowercase and a number.</small></div>
         {role === "MOTHER" && <><div className="field"><label htmlFor="signup-kitchen">Kitchen name</label><input id="signup-kitchen" name="kitchenName" required minLength={2} maxLength={120} /></div><div className="field"><label htmlFor="signup-cuisine">Cooking specialties</label><input id="signup-cuisine" name="cuisine" placeholder="e.g. Odia home cooking, vegetarian thalis" required minLength={2} maxLength={80} /></div><div className="field"><label htmlFor="signup-capacity">Meals you can prepare per day</label><input id="signup-capacity" name="capacityPerDay" type="number" min={1} max={300} required /></div><div className="field"><label htmlFor="signup-days">Available lunch days</label><input id="signup-days" name="availableDays" placeholder="Monday, Tuesday, Wednesday" required minLength={2} maxLength={120} /><small>Separate days with commas.</small></div><div className="field full"><label htmlFor="signup-lunch-window">Lunch service window</label><input id="signup-lunch-window" name="lunchWindow" placeholder="11:30 AM to 2:00 PM" required minLength={3} maxLength={80} /></div></>}
         {role === "DELIVERY_AGENT" && <div className="field full"><label htmlFor="signup-vehicle">Vehicle type</label><select id="signup-vehicle" name="vehicleType" required defaultValue=""><option value="" disabled>Select vehicle</option><option>Bicycle</option><option>Scooter</option><option>Motorcycle</option><option>Car</option><option>Other</option></select></div>}
         <div className="field full"><label htmlFor="signup-address">Street address</label><input id="signup-address" name="addressLine1" autoComplete="street-address" required minLength={3} maxLength={160} /></div>
@@ -206,8 +178,7 @@ export function SignUpForm() {
         <div className="field"><label htmlFor="signup-city">City</label><input id="signup-city" name="city" autoComplete="address-level2" required minLength={2} maxLength={100} /></div>
         <div className="field"><label htmlFor="signup-pin">PIN code</label><input id="signup-pin" name="pinCode" autoComplete="postal-code" required minLength={4} maxLength={12} /></div>
       </div>
-      {message && <Alert success>{message}{developmentCode && <><br /><strong>Pausstik preview code: {developmentCode}</strong></>}</Alert>}
-      <p className="form-note">Use a phone number and email you can access. Mother and delivery accounts stay pending until reviewed. Admin accounts are created through the restricted admin setup.</p>
+      {role !== "CUSTOMER" && <p className="form-note">Your application will be reviewed after email confirmation.</p>}
       <button className="button form-submit" type="submit" disabled={busy}>{busy ? "Creating account…" : "Create account"}<span aria-hidden="true">→</span></button>
     </form>}
     <p className="form-footer">Already registered? <Link className="text-link" href="/sign-in">Sign in</Link></p>

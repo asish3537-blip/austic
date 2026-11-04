@@ -1,3 +1,5 @@
+import { randomBytes, createHash } from "node:crypto";
+import { isEmailConfigured, sendAuthEmail } from "@/lib/email";
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
@@ -20,15 +22,18 @@ export async function POST(request: Request) {
   const parsed = adminCreateSchema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0]?.message || "Check the admin account details." }, { status: 400 });
 
+  if (!isEmailConfigured()) return NextResponse.json({ error: "Invitation email is temporarily unavailable." }, { status: 503 });
+  const token = randomBytes(32).toString("base64url");
   const username = parsed.data.username.toLowerCase();
   const email = parsed.data.email.toLowerCase();
   try {
     const passwordHash = await bcrypt.hash(parsed.data.password, 12);
     const created = await prisma.$transaction(async (tx) => {
       const admin = await tx.user.create({
-        data: { name: parsed.data.name, email, username, passwordHash, role: "ADMIN", status: "ACTIVE" },
+        data: { name: parsed.data.name, email, username, passwordHash, role: "ADMIN", status: "PENDING" },
         select: { id: true, name: true, email: true, username: true, role: true, createdAt: true },
       });
+      await tx.emailVerificationToken.create({ data: { userId: admin.id, tokenHash: createHash("sha256").update(token).digest("hex"), expiresAt: new Date(Date.now() + 86400000) } });
       await tx.adminActivityLog.create({
         data: {
           adminId: actor.id,
@@ -40,7 +45,8 @@ export async function POST(request: Request) {
       });
       return admin;
     });
-    return NextResponse.json({ created: true, admin: created, message: "Admin account created. The password is stored as a secure hash." }, { status: 201 });
+    const sent = await sendAuthEmail(email, "verify", token, new URL(request.url).origin).catch(() => false);
+    return NextResponse.json({ created: true, admin: created, message: sent ? "Invitation sent. The administrator must confirm their email." : "Account saved. Use Resend confirmation email on the sign-in page to finish the invitation." }, { status: 201 });
   } catch (error) {
     if (error && typeof error === "object" && "code" in error && error.code === "P2002") {
       return NextResponse.json({ error: "That username or email is already in use." }, { status: 409 });

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { afterSignIn, signInLink } from "@/lib/kitchen-handoff";
+import { afterSignIn } from "@/lib/kitchen-handoff";
+import { ResendVerificationForm } from "@/components/auth-forms";
 import Link from "next/link";
 
 function Message({ children, success = false }: { children: React.ReactNode; success?: boolean }) {
@@ -38,18 +39,21 @@ export function PasswordSignInForm({ kitchen }: { kitchen?: string }) {
   }
 
   return <>
-    <span className="eyebrow">Email sign in</span><h2>Use your password</h2>
+    <span className="eyebrow">Email sign in</span><h2>Sign in</h2>
     {kitchen && <p className="form-note">After customer sign-in, your selected kitchen will reopen.</p>}
-    <p className="auth-intro">For customer, mother and delivery accounts. Admins should use the admin sign-in page.</p>
+
     {error && <Message>{error}</Message>}
     <form onSubmit={submit}>
       <div className="form-grid">
         <div className="field full"><label htmlFor="password-login-email">Email address</label><input id="password-login-email" name="email" type="email" autoComplete="email" required maxLength={254} /></div>
         <div className="field full"><label htmlFor="password-login-password">Password</label><input id="password-login-password" name="password" type="password" autoComplete="current-password" required minLength={8} maxLength={72} /></div>
       </div>
-      <div className="auth-links"><Link className="text-link" href="/forgot-password">Forgot password?</Link><Link className="text-link" href={signInLink("/sign-in", kitchen)}>Use a phone code</Link></div>
+      <div className="auth-links"><Link className="text-link" href="/forgot-password">Forgot password?</Link></div>
       <button className="button form-submit" type="submit" disabled={busy}>{busy ? "Signing in…" : "Sign in"}<span aria-hidden="true">→</span></button>
     </form>
+    <p className="form-footer"><Link href="/sign-up">Create account</Link> · <Link href="/admin-sign-in">Admin sign-in</Link></p>
+    <details><summary>Resend confirmation email</summary><ResendVerificationForm /></details>
+
   </>;
 }
 
@@ -80,14 +84,14 @@ export function ForgotPasswordForm() {
 
   return <>
     <span className="eyebrow">Account recovery</span><h2>Reset your password</h2>
-    <p className="auth-intro">Enter the email on your account. We’ll send a secure link that expires after one hour. Phone-code sign-in remains available.</p>
+    <p className="auth-intro">Enter the email on your account. We’ll send a secure link that expires after one hour.</p>
     {error && <Message>{error}</Message>}
     {sent && <Message success>If the account can receive email, a password reset link is on its way. Check spam too.</Message>}
     <form onSubmit={submit}>
       <div className="form-grid"><div className="field full"><label htmlFor="forgot-email">Email address</label><input id="forgot-email" name="email" type="email" autoComplete="email" required maxLength={254} /></div></div>
       <button className="button form-submit" type="submit" disabled={busy}>{busy ? "Sending…" : "Email reset link"}<span aria-hidden="true">→</span></button>
     </form>
-    <p className="form-footer"><Link className="text-link" href="/password-sign-in">Back to password sign in</Link> · <Link className="text-link" href="/sign-in">Phone code</Link> · <Link className="text-link" href="/admin-sign-in">Admin sign in</Link></p>
+    <p className="form-footer"><Link className="text-link" href="/password-sign-in">Back to password sign in</Link> · <Link className="text-link" href="/admin-sign-in">Admin sign in</Link></p>
   </>;
 }
 
@@ -125,7 +129,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
     <span className="eyebrow">Account recovery</span><h2>Choose a new password</h2>
     <p className="auth-intro">Use at least 8 characters, including uppercase, lowercase and a number.</p>
     {error && <Message>{error}</Message>}
-    {complete ? <Message success>Your password has been changed and other sessions have been signed out. <Link href="/password-sign-in">Sign in with your new password</Link>.</Message> : !token ? <Message>This reset link is incomplete. Request a fresh link and try again.</Message> : <form onSubmit={submit}>
+    {complete ? <Message success>Your password has been changed and other sessions have been signed out. <Link href="/password-sign-in">Sign in with your new password</Link> or <Link href="/admin-sign-in">open admin sign-in</Link>.</Message> : !token ? <Message>This reset link is incomplete. Request a fresh link and try again.</Message> : <form onSubmit={submit}>
       <div className="form-grid">
         <div className="field full"><label htmlFor="reset-password">New password</label><input id="reset-password" name="password" type="password" autoComplete="new-password" required minLength={8} maxLength={72} /></div>
         <div className="field full"><label htmlFor="reset-password-confirm">Confirm password</label><input id="reset-password-confirm" name="confirmPassword" type="password" autoComplete="new-password" required minLength={8} maxLength={72} /></div>

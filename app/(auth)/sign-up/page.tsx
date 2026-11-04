@@ -1,6 +1,7 @@
 import { AuthPanel } from "@/components/auth-panel";
 import { SignUpForm } from "@/components/auth-forms";
 
-export default function SignUpPage() {
-  return <AuthPanel eyebrow="A local food community" title="Find your place at the table." description="Customers discover meals nearby. Mother entrepreneurs grow local kitchens. Delivery agents bring good food closer."><SignUpForm /></AuthPanel>;
+export default async function SignUpPage({ searchParams }: { searchParams: Promise<{ role?: string }> }) {
+  const role = (await searchParams).role;
+  return <AuthPanel eyebrow="" title="Create an account" description=""><SignUpForm initialRole={role === "MOTHER" || role === "DELIVERY_AGENT" ? role : "CUSTOMER"} /></AuthPanel>;
 }
