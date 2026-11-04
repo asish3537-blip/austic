@@ -36,8 +36,8 @@ export async function POST(request: Request) {
       if (!sent) {
         await prisma.passwordResetToken.deleteMany({ where: { userId, tokenHash: hash, usedAt: null } });
         console.error("Pausstik owner setup email was not accepted.");
-      }
-    }
+      } else console.info("Pausstik owner setup email accepted by provider.");
+    } else console.warn("Pausstik owner setup requires account role review.");
     return NextResponse.json({ message }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     if (error instanceof AdminAuthError) return NextResponse.json({ error: error.message }, { status: error.status });
@@ -45,4 +45,3 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Could not request the setup email. Please try again." }, { status: 503 });
   }
 }
-
