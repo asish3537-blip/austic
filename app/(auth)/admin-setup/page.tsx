@@ -1,25 +1,22 @@
+import Link from "next/link";
+import { redirect } from "next/navigation";
 import { AuthPanel } from "@/components/auth-panel";
 import { AdminOwnerSetupForm } from "@/components/recovery-forms";
-import { prisma } from "@/lib/prisma";
+import { getCurrentUser } from "@/lib/auth";
+import { localAdminPreviewEnabled } from "@/lib/local-admin-preview";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminOwnerSetupPage() {
-  if (process.env.DATABASE_URL) {
-    try {
-      const completed = await prisma.adminActivityLog.findFirst({
-        where: { action: "ADMIN_OWNER_BOOTSTRAP" },
-        select: { id: true },
-      });
-      if (completed) {
-        return <AuthPanel eyebrow="Setup complete" title="Admin recovery is closed." description="Use the admin panel to create additional administrator accounts.">
-          <p className="auth-intro">The one-time owner setup has already been used. Sign in with the Pausstik admin account.</p>
-          <a className="button" href="/admin-sign-in">Go to admin sign in</a>
-        </AuthPanel>;
-      }
-    } catch {
-      // Keep the recovery form available; its API provides the authoritative error.
-    }
-  }
-  return <AuthPanel eyebrow="Restricted setup" title="Set up Pausstik operations." description="The one-time recovery code is required. After this account is created, administrators are managed from the admin panel."><AdminOwnerSetupForm /></AuthPanel>;
+  const user = await getCurrentUser();
+  if (user?.role === "ADMIN" && user.status === "ACTIVE") redirect("/admin/accounts");
+  if (localAdminPreviewEnabled()) return <AuthPanel eyebrow="Local testing" title="Create local admin" description=""><AdminOwnerSetupForm localPreview /></AuthPanel>;
+  return <AuthPanel eyebrow="Administrator access" title="Manage administrator access" description="">
+    <h2>Administrator access</h2>
+    <p className="auth-intro">New administrators are invited by an existing administrator from Accounts &amp; roles.</p>
+    <Link className="button" href="/admin-sign-in">Sign in as admin</Link>
+    <p className="form-footer"><Link href="/forgot-password">Forgot admin password? Reset by email</Link></p>
+    <p className="form-note">Use the email registered to your live admin account. Local test accounts belong to the localhost preview.</p>
+  </AuthPanel>;
 }
+

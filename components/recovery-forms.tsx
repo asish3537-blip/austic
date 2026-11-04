@@ -139,7 +139,7 @@ export function ResetPasswordForm({ token }: { token: string }) {
   </>;
 }
 
-export function AdminOwnerSetupForm() {
+export function AdminOwnerSetupForm({ localPreview = false }: { localPreview?: boolean }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
@@ -149,7 +149,7 @@ export function AdminOwnerSetupForm() {
     setBusy(true);
     setError("");
     try {
-      const result = await readResponse(await fetch("/api/auth/admin-bootstrap", {
+      const result = await readResponse(await fetch(localPreview ? "/api/auth/local-admin" : "/api/auth/admin-bootstrap", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -168,18 +168,19 @@ export function AdminOwnerSetupForm() {
   }
 
   return <>
-    <span className="eyebrow">First administrator setup</span><h2>Create the Pausstik owner account</h2>
-    <p className="auth-intro">Use the private owner setup code provided to you; it is not an SMS code or an authenticator code. This recovery creates your owner access and revokes other admin sessions. After creating the account, link Google Authenticator or Microsoft Authenticator from Admin security. The app then creates a new six-digit sign-in code every 30 seconds.</p>
+    <span className="eyebrow">{localPreview ? "Local test environment" : "First administrator setup"}</span><h2>{localPreview ? "Create a local test admin" : "Create the Pausstik owner account"}</h2>
+    {localPreview && <p className="form-note">This creates an administrator in the isolated local test database. Use at least eight password characters with uppercase, lowercase and a number.</p>}
+    {!localPreview && <p className="auth-intro">Use the private owner setup code provided to you; it is not an SMS code or an authenticator code. This recovery creates your owner access and revokes other admin sessions. After creating the account, link Google Authenticator or Microsoft Authenticator from Admin security. The app then creates a new six-digit sign-in code every 30 seconds.</p>}
     {error && <Message>{error}</Message>}
     <form onSubmit={submit}>
       <div className="form-grid">
-        <div className="field full"><label htmlFor="admin-setup-code">One-time setup code</label><input id="admin-setup-code" name="setupCode" type="password" autoComplete="one-time-code" required minLength={32} maxLength={128} /></div>
+        {!localPreview && <div className="field full"><label htmlFor="admin-setup-code">One-time setup code</label><input id="admin-setup-code" name="setupCode" type="password" autoComplete="one-time-code" required minLength={32} maxLength={128} /></div>}
         <div className="field"><label htmlFor="owner-name">Full name</label><input id="owner-name" name="name" autoComplete="name" required minLength={2} maxLength={100} /></div>
         <div className="field"><label htmlFor="owner-username">Admin username</label><input id="owner-username" name="username" autoComplete="username" required minLength={3} maxLength={32} pattern="[A-Za-z0-9._-]+" /></div>
         <div className="field full"><label htmlFor="owner-email">Admin email</label><input id="owner-email" name="email" type="email" autoComplete="email" required maxLength={254} /></div>
         <div className="field full"><label htmlFor="owner-password">New password</label><input id="owner-password" name="password" type="password" autoComplete="new-password" required minLength={8} maxLength={72} /><small>At least 8 characters with uppercase, lowercase and a number.</small></div>
       </div>
-      <button className="button form-submit" type="submit" disabled={busy}>{busy ? "Creating account…" : "Create owner account"}<span aria-hidden="true">→</span></button>
+      <button className="button form-submit" type="submit" disabled={busy}>{busy ? "Creating account…" : localPreview ? "Create test admin" : "Create owner account"}<span aria-hidden="true">→</span></button>
     </form>
     <p className="form-footer"><Link className="text-link" href="/admin-sign-in">Back to admin sign in</Link></p>
   </>;
