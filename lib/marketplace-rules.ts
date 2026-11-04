@@ -36,7 +36,7 @@ export function distanceMeters(first: { latitude: number; longitude: number }, s
 }
 
 export async function lockWallet(tx: import("@/app/generated/prisma/client").Prisma.TransactionClient, userId: string) {
-  await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtextextended(${userId}, 0))`;
+  await tx.$queryRaw`SELECT 1 AS locked FROM pg_advisory_xact_lock(hashtextextended(${userId}, 0))`;
 }
 
 export async function walletBalance(tx: import("@/app/generated/prisma/client").Prisma.TransactionClient, userId: string) {

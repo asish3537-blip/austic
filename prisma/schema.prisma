@@ -591,6 +591,7 @@ model WalletLedgerEntry {
 
   @@index([userId, createdAt(sort: Desc)])
   @@index([orderId, createdAt])
+  @@map("wallet_ledger_entries")
   @@schema("paustik_marketplace")
 }
 
