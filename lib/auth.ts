@@ -1,5 +1,6 @@
 import { createHash, randomBytes } from "node:crypto";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
+import { signInLink } from "@/lib/kitchen-handoff";
 import { redirect } from "next/navigation";
 import { cache } from "react";
 import { prisma } from "@/lib/prisma";
@@ -120,7 +121,7 @@ export function roleHome(user: Pick<SessionUser, "role" | "status">) {
 
 export async function requireAuthenticatedUser() {
   const user = await getCurrentUser();
-  if (!user) redirect("/sign-in");
+  if (!user) redirect(signInLink("/sign-in", (await headers()).get("x-pausstik-kitchen") ?? undefined));
   return user;
 }
 

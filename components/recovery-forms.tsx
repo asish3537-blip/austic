@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { afterSignIn, signInLink } from "@/lib/kitchen-handoff";
 import Link from "next/link";
 
 function Message({ children, success = false }: { children: React.ReactNode; success?: boolean }) {
@@ -13,7 +14,7 @@ async function readResponse(response: Response) {
   return result;
 }
 
-export function PasswordSignInForm() {
+export function PasswordSignInForm({ kitchen }: { kitchen?: string }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
@@ -29,7 +30,7 @@ export function PasswordSignInForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: data.get("email"), password: data.get("password") }),
       }));
-      window.location.assign(result.destination);
+      window.location.assign(afterSignIn(result.destination, kitchen));
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Pausstik could not sign you in.");
       setBusy(false);
@@ -38,6 +39,7 @@ export function PasswordSignInForm() {
 
   return <>
     <span className="eyebrow">Email sign in</span><h2>Use your password</h2>
+    {kitchen && <p className="form-note">After customer sign-in, your selected kitchen will reopen.</p>}
     <p className="auth-intro">For customer, mother and delivery accounts. Admins should use the admin sign-in page.</p>
     {error && <Message>{error}</Message>}
     <form onSubmit={submit}>
@@ -45,7 +47,7 @@ export function PasswordSignInForm() {
         <div className="field full"><label htmlFor="password-login-email">Email address</label><input id="password-login-email" name="email" type="email" autoComplete="email" required maxLength={254} /></div>
         <div className="field full"><label htmlFor="password-login-password">Password</label><input id="password-login-password" name="password" type="password" autoComplete="current-password" required minLength={8} maxLength={72} /></div>
       </div>
-      <div className="auth-links"><Link className="text-link" href="/forgot-password">Forgot password?</Link><Link className="text-link" href="/sign-in">Use a phone code</Link></div>
+      <div className="auth-links"><Link className="text-link" href="/forgot-password">Forgot password?</Link><Link className="text-link" href={signInLink("/sign-in", kitchen)}>Use a phone code</Link></div>
       <button className="button form-submit" type="submit" disabled={busy}>{busy ? "Signing in…" : "Sign in"}<span aria-hidden="true">→</span></button>
     </form>
   </>;

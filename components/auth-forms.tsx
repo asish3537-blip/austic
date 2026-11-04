@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { afterSignIn, signInLink } from "@/lib/kitchen-handoff";
 import Link from "next/link";
 import { SignInOptions } from "@/components/sign-in-options";
 
@@ -21,7 +22,7 @@ function VerificationChannelPicker({ value, onChange, idPrefix }: { value: Verif
   </fieldset>;
 }
 
-export function SignInForm() {
+export function SignInForm({ kitchen }: { kitchen?: string }) {
   const [busy, setBusy] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
@@ -54,14 +55,15 @@ export function SignInForm() {
       const response = await fetch("/api/auth/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ phone: data.get("phone"), otp: data.get("otp") }) });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || "Could not sign in.");
-      window.location.assign(result.destination);
+      window.location.assign(afterSignIn(result.destination, kitchen));
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Could not sign in. Please try again."); setBusy(false);
     }
   }
   return <>
     <span className="eyebrow">Welcome back</span><h2>Sign in to Pausstik</h2>
-    <SignInOptions />
+    {kitchen && <p className="form-note">Sign in as a customer to continue with the kitchen you selected.</p>}
+    <SignInOptions kitchen={kitchen} />
     <p className="form-success">Testing without SMS? <Link className="text-link" href="/demo-sign-in">Open a separate demo profile with an on-screen code</Link>.</p>
     <p className="auth-intro">Phone sign-in below will be available once messaging is activated. For now, choose email/password or a demo profile above.</p>
     <p className="auth-intro">Your saved account role opens your customer, mother or delivery dashboard automatically. Partner accounts awaiting approval open their application status.</p>
@@ -80,7 +82,7 @@ export function SignInForm() {
       <div className="auth-links"><span>Codes expire shortly and can be used once.</span></div>
       <button className="button form-submit" type="submit" disabled={busy}>{busy ? "Signing in…" : "Sign in"}<span aria-hidden="true">→</span></button>
     </form>
-    <p className="form-footer">Prefer a password? <Link className="text-link" href="/password-sign-in">Sign in with email</Link> · <Link className="text-link" href="/forgot-password">Reset password</Link></p>
+    <p className="form-footer">Prefer a password? <Link className="text-link" href={signInLink("/password-sign-in", kitchen)}>Sign in with email</Link> · <Link className="text-link" href="/forgot-password">Reset password</Link></p>
     <details className="verification-help"><summary>Need a fresh email verification link?</summary><ResendVerificationForm /></details>
     <p className="form-footer">Administrator? <Link className="text-link" href="/admin-sign-in">Admin sign in</Link></p>
     <p className="form-footer">New to Pausstik? <Link className="text-link" href="/sign-up">Create an account</Link></p>
