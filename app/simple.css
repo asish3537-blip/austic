@@ -41,3 +41,4 @@ body:has(.dashboard-topline) .header-nav,body:has(.dashboard-topline) .header-co
 .public-partner{padding:24px}
 }
 
+.upi-payment{margin:8px 0;max-width:280px;white-space:normal}.upi-payment section{padding:16px;background:#fffdf6;border:1px solid #deded0;border-radius:14px;text-align:left}.upi-payment section p{overflow-wrap:anywhere;font-size:13px;line-height:1.5}.upi-payment img{display:block;width:100%;max-width:240px;height:auto}

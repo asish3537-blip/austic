@@ -1,3 +1,5 @@
+import { UpiPayment } from "@/components/upi-payment";
+import { upiReceiver } from "@/lib/upi";
 import Link from "next/link";
 import { isLocalAuthMode } from "@/lib/local-auth-mode";
 import { requireRole } from "@/lib/auth";
@@ -100,7 +102,7 @@ export default async function CustomerDashboardPage() {
         {!activityAvailable ? <p className="customer-empty">We couldn’t load your account activity right now. Refresh this page in a moment.</p> : orders.length ? <ul className="customer-record-list">
           {orders.map((order) => <li key={order.id}>
             <div className="customer-record-main"><strong>{order.orderNumber}</strong><span>{order.kitchen.name} · {order.items.map((item) => `${item.quantity} × ${item.mealName}`).join(", ")}</span><small>Ordered {date(order.orderedAt)} · For {date(order.scheduledFor)}</small>{order.delivery && order.status !== "DELIVERED" && order.status !== "CANCELLED" && <CustomerDeliveryTracking orderId={order.id} orderNumber={order.orderNumber} />}</div>
-            <div className="customer-record-meta"><b>{money(Number(order.totalAmount), order.currency)}</b><span className={`customer-status customer-status-${order.status.toLowerCase()}`}>{title(order.status)}</span></div>
+            <div className="customer-record-meta">{upiReceiver() && order.paymentStatus === "PENDING" && !["CANCELLED", "FAILED"].includes(order.status) && <UpiPayment orderId={order.id} />}<b>{money(Number(order.totalAmount), order.currency)}</b><span className={`customer-status customer-status-${order.status.toLowerCase()}`}>{title(order.status)}</span></div>
           </li>)}
         </ul> : <div className="customer-empty-state"><span className="card-icon" aria-hidden="true">⌑</span><strong>Your first order will show up here</strong><Link className="text-link" href="#customer-discover">Explore kitchens <span aria-hidden="true">→</span></Link></div>}
       </article>
