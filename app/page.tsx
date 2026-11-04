@@ -13,7 +13,7 @@ export default function HomePage() {
       <div className="public-hero-copy"><span className="eyebrow">From her kitchen. To your table.</span>
         <h1>A little taste<br />of <em>home.</em></h1>
         <p>Fresh lunches from mothers in your neighbourhood. Choose your kitchen. Make the week yours.</p>
-        <div className="hero-actions"><Link className="button" href="/app">Find your kitchen →</Link><a className="button button-light" href="/downloads/Pausstik-1.1.0.apk" download>Get the Android app</a></div>
+        <div className="hero-actions"><Link className="button" href="/app">Find your kitchen →</Link><a className="button button-light" href="/downloads/Pausstik-1.2.0.apk" download>Get the Android app</a></div>
         <div className="hero-mini-note">Meals from ₹69 <span aria-hidden="true">·</span> Veg &amp; non-veg</div>
       </div>
       <div className="public-hero-picture"><Image src="/assets/neighbourhood-lunch.svg" alt="Illustration of a home-style lunch with rice, dal, vegetables and salad" width={800} height={640} priority /><div className="hero-picture-note"><span>♨</span><div><strong>Good food, closer.</strong><small>Home-style meals. Local kitchens.</small></div></div></div>

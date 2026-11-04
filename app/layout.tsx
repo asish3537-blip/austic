@@ -8,6 +8,7 @@ import "./app-demo.css";
 import "./bottom-navigation.css";
 import "./install.css";
 import "./simple.css";
+import "./brand-theme.css";
 
 export const metadata: Metadata = {
   title: {
@@ -16,7 +17,7 @@ export const metadata: Metadata = {
   },
   description: "Discover home-style food from nearby mother-led kitchens. Pausstik is preparing its first neighbourhood marketplace pilot.",
   icons: {
-    icon: "/icons/pausstik-app-icon.svg",
+    icon: "/icons/pausstik-app-192.png",
     apple: [{ url: "/icons/pausstik-apple-touch-180.png", sizes: "180x180", type: "image/png" }],
   },
   manifest: "/manifest.webmanifest",
@@ -24,7 +25,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#174b3b",
+  themeColor: "#b52c2e",
   viewportFit: "cover",
 };
 

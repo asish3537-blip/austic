@@ -18,8 +18,8 @@ import java.io.*;
 import java.util.concurrent.*;
 
 public final class KitchenActivity extends Activity {
-    private static final String SITE = "https://paustik-vercel-upload-99710b4719064.vercel.app";
-    private static final int GREEN = Color.rgb(23, 85, 62);
+    private static final String SITE = "https://paustik.in";
+    private static final int GREEN = Color.rgb(181, 44, 46);
     private final ExecutorService worker = Executors.newSingleThreadExecutor();
     private LinearLayout body;
     private String city = "Bhubaneswar";
@@ -104,7 +104,7 @@ public final class KitchenActivity extends Activity {
 
     private void page() {
         ScrollView scroll = new ScrollView(this);
-        scroll.setBackgroundColor(Color.rgb(251, 248, 239));
+        scroll.setBackgroundColor(Color.rgb(255, 248, 237));
         scroll.setOnApplyWindowInsetsListener((v, insets) -> {
             if (android.os.Build.VERSION.SDK_INT >= 30) {
                 android.graphics.Insets bars = insets.getInsets(WindowInsets.Type.systemBars() | WindowInsets.Type.displayCutout() | WindowInsets.Type.ime());

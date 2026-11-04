@@ -10,8 +10,8 @@ export default function manifest(): MetadataRoute.Manifest {
     start_url: "/app",
     scope: "/",
     display: "standalone",
-    background_color: "#fbf8f0",
-    theme_color: "#174b3b",
+    background_color: "#fff8ed",
+    theme_color: "#b52c2e",
     categories: ["food", "lifestyle", "shopping"],
     icons: [
       { src: "/icons/pausstik-app-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
