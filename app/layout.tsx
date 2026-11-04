@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { Analytics } from "@vercel/analytics/next";
 import { PwaRuntime } from "@/components/pwa-runtime";
 import { MobileNavigation } from "@/components/mobile-navigation";
 import "./globals.css";
@@ -56,6 +57,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <span className="footer-links"><Link href="/">Website</Link><Link href="/help">Help</Link><Link href="/admin-sign-in">Admin</Link></span>
           <small className="footer-copyright">© 2026 Pausstik. All rights reserved.</small>
         </footer>
+        <Analytics />
       </body>
     </html>
   );
