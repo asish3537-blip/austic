@@ -3,7 +3,7 @@ import { UiText } from "@/components/ui-language";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 const links = [
-  ["Overview", "/admin/paustik-admin", "▦"], ["Orders", "/admin/orders", "▤"],
+  ["Overview", "/admin/paustik-admin", "▦"], ["Orders", "/admin/orders", "▤"], ["App preview", "/admin/app-preview", "▣"],
   ["Analytics", "/admin/analytics", "↗"], ["Operations map", "/admin/map", "⌖"], ["Kitchens & menus", "/admin/menus", "☷"],
   ["Demo marketplace & P&L", "/admin/demo-marketplace", "◉"],
   ["Finance & activity", "/admin/dashboard", "₹"], ["Accounts & roles", "/admin/accounts", "♙"],

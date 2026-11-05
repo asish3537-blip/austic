@@ -47,9 +47,9 @@ test("totals multiply servings and charge delivery once per selected day", () =>
 
 test("discovery starts with kitchens and keeps sample content separate", () => {
   const html = renderToStaticMarkup(<KitchenDiscovery kitchens={[]} sampleKitchens={[]} hasDeliveryPin={false} deliveryArea="Patia, Bhubaneswar" available />);
-  assert.match(html, /Choose a kitchen/);
-  assert.match(html, /Explore its menu/);
-  assert.match(html, /Build your subscription/);
+  assert.match(html, /Explore mother-led kitchens/);
+  assert.match(html, /aria-label="Kitchen view"/);
+  assert.match(html, /Search kitchens or meals/);
   assert.match(html, /No available menus in this area yet/);
   assert.match(html, /aria-expanded="false"/);
   assert.doesNotMatch(html, /Reserve .*meal days/);
@@ -69,7 +69,7 @@ test("an available kitchen card opens its own menu without expanding dishes in d
   const html = renderToStaticMarkup(<AppRouterContext.Provider value={mockRouter}><KitchenDiscovery kitchens={[kitchen]} sampleKitchens={[]} hasDeliveryPin deliveryArea="Patia, Bhubaneswar" available /></AppRouterContext.Provider>);
   assert.match(html, /href="\/customer\/kitchens\/kitchen-one"/);
   assert.match(html, /View menu/);
-  assert.match(html, /2.0 km away/);
+  assert.match(html, /2.0 km/);
   assert.doesNotMatch(html, /Dalma comfort meal/);
   assert.doesNotMatch(html, /Order meal/);
 });

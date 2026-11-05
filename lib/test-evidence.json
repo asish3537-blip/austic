@@ -1,7 +1,7 @@
 {
   "runId": "pilot-1793818743911",
   "environment": "Isolated local test system",
-  "capturedAt": "2026-11-05T02:55:02.261Z",
+  "capturedAt": "2026-11-05T05:12:51.327Z",
   "checks": [
     "Wallet: one-time ₹555, ₹500 cap, idempotent retry and concurrent requests",
     "Reservation: one date rejected, three dates reserved, wallet debited atomically",
@@ -13,7 +13,9 @@
     "Branding: visible Paustik name; versioned browser and install icons",
     "Single meal: one-day lunch without subscription and wallet settlement",
     "Evidence gallery: admin image loads, category filtering and unknown-file rejection",
-    "Demo marketplace: 30 profiles, 40 linked orders, idempotent seeding, P&L/CSV reconciliation, mobile and access checks"
+    "Demo marketplace: 30 profiles, 40 linked orders, idempotent seeding, P&L/CSV reconciliation, mobile and access checks",
+    "App UX: customer order-first and empty states, list/grid, profile image persistence, single-order redirection and history pagination",
+    "Admin preview: customer, mother and courier simulation with zero server writes and protected role access"
   ],
   "screenshots": [
     {
@@ -303,6 +305,78 @@
       "note": "A complete delivered order, actor/time history and separate food/delivery feedback.",
       "width": 1082,
       "height": 593
+    },
+    {
+      "id": "33-orders-first",
+      "file": "33-orders-first.png",
+      "title": "Orders and tracking first",
+      "group": "App UX",
+      "note": "Active orders lead the customer workspace; the current order timeline is expanded.",
+      "width": 390,
+      "height": 900
+    },
+    {
+      "id": "34-compact-grid",
+      "file": "34-compact-grid.png",
+      "title": "Compact kitchen grid",
+      "group": "App UX",
+      "note": "Short kitchen cards show identity, cuisine, rating and price. The list/grid switch works on mobile.",
+      "width": 390,
+      "height": 900
+    },
+    {
+      "id": "35-customer-app-preview",
+      "file": "35-customer-app-preview.png",
+      "title": "Customer app preview",
+      "group": "App UX",
+      "note": "Admin-only sample customer workspace. Preview controls never create server records.",
+      "width": 390,
+      "height": 900
+    },
+    {
+      "id": "36-mother-app-preview",
+      "file": "36-mother-app-preview.png",
+      "title": "Mother app preview",
+      "group": "App UX",
+      "note": "Connected sample preparation flow and weekly-menu controls in the admin preview.",
+      "width": 390,
+      "height": 900
+    },
+    {
+      "id": "37-delivery-app-preview",
+      "file": "37-delivery-app-preview.png",
+      "title": "Courier tracking preview",
+      "group": "App UX",
+      "note": "Sample courier progression and illustrative route, with no live GPS or arrival-time claim.",
+      "width": 390,
+      "height": 900
+    },
+    {
+      "id": "38-kitchen-logo-upload",
+      "file": "38-kitchen-logo-upload.png",
+      "title": "Mother photo and logo upload",
+      "group": "App UX",
+      "note": "A synthetic kitchen logo saved to the local kitchen profile; existing service hours were preserved.",
+      "width": 390,
+      "height": 900
+    },
+    {
+      "id": "39-admin-preview-desktop",
+      "file": "39-admin-preview-desktop.png",
+      "title": "Desktop app preview",
+      "group": "App UX",
+      "note": "Desktop view of the same protected customer, mother and delivery preview.",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "id": "40-no-orders-discovery",
+      "file": "40-no-orders-discovery.png",
+      "title": "New customer starts with kitchens",
+      "group": "App UX",
+      "note": "Customers without orders keep kitchen discovery above their empty history.",
+      "width": 390,
+      "height": 900
     }
   ]
 }

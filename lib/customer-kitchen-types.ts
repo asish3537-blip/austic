@@ -15,6 +15,8 @@ export type CustomerKitchen = {
   id: string;
   name: string;
   motherName: string;
+  profileImage?: string;
+  imageKind?: "photo" | "logo";
   locality: string;
   city: string;
   cuisine: string;

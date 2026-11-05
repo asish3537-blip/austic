@@ -14,12 +14,13 @@ export async function GET() {
     return NextResponse.json({ error: "An active customer account is required." }, { status: 403 });
   }
   try {
-    const [balance, entries, topups, starter] = await Promise.all([
-      walletBalance(prisma, user.id),
-      prisma.walletLedgerEntry.findMany({ where: { userId: user.id }, orderBy: { createdAt: "desc" }, take: 20 }),
-      prisma.walletLedgerEntry.aggregate({ where: { userId: user.id, reference: { startsWith: "pilot-topup:" + user.id + ":" }, direction: "CREDIT" }, _sum: { amount: true } }),
-      prisma.walletLedgerEntry.findUnique({ where: { reference: "pilot-starter:" + user.id }, select: { id: true } }),
-    ]);
+    // A consistent snapshot prevents a concurrent starter credit from reporting balance 0 with starterGranted true.
+    const [balance, entries, topups, starter] = await prisma.$transaction(async tx => Promise.all([
+      walletBalance(tx, user.id),
+      tx.walletLedgerEntry.findMany({ where: { userId: user.id }, orderBy: { createdAt: "desc" }, take: 20 }),
+      tx.walletLedgerEntry.aggregate({ where: { userId: user.id, reference: { startsWith: "pilot-topup:" + user.id + ":" }, direction: "CREDIT" }, _sum: { amount: true } }),
+      tx.walletLedgerEntry.findUnique({ where: { reference: "pilot-starter:" + user.id }, select: { id: true } }),
+    ]), { isolationLevel: "RepeatableRead" });
     return NextResponse.json({ currency: "INR", balance, pilot: { enabled: pilotWalletEnabled(), starterGranted: Boolean(starter), starterAmount: PILOT_STARTER_CREDIT, topUpRemaining: Math.max(0, PILOT_TOPUP_LIMIT - Number(topups._sum.amount ?? 0)), topUpLimit: PILOT_TOPUP_LIMIT }, entries: entries.map((entry) => ({
       id: entry.id, direction: entry.direction, amount: Number(entry.amount), description: entry.description,
       createdAt: entry.createdAt.toISOString(), orderId: entry.orderId,

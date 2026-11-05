@@ -1,3 +1,4 @@
+import { KitchenAvatar } from "@/components/kitchen-avatar";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireRole } from "@/lib/auth";
@@ -37,7 +38,7 @@ export default async function KitchenPage({ params }: { params: Promise<{ kitche
     <ol className="kitchen-journey" aria-label="Your meal journey"><li><span>✓</span>Choose a kitchen</li><li className="is-current"><span>2</span>Explore its menu</li><li><span>3</span>Build your subscription</li></ol>
     {sample && <div className="kitchen-sample-notice"><strong>Sample kitchen preview</strong><span>This menu, rating and availability are for demonstration. You can explore a subscription price, but no order or payment will be created.</span></div>}
     <header className="kitchen-detail-header">
-      <span className="kitchen-detail-avatar" aria-hidden="true">{kitchen.motherName.slice(0, 1)}</span>
+      <KitchenAvatar name={kitchen.motherName} image={kitchen.profileImage} kind={kitchen.imageKind}/>
       <div><span className="eyebrow">{sample ? "Meet a sample mother" : "From a mother-led kitchen"}</span><h1>{kitchen.name}</h1><p>Prepared by {kitchen.motherName} · {kitchen.locality}, {kitchen.city}</p><p>{kitchen.cuisine}</p><div className="kitchen-detail-facts"><span>{kitchen.rating > 0 ? `★ ${kitchen.rating.toFixed(1)}${sample ? " sample rating" : ""}` : "New kitchen"}</span><span>From {kitchenMoney(Math.min(...kitchen.meals.map((meal) => meal.price)))} / meal</span><span>{days} menu days</span>{kitchen.distanceKm !== undefined && <span>{kitchen.distanceKm.toFixed(1)} km away</span>}</div></div>
       <div className="kitchen-detail-actions"><a className="button button-warm" href="#kitchen-subscription">Build my subscription</a>{!sample && <FavoriteKitchenButton kitchenId={kitchen.id} initiallySaved={Boolean(kitchen.isFavorite)} />}</div>
     </header>

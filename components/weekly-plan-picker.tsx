@@ -41,6 +41,7 @@ export function WeeklyPlanPicker({ menus, kitchenName, preview = false, canReser
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Could not reserve those meal days.");
       setMessage(data.message + (data.orders.some((order: { amountDue: number }) => order.amountDue > 0) ? " Any amount not covered by your wallet remains due; no online payment was taken." : " Wallet credit covered each day."));
+      router.push("/customer/dashboard#order-history");
       setSelected([]);
       window.dispatchEvent(new Event("paustik-wallet-updated"));
       router.refresh();

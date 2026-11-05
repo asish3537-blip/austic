@@ -1,3 +1,4 @@
+import { readKitchenBranding } from "@/lib/kitchen-branding";
 import "server-only";
 import { isLocalAuthMode } from "@/lib/local-auth-mode";
 import { prisma } from "@/lib/prisma";
@@ -56,7 +57,7 @@ async function publishedKitchens(city: string | null | undefined, customerPin?: 
     },
     orderBy: [{ mother: { rating: "desc" } }, { name: "asc" }],
     select: {
-      id: true, name: true, locality: true, city: true, cuisine: true, latitude: true, longitude: true, marketplaceRadiusMeters: true,
+      id: true, name: true, locality: true, city: true, cuisine: true, operatingHours: true, latitude: true, longitude: true, marketplaceRadiusMeters: true,
       mother: { select: { rating: true, user: { select: { name: true } } } },
       menus: { where: menuWhere, orderBy: [{ serviceDate: "asc" }, { meal: { name: "asc" } }], select: { id: true, serviceDate: true, deliveryTime: true, stockCount: true, meal: { select: { id: true, name: true, category: true, tier: true, components: true, price: true } } } },
     },
@@ -64,6 +65,7 @@ async function publishedKitchens(city: string | null | undefined, customerPin?: 
 
   const kitchens: CustomerKitchen[] = rows.map((kitchen) => ({
     id: kitchen.id, name: kitchen.name, motherName: kitchen.mother.user.name, locality: kitchen.locality, city: kitchen.city,
+    profileImage: readKitchenBranding(kitchen.operatingHours)?.image, imageKind: readKitchenBranding(kitchen.operatingHours)?.kind,
     cuisine: kitchen.cuisine, rating: Number(kitchen.mother.rating), isFavorite: favoriteIds.has(kitchen.id),
     latitude: Number(kitchen.latitude), longitude: Number(kitchen.longitude), marketplaceRadiusKm: kitchen.marketplaceRadiusMeters / 1000,
     distanceKm: customerPin ? distanceMeters(customerPin, { latitude: Number(kitchen.latitude), longitude: Number(kitchen.longitude) }) / 1000 : undefined,

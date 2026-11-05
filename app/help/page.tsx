@@ -23,14 +23,15 @@ const guides = [
     text: "Choose a nearby mother-led kitchen, open its daily menu, then build a 3–7-day subscription with a clear price breakdown.",
     steps: [
       "Create a Customer account and sign in using the code delivered by SMS or WhatsApp. Real code delivery requires Paustik’s messaging provider to be connected.",
+      "Your orders & tracking appears at the top once you have orders. Open Track order for the timeline; active orders refresh while the page is visible. Use Older orders to browse the rest of your history.",
       "Use my location to save your drop-off pin. Paustik uses it to calculate nearby kitchens and shares it with the assigned courier for an order.",
-      "Browse the kitchen list. Search by a mother’s name, cuisine or dish, filter vegetarian or non-vegetarian menus, and save favourite kitchens. With a delivery pin, the list shows kitchens whose 5–10 km service area reaches you.",
+      "Switch between the compact kitchen list and grid. Photos or logos help identify the mother. Search by a mother’s name, cuisine or dish, filter vegetarian or non-vegetarian menus, and save favourite kitchens. With a delivery pin, the list shows kitchens whose 5–10 km service area reaches you.",
       "Open View menu on a kitchen to see that mother’s dated menu, three meal components, price, delivery time and available servings. Choose a date to browse its meals. Sample kitchens are labelled and cannot create real orders.",
       "Select Build my subscription. Choose 3–7 days, one meal per day and your number of servings. The 3, 5, 6 and 7-day shortcuts select the first available days; review or change each meal before reserving. Meals and ₹30-per-day delivery are itemised in the summary. Plans cover one week and renew manually.",
       "For a single meal, expand Prefer this meal for one day beneath that dish. Your saved orders and subscriptions appear in the customer workspace. OpenStreetMap links share coordinates with that map provider.",
       "Online checkout is not connected. No payment is taken here; use the pilot collection process with Paustik admin if a payment is collected outside the app.",
       "Cancel a meal day at least five hours before its scheduled delivery. The eligible amount already paid, minus the ₹5 processing fee, is credited to your Paustik wallet. No credit is issued for an unpaid amount.",
-      "Track kitchen and courier status in Recent orders. A current courier point appears after pickup when the courier has opted in to GPS sharing.",
+      "Track kitchen and courier status in Your orders & tracking. A current courier point appears after pickup when the courier has opted in to GPS sharing.",
     ],
   },
   {
@@ -39,6 +40,7 @@ const guides = [
     status: "Kitchen application, weekly menu and order queue available",
     text: "After Paustik approval, save your kitchen pin, choose a 5–10 km customer service radius, publish dated three-part meals, and prepare customer orders.",
     steps: [
+      "In Your kitchen, use Your kitchen identity to upload a profile photo or kitchen logo. Choose PNG, JPG or WebP under 5 MB. The saved image is public on your kitchen listing; you can replace or remove it at any time.",
       "Choose Mother entrepreneur and enter your kitchen name, cooking specialties, daily meal capacity, lunch days, and service window.",
       "Verify your phone with a real SMS or WhatsApp code, then confirm your email with the link sent to your inbox.",
       "Your application stays pending until an administrator reviews and approves it in the operations dashboard.",
