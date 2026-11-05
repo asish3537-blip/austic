@@ -11,7 +11,7 @@ export default async function AdminAnalytics({ searchParams }: { searchParams: P
     prisma.paymentLedgerEntry.groupBy({ by: ["category", "currency"], where: { createdAt: period }, _sum: { amount: true } }),
     prisma.earning.groupBy({ by: ["beneficiaryRole", "status", "currency"], _sum: { netAmount: true } }),
     prisma.payout.groupBy({ by: ["status", "currency"], _sum: { amount: true } }),
-    prisma.subscription.groupBy({ by: ["status"], _count: { _all: true } }),
+    prisma.subscription.groupBy({ by: ["status"], where: { customer: { email: { not: { endsWith: "@paustik.invalid" } } } }, _count: { _all: true } }),
     prisma.delivery.groupBy({ by: ["status"], where: { order: { orderNumber: { not: { startsWith: "TEST-LIFE-" } } } }, _count: { _all: true } }),
     prisma.rating.aggregate({ where: { order: { orderNumber: { not: { startsWith: "TEST-LIFE-" } } }, createdAt: period }, _avg: { mealScore: true, deliveryScore: true }, _count: { mealScore: true, deliveryScore: true } }),
   ]);

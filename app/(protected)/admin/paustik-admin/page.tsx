@@ -11,7 +11,7 @@ export default async function AdminOverview({ searchParams }: { searchParams: Pr
     prisma.order.groupBy({ by: ["status"], where: { orderNumber: { not: { startsWith: "TEST-LIFE-" } }, orderedAt: { gte: since, lte: now } }, _count: { _all: true } }),
     prisma.$queryRaw<Array<{ day: string; amount: string }>>`SELECT to_char(captured_at AT TIME ZONE 'Asia/Kolkata', 'YYYY-MM-DD') AS day, sum(amount)::text AS amount FROM paustik_marketplace.payments WHERE currency = 'INR' AND captured_at >= ${since} AND captured_at <= ${now} GROUP BY 1 ORDER BY 1`,
     prisma.user.groupBy({ by: ["role"], where: { email: { not: { endsWith: "@paustik.invalid" } } }, _count: { _all: true } }),
-    prisma.kitchen.count({ where: { isAcceptingOrders: true } }), prisma.subscription.count({ where: { status: "ACTIVE" } }),
+    prisma.kitchen.count({ where: { isAcceptingOrders: true } }), prisma.subscription.count({ where: { status: "ACTIVE", customer: { email: { not: { endsWith: "@paustik.invalid" } } } } }),
     prisma.user.count({ where: { role: { in: ["MOTHER", "DELIVERY_AGENT"] }, status: "PENDING" } }),
     prisma.complaint.count({ where: { status: { in: ["OPEN", "IN_REVIEW"] } } }),
     prisma.paymentLedgerEntry.aggregate({ where: { category: "PLATFORM_FEE", currency: "INR", createdAt: { gte: since, lte: now } }, _sum: { amount: true } }),

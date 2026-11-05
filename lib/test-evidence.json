@@ -1,7 +1,7 @@
 {
   "runId": "pilot-1793818743911",
   "environment": "Isolated local test system",
-  "capturedAt": "2026-11-04T19:08:25.489Z",
+  "capturedAt": "2026-11-05T02:55:02.261Z",
   "checks": [
     "Wallet: one-time ₹555, ₹500 cap, idempotent retry and concurrent requests",
     "Reservation: one date rejected, three dates reserved, wallet debited atomically",
@@ -12,7 +12,8 @@
     "Access: guest/customer blocked from admin reports and screenshot files",
     "Branding: visible Paustik name; versioned browser and install icons",
     "Single meal: one-day lunch without subscription and wallet settlement",
-    "Evidence gallery: admin image loads, category filtering and unknown-file rejection"
+    "Evidence gallery: admin image loads, category filtering and unknown-file rejection",
+    "Demo marketplace: 30 profiles, 40 linked orders, idempotent seeding, P&L/CSV reconciliation, mobile and access checks"
   ],
   "screenshots": [
     {
@@ -257,6 +258,51 @@
       "note": "Homepage, main navigation and key calls to action use the selected language.",
       "width": 390,
       "height": 900
+    },
+    {
+      "id": "28-demo-overview",
+      "file": "28-demo-overview.png",
+      "title": "30 accounts and 40 orders",
+      "group": "Demo marketplace",
+      "note": "10 customers, 10 mothers and 10 couriers linked through delivered, active, cancelled and failed orders.",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "id": "29-demo-accounts",
+      "file": "29-demo-accounts.png",
+      "title": "Demo account relationships",
+      "group": "Demo marketplace",
+      "note": "Synthetic account profiles, seven-day menus, capacity and ratings. Demo accounts cannot sign in.",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "id": "30-demo-profit-loss",
+      "file": "30-demo-profit-loss.png",
+      "title": "Scenario profit & loss",
+      "group": "Demo marketplace",
+      "note": "Collections, refunds, partner costs and fixed overhead. This scenario includes both profitable and loss-making orders.",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "id": "32-demo-activity",
+      "file": "32-demo-activity.png",
+      "title": "Event-by-event activity",
+      "group": "Demo marketplace",
+      "note": "Saved synthetic actor actions, status changes, internal updates, feedback and resolution.",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "id": "31-demo-lifecycle",
+      "file": "31-demo-lifecycle.png",
+      "title": "One complete linked lifecycle",
+      "group": "Demo marketplace",
+      "note": "A complete delivered order, actor/time history and separate food/delivery feedback.",
+      "width": 1082,
+      "height": 593
     }
   ]
 }

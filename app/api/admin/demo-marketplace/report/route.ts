@@ -1,0 +1,9 @@
+import {NextResponse}from"next/server";
+import {getCurrentUser}from"@/lib/auth";
+import {demoOverhead,contribution}from"@/lib/demo-economics";
+import {loadDemoMarket}from"@/lib/demo-marketplace-report";
+export const dynamic="force-dynamic";
+export async function GET(request:Request){const user=await getCurrentUser();if(!user||user.role!=="ADMIN"||user.status!=="ACTIVE")return NextResponse.json({error:"Administrator access required."},{status:403});const p=new URL(request.url).searchParams;const data=await loadDemoMarket({days:p.get("days")??undefined,family:p.get("family")??undefined,fixed:demoOverhead(p.get("fixed")??undefined)});
+ const t=data.totals;const rows:(string|number)[][]=[["DEMO ONLY — all finances simulated; amounts in INR"],["Period days",data.days],["Family",data.family??"All"],["Net receipts",t.netReceipts/100],["Variable costs",t.costs/100],["Contribution before fixed overhead",t.contribution/100],["Fixed overhead scenario",t.fixedOverhead/100],["Operating result before tax",t.operatingResult/100],[],["Order","Status","Kitchen","List charges","Discount","Collected","Refund","Mother settlement","Courier cost","Packaging","Processing","Operations","Contribution before overhead","Mother settlement status","Courier settlement status"],...data.rows.flatMap(({order:o,finance:f})=>f?[[o.orderNumber,o.status,o.kitchen.name,...[f.listPrice,f.discount,f.collected,f.refund,f.mother,f.courier,f.packaging,f.processing,f.operations,contribution(f)].map(n=>n/100),f.motherSettlement,f.courierSettlement]]:[])];
+ const csv=rows.map(row=>row.map(v=>{const text=typeof v==="string"&&/^[=+\-@\t\r]/.test(v)?"'"+v:String(v);return '"'+text.replaceAll('"','""')+'"';}).join(",")).join("\r\n");return new Response(csv,{headers:{"Content-Type":"text/csv; charset=utf-8","Content-Disposition":"attachment; filename=paustik-demo-profit-loss.csv","Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff"}});
+}
