@@ -1,3 +1,4 @@
+import { scheduleEntityPush } from "@/lib/web-push";
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
 import { rejectCrossOrigin, serviceUnavailable } from "@/lib/http";
@@ -58,6 +59,7 @@ export async function POST(request: Request, context: { params: Promise<{ orderI
       ] });
       return { walletCredit: credit, balance: await walletBalance(tx, user.id), cutoffAt: cutoffAt.toISOString() };
     });
+    scheduleEntityPush([orderId]);
     return NextResponse.json({ cancelled: true, ...result, message: result.walletCredit > 0 ? "Meal day cancelled; eligible paid value less the ₹5 fee is in your wallet." : "Meal day cancelled. No payment had been collected." });
   } catch (error) {
     const code = error instanceof Error ? error.message : "";

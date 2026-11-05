@@ -1,3 +1,4 @@
+import { scheduleEntityPush } from "@/lib/web-push";
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { prisma } from "@/lib/prisma";
 import { lockWallet } from "@/lib/marketplace-rules";
@@ -27,7 +28,7 @@ export async function recordRazorpayReceipt(providerOrderId: string, paymentId: 
   const remote = await razorpayRequest("payments/" + encodeURIComponent(paymentId));
   if (remote.id !== paymentId || remote.order_id !== providerOrderId || remote.currency !== "INR" || remote.amount !== Number(row.amount.mul(100).toFixed(0))) throw new Error("Payment details do not match this order.");
   if (remote.status !== "captured" || remote.captured !== true) return { paid: false };
-  return prisma.$transaction(async tx => {
+  const receipt = await prisma.$transaction(async tx => {
     await lockWallet(tx, row.order.customerId);
     const current = await tx.payment.findUniqueOrThrow({ where: { id: row.id }, include: { order: true } });
     if (current.status === "CAPTURED" && current.providerPaymentId === paymentId) return { paid: true };
@@ -40,5 +41,7 @@ export async function recordRazorpayReceipt(providerOrderId: string, paymentId: 
     await tx.notification.create({ data: { userId: current.order.customerId, kind: "PAYMENT", entityId: row.orderId, title: closed ? "Payment needs review" : "Payment received", body: closed ? "Payment arrived after this order closed. Contact Paustik for a refund review." : "Payment received for " + current.order.orderNumber + "." } });
     return { paid: true, refundReviewRequired: closed };
   });
+  scheduleEntityPush([row.orderId]);
+  return receipt;
 }
 

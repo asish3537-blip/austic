@@ -1,3 +1,4 @@
+import { scheduleEntityPush } from "@/lib/web-push";
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
 import { rejectCrossOrigin, serviceUnavailable } from "@/lib/http";
@@ -65,7 +66,7 @@ export async function POST(request: Request) {
   try {
     const agent = await approvedAgent(user.id);
     if (!agent || agent.verificationStatus !== "APPROVED") return NextResponse.json({ error: "Your delivery partner application still needs approval." }, { status: 403 });
-    await prisma.$transaction(async (tx) => {
+    const acceptedOrderId = await prisma.$transaction(async (tx) => {
       const claimed = await tx.delivery.updateMany({
         where: { id: parsed.data.deliveryId, agentId: null, status: "ASSIGNED", order: { status: "READY_FOR_PICKUP" } },
         data: { agentId: agent.id, status: "ACCEPTED", acceptedAt: new Date(), assignedAt: new Date() },
@@ -75,7 +76,10 @@ export async function POST(request: Request) {
       await tx.order.update({ where: { id: delivery.orderId }, data: { status: "DELIVERY_ASSIGNED" } });
       await tx.orderEvent.create({ data: { orderId: delivery.orderId, actorUserId: user.id, status: "DELIVERY_ASSIGNED", detail: "A delivery partner accepted this job." } });
       await tx.notification.create({ data: { userId: delivery.order.customerId, title: "Courier assigned", body: "A Paustik delivery partner accepted order " + delivery.order.orderNumber + ".", kind: "DELIVERY", entityId: delivery.orderId } });
+      await tx.notification.create({ data: { userId: user.id, title: "Delivery job accepted", body: "Your pickup is ready to view in Your deliveries.", kind: "DELIVERY", entityId: delivery.orderId } });
+      return delivery.orderId;
     });
+    scheduleEntityPush([acceptedOrderId]);
     return NextResponse.json({ accepted: true });
   } catch (error) {
     if (error instanceof Error && error.message === "JOB_ALREADY_CLAIMED") return NextResponse.json({ error: "Another courier accepted this delivery first." }, { status: 409 });

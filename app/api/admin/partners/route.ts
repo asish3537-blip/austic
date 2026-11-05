@@ -1,3 +1,4 @@
+import { scheduleEntityPush } from "@/lib/web-push";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getCurrentUser } from "@/lib/auth";
@@ -64,6 +65,7 @@ export async function POST(request: Request) {
         data: { userId: partner.id, title: approved ? "Paustik partner access approved" : "Paustik partner application update", body: approved ? "Your account is approved. Sign in to continue." : "Your partner application was not approved. Contact Paustik support for details.", kind: "ACCOUNT", entityId: partner.id },
       });
     });
+    scheduleEntityPush([partner.id]);
     return NextResponse.json({ reviewed: true, status: approved ? "ACTIVE" : "REJECTED" });
   } catch (error) {
     console.error("Paustik partner review failed.", error instanceof Error ? error.name : "unknown error");

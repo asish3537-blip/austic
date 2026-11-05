@@ -1,3 +1,4 @@
+import { scheduleEntityPush } from "@/lib/web-push";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getCurrentUser } from "@/lib/auth";
@@ -53,6 +54,7 @@ export async function POST(request: Request) {
       await tx.notification.create({ data: { userId: order.customerId, title: "Payment recorded", body: "Your " + parsed.data.provider + " payment for order " + order.orderNumber + " was recorded by Paustik.", kind: "PAYMENT", entityId: order.id } });
       return { orderNumber: order.orderNumber, amount: due, currency: order.currency };
     });
+    scheduleEntityPush([parsed.data.orderId]);
     return NextResponse.json({ captured: true, ...result, message: "Payment recorded from the external " + parsed.data.provider + " collection." });
   } catch (error) {
     const code = error instanceof Error ? error.message : "";

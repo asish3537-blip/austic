@@ -1,3 +1,4 @@
+import { GoogleMapActions } from "@/components/google-map-actions";
 import { KitchenAvatar } from "@/components/kitchen-avatar";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -43,7 +44,7 @@ export default async function KitchenPage({ params }: { params: Promise<{ kitche
       <div className="kitchen-detail-actions"><a className="button button-warm" href="#kitchen-subscription">Build my subscription</a>{!sample && <FavoriteKitchenButton kitchenId={kitchen.id} initiallySaved={Boolean(kitchen.isFavorite)} />}</div>
     </header>
     {!sample && <CustomerDeliveryPin initialPinned={hasDeliveryPin} />}
-    <div className="kitchen-delivery-strip"><span><strong>Neighbourhood delivery</strong>{sample ? "Delivery eligibility is confirmed for real kitchens using your saved pin." : hasDeliveryPin ? `This kitchen serves your pin within its ${kitchen.marketplaceRadiusKm} km area.` : "Add your delivery pin to confirm this kitchen can reach you."}</span><span><strong>Clear daily pricing</strong>Meal price + ₹30 delivery per day</span>{!sample && kitchen.latitude !== undefined && kitchen.longitude !== undefined && <a href={`https://www.openstreetmap.org/?mlat=${kitchen.latitude}&mlon=${kitchen.longitude}#map=15/${kitchen.latitude}/${kitchen.longitude}`} target="_blank" rel="noreferrer">View kitchen on map ↗</a>}</div>
+    <div className="kitchen-delivery-strip"><span><strong>Neighbourhood delivery</strong>{sample ? "Delivery eligibility is confirmed for real kitchens using your saved pin." : hasDeliveryPin ? `This kitchen serves your pin within its ${kitchen.marketplaceRadiusKm} km area.` : "Add your delivery pin to confirm this kitchen can reach you."}</span><span><strong>Clear daily pricing</strong>Meal price + ₹30 delivery per day</span>{!sample && kitchen.latitude !== undefined && kitchen.longitude !== undefined && <GoogleMapActions point={{ latitude: kitchen.latitude, longitude: kitchen.longitude }} label="Kitchen"/>}</div>
     <KitchenMenu meals={kitchen.meals} sample={sample} canOrder={hasDeliveryPin} />
     <section className="kitchen-subscription-section" id="kitchen-subscription" aria-labelledby="kitchen-subscription-title">
       <div className="kitchen-section-heading"><div><span className="eyebrow">Make it your everyday kitchen</span><h2 id="kitchen-subscription-title">Build your subscription</h2><p>Choose 3–7 days from this mother’s available menu. Your meals, your days, one kitchen.</p></div><span className="kitchen-minimum-tag">3 days minimum</span></div>

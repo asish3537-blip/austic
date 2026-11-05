@@ -15,6 +15,7 @@ import "./brand-theme.css";
 import "./admin-console.css";
 import "./pilot-ui.css";
 import "./app-workspace.css";
+import "./notifications-maps.css";
 
 export const metadata: Metadata = {
   title: {

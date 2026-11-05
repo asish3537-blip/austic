@@ -2,6 +2,7 @@ import { UiText } from "@/components/ui-language";
 import Link from "next/link";
 
 const guides = [
+  { slug: "notifications-and-maps", title: "Notifications and Google Maps", status: "In-app updates and map controls", text: "Open Notifications for your account updates and device push settings.", steps: ["Enable device push only if you want browser notifications. Approve the browser prompt; no permission is requested automatically. Live push needs server signing keys.", "Use Turn off device push to opt out. Signing out stops future dispatch for that session. Lock-screen alerts hide private order details.", "Kitchen profiles, admin map points and fresh courier tracking include Google Maps controls. Tapping them sends the selected coordinates to Google Maps; the app does not load a Google map automatically.", "Browser/PWA push support varies by device. On iPhone/iPad open the installed Home Screen app. Native Android background push needs separate Firebase configuration."] },
   {
     slug: "account-setup",
     title: "Create an account with SMS or WhatsApp",

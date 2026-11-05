@@ -211,6 +211,7 @@ model User {
   ratingsGiven         Rating[]                 @relation("RatingsGiven")
   ratingsReceived      Rating[]                 @relation("RatingsReceived")
   complaints           Complaint[]
+  webPushDevices       WebPushDevice[]
   notifications        Notification[]
   earnings             Earning[]
   payouts              Payout[]
@@ -836,7 +837,26 @@ model AdminActivityLog {
   @@schema("paustik_marketplace")
 }
 
+model WebPushDevice {
+  id                 String @id @default(uuid()) @db.Uuid
+  userId             String @map("user_id") @db.Uuid
+  sessionId          String @map("session_id") @db.Uuid
+  endpointHash       String @unique @map("endpoint_hash") @db.Char(64)
+  endpoint           String
+  p256dh             String
+  auth               String
+  createdAt          DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  lastEventAt        DateTime @default(now()) @map("last_event_at") @db.Timestamptz(6)
+  lastAttemptAt      DateTime? @map("last_attempt_at") @db.Timestamptz(6)
+  user               User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  session            AuthSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  @@index([userId])
+  @@map("web_push_devices")
+  @@schema("paustik_marketplace")
+}
+
 model AuthSession {
+  webPushDevices WebPushDevice[]
   id         String    @id @default(uuid()) @db.Uuid
   userId     String    @map("user_id") @db.Uuid
   tokenHash  String    @unique @map("token_hash") @db.Char(64)

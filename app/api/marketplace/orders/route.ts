@@ -1,3 +1,4 @@
+import { scheduleEntityPush } from "@/lib/web-push";
 import { randomBytes } from "node:crypto";
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -90,8 +91,10 @@ export async function POST(request: Request) {
       await tx.notification.create({
         data: { userId: menu.kitchen.mother.userId, title: "New meal order", body: orderNumber + " · " + parsed.data.quantity + " serving(s) of " + menu.meal.name, kind: "ORDER", entityId: created.id },
       });
+      await tx.notification.create({ data: { userId: user.id, title: "Meal order placed", body: "Your order " + created.orderNumber + " is saved. Follow it in Your orders & tracking.", kind: "ORDER", entityId: created.id } });
       return created;
     });
+    scheduleEntityPush([order.id]);
     const walletApplied = await prisma.walletLedgerEntry.aggregate({ where: { orderId: order.id, direction: "DEBIT" }, _sum: { amount: true } });
     return NextResponse.json({ created: true, orderId: order.id, orderNumber: order.orderNumber, total, walletApplied: Number(walletApplied._sum.amount ?? 0), amountDue: Math.max(0, total - Number(walletApplied._sum.amount ?? 0)), currency: "INR", paymentStatus: order.paymentStatus, message: "Order saved. Online payment is not connected; any remaining balance has not been charged." }, { status: 201 });
   } catch (error) {

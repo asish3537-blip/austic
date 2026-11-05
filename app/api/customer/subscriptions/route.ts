@@ -1,3 +1,4 @@
+import { scheduleEntityPush } from "@/lib/web-push";
 import { randomBytes } from "node:crypto";
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -100,10 +101,12 @@ export async function POST(request: Request) {
         } });
         if (due > 0) await tx.notification.create({ data: { userId: user.id, title: "Payment due for weekly meal", body: "₹" + due.toFixed(0) + " remains due for " + created.orderNumber + ". No online payment was taken.", kind: "PAYMENT", entityId: created.id } });
         await tx.notification.create({ data: { userId: kitchen.mother.userId, title: "Weekly meal reserved", body: created.orderNumber + " · " + parsed.data.quantity + " serving(s) of " + menu.meal.name, kind: "ORDER", entityId: created.id } });
+        await tx.notification.create({ data: { userId: user.id, title: "Meal day reserved", body: created.orderNumber + " is saved in Your orders & tracking.", kind: "ORDER", entityId: created.id } });
         createdOrders.push({ id: created.id, orderNumber: created.orderNumber, scheduledFor: scheduledFor.toISOString(), amountDue: due });
       }
       return { subscriptionId: subscription.id, orders: createdOrders };
     });
+    scheduleEntityPush(result.orders.map(order => order.id));
     return NextResponse.json({ created: true, ...result, message: "Your one-week plan is saved for " + sorted.length + " delivery days. Renew manually next week; no automatic payment is scheduled." }, { status: 201 });
   } catch (error) {
     if (error instanceof Error && error.message === "MENU_SOLD_OUT") return NextResponse.json({ error: "One selected day sold out while the plan was being saved. Refresh the menu and try again." }, { status: 409 });

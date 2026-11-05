@@ -1,3 +1,4 @@
+import { scheduleEntityPush } from "@/lib/web-push";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getCurrentUser } from "@/lib/auth";
@@ -77,6 +78,7 @@ export async function PATCH(request: Request, context: { params: Promise<{ deliv
         await tx.notification.create({ data: { userId: current.order.customerId, title: "Delivery " + parsed.data.status.toLowerCase().replaceAll("_", " "), body: "Your courier updated order " + current.order.orderNumber + ".", kind: "DELIVERY", entityId: current.orderId } });
       }
     });
+    scheduleEntityPush([current.orderId]);
     return NextResponse.json({ updated: true, status: parsed.data.status });
   } catch (error) {
     console.error("Paustik delivery progress update failed.", error instanceof Error ? error.name : "unknown error");
