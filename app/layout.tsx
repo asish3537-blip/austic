@@ -16,6 +16,7 @@ import "./admin-console.css";
 import "./pilot-ui.css";
 import "./app-workspace.css";
 import "./notifications-maps.css";
+import "./journey-branding.css";
 
 export const metadata: Metadata = {
   title: {
@@ -65,6 +66,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         {children}
         <PausstikAssistant />
         <footer className="site-footer">
+          <Link href="/" className="footer-brand" aria-label="Paustik home"><Image src="/assets/paustik-mother-wordmark.webp" alt="Paustik" width={140} height={68}/></Link>
           <span className="footer-links"><Link href="/"><UiText text="Website"/></Link><Link href="/help"><UiText text="Help"/></Link><span className="admin-footer-entry"><Link href="/admin-sign-in"><UiText text="Admin"/></Link><span className="admin-footer-menu"><Link href="/admin/paustik-admin"><UiText text="Admin dashboard"/></Link><Link href="/admin-sign-in"><UiText text="Admin sign in"/></Link></span></span></span>
           <small className="footer-copyright">© 2026 Paustik. All rights reserved.</small>
         </footer>
