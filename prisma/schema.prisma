@@ -266,6 +266,11 @@ model MotherProfile {
 }
 
 model DeliveryAgentProfile {
+  serviceCity String? @map("service_city")
+  serviceLatitude Decimal? @map("service_latitude") @db.Decimal(10,7)
+  serviceLongitude Decimal? @map("service_longitude") @db.Decimal(10,7)
+  serviceRadiusMeters Int @default(8000) @map("service_radius_meters")
+  isAvailable Boolean @default(false) @map("is_available")
   id                  String             @id @default(uuid()) @db.Uuid
   userId              String             @unique @map("user_id") @db.Uuid
   vehicleType         String             @map("vehicle_type")
@@ -597,6 +602,9 @@ model WalletLedgerEntry {
 }
 
 model Delivery {
+  estimatedPayout Decimal? @map("estimated_payout") @db.Decimal(12,2)
+  estimatedDistanceKm Decimal? @map("estimated_distance_km") @db.Decimal(10,3)
+  estimationRule Json? @map("estimation_rule")
   id                    String                @id @default(uuid()) @db.Uuid
   orderId               String                @unique @map("order_id") @db.Uuid
   agentId               String?               @map("agent_id") @db.Uuid
@@ -948,5 +956,18 @@ model OrderEvent {
 
   @@index([orderId, createdAt])
   @@map("order_events")
+  @@schema("paustik_marketplace")
+}
+
+model EarningsEstimatePolicy {
+  id String @id @default(uuid()) @db.Uuid
+  motherBasisPoints Int @map("mother_basis_points")
+  courierBase Decimal @map("courier_base") @db.Decimal(10,2)
+  includedKm Decimal @map("included_km") @db.Decimal(6,2)
+  perKm Decimal @map("per_km") @db.Decimal(10,2)
+  courierCap Decimal @map("courier_cap") @db.Decimal(10,2)
+  isActive Boolean @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  @@map("earnings_estimate_policies")
   @@schema("paustik_marketplace")
 }

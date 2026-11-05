@@ -1,3 +1,4 @@
+import { scheduleCourierOffers } from "@/lib/courier-offers";
 import { scheduleEntityPush } from "@/lib/web-push";
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -61,6 +62,7 @@ export async function PATCH(request: Request, context: { params: Promise<{ order
       return next;
     });
     scheduleEntityPush([updated.id]);
+    scheduleCourierOffers([updated.id]);
     return NextResponse.json({ updated: true, status: updated.status });
   } catch (error) {
     if (error instanceof Error && error.message === "PAYMENT_REVIEW_REQUIRED") return NextResponse.json({ error: "This order has a payment or an open checkout. Contact operations for cancellation and refund review." }, { status: 409 });

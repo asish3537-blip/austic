@@ -48,12 +48,12 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
               <Image className="brand-wordmark" src="/assets/paustik-mother-wordmark.webp" alt="Paustik" width={640} height={310} priority />
               
             </Link>
-            <nav className="header-nav" aria-label="Main navigation"><Link href="/#meal-plans"><UiText text="Meals"/></Link><Link href="/install"><UiText text="Get the app"/></Link></nav>
+            <nav className="header-nav" aria-label="Main navigation"><Link href="/#customers">Customers</Link><Link href="/#for-mothers">Mother Kitchens</Link><Link href="/#for-delivery">Delivery Partners</Link></nav>
             <div className="header-controls">
               <LanguageSelector />
               <MobileNavigation>
                 <summary aria-label="Navigation menu"><span className="menu-icon" aria-hidden="true"><i></i><i></i><i></i></span><span><UiText text="Menu"/></span></summary>
-                <nav className="mobile-nav-panel" aria-label="Mobile navigation"><Link href="/#meal-plans"><UiText text="Meals"/></Link><Link href="/install"><UiText text="Get the app"/></Link><Link href="/help"><UiText text="Help"/></Link></nav>
+                <nav className="mobile-nav-panel" aria-label="Mobile navigation"><Link href="/#customers">Customers</Link><Link href="/#for-mothers">Mother Kitchens</Link><Link href="/#for-delivery">Delivery Partners</Link><Link href="/#meal-plans"><UiText text="Meals"/></Link><Link href="/install"><UiText text="Get the app"/></Link><Link href="/help"><UiText text="Help"/></Link></nav>
               </MobileNavigation>
               <div className="header-actions">
                 <Link className="button button-small" href="/app"><UiText text="Open app"/></Link>

@@ -1,3 +1,6 @@
+import { loadEstimatePolicy, orderDistance } from "@/lib/partner-income";
+import { estimateShares } from "@/lib/earnings-estimates";
+import { courierCovers } from "@/lib/courier-offers";
 import { scheduleEntityPush } from "@/lib/web-push";
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
@@ -18,10 +21,11 @@ export async function GET() {
   try {
     const agent = await approvedAgent(user.id);
     if (!agent || agent.verificationStatus !== "APPROVED") return NextResponse.json({ error: "Your delivery partner application still needs approval." }, { status: 403 });
-    const [available, assigned] = await Promise.all([
-      prisma.delivery.findMany({
-        where: { agentId: null, status: "ASSIGNED", order: { status: "READY_FOR_PICKUP" } },
-        orderBy: { createdAt: "asc" }, take: 20,
+    const policy = await loadEstimatePolicy();
+    const [available, assigned, upcoming] = await Promise.all([
+      !agent.isAvailable || !agent.serviceCity ? Promise.resolve([]) : prisma.delivery.findMany({
+        where: { agentId: null, status: "ASSIGNED", order: { status: "READY_FOR_PICKUP", orderNumber: { not: { startsWith: "TEST-LIFE-" } }, kitchen: { city: { equals: agent.serviceCity, mode: "insensitive" } } } },
+        orderBy: { createdAt: "asc" }, take: 100,
         include: { order: { include: { kitchen: true, address: true, items: { select: { mealName: true, quantity: true } } } } },
       }),
       prisma.delivery.findMany({
@@ -29,8 +33,11 @@ export async function GET() {
         orderBy: { updatedAt: "desc" }, take: 20,
         include: { order: { include: { kitchen: true, address: true, items: { select: { mealName: true, quantity: true } } } } },
       }),
+      !agent.isAvailable || !agent.serviceCity ? Promise.resolve([]) : prisma.order.findMany({ where: { status: { in: ["ORDER_PLACED","CONFIRMED","PREPARING"] }, orderNumber: { not: { startsWith: "TEST-LIFE-" } }, kitchen: { city: { equals: agent.serviceCity, mode: "insensitive" } }, scheduledFor: { gte: new Date(Date.now()-7200000), lte: new Date(Date.now()+7*86400000) } }, include: { kitchen: true, address: true, items: { select: { mealName:true,quantity:true } } }, orderBy: { orderedAt:"desc" },take:100 }),
     ]);
     const mapJob = (delivery: typeof available[number], isAssigned: boolean) => ({
+      estimatedPay: estimateShares(Number(delivery.order.subtotal), Number(delivery.order.deliveryFee), orderDistance(delivery.order.kitchen, delivery.order.address), policy, delivery.estimatedPayout == null ? null : Number(delivery.estimatedPayout)).courier,
+      routeDistanceKm: orderDistance(delivery.order.kitchen, delivery.order.address), alertAt: delivery.updatedAt.toISOString(), isUpcoming: false,
       deliveryId: delivery.id, orderId: delivery.order.id, orderNumber: delivery.order.orderNumber,
       deliveryStatus: delivery.status, orderStatus: delivery.order.status, trackingReference: delivery.trackingReference,
       pickup: delivery.order.kitchen.name + " · " + delivery.order.kitchen.locality,
@@ -47,7 +54,7 @@ export async function GET() {
         ? `${delivery.order.address.latitude},${delivery.order.address.longitude}`
         : [delivery.order.address.addressLine1, delivery.order.address.locality, delivery.order.address.city, delivery.order.address.pinCode].join(", "),
     });
-    return NextResponse.json({ available: available.map((delivery) => mapJob(delivery, false)), assigned: assigned.map((delivery) => mapJob(delivery, true)) }, { headers: { "Cache-Control": "private, no-store" } });
+    return NextResponse.json({ userScope: user.id, policy, area: { online: agent.isAvailable, city: agent.serviceCity || "", radiusKm: agent.serviceRadiusMeters/1000 }, available: available.filter(d=>courierCovers(agent,d.order.kitchen)).slice(0,20).map((delivery) => mapJob(delivery, false)), assigned: assigned.map((delivery) => mapJob(delivery, true)), upcoming: upcoming.filter(o=>courierCovers(agent,o.kitchen)).slice(0,20).map(o=>({ deliveryId:"upcoming:"+o.id,orderId:o.id,orderNumber:o.orderNumber,deliveryStatus:"UPCOMING",orderStatus:o.status,trackingReference:null,pickup:o.kitchen.name+" · "+o.kitchen.locality,dropoff:o.address.locality+", "+o.address.city,items:o.items.map(i=>i.quantity+" × "+i.mealName),scheduledFor:o.scheduledFor.toISOString(),pickupPinned:o.kitchen.latitude!==null,dropoffPinned:o.address.latitude!==null,isSharingLocation:false,pickupNavigation:null,dropoffNavigation:null,estimatedPay:estimateShares(Number(o.subtotal),Number(o.deliveryFee),orderDistance(o.kitchen,o.address),policy).courier,routeDistanceKm:orderDistance(o.kitchen,o.address),alertAt:o.orderedAt.toISOString(),isUpcoming:true})) }, { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) {
     console.error("Paustik delivery jobs could not load.", error instanceof Error ? error.name : "unknown error");
     return serviceUnavailable();
@@ -66,10 +73,13 @@ export async function POST(request: Request) {
   try {
     const agent = await approvedAgent(user.id);
     if (!agent || agent.verificationStatus !== "APPROVED") return NextResponse.json({ error: "Your delivery partner application still needs approval." }, { status: 403 });
+    const candidate = await prisma.delivery.findUnique({ where: { id: parsed.data.deliveryId }, include: { order: { include: { kitchen:true,address:true } } } });
+    if (!candidate || candidate.order.orderNumber.startsWith("TEST-LIFE-") || !courierCovers(agent,candidate.order.kitchen)) return NextResponse.json({error:"Go online in the kitchen’s service area before accepting this job."},{status:409});
+    const policy=await loadEstimatePolicy(), km=orderDistance(candidate.order.kitchen,candidate.order.address), pay=estimateShares(Number(candidate.order.subtotal),Number(candidate.order.deliveryFee),km,policy).courier;
     const acceptedOrderId = await prisma.$transaction(async (tx) => {
       const claimed = await tx.delivery.updateMany({
         where: { id: parsed.data.deliveryId, agentId: null, status: "ASSIGNED", order: { status: "READY_FOR_PICKUP" } },
-        data: { agentId: agent.id, status: "ACCEPTED", acceptedAt: new Date(), assignedAt: new Date() },
+        data: { estimatedPayout:pay,estimatedDistanceKm:km,estimationRule:{...policy,method:"STRAIGHT_LINE_ESTIMATE"},agentId: agent.id, status: "ACCEPTED", acceptedAt: new Date(), assignedAt: new Date() },
       });
       if (claimed.count !== 1) throw new Error("JOB_ALREADY_CLAIMED");
       const delivery = await tx.delivery.findUniqueOrThrow({ where: { id: parsed.data.deliveryId }, include: { order: true } });

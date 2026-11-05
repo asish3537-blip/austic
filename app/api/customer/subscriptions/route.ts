@@ -1,3 +1,4 @@
+import { scheduleCourierOffers } from "@/lib/courier-offers";
 import { scheduleEntityPush } from "@/lib/web-push";
 import { randomBytes } from "node:crypto";
 import { NextResponse } from "next/server";
@@ -107,6 +108,7 @@ export async function POST(request: Request) {
       return { subscriptionId: subscription.id, orders: createdOrders };
     });
     scheduleEntityPush(result.orders.map(order => order.id));
+    scheduleCourierOffers(result.orders.map(order => order.id));
     return NextResponse.json({ created: true, ...result, message: "Your one-week plan is saved for " + sorted.length + " delivery days. Renew manually next week; no automatic payment is scheduled." }, { status: 201 });
   } catch (error) {
     if (error instanceof Error && error.message === "MENU_SOLD_OUT") return NextResponse.json({ error: "One selected day sold out while the plan was being saved. Refresh the menu and try again." }, { status: 409 });

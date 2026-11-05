@@ -1,3 +1,4 @@
+import { scheduleCourierOffers } from "@/lib/courier-offers";
 import { scheduleEntityPush } from "@/lib/web-push";
 import { randomBytes } from "node:crypto";
 import { NextResponse } from "next/server";
@@ -95,6 +96,7 @@ export async function POST(request: Request) {
       return created;
     });
     scheduleEntityPush([order.id]);
+    scheduleCourierOffers([order.id]);
     const walletApplied = await prisma.walletLedgerEntry.aggregate({ where: { orderId: order.id, direction: "DEBIT" }, _sum: { amount: true } });
     return NextResponse.json({ created: true, orderId: order.id, orderNumber: order.orderNumber, total, walletApplied: Number(walletApplied._sum.amount ?? 0), amountDue: Math.max(0, total - Number(walletApplied._sum.amount ?? 0)), currency: "INR", paymentStatus: order.paymentStatus, message: "Order saved. Online payment is not connected; any remaining balance has not been charged." }, { status: 201 });
   } catch (error) {

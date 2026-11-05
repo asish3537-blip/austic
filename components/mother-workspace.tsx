@@ -172,7 +172,7 @@ export function MotherWorkspace() {
     <section className="mother-summary-grid" id="kitchen-summary" aria-label="Kitchen status">
       <article><span><UiText text="Kitchen"/></span><strong>{workspace.kitchen.name}</strong><small>{workspace.kitchen.approved ? "Paustik verified" : "Waiting for Paustik approval"}</small></article>
       <article><span>Menu items</span><strong>{workspace.menus.filter((item) => item.isPublished && item.isAvailable).length}</strong><small>Live and available to customers</small></article>
-      <article><span>Recorded earnings</span><strong>{money(workspace.earningsRecorded, workspace.currency)}</strong><small>Recorded after payment; payouts are not connected</small></article>
+      
     </section>
 
     <section className="mother-location-panel">

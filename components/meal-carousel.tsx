@@ -1,0 +1,11 @@
+"use client";
+import { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+const meals=[
+  {id:"base",name:"Base meal",price:69,description:"Rice, dal and seasonal vegetables.",diet:"Vegetarian",heading:"Everyday comfort, simply made."},
+  {id:"egg",name:"Egg meal",price:79,description:"Rice, egg curry and seasonal vegetables.",diet:"Non-vegetarian",heading:"A little more protein. A lot of care."},
+  {id:"cheese",name:"Cheese meal",price:89,description:"Rice, cheese curry and seasonal vegetables.",diet:"Vegetarian",heading:"Your creamy, comforting favourite."},
+  {id:"chicken",name:"Chicken meal",price:99,description:"Rice, chicken curry and seasonal vegetables.",diet:"Non-vegetarian",heading:"A home-style chicken lunch."},
+];
+export function MealCarousel(){const[index,setIndex]=useState(0),meal=meals[index];return <section className="meal-carousel" id="meal-plans" aria-roledescription="carousel" aria-label="Everyday meal choices"><div className="meal-carousel-image"><Image src={`/assets/meal-${meal.id}.svg`} alt={`Illustration of ${meal.name.toLowerCase()}: ${meal.description}`} width={800} height={560}/><span className="meal-carousel-badge">3 meal components · {meal.diet}</span></div><div className="meal-carousel-copy"><span className="eyebrow">Everyday meals. Simple, clear prices.</span><div aria-live="polite" aria-atomic="true"><h2>{meal.heading}</h2><p>{meal.description}</p><div className="meal-carousel-price"><span>{meal.name}</span><strong>from ₹{meal.price}</strong><small>Meal price · delivery shown in the app</small></div></div><p>Choose a nearby Mother Kitchen and build your 3–7-day meal plan in the app.</p><Link className="button" href="/app">Choose subscription →</Link><div className="meal-carousel-navigation"><button type="button" aria-label="Previous meal" onClick={()=>setIndex((index+meals.length-1)%meals.length)}>←</button><div role="group" aria-label="Choose a meal slide">{meals.map((m,i)=><button type="button" key={m.id} aria-pressed={i===index} onClick={()=>setIndex(i)}>{m.name}<small>₹{m.price}+</small></button>)}</div><button type="button" aria-label="Next meal" onClick={()=>setIndex((index+1)%meals.length)}>→</button></div></div></section>;}
