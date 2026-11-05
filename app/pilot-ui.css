@@ -44,3 +44,5 @@ body:has(.dashboard-topline) .header-controls>:not(.language-selector) { display
 .kitchen-plan-notice .button { margin-top:12px; width:100%; }
 @media(max-width:700px) { .console-sidebar { position:relative; } .console-sidebar>.language-selector { position:absolute; right:16px; top:18px; margin:0; } .console-sidebar>.language-selector select { max-width:100px; } }
 @media(max-width:550px) { .header-controls { gap:12px!important; } .header-actions { display:none!important; } .site-header .language-selector span { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); } .site-header .language-selector select { max-width:90px; } .customer-record-main { min-width:0; } }
+
+.paustik-help-actions,.paustik-help-tools{display:flex;flex-wrap:wrap;gap:8px;padding:8px 14px}.paustik-help-actions a,.paustik-help-tools button{font-size:13px;border:1px solid #dfd4c4;border-radius:14px;padding:6px 10px;background:#fffaf1;color:#185b48;text-decoration:none}.pausstik-chat-panel{max-height:calc(100dvh - 140px);overflow:auto}.pausstik-chat-panel small[role=status]{padding:4px 14px;color:#665b50}

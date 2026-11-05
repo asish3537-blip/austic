@@ -1,3 +1,4 @@
+import { guidedHelp, helpLinks, type HelpRole } from "@/lib/assistant-guides";
 import OpenAI from "openai";
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -8,7 +9,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const requestSchema = z.object({
-  messages: z.array(z.object({ role: z.enum(["user", "assistant"]), content: z.string().trim().min(1).max(1200) })).min(1).max(12),
+  messages: z.array(z.object({ role: z.enum(["user", "assistant"]), content: z.string().trim().min(1).max(4000) })).min(1).max(12),
 });
 
 const limits = new Map<string, { count: number; expiresAt: number }>();
@@ -20,20 +21,19 @@ Paustik marketplace facts: families discover nearby mother-led kitchens and thei
 
 Be transparent: online payment checkout and bank payouts are not connected yet; an order or preview must never be described as paid unless the app explicitly confirms a recorded payment. Do not invent nearby availability, order status, account details, live income, delivery ETAs, eligibility, or policy beyond the facts above. You do not have access to the user's private records and cannot place, cancel, or refund orders, publish a menu, or change accounts. Direct users to their signed-in workspace for those actions. Never ask users to send passwords, one-time codes, full payment-card details, or bank credentials.`;
 
+export async function GET() {
+  const user = await getCurrentUser();
+  const role: HelpRole = user?.status === "ACTIVE" ? user.role : "GUEST";
+  return NextResponse.json({ mode: process.env.PAUSTIK_LIVE_AI_ENABLED === "true" && !!process.env.OPENAI_API_KEY ? "ai" : "guided", links: helpLinks(role), role }, { headers: { "Cache-Control": "private, no-store" } });
+}
+
 export async function POST(request: Request) {
   const originError = rejectCrossOrigin(request);
   if (originError) return originError;
 
   const user = await getCurrentUser();
-  if (!user || user.status !== "ACTIVE") {
-    return NextResponse.json({ error: "Sign in to use Paustik help." }, { status: 401 });
-  }
-
+  const role: HelpRole = user?.status === "ACTIVE" ? user.role : "GUEST";
   const key = process.env.OPENAI_API_KEY;
-  if (!key) {
-    return NextResponse.json({ error: "AI help is not connected on this deployment yet. You can still use the help videos and guides." }, { status: 503 });
-  }
-
   let body: unknown;
   try { body = await request.json(); }
   catch { return NextResponse.json({ error: "Send a message to Paustik help." }, { status: 400 }); }
@@ -41,6 +41,9 @@ export async function POST(request: Request) {
   if (!parsed.success || parsed.data.messages.at(-1)?.role !== "user") {
     return NextResponse.json({ error: "Send a valid message to continue." }, { status: 400 });
   }
+
+  const fallback = guidedHelp(parsed.data.messages.at(-1)!.content, role);
+  if (!key || process.env.PAUSTIK_LIVE_AI_ENABLED !== "true" || !user || user.status !== "ACTIVE") return NextResponse.json(fallback);
 
   const now = Date.now();
   const currentLimit = limits.get(user.id);
@@ -59,9 +62,9 @@ export async function POST(request: Request) {
       max_output_tokens: 260,
       store: false,
     });
-    return NextResponse.json({ reply: response.output_text || "I couldn’t form a clear answer just now. Try asking in a different way." });
+    return NextResponse.json({ reply: response.output_text || fallback.reply, links: helpLinks(role), mode: "ai" });
   } catch (error) {
     console.error("Paustik AI helper request failed.", error instanceof Error ? error.name : "unknown error");
-    return NextResponse.json({ error: "Paustik help could not answer just now. Please try again." }, { status: 502 });
+    return NextResponse.json({ ...fallback, notice: "Live AI is unavailable. Showing guided help instead." });
   }
 }

@@ -1,7 +1,8 @@
+import { UiText } from "@/components/ui-language";
 import { requireAuthenticatedUser } from "@/lib/auth";
 import { SignOutButton } from "@/components/sign-out-button";
 import Link from "next/link";
-import { PausstikAssistant } from "@/components/pausstik-assistant";
+
 
 const mobileNavigation = {
   CUSTOMER: [{ label: "Discover", icon: "⌖", href: "/customer/dashboard#customer-discover" }, { label: "Orders", icon: "▤", href: "/customer/dashboard#order-history" }, { label: "Wallet", icon: "₹", href: "/customer/dashboard#wallet-section" }, { label: "Help", icon: "?", href: "/help" }, { label: "Website", icon: "↗", href: "/" }],
@@ -16,8 +17,8 @@ export default async function ProtectedLayout({ children }: Readonly<{ children:
     <div className="dashboard-topline"><span>{user.name} <span className="muted">· {user.role.replaceAll("_", " ").toLowerCase()}</span></span><SignOutButton /></div>
     {children}
     <nav className="app-bottom-nav" aria-label={`${user.role.replaceAll("_", " ").toLowerCase()} app navigation`}>
-      {mobileNavigation[user.role].map((item) => <Link href={item.href} key={item.label}><span aria-hidden="true">{item.icon}</span>{item.label}</Link>)}
+      {mobileNavigation[user.role].map((item) => <Link href={item.href} key={item.label}><span aria-hidden="true">{item.icon}</span><UiText text={item.label}/></Link>)}
     </nav>
-    <PausstikAssistant />
+
   </>;
 }

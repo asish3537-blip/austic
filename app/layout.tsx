@@ -1,3 +1,4 @@
+import { PausstikAssistant } from "@/components/pausstik-assistant";
 import { UiText } from "@/components/ui-language";
 import type { Metadata, Viewport } from "next";
 import Image from "next/image";
@@ -60,6 +61,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         </header>
         <PwaRuntime />
         {children}
+        <PausstikAssistant />
         <footer className="site-footer">
           <span className="footer-links"><Link href="/"><UiText text="Website"/></Link><Link href="/help"><UiText text="Help"/></Link><span className="admin-footer-entry"><Link href="/admin-sign-in"><UiText text="Admin"/></Link><span className="admin-footer-menu"><Link href="/admin/paustik-admin"><UiText text="Admin dashboard"/></Link><Link href="/admin-sign-in"><UiText text="Admin sign in"/></Link></span></span></span>
           <small className="footer-copyright">© 2026 Paustik. All rights reserved.</small>

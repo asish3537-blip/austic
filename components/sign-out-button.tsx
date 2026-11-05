@@ -10,7 +10,7 @@ export function SignOutButton() {
   async function signOut() {
     setBusy(true);
     try { await fetch("/api/auth/logout", { method: "POST" }); }
-    finally { router.replace("/sign-in"); router.refresh(); }
+    finally { window.dispatchEvent(new Event("paustik-auth-changed")); router.replace("/sign-in"); router.refresh(); }
   }
   return <button className="plain-button" type="button" disabled={busy} onClick={signOut}>{busy ? "Signing out…" : <UiText text="Sign out"/>}</button>;
 }
