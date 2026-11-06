@@ -40,4 +40,10 @@ Four populated screenshots are captured for the delivery-time agreement, custome
 
 No physical-phone route, food preparation/quality, real email/SMS/WhatsApp/push receipt, live payment, bank payout or external courier integration was validated in this release. Test wallet credit is not cash. The 30-minute travel buffer is a scheduling allowance, not a road ETA. Real late delivery completion remains recordable and flagged; no software can guarantee physical arrival by a cutoff.
 
-No real customer, seller or order was created for the production smoke check. Final production status and checks will be noted after release.
+## Production release verification
+
+Feature commit: 23d32132fbfa246473f8bc5d86013143459f2b04. Vercel reported deployment completed at 06:53:43 UTC on 6 November 2026. Public checks completed at 06:55 UTC on https://paustik.in.
+
+All 14 anonymous production smoke checks passed: website, app entry and Help content; customer/mother/admin marketplace sign-in redirects; five protected product/request/evidence API checks; live PDF byte-for-byte match with the reviewed guide; cross-origin mutation rejection; and mobile Help without overflow or browser errors.
+
+No real customer, seller, order, payment or delivery was created in production. Authenticated order lifecycle tests were run in the isolated preview. Vercel's management integration returned 403 and no local CLI fallback was installed, so deployment completion was verified using the project's GitHub Vercel status and the actual public site. Production runtime logs were not available for review.

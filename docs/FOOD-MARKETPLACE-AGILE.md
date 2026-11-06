@@ -1,6 +1,6 @@
 # Agile release - meals and Mother Kitchen products
 
-Release: 6 November 2026. Product owner: founder review. Status: implemented; local automated QA passed; physical neighbourhood UAT pending.
+Release: 6 November 2026. Product owner: founder review. Status: published at paustik.in; local automated QA and 14 anonymous production smoke checks passed; physical neighbourhood UAT pending.
 
 | Story | User need | Acceptance criteria | QA evidence |
 |---|---|---|---|
