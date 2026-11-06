@@ -1,9 +1,9 @@
 import "server-only";
 import {prisma} from "@/lib/prisma";
-export async function loadCustomerActivity(customerId: string, page: number) {
+export async function loadCustomerActivity(customerId: string, page: number, productsOnly=false) {
   return Promise.all([
     prisma.order.findMany({
-      where: { customerId },
+      where: { customerId,...(productsOnly?{productRequest:{isNot:null}}:{productRequest:{is:null}}) },
       orderBy: { orderedAt: "desc" },
       take: 20,
       skip: (page - 1) * 20,
@@ -35,7 +35,7 @@ export async function loadCustomerActivity(customerId: string, page: number) {
         mealPlan: { select: { name: true, cadence: true, mealCount: true, price: true, currency: true } },
       },
     }),
-    prisma.order.count({ where: { customerId } }),
+    prisma.order.count({ where: { customerId,...(productsOnly?{productRequest:{isNot:null}}:{productRequest:{is:null}}) } }),
   ]);
 }
 

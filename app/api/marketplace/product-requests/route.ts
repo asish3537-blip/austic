@@ -1,3 +1,4 @@
+import {hasOnlineCourier,NO_COURIER_MESSAGE} from "@/lib/delivery-availability";
 import {NextResponse} from "next/server";
 import {z} from "zod";
 import {randomUUID} from "node:crypto";
@@ -21,7 +22,7 @@ export async function POST(req:Request){const origin=rejectCrossOrigin(req);if(o
  if(x.action==="create"){
   if(u.role!=="CUSTOMER")throw new MarketError("Only customers can request products.",403);
   const p=await prisma.foodProduct.findUnique({where:{id:x.productId},include:productInclude});if(!p||!availableProduct(p))throw new MarketError("This product is unavailable.");if(x.quantity<p.minimumQuantity||x.quantity>p.stockCount)throw new MarketError("Choose a quantity between the minimum and remaining units.");
-  const a=await prisma.address.findFirst({where:{userId:u.id},orderBy:[{isDefault:"desc"},{createdAt:"asc"}]});if(!a)throw new MarketError("Add your delivery address first.");assertProductArea(p,a);const at=new Date(x.scheduledFor);assertProductSlot(p,at);
+  const a=await prisma.address.findFirst({where:{userId:u.id},orderBy:[{isDefault:"desc"},{createdAt:"asc"}]});if(!a)throw new MarketError("Add your delivery address first.");assertProductArea(p,a);const at=new Date(x.scheduledFor);assertProductSlot(p,at);if(!await hasOnlineCourier(p.meal.kitchen))throw new MarketError(NO_COURIER_MESSAGE);
   const r=await prisma.$transaction(async tx=>{await lockWallet(tx,u.id);if(await tx.productRequest.count({where:{customerId:u.id,status:{in:["KITCHEN_REVIEW","CUSTOMER_CONFIRM"]},expiresAt:{gt:new Date()}}})>=20)throw new MarketError("Finish or cancel earlier requests before adding more.");const result=await tx.productRequest.create({data:{customerId:u.id,productId:p.id,addressId:a.id,quantity:x.quantity,scheduledFor:at,expiresAt:new Date(Date.now()+48*3600000),unitPrice:p.meal.price,deliveryFee:DELIVERY_FEE_INR,snapshot:{terms:productTerms(p),name:p.meal.name,unit:p.unitLabel,mode:p.preparationMode,ingredients:p.meal.ingredients,allergens:p.meal.allergens,storage:p.storageInstructions,shelfLifeHours:p.shelfLifeHours,readyUntil:p.readyUntil?.toISOString()??null},history:[{role:"CUSTOMER",action:"REQUEST",at:new Date().toISOString(),deliveryAt:at.toISOString()}]}});await tx.notification.create({data:{userId:p.meal.kitchen.mother.userId,title:"Product delivery time requested",body:p.meal.name+" · "+x.quantity+" unit(s). Review it in Mother Marketplace.",kind:"ORDER",entityId:result.id}});return result;});scheduleEntityPush([r.id]);return NextResponse.json({id:r.id,message:"Request sent. The mother must confirm readiness/time. Nothing is reserved or charged yet."},{status:201});
  }
  const result=await prisma.$transaction(async tx=>{
@@ -41,6 +42,7 @@ export async function POST(req:Request){const origin=rejectCrossOrigin(req);if(o
    assertProductSlot(r.product,time);
    if(x.action==="confirm"){
     if(!customer||r.status!=="CUSTOMER_CONFIRM")throw new MarketError("The kitchen must agree to the delivery time before checkout.");
+    if(!await hasOnlineCourier(r.product.meal.kitchen,tx))throw new MarketError(NO_COURIER_MESSAGE);
     await lockWallet(tx,u.id);await ensurePilotWallet(tx,u.id);const subtotal=Math.round(Number(r.unitPrice)*100)*r.quantity/100,total=Math.round((subtotal+Number(r.deliveryFee))*100)/100,walletUsed=Math.min(await walletBalance(tx,u.id),total),due=Math.round((total-walletUsed)*100)/100;
     // Product and request locks use a consistent order. Stock is reserved only at final customer checkout.
     await tx.$queryRaw`SELECT 1 FROM pg_advisory_xact_lock(hashtextextended(${"product:"+r.productId},0))`;

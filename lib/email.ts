@@ -1,6 +1,6 @@
 type AuthEmailKind = "verify" | "reset";
 
-function emailConfig() {
+export function emailConfig() {
   const apiKey = process.env.RESEND_API_KEY?.trim();
   const from = process.env.EMAIL_FROM?.trim();
   if (!apiKey || !from || /[\r\n]/.test(from)) return null;

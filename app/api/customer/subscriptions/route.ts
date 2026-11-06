@@ -1,3 +1,4 @@
+import {hasOnlineCourier,NO_COURIER_MESSAGE} from "@/lib/delivery-availability";
 import {slotAllowed,componentsAllowed,DELIVERY_WINDOW_POLICY} from "@/lib/service-windows";
 import { scheduleCourierOffers } from "@/lib/courier-offers";
 import { scheduleEntityPush } from "@/lib/web-push";
@@ -60,6 +61,7 @@ export async function POST(request: Request) {
     const total = subtotal + DELIVERY_FEE_INR * sorted.length;
     const dayNames = sorted.map((menu) => new Intl.DateTimeFormat("en-IN", { weekday: "long", timeZone: "UTC" }).format(menu.serviceDate));
     const result = await prisma.$transaction(async (tx) => {
+      if(!await hasOnlineCourier(kitchen,tx))throw new Error("NO_COURIER");
       await lockWallet(tx, user.id);
       await ensurePilotWallet(tx, user.id);
       let remainingWallet = await walletBalance(tx, user.id);
@@ -113,6 +115,7 @@ export async function POST(request: Request) {
     scheduleCourierOffers(result.orders.map(order => order.id));
     return NextResponse.json({ created: true, ...result, message: "Your one-week plan is saved for " + sorted.length + " delivery days. Renew manually next week; no automatic payment is scheduled." }, { status: 201 });
   } catch (error) {
+    if(error instanceof Error&&error.message==="NO_COURIER")return NextResponse.json({error:NO_COURIER_MESSAGE},{status:409});
     if (error instanceof Error && error.message === "MENU_SOLD_OUT") return NextResponse.json({ error: "One selected day sold out while the plan was being saved. Refresh the menu and try again." }, { status: 409 });
     console.error("Paustik weekly subscription creation failed.", error instanceof Error ? error.name : "unknown error");
     return serviceUnavailable();

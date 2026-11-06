@@ -64,6 +64,8 @@ export function CustomerDeliveryPin({ initialPinned = false }: { initialPinned?:
 export function PlaceOrderButton({ menuId, servings }: { menuId: string; servings: number }) {
   const router = useRouter();
   const [quantity, setQuantity] = useState(1);
+  const [delivery,setDelivery]=useState<{available:boolean;message:string}|null>(null);
+  useEffect(()=>{let active=true;const refresh=async()=>{try{const r=await fetch("/api/marketplace/delivery-availability?menuId="+encodeURIComponent(menuId),{cache:"no-store"});const d=await r.json();if(active)setDelivery(r.ok?d:{available:false,message:d.error||"Could not check delivery availability."});}catch{if(active)setDelivery({available:false,message:"Could not check delivery availability. Please refresh."});}};void refresh();const timer=setInterval(()=>{if(document.visibilityState==="visible")void refresh();},30000);return()=>{active=false;clearInterval(timer);};},[menuId]);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState(false);
@@ -96,8 +98,9 @@ export function PlaceOrderButton({ menuId, servings }: { menuId: string; serving
       <label><UiText text="Servings"/><select aria-label="Servings" value={quantity} onChange={(event) => setQuantity(Number(event.target.value))}>
         {Array.from({ length: Math.min(8, servings) }, (_, index) => <option key={index + 1} value={index + 1}>{index + 1}</option>)}
       </select></label>
-      <button type="button" className="button button-small" onClick={placeOrder} disabled={busy || servings < 1}>{busy ? "Saving…" : <UiText text="Order meal"/>}</button>
+      <button type="button" className="button button-small" onClick={placeOrder} disabled={busy || servings < 1 || !delivery?.available}>{busy ? "Saving…" : <UiText text="Order meal"/>}</button>
     </div>
+    {<p className="customer-order-message" role="status">{delivery?.message??"Checking delivery partners…"}</p>}
     {message && <p className={"customer-order-message " + (error ? "is-error" : "")}>{message}</p>}
   </div>;
 }

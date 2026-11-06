@@ -2,7 +2,7 @@
 
 import { UiText, useUiLanguage } from "@/components/ui-language";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect,useState } from "react";
 import { useRouter } from "next/navigation";
 import { kitchenMenuDate, kitchenMoney, mealCategoryLabel } from "@/lib/customer-kitchen-types";
 import { groupPlanMenus, planTotals, selectedPlanMenus, togglePlanMenu, type PlanMenu } from "@/lib/customer-plan-selection";
@@ -15,6 +15,8 @@ export function WeeklyPlanPicker({ menus:allMenus, kitchenName, preview = false,
   const [selected, setSelected] = useState<string[]>([]);
   const [quantity, setQuantity] = useState(1);
   const [busy, setBusy] = useState(false);
+  const [delivery,setDelivery]=useState<{available:boolean;message:string}|null>(null);const menuId=allMenus[0]?.menuId;
+  useEffect(()=>{if(preview||!menuId)return;let active=true;const refresh=async()=>{try{const r=await fetch("/api/marketplace/delivery-availability?menuId="+encodeURIComponent(menuId),{cache:"no-store"});const d=await r.json();if(active)setDelivery(r.ok?d:{available:false,message:d.error||"Delivery availability could not load."});}catch{if(active)setDelivery({available:false,message:"Delivery availability could not load. Please refresh."});}};void refresh();const timer=setInterval(()=>{if(document.visibilityState==="visible")void refresh();},30000);return()=>{active=false;clearInterval(timer);};},[menuId,preview]);
   const [message, setMessage] = useState("");
   const [error, setError] = useState(false);
   const groups = groupPlanMenus(menus);
@@ -36,7 +38,7 @@ export function WeeklyPlanPicker({ menus:allMenus, kitchenName, preview = false,
   }
 
   async function createPlan() {
-    if (busy || preview || !canReserve || !enoughDays) return;
+    if (busy || preview || !canReserve || !enoughDays || !delivery?.available) return;
     setBusy(true); setError(false); setMessage("");
     try {
       const response = await fetch("/api/customer/subscriptions", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ menuIds: chosenIds, quantity }) });
@@ -69,9 +71,9 @@ export function WeeklyPlanPicker({ menus:allMenus, kitchenName, preview = false,
       {chosen.length ? <ul className="kitchen-plan-chosen">{chosen.map((menu) => <li key={menu.menuId}><span><strong>{kitchenMenuDate(menu.serviceDate)}</strong><small>{quantity} × {menu.name}</small></span><b>{kitchenMoney(menu.price * quantity)}</b></li>)}</ul> : <p className="kitchen-plan-placeholder">Your chosen meals and total will appear here.</p>}
       <dl className="kitchen-plan-totals"><div><dt>Meals · {chosen.length * quantity} servings</dt><dd>{kitchenMoney(totals.meals)}</dd></div><div><dt>Delivery · {chosen.length} × ₹30</dt><dd>{kitchenMoney(totals.delivery)}</dd></div><div className="kitchen-plan-total"><dt><UiText text="Total before wallet credit"/></dt><dd>{kitchenMoney(totals.total)}</dd></div></dl>
       <p className="kitchen-plan-payment">{preview ? "Preview total only. No booking or payment is created." : "Wallet credit is applied when you reserve. Any remaining balance is due outside the app; no online payment is taken."}</p>
-      {!preview && !canReserve && <p className="kitchen-plan-notice">Set your delivery pin above to confirm delivery before reserving.</p>}
+      {!preview&&<p className="kitchen-plan-notice" role="status">{delivery?.message??"Checking delivery partners…"}</p>}{!preview && !canReserve && <p className="kitchen-plan-notice">Set your delivery pin above to confirm delivery before reserving.</p>}
       {!preview && !enoughDays && <p className="kitchen-plan-notice" id="reservation-minimum"><UiText text="A subscription requires at least three different days; multiple servings on one day still count as one day."/>{availableDays.length >= 3 && <button type="button" className="button button-light" disabled={busy} onClick={() => selectFirstDays(3)}><UiText text="Select first 3 available days"/></button>}</p>}
-      <button className="button" type="button" aria-describedby={!enoughDays ? "reservation-minimum" : undefined} disabled={busy || !enoughDays || preview || !canReserve} onClick={createPlan}>{preview ? "Sample subscription" : busy ? "Reserving your meals…" : !enoughDays ? <UiText text="Choose at least 3 days"/> : <UiText text="Reserve selected meal days"/>}</button>
+      <button className="button" type="button" aria-describedby={!enoughDays ? "reservation-minimum" : undefined} disabled={busy || !enoughDays || preview || !canReserve || !delivery?.available} onClick={createPlan}>{preview ? "Sample subscription" : busy ? "Reserving your meals…" : !enoughDays ? <UiText text="Choose at least 3 days"/> : <UiText text="Reserve selected meal days"/>}</button>
       <small className="kitchen-plan-terms">One week only. No automatic renewal. Cancel a day 5+ hours before delivery; eligible paid value less ₹5 returns to your wallet.</small>
       {message && <div className={"kitchen-plan-message " + (error ? "is-error" : "")} role={error ? "alert" : "status"}><p>{message}</p>{!error && <Link href="/customer/orders#order-history">View my orders and plans →</Link>}</div>}
     </aside>

@@ -1,3 +1,4 @@
+import {hasOnlineCourier,NO_COURIER_MESSAGE} from "@/lib/delivery-availability";
 import {slotAllowed,componentsAllowed,DELIVERY_WINDOW_POLICY} from "@/lib/service-windows";
 import { scheduleCourierOffers } from "@/lib/courier-offers";
 import { scheduleEntityPush } from "@/lib/web-push";
@@ -59,6 +60,7 @@ export async function POST(request: Request) {
     if (!slotAllowed(menu.mealPeriod,menu.deliveryTime)||scheduledFor.getTime()<Date.now()+30*60000) return NextResponse.json({ error: "Choose a valid meal period and delivery at least 30 minutes ahead. Dinner ends at 21:00 IST." }, { status: 409 });
     const orderNumber = "PS-" + Date.now().toString(36).toUpperCase() + "-" + randomBytes(2).toString("hex").toUpperCase();
     const order = await prisma.$transaction(async (tx) => {
+      if(!await hasOnlineCourier(menu.kitchen,tx))throw new Error("NO_COURIER");
       await lockWallet(tx, user.id);
       await ensurePilotWallet(tx, user.id);
       const walletUsed = Math.min(await walletBalance(tx, user.id), total);
@@ -101,6 +103,7 @@ export async function POST(request: Request) {
     const walletApplied = await prisma.walletLedgerEntry.aggregate({ where: { orderId: order.id, direction: "DEBIT" }, _sum: { amount: true } });
     return NextResponse.json({ created: true, orderId: order.id, orderNumber: order.orderNumber, total, walletApplied: Number(walletApplied._sum.amount ?? 0), amountDue: Math.max(0, total - Number(walletApplied._sum.amount ?? 0)), currency: "INR", paymentStatus: order.paymentStatus, message: "Order saved. Online payment is not connected; any remaining balance has not been charged." }, { status: 201 });
   } catch (error) {
+    if(error instanceof Error && error.message === "NO_COURIER")return NextResponse.json({error:NO_COURIER_MESSAGE},{status:409});
     if (error instanceof Error && error.message === "MENU_SOLD_OUT") return NextResponse.json({ error: "That meal just sold out. Refresh the menu to see remaining servings." }, { status: 409 });
     console.error("Paustik order creation failed.", error instanceof Error ? error.name : "unknown error");
     return serviceUnavailable();

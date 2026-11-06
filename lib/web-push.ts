@@ -1,3 +1,4 @@
+import {sendPendingOrderEmails} from "@/lib/order-email";
 import webpush from "web-push";
 import { after } from "next/server";
 import { prisma } from "@/lib/prisma";
@@ -43,11 +44,11 @@ export async function sendPendingPush(userIds: string[], sender: typeof webpush.
   }));
 }
 export function scheduleEntityPush(entityIds: string[]) {
-  if (!webPushConfig()) return;
   after(async () => {
     try {
       const recipients = await prisma.notification.findMany({ where: { entityId: { in: entityIds }, createdAt: { gte: new Date(Date.now() - 60000) }, kind: { not: "DEMO" } }, distinct: ["userId"], select: { userId: true } });
-      await sendPendingPush(recipients.map(r => r.userId));
+      const userIds=recipients.map(r => r.userId);
+      await Promise.allSettled([sendPendingPush(userIds),sendPendingOrderEmails(userIds)]);
     } catch { console.error("Paustik push dispatch deferred."); }
   });
 }

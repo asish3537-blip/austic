@@ -798,6 +798,10 @@ model MealChangeRequest {
 }
 
 model Notification {
+  emailPending Boolean @default(true) @map("email_pending")
+  emailSentAt DateTime? @map("email_sent_at") @db.Timestamptz(6)
+  emailAttemptAt DateTime? @map("email_attempt_at") @db.Timestamptz(6)
+  emailAttempts Int @default(0) @map("email_attempts")
   id        String    @id @default(uuid()) @db.Uuid
   userId    String    @map("user_id") @db.Uuid
   title     String
