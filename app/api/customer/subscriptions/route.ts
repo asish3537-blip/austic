@@ -1,3 +1,4 @@
+import {slotAllowed,componentsAllowed,DELIVERY_WINDOW_POLICY} from "@/lib/service-windows";
 import { scheduleCourierOffers } from "@/lib/courier-offers";
 import { scheduleEntityPush } from "@/lib/web-push";
 import { randomBytes } from "node:crypto";
@@ -43,14 +44,15 @@ export async function POST(request: Request) {
     if (address.city.trim().toLocaleLowerCase("en-IN") !== kitchen.city.trim().toLocaleLowerCase("en-IN")) return NextResponse.json({ error: "This kitchen currently serves " + kitchen.city + ". Choose a kitchen serving your delivery city." }, { status: 409 });
     const distance = distanceMeters({ latitude: Number(address.latitude), longitude: Number(address.longitude) }, { latitude: Number(kitchen.latitude), longitude: Number(kitchen.longitude) });
     if (distance > kitchen.marketplaceRadiusMeters) return NextResponse.json({ error: "This kitchen is outside its " + (kitchen.marketplaceRadiusMeters / 1000).toFixed(1) + " km neighbourhood delivery area." }, { status: 409 });
+    if(new Set(menus.map(m=>m.mealPeriod)).size!==1)return NextResponse.json({error:"Choose one meal period per plan. Create separate breakfast, lunch or dinner plans."},{status:400});
     const sorted = [...menus].sort((a, b) => a.serviceDate.getTime() - b.serviceDate.getTime());
     if (new Set(sorted.map((menu) => menu.serviceDate.toISOString().slice(0, 10))).size !== sorted.length) return NextResponse.json({ error: "Choose one meal on each selected day." }, { status: 400 });
     const now = new Date();
     const weekEnd = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
     for (const menu of sorted) {
       const scheduledFor = mealDeliveryInstant(menu.serviceDate, menu.deliveryTime);
-      if (menu.meal.components.length !== 3 || !mealPriceAllowed(menu.meal.tier, Number(menu.meal.price))) return NextResponse.json({ error: "A selected menu needs a mother update before it can be reserved. Choose a three-part meal with a current tier price." }, { status: 409 });
-      if (!menu.isAvailable || !menu.meal.isAvailable || menu.stockCount < parsed.data.quantity || menu.cycle.status !== "PUBLISHED" || scheduledFor <= now || scheduledFor > weekEnd) {
+      if (!componentsAllowed(menu.mealPeriod,menu.meal.components) || !mealPriceAllowed(menu.meal.tier, Number(menu.meal.price))) return NextResponse.json({ error: "A selected menu needs a mother update before it can be reserved. Choose a three-part meal with a current tier price." }, { status: 409 });
+      if (!menu.isAvailable || !menu.meal.isAvailable || menu.stockCount < parsed.data.quantity || menu.cycle.status !== "PUBLISHED" || !slotAllowed(menu.mealPeriod,menu.deliveryTime) || scheduledFor.getTime()<now.getTime()+30*60000 || scheduledFor > weekEnd) {
         return NextResponse.json({ error: "Weekly plans need available menus for upcoming delivery days. Refresh the kitchen menu." }, { status: 409 });
       }
     }
@@ -74,7 +76,7 @@ export async function POST(request: Request) {
         cancellationOperationFee: CANCELLATION_OPERATION_FEE_INR,
         startsAt: firstDelivery, endsAt: lastDelivery,
         preferences: { menuIds: sorted.map((menu) => menu.id), servingsPerDay: parsed.data.quantity, renewal: "MANUAL" },
-        policySnapshot: { cutoffHours: CANCELLATION_CUTOFF_HOURS, operationFeeINR: CANCELLATION_OPERATION_FEE_INR, dailyDeliveryFeeINR: DELIVERY_FEE_INR },
+        policySnapshot: { ...DELIVERY_WINDOW_POLICY, cutoffHours: CANCELLATION_CUTOFF_HOURS, operationFeeINR: CANCELLATION_OPERATION_FEE_INR, dailyDeliveryFeeINR: DELIVERY_FEE_INR },
       } });
       const createdOrders = [];
       for (const menu of sorted) {
@@ -92,7 +94,7 @@ export async function POST(request: Request) {
           status: "ORDER_PLACED", paymentStatus: due === 0 ? "CAPTURED" : "PENDING", scheduledFor,
           subtotal: daySubtotal, deliveryFee: DELIVERY_FEE_INR, taxAmount: 0, totalAmount: dayTotal, currency: "INR",
           policySnapshot: { cutoffHours: CANCELLATION_CUTOFF_HOURS, operationFeeINR: CANCELLATION_OPERATION_FEE_INR, cancellation: "Cancel at least five hours before delivery; eligible paid value less the ₹5 processing fee returns to wallet." },
-          items: { create: { mealId: menu.mealId, mealName: menu.meal.name, quantity: parsed.data.quantity, unitPrice: menu.meal.price, lineTotal: daySubtotal, dietarySnapshot: { category: menu.meal.category, tier: menu.meal.tier, components: menu.meal.components, allergens: menu.meal.allergens, menuId: menu.id } } },
+          items: { create: { mealId: menu.mealId, mealName: menu.meal.name, quantity: parsed.data.quantity, unitPrice: menu.meal.price, lineTotal: daySubtotal, dietarySnapshot: { category: menu.meal.category, tier: menu.meal.tier, components: menu.meal.components, allergens: menu.meal.allergens, menuId: menu.id,mealPeriod:menu.mealPeriod } } },
           ...(due > 0 ? { payments: { create: { provider: "not_configured", status: "PENDING", amount: due, currency: "INR" } } } : {}),
           events: { create: { actorUserId: user.id, status: "ORDER_PLACED", detail: due === 0 ? "Weekly meal day reserved using existing wallet credit." : "Weekly meal day reserved. Remaining payment is collected outside the app during this pilot." } },
         } });

@@ -1,3 +1,4 @@
+import {slotAllowed,componentsAllowed,DELIVERY_WINDOW_POLICY} from "@/lib/service-windows";
 import { scheduleCourierOffers } from "@/lib/courier-offers";
 import { scheduleEntityPush } from "@/lib/web-push";
 import { randomBytes } from "node:crypto";
@@ -36,7 +37,7 @@ export async function POST(request: Request) {
     if (!menu || !menu.isAvailable || !menu.meal.isAvailable || menu.stockCount < parsed.data.quantity || menu.cycle.status !== "PUBLISHED") {
       return NextResponse.json({ error: "That meal is no longer available. Refresh the menu and choose another serving." }, { status: 409 });
     }
-    if (menu.meal.components.length !== 3 || !mealPriceAllowed(menu.meal.tier, Number(menu.meal.price))) return NextResponse.json({ error: "This older menu needs a mother update before orders can be accepted. Choose a three-part meal with a current tier price." }, { status: 409 });
+    if (!componentsAllowed(menu.mealPeriod,menu.meal.components) || !mealPriceAllowed(menu.meal.tier, Number(menu.meal.price))) return NextResponse.json({ error: "This older menu needs a mother update before orders can be accepted. Choose a three-part meal with a current tier price." }, { status: 409 });
     if (menu.kitchen.verificationStatus !== "APPROVED" || !menu.kitchen.isAcceptingOrders || menu.kitchen.mother.user.status !== "ACTIVE") {
       return NextResponse.json({ error: "This kitchen is not accepting orders right now." }, { status: 409 });
     }
@@ -55,7 +56,7 @@ export async function POST(request: Request) {
     const subtotal = Number(menu.meal.price) * parsed.data.quantity;
     const total = subtotal + DELIVERY_FEE_INR;
     const scheduledFor = mealDeliveryInstant(menu.serviceDate, menu.deliveryTime);
-    if (scheduledFor <= new Date()) return NextResponse.json({ error: "This delivery slot has already passed. Choose a future menu day." }, { status: 409 });
+    if (!slotAllowed(menu.mealPeriod,menu.deliveryTime)||scheduledFor.getTime()<Date.now()+30*60000) return NextResponse.json({ error: "Choose a valid meal period and delivery at least 30 minutes ahead. Dinner ends at 21:00 IST." }, { status: 409 });
     const orderNumber = "PS-" + Date.now().toString(36).toUpperCase() + "-" + randomBytes(2).toString("hex").toUpperCase();
     const order = await prisma.$transaction(async (tx) => {
       await lockWallet(tx, user.id);
@@ -82,8 +83,8 @@ export async function POST(request: Request) {
           taxAmount: 0,
           totalAmount: total,
           currency: "INR",
-          policySnapshot: { cancellation: "Cancel at least five hours before the scheduled delivery. Eligible collected value less a ₹5 processing fee is returned to wallet.", cutoffHours: CANCELLATION_CUTOFF_HOURS, operationFeeINR: CANCELLATION_OPERATION_FEE_INR, paymentMode: "PAYMENT_PROVIDER_NOT_CONFIGURED" },
-          items: { create: { mealId: menu.mealId, mealName: menu.meal.name, quantity: parsed.data.quantity, unitPrice: menu.meal.price, lineTotal: subtotal, dietarySnapshot: { category: menu.meal.category, tier: menu.meal.tier, components: menu.meal.components, allergens: menu.meal.allergens, menuId: menu.id } } },
+          policySnapshot: { ...DELIVERY_WINDOW_POLICY, mealPeriod:menu.mealPeriod, cancellation: "Cancel at least five hours before the scheduled delivery. Eligible collected value less a ₹5 processing fee is returned to wallet.", cutoffHours: CANCELLATION_CUTOFF_HOURS, operationFeeINR: CANCELLATION_OPERATION_FEE_INR, paymentMode: "PAYMENT_PROVIDER_NOT_CONFIGURED" },
+          items: { create: { mealId: menu.mealId, mealName: menu.meal.name, quantity: parsed.data.quantity, unitPrice: menu.meal.price, lineTotal: subtotal, dietarySnapshot: { category: menu.meal.category, tier: menu.meal.tier, components: menu.meal.components, allergens: menu.meal.allergens, menuId: menu.id,mealPeriod:menu.mealPeriod } } },
           ...(amountDue > 0 ? { payments: { create: { provider: "not_configured", status: "PENDING", amount: amountDue, currency: "INR" } } } : {}),
           events: { create: { actorUserId: user.id, status: "ORDER_PLACED", detail: amountDue === 0 ? "Customer used wallet credit to settle this order." : "Customer placed a marketplace order. Remaining payment is not collected in the app." } },
         },

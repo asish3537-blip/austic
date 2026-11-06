@@ -1,3 +1,4 @@
+import {componentsAllowed,slotAllowed} from "@/lib/service-windows";
 import { readKitchenBranding } from "@/lib/kitchen-branding";
 import "server-only";
 import { isLocalAuthMode } from "@/lib/local-auth-mode";
@@ -59,7 +60,7 @@ async function publishedKitchens(city: string | null | undefined, customerPin?: 
     select: {
       id: true, name: true, locality: true, city: true, cuisine: true, operatingHours: true, latitude: true, longitude: true, marketplaceRadiusMeters: true,
       mother: { select: { rating: true, user: { select: { name: true } } } },
-      menus: { where: menuWhere, orderBy: [{ serviceDate: "asc" }, { meal: { name: "asc" } }], select: { id: true, serviceDate: true, deliveryTime: true, stockCount: true, meal: { select: { id: true, name: true, category: true, tier: true, components: true, price: true } } } },
+      menus: { where: menuWhere, orderBy: [{ serviceDate: "asc" }, { meal: { name: "asc" } }], select: { id: true, serviceDate: true,mealPeriod:true, deliveryTime: true, stockCount: true, meal: { select: { id: true, name: true, category: true, tier: true, components: true, price: true } } } },
     },
   });
 
@@ -71,8 +72,8 @@ async function publishedKitchens(city: string | null | undefined, customerPin?: 
     distanceKm: customerPin ? distanceMeters(customerPin, { latitude: Number(kitchen.latitude), longitude: Number(kitchen.longitude) }) / 1000 : undefined,
     meals: kitchen.menus.filter((menu) => {
       const delivery = mealDeliveryInstant(menu.serviceDate, menu.deliveryTime);
-      return menu.meal.components.length === 3 && mealPriceAllowed(menu.meal.tier, Number(menu.meal.price)) && delivery > now && delivery <= weekEnd;
-    }).map((menu) => ({ id: menu.meal.id, menuId: menu.id, name: menu.meal.name, category: menu.meal.category, tier: menu.meal.tier, components: menu.meal.components, price: Number(menu.meal.price), serviceDate: menu.serviceDate.toISOString().slice(0, 10), deliveryTime: menu.deliveryTime, servings: menu.stockCount })),
+      return componentsAllowed(menu.mealPeriod,menu.meal.components)&&slotAllowed(menu.mealPeriod,menu.deliveryTime) && mealPriceAllowed(menu.meal.tier, Number(menu.meal.price)) && delivery.getTime()>=now.getTime()+30*60000 && delivery <= weekEnd;
+    }).map((menu) => ({ id: menu.meal.id, menuId: menu.id,mealPeriod:menu.mealPeriod, name: menu.meal.name, category: menu.meal.category, tier: menu.meal.tier, components: menu.meal.components, price: Number(menu.meal.price), serviceDate: menu.serviceDate.toISOString().slice(0, 10), deliveryTime: menu.deliveryTime, servings: menu.stockCount })),
   })).filter((kitchen) => kitchen.meals.length > 0 && (kitchen.distanceKm === undefined || kitchen.distanceKm <= kitchen.marketplaceRadiusKm!))
     .sort((a, b) => Number(Boolean(b.isFavorite)) - Number(Boolean(a.isFavorite)) || (a.distanceKm !== undefined && b.distanceKm !== undefined ? a.distanceKm - b.distanceKm : b.rating - a.rating));
 

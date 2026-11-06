@@ -1,7 +1,7 @@
 {
   "runId": "pilot-1793818743911",
   "environment": "Isolated local test system",
-  "capturedAt": "2026-11-05T09:58:08.417Z",
+  "capturedAt": "2026-11-06T06:22:15.298Z",
   "checks": [
     "Wallet: one-time ₹555, ₹500 cap, idempotent retry and concurrent requests",
     "Reservation: one date rejected, three dates reserved, wallet debited atomically",
@@ -18,7 +18,16 @@
     "Admin preview: customer, mother and courier simulation with zero server writes and protected role access",
     "Notifications: own-user inbox, opt-in/off and session-bound subscriptions; mocked transport verifies cursor, revocation and expired endpoint removal",
     "Google Maps: validated locations and directions, no automatic map-location requests before a tap",
-    "Partner journeys, carousel, role-scoped income, nearby online offers, editable rates, one-winner courier claim and accepted-rate snapshot verified locally."
+    "Partner journeys, carousel, role-scoped income, nearby online offers, editable rates, one-winner courier claim and accepted-rate snapshot verified locally.",
+    "Mother creates a product; nearby customer discovers correct unit, price and ingredients",
+    "Time negotiation, customer counter, kitchen acceptance, final checkout, stale-version rejection and duplicate-checkout idempotency",
+    "Kitchen cancellation returns full wallet spend and unprepared capacity without a customer fee",
+    "Ready-batch expiry, bulk minimum, after-21:00 slot and expired request are rejected without payment",
+    "Concurrent purchase of the final unit has one winner and never debits the losing wallet",
+    "Changed allergens invalidate old agreements; stale stock edits cannot overwrite a new inventory state",
+    "Breakfast one-time and 3-day plan work; light dinner accepts 21:00 and rejects 21:01; mixed periods and one-day subscriptions are rejected; cancellation preserves menu pause",
+    "Product order completes the shared kitchen, courier claim, GPS pickup/drop-off and separate feedback lifecycle",
+    "Browser form flow: mother publishes, customer requests time, mother accepts, customer confirms checkout and lands on Orders; mobile and admin screens have no overflow"
   ],
   "screenshots": [
     {
@@ -452,6 +461,42 @@
       "group": "Partner journeys & income",
       "width": 1132,
       "height": 284
+    },
+    {
+      "id": "49-product-time-agreement",
+      "title": "Customer reviews mutually agreed delivery time",
+      "file": "49-product-time-agreement.png",
+      "group": "Food marketplace pilot",
+      "note": "Isolated synthetic accounts; real browser/API workflow. No real payment or food fulfilment.",
+      "width": 390,
+      "height": 900
+    },
+    {
+      "id": "50-marketplace-products",
+      "title": "Nearby homemade products",
+      "file": "50-marketplace-products.png",
+      "group": "Food marketplace pilot",
+      "note": "Isolated synthetic accounts; real browser/API workflow. No real payment or food fulfilment.",
+      "width": 390,
+      "height": 900
+    },
+    {
+      "id": "51-mother-product-editor",
+      "title": "Mother product creation",
+      "file": "51-mother-product-editor.png",
+      "group": "Food marketplace pilot",
+      "note": "Isolated synthetic accounts; real browser/API workflow. No real payment or food fulfilment.",
+      "width": 390,
+      "height": 900
+    },
+    {
+      "id": "52-admin-marketplace",
+      "title": "Admin product and agreement oversight",
+      "file": "52-admin-marketplace.png",
+      "group": "Food marketplace pilot",
+      "note": "Isolated synthetic accounts; real browser/API workflow. No real payment or food fulfilment.",
+      "width": 1440,
+      "height": 1000
     }
   ]
 }

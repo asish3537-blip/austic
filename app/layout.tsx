@@ -17,6 +17,7 @@ import "./pilot-ui.css";
 import "./app-workspace.css";
 import "./notifications-maps.css";
 import "./journey-branding.css";
+import "./food-marketplace.css";
 
 export const metadata: Metadata = {
   title: {

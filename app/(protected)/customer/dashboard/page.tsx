@@ -132,6 +132,7 @@ export default async function CustomerDashboardPage({ searchParams }: { searchPa
     {showOrdersFirst && activityPanel}
     <CustomerDeliveryPin initialPinned={discovery.hasDeliveryPin} />
 
+    <Link className="market-entry" href="/customer/marketplace"><strong>Homemade products near you →</strong><span>Sattu, sweets, pickles and bulk requests · agree a delivery time</span></Link>
     <KitchenDiscovery kitchens={discovery.kitchens} sampleKitchens={sampleCustomerKitchens()} hasDeliveryPin={discovery.hasDeliveryPin} deliveryArea={discovery.deliveryArea} available={discovery.available} />
 
     <CustomerWallet />

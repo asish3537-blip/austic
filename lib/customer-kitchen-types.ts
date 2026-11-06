@@ -1,6 +1,7 @@
 export type KitchenMeal = {
   id: string;
   menuId?: string;
+  mealPeriod?:string;
   name: string;
   category: string;
   tier: string;

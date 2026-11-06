@@ -1,3 +1,4 @@
+import {restoreUnpreparedCapacity} from "@/lib/restore-capacity";
 import { scheduleCourierOffers } from "@/lib/courier-offers";
 import { scheduleEntityPush } from "@/lib/web-push";
 import { NextResponse } from "next/server";
@@ -39,16 +40,15 @@ export async function PATCH(request: Request, context: { params: Promise<{ order
       const live = await tx.order.findUniqueOrThrow({ where: { id: order.id }, include: { payments: true } });
       if (!transitions[live.status]?.includes(parsed.data.status)) throw new Error("ORDER_CHANGED");
       if (parsed.data.status === "CANCELLED" && live.payments.some(payment => payment.status === "CAPTURED" || payment.provider === "razorpay")) throw new Error("PAYMENT_REVIEW_REQUIRED");
+      let kitchenWalletRefund=0;
       if (parsed.data.status === "CANCELLED") {
-        for (const item of order.items) {
-          await tx.menu.updateMany({
-            where: { kitchenId: order.kitchenId, mealId: item.mealId, serviceDate: order.scheduledFor },
-            data: { stockCount: { increment: item.quantity } },
-          });
-        }
+        if(live.status!=="PREPARING")await restoreUnpreparedCapacity(tx,order.items);
+        const spent=Number((await tx.walletLedgerEntry.aggregate({where:{orderId:order.id,direction:"DEBIT"},_sum:{amount:true}}))._sum.amount??0);
+        kitchenWalletRefund=spent;
+        if(spent>0)await tx.walletLedgerEntry.create({data:{userId:order.customerId,orderId:order.id,direction:"CREDIT",amount:spent,reference:"kitchen-cancel:"+order.id,description:"Kitchen cancelled; full wallet spend returned, no customer processing fee"}});
       }
-      const next = await tx.order.update({ where: { id: order.id }, data: { status: parsed.data.status } });
-      await tx.orderEvent.create({ data: { orderId: order.id, actorUserId: user.id, status: parsed.data.status, detail: "Kitchen updated order status." } });
+      const next = await tx.order.update({ where: { id: order.id }, data: { status: parsed.data.status, ...(kitchenWalletRefund>0?{paymentStatus:"REFUNDED"}:{}) } });
+      await tx.orderEvent.create({ data: { orderId: order.id, actorUserId: user.id, status: parsed.data.status, detail: "Kitchen updated order status."+(kitchenWalletRefund>0?" Full wallet credit ₹"+kitchenWalletRefund.toFixed(2)+" returned without a customer fee.":"") } });
       if (parsed.data.status === "READY_FOR_PICKUP") {
         await tx.delivery.upsert({
           where: { orderId: order.id },

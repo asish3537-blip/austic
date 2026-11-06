@@ -77,18 +77,11 @@ const guides = [
   },
   {
     slug: "marketplace-roadmap",
-    title: "Meal days, cancellations and payments",
-    status: "One-week reservation and wallet records available · checkout pending",
-    text: "Understand meal-tier pricing, manual weekly renewal, early cancellation and wallet adjustments.",
-    steps: [
-      "Meal prices start at ₹69 base, ₹79 egg, ₹89 cheese and ₹99 chicken. Mother entrepreneurs publish three meal components; chicken is capped at ₹100.",
-      "A weekly selection reserves 3–7 days from one mother for one week. Delivery is ₹30 for each day. It does not renew automatically.",
-      "Cancel a day at least five hours before delivery. If money was collected, eligible value less the ₹5 processing fee goes to the customer wallet; wallet funds can be applied to the next order.",
-      "Online payments are not connected. Admin can record confirmed external UPI or cash receipts with a reference. Do not record a receipt until the money has actually been received.",
-      "The admin dashboard reports payment receipts and wallet adjustments separately. It does not count unpaid order balances as revenue.",
-      "Online checkout, vouchers, provider refunds and partner payouts still need their payment-provider connection.",
-      "Account verification by real email and WhatsApp/SMS depends on configured Resend and Twilio credentials. Preview codes do not verify contact ownership.",
-    ],
+    title: "Homemade products and delivery-time agreements",
+    audience: "Customers, mothers and admin",
+    status: "Product requests and agreed-time checkout",
+    text: "Sell or request sattu, sweets, pickles and other homemade food in the new Marketplace section.",
+    steps: ["Mothers open Marketplace, add a product, pack size, price, units, minimum quantity, ingredients, allergens, preparation and storage/shelf-life details. Ready batches need an expiry.","Customers with a delivery pin see nearby available products. Request a delivery date/time in IST; no stock or payment is taken yet.","The mother accepts or proposes a time. The customer can counter-propose. After the kitchen agrees, the customer confirms checkout within 30 minutes. Shared orders, wallet, kitchen status, courier handover, tracking and feedback then apply.","For meals, select breakfast, lunch or light dinner. Use Order meal for a single serving day, or create a 3–7-day subscription for one meal period. Separate plans cover other periods.","Dinner and all local deliveries end at 9 p.m. IST. New pickups close at 8:30 p.m. Eligible unprepared cancellations release capacity; prepared or returned food is not automatically relisted."]
   },
 ];
 
@@ -105,10 +98,10 @@ export default function HelpPage() {
         <a href="#admin-authenticator">Administrator sign-in</a>
         {guides.map((guide) => <a key={guide.slug} href={`#${guide.slug}`}>{guide.title}</a>)}
       </nav>
-      <div className="help-callout"><strong>Live pilot status:</strong> approved mothers can publish priced three-part menus; customers can reserve one week (3–7 days), cancel eligible days to receive wallet credits, and see nearby kitchens using opted-in pins. Online checkout and real email/SMS/WhatsApp delivery still need provider setup. Admin records only confirmed external payment receipts. Admin accounts are created in the admin panel.</div>
+      <div className="help-callout"><strong>Live pilot status:</strong> approved mothers can publish breakfast, lunch and light dinner menus plus homemade products; customers can reserve one week (3–7 days), cancel eligible days to receive wallet credits, and see nearby kitchens using opted-in pins. Online checkout and real email/SMS/WhatsApp delivery still need provider setup. Admin records only confirmed external payment receipts. Admin accounts are created in the admin panel.</div>
       <section className="help-documents" aria-labelledby="help-documents-title">
         <div><span className="eyebrow">Take Paustik with you</span><h2 id="help-documents-title">Guides and project documents</h2><p>Download the current user guide or the detailed product and development specification.</p></div>
-        <div className="help-document-actions"><a className="button button-small" href="/docs/Paustik_Authenticator_and_Kitchen_Guide.pdf" download>New kitchen &amp; sign-in guide (PDF)</a><a className="button button-small button-light" href="/docs/Paustik_User_Guide.pdf" download>Full pilot guide (PDF)</a><a className="button button-small button-light" href="/docs/Paustik_Product_and_Development_Specification.pdf" download>Product and development specification (PDF)</a></div>
+        <div className="help-document-actions"><a className="button button-small" href="/docs/Paustik_Marketplace_Pilot_Guide_QA.pdf" download>Marketplace, meals &amp; QA guide (PDF)</a><a className="button button-small" href="/docs/Paustik_Authenticator_and_Kitchen_Guide.pdf" download>New kitchen &amp; sign-in guide (PDF)</a><a className="button button-small button-light" href="/docs/Paustik_User_Guide.pdf" download>Full pilot guide (PDF)</a><a className="button button-small button-light" href="/docs/Paustik_Product_and_Development_Specification.pdf" download>Product and development specification (PDF)</a></div>
       </section>
       <section className="help-callout" id="install-app" aria-labelledby="install-app-title">
         <span className="eyebrow">Paustik on your home screen</span>
@@ -133,16 +126,16 @@ export default function HelpPage() {
       <section className="help-grid" aria-label="Paustik video help guides">
         {guides.map((guide, index) => (
           <article className="help-card" id={guide.slug} key={guide.slug}>
-            <video className="help-video" controls playsInline preload="none" poster={`/assets/help-${guide.slug}.png`} aria-label={`${guide.title} help video`}>
+            {guide.slug !== "marketplace-roadmap" && <video className="help-video" controls playsInline preload="none" poster={`/assets/help-${guide.slug}.png`} aria-label={`${guide.title} help video`}>
               <source src={`/help-videos/${guide.slug}.webm`} type="video/webm" />
               Your browser does not support this help video. Use the written steps below.
-            </video>
+            </video>}
             <div className="help-card-content">
               <div className="help-card-top"><span className="help-number">0{index + 1}</span><span className="help-status">{guide.status}</span></div>
               <h2>{guide.title}</h2>
               <p>{guide.text}</p>
               <details className="help-transcript">
-                <summary>Read the video transcript</summary>
+                <summary>{guide.slug === "marketplace-roadmap" ? "Read the marketplace steps" : "Read the video transcript"}</summary>
                 <ol>{guide.steps.map((step) => <li key={step}>{step}</li>)}</ol>
               </details>
             </div>

@@ -7,9 +7,11 @@ import { useRouter } from "next/navigation";
 import { kitchenMenuDate, kitchenMoney, mealCategoryLabel } from "@/lib/customer-kitchen-types";
 import { groupPlanMenus, planTotals, selectedPlanMenus, togglePlanMenu, type PlanMenu } from "@/lib/customer-plan-selection";
 
-export function WeeklyPlanPicker({ menus, kitchenName, preview = false, canReserve = true }: { menus: PlanMenu[]; kitchenName: string; preview?: boolean; canReserve?: boolean }) {
+export function WeeklyPlanPicker({ menus:allMenus, kitchenName, preview = false, canReserve = true }: { menus: PlanMenu[]; kitchenName: string; preview?: boolean; canReserve?: boolean }) {
   const { t } = useUiLanguage();
   const router = useRouter();
+  const [period,setPeriod]=useState(allMenus.some(m=>(m.mealPeriod??"LUNCH")==="LUNCH")?"LUNCH":allMenus[0]?.mealPeriod??"LUNCH");
+  const menus=allMenus.filter(m=>(m.mealPeriod??"LUNCH")===period);
   const [selected, setSelected] = useState<string[]>([]);
   const [quantity, setQuantity] = useState(1);
   const [busy, setBusy] = useState(false);
@@ -50,7 +52,7 @@ export function WeeklyPlanPicker({ menus, kitchenName, preview = false, canReser
   }
 
   return <div className="kitchen-plan-builder">
-    <div className="kitchen-plan-selection">
+    <div className="kitchen-plan-selection"><label>Subscription meal period<select value={period} onChange={e=>{setPeriod(e.target.value);setSelected([]);setMessage("");}}><option value="BREAKFAST">Breakfast</option><option value="LUNCH">Lunch</option><option value="DINNER">Light dinner</option></select><small>Each plan covers one period. Reserve a separate plan for another period.</small></label>
       <div className="kitchen-plan-settings"><div><h3><UiText text="1. Choose your days and meals"/></h3><p>Select one meal per day. You can change each choice before reserving.</p></div><label><UiText text="Servings per day"/><select aria-label={t("Servings per day")} value={quantity} disabled={busy} onChange={(event) => { const count = Number(event.target.value); setQuantity(count); setSelected(selectedPlanMenus(menus, selected, count).map((menu) => menu.menuId)); setMessage(""); }}>{[1, 2, 3, 4, 5, 6].map((count) => <option key={count} value={count}>{count}</option>)}</select></label></div>
       <div className="kitchen-plan-mobile-review"><span><strong>{chosen.length} {chosen.length === 1 ? "day" : "days"} selected</strong><small>{kitchenMoney(totals.total)} including delivery</small></span><a href="#plan-summary-title">Review plan ↓</a></div>
       <div className="kitchen-plan-presets" role="group" aria-label="Quick selection"><span>Select first available days:</span>{[3, 5, 6, 7].map((count) => <button key={count} type="button" disabled={busy || availableDays.length < count} onClick={() => selectFirstDays(count)}>{count} days</button>)}<button type="button" disabled={busy || chosen.length === 0} onClick={() => { setSelected([]); setMessage(""); }}><UiText text="Clear"/></button></div>

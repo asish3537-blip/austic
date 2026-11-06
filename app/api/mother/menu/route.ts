@@ -1,3 +1,4 @@
+import {indiaDate,slotAllowed,componentsAllowed} from "@/lib/service-windows";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getCurrentUser } from "@/lib/auth";
@@ -11,7 +12,8 @@ const mealSchema = z.object({
   name: z.string().trim().min(3).max(90),
   description: z.string().trim().max(400).optional().default(""),
   tier: z.enum(["BASE", "EGG", "CHEESE", "CHICKEN"]),
-  components: z.array(z.string().trim().min(1).max(70)).length(3),
+  mealPeriod:z.enum(["BREAKFAST","LUNCH","DINNER"]).default("LUNCH"),
+  components: z.array(z.string().trim().min(1).max(70)).min(1).max(3),
   price: z.number().finite().min(69).max(500),
   servings: z.number().int().min(1).max(200),
   serviceDate: z.iso.date(),
@@ -19,6 +21,8 @@ const mealSchema = z.object({
   ingredients: z.string().max(500).optional().default(""),
   allergens: z.string().max(300).optional().default(""),
 }).superRefine((meal, context) => {
+  if(!slotAllowed(meal.mealPeriod,meal.deliveryTime))context.addIssue({code:"custom",message:"Use breakfast 06:00–10:59, lunch 11:00–16:59 or dinner 17:00–21:00 IST."});
+  if(!componentsAllowed(meal.mealPeriod,meal.components))context.addIssue({code:"custom",message:"Lunch needs three components; breakfast and light dinner need one to three."});
   const rule = MEAL_PRICE_TIERS[meal.tier];
   if (meal.price < rule.startingPrice || meal.price > rule.maxPrice) context.addIssue({ code: "custom", message: rule.label + " must be priced between ₹" + rule.startingPrice + " and ₹" + rule.maxPrice + "." });
 });
@@ -39,7 +43,7 @@ export async function GET() {
     const mother = await prisma.motherProfile.findUnique({ where: { userId: user.id }, include: { kitchen: true } });
     if (!mother?.kitchen) return NextResponse.json({ error: "Finish your kitchen application before managing a menu." }, { status: 409 });
     const today = new Date();
-    const start = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()));
+    const start = new Date(indiaDate(today)+"T00:00:00.000Z");
     const end = new Date(start);
     end.setUTCDate(end.getUTCDate() + 14);
     const [menus, orders, earnings] = await Promise.all([
@@ -61,7 +65,7 @@ export async function GET() {
       menus: menus.map((menu) => ({
         id: menu.id, mealId: menu.mealId, name: menu.meal.name, description: menu.meal.description,
         category: menu.meal.category, price: Number(menu.meal.price), serviceDate: menu.serviceDate.toISOString().slice(0, 10),
-        tier: menu.meal.tier, components: menu.meal.components, deliveryTime: menu.deliveryTime,
+        mealPeriod:menu.mealPeriod, tier: menu.meal.tier, components: menu.meal.components, deliveryTime: menu.deliveryTime,
         servings: menu.stockCount, isAvailable: menu.isAvailable, isPublished: menu.cycle.status === "PUBLISHED",
       })),
       orders: orders.map((order) => ({
@@ -94,7 +98,7 @@ export async function POST(request: Request) {
     if (!mother?.kitchen) return NextResponse.json({ error: "Finish your kitchen application first." }, { status: 409 });
     const serviceDate = new Date(parsed.data.serviceDate + "T00:00:00.000Z");
     const now = new Date();
-    const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+    const today = new Date(indiaDate(now)+"T00:00:00.000Z");
     if (serviceDate < today) return NextResponse.json({ error: "Choose today or a future date for this menu item." }, { status: 400 });
     const weekStart = mondayFor(serviceDate);
     const weekEnd = new Date(weekStart);
@@ -133,7 +137,7 @@ export async function POST(request: Request) {
         cycleId: cycle.id,
         mealId: meal.id,
         serviceDate,
-        mealPeriod: "LUNCH",
+        mealPeriod: parsed.data.mealPeriod,
         deliveryTime: parsed.data.deliveryTime,
         stockCount: parsed.data.servings,
         isAvailable: publish,

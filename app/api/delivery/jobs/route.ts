@@ -1,3 +1,4 @@
+import {canStartLocalDelivery} from "@/lib/service-windows";
 import { loadEstimatePolicy, orderDistance } from "@/lib/partner-income";
 import { estimateShares } from "@/lib/earnings-estimates";
 import { courierCovers } from "@/lib/courier-offers";
@@ -54,7 +55,7 @@ export async function GET() {
         ? `${delivery.order.address.latitude},${delivery.order.address.longitude}`
         : [delivery.order.address.addressLine1, delivery.order.address.locality, delivery.order.address.city, delivery.order.address.pinCode].join(", "),
     });
-    return NextResponse.json({ userScope: user.id, policy, area: { online: agent.isAvailable, city: agent.serviceCity || "", radiusKm: agent.serviceRadiusMeters/1000 }, available: available.filter(d=>courierCovers(agent,d.order.kitchen)).slice(0,20).map((delivery) => mapJob(delivery, false)), assigned: assigned.map((delivery) => mapJob(delivery, true)), upcoming: upcoming.filter(o=>courierCovers(agent,o.kitchen)).slice(0,20).map(o=>({ deliveryId:"upcoming:"+o.id,orderId:o.id,orderNumber:o.orderNumber,deliveryStatus:"UPCOMING",orderStatus:o.status,trackingReference:null,pickup:o.kitchen.name+" · "+o.kitchen.locality,dropoff:o.address.locality+", "+o.address.city,items:o.items.map(i=>i.quantity+" × "+i.mealName),scheduledFor:o.scheduledFor.toISOString(),pickupPinned:o.kitchen.latitude!==null,dropoffPinned:o.address.latitude!==null,isSharingLocation:false,pickupNavigation:null,dropoffNavigation:null,estimatedPay:estimateShares(Number(o.subtotal),Number(o.deliveryFee),orderDistance(o.kitchen,o.address),policy).courier,routeDistanceKm:orderDistance(o.kitchen,o.address),alertAt:o.orderedAt.toISOString(),isUpcoming:true})) }, { headers: { "Cache-Control": "private, no-store" } });
+    return NextResponse.json({ userScope: user.id, policy, area: { online: agent.isAvailable, city: agent.serviceCity || "", radiusKm: agent.serviceRadiusMeters/1000 }, available: available.filter(d=>courierCovers(agent,d.order.kitchen)&&canStartLocalDelivery()).slice(0,20).map((delivery) => mapJob(delivery, false)), assigned: assigned.map((delivery) => mapJob(delivery, true)), upcoming: upcoming.filter(o=>courierCovers(agent,o.kitchen)).slice(0,20).map(o=>({ deliveryId:"upcoming:"+o.id,orderId:o.id,orderNumber:o.orderNumber,deliveryStatus:"UPCOMING",orderStatus:o.status,trackingReference:null,pickup:o.kitchen.name+" · "+o.kitchen.locality,dropoff:o.address.locality+", "+o.address.city,items:o.items.map(i=>i.quantity+" × "+i.mealName),scheduledFor:o.scheduledFor.toISOString(),pickupPinned:o.kitchen.latitude!==null,dropoffPinned:o.address.latitude!==null,isSharingLocation:false,pickupNavigation:null,dropoffNavigation:null,estimatedPay:estimateShares(Number(o.subtotal),Number(o.deliveryFee),orderDistance(o.kitchen,o.address),policy).courier,routeDistanceKm:orderDistance(o.kitchen,o.address),alertAt:o.orderedAt.toISOString(),isUpcoming:true})) }, { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) {
     console.error("Paustik delivery jobs could not load.", error instanceof Error ? error.name : "unknown error");
     return serviceUnavailable();
@@ -75,6 +76,7 @@ export async function POST(request: Request) {
     if (!agent || agent.verificationStatus !== "APPROVED") return NextResponse.json({ error: "Your delivery partner application still needs approval." }, { status: 403 });
     const candidate = await prisma.delivery.findUnique({ where: { id: parsed.data.deliveryId }, include: { order: { include: { kitchen:true,address:true } } } });
     if (!candidate || candidate.order.orderNumber.startsWith("TEST-LIFE-") || !courierCovers(agent,candidate.order.kitchen)) return NextResponse.json({error:"Go online in the kitchen’s service area before accepting this job."},{status:409});
+    if(!canStartLocalDelivery())return NextResponse.json({error:"New pickups run 06:00–20:29 IST to allow delivery by 21:00. Contact operations for a late order."},{status:409});
     const policy=await loadEstimatePolicy(), km=orderDistance(candidate.order.kitchen,candidate.order.address), pay=estimateShares(Number(candidate.order.subtotal),Number(candidate.order.deliveryFee),km,policy).courier;
     const acceptedOrderId = await prisma.$transaction(async (tx) => {
       const claimed = await tx.delivery.updateMany({

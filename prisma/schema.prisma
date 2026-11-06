@@ -184,6 +184,7 @@ enum PaymentCategory {
 }
 
 model User {
+  productRequests ProductRequest[]
   id                   String                   @id @default(uuid()) @db.Uuid
   name                 String
   email                String                   @unique
@@ -290,6 +291,7 @@ model DeliveryAgentProfile {
 }
 
 model Address {
+  productRequests ProductRequest[]
   id            String   @id @default(uuid()) @db.Uuid
   userId        String   @map("user_id") @db.Uuid
   label         String   @default("Home")
@@ -382,6 +384,7 @@ model FavoriteKitchen {
 }
 
 model Meal {
+  product FoodProduct?
   id                 String              @id @default(uuid()) @db.Uuid
   kitchenId          String              @map("kitchen_id") @db.Uuid
   name               String
@@ -479,6 +482,7 @@ model Subscription {
 }
 
 model Order {
+  productRequest ProductRequest?
   id                   String                @id @default(uuid()) @db.Uuid
   orderNumber          String                @unique @map("order_number")
   customerId           String                @map("customer_id") @db.Uuid
@@ -969,5 +973,52 @@ model EarningsEstimatePolicy {
   isActive Boolean @default(true) @map("is_active")
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   @@map("earnings_estimate_policies")
+  @@schema("paustik_marketplace")
+}
+
+model FoodProduct {
+  category String @default("OTHER")
+  id String @id @default(uuid()) @db.Uuid
+  mealId String @unique @map("meal_id") @db.Uuid
+  unitLabel String @map("unit_label")
+  stockCount Int @default(0) @map("stock_count")
+  minimumQuantity Int @default(1) @map("minimum_quantity")
+  preparationMode String @map("preparation_mode")
+  preparationMinutes Int @map("preparation_minutes")
+  storageInstructions String @map("storage_instructions")
+  shelfLifeHours Int @map("shelf_life_hours")
+  readyUntil DateTime? @map("ready_until") @db.Timestamptz(6)
+  isActive Boolean @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  meal Meal @relation(fields:[mealId],references:[id],onDelete:Restrict)
+  requests ProductRequest[]
+  @@map("food_products")
+  @@schema("paustik_marketplace")
+}
+model ProductRequest {
+  id String @id @default(uuid()) @db.Uuid
+  customerId String @map("customer_id") @db.Uuid
+  productId String @map("product_id") @db.Uuid
+  addressId String @map("address_id") @db.Uuid
+  quantity Int
+  status String @default("KITCHEN_REVIEW")
+  version Int @default(0)
+  scheduledFor DateTime @map("scheduled_for") @db.Timestamptz(6)
+  expiresAt DateTime @map("expires_at") @db.Timestamptz(6)
+  unitPrice Decimal @map("unit_price") @db.Decimal(12,2)
+  deliveryFee Decimal @map("delivery_fee") @db.Decimal(12,2)
+  snapshot Json
+  history Json @default("[]")
+  orderId String? @unique @map("order_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  customer User @relation(fields:[customerId],references:[id],onDelete:Restrict)
+  product FoodProduct @relation(fields:[productId],references:[id],onDelete:Restrict)
+  address Address @relation(fields:[addressId],references:[id],onDelete:Restrict)
+  order Order? @relation(fields:[orderId],references:[id],onDelete:Restrict)
+  @@index([customerId,status,createdAt])
+  @@index([productId,status])
+  @@map("product_requests")
   @@schema("paustik_marketplace")
 }

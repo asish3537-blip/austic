@@ -1,3 +1,4 @@
+import {slotAllowed,componentsAllowed} from "@/lib/service-windows";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getCurrentUser } from "@/lib/auth";
@@ -11,12 +12,15 @@ const updateSchema = z.object({
   name: z.string().trim().min(3).max(90),
   description: z.string().trim().max(400).optional().default(""),
   tier: z.enum(["BASE", "EGG", "CHEESE", "CHICKEN"]),
-  components: z.array(z.string().trim().min(1).max(70)).length(3),
+  mealPeriod:z.enum(["BREAKFAST","LUNCH","DINNER"]).default("LUNCH"),
+  components: z.array(z.string().trim().min(1).max(70)).min(1).max(3),
   price: z.number().finite().min(69).max(500),
   deliveryTime: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/),
   servings: z.number().int().min(0).max(200),
   isAvailable: z.boolean(),
 }).superRefine((meal, context) => {
+  if(!slotAllowed(meal.mealPeriod,meal.deliveryTime))context.addIssue({code:"custom",message:"Use breakfast 06:00–10:59, lunch 11:00–16:59 or dinner 17:00–21:00 IST."});
+  if(!componentsAllowed(meal.mealPeriod,meal.components))context.addIssue({code:"custom",message:"Lunch needs three components; breakfast and light dinner need one to three."});
   const rule = MEAL_PRICE_TIERS[meal.tier];
   if (meal.price < rule.startingPrice || meal.price > rule.maxPrice) context.addIssue({ code: "custom", message: rule.label + " must be priced between ₹" + rule.startingPrice + " and ₹" + rule.maxPrice + "." });
 });
@@ -49,6 +53,7 @@ export async function PATCH(request: Request, context: { params: Promise<{ menuI
       } }),
       prisma.menu.update({ where: { id: menu.id }, data: {
         stockCount: parsed.data.servings,
+        mealPeriod:parsed.data.mealPeriod,
         deliveryTime: parsed.data.deliveryTime,
         isAvailable: parsed.data.isAvailable && canPublish && parsed.data.servings > 0,
       } }),

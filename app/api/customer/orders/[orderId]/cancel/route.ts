@@ -1,3 +1,4 @@
+import {restoreUnpreparedCapacity} from "@/lib/restore-capacity";
 import { scheduleEntityPush } from "@/lib/web-push";
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
@@ -45,10 +46,7 @@ export async function POST(request: Request, context: { params: Promise<{ orderI
       } });
       await tx.order.update({ where: { id: order.id }, data: { status: "CANCELLED", paymentStatus: credit > 0 ? (credit >= Number(order.totalAmount) ? "REFUNDED" : "PARTIALLY_REFUNDED") : order.paymentStatus } });
       await tx.orderEvent.create({ data: { orderId: order.id, actorUserId: user.id, status: "CANCELLED", detail: "Customer cancelled at least five hours before delivery. Wallet credit ₹" + credit.toFixed(2) + "; ₹5 processing fee applies only when paid value is refunded." } });
-      for (const item of order.items) {
-        const snapshot = item.dietarySnapshot && typeof item.dietarySnapshot === "object" && !Array.isArray(item.dietarySnapshot) ? item.dietarySnapshot as Record<string, unknown> : null;
-        if (typeof snapshot?.menuId === "string") await tx.menu.updateMany({ where: { id: snapshot.menuId }, data: { stockCount: { increment: item.quantity }, isAvailable: true } });
-      }
+      await restoreUnpreparedCapacity(tx,order.items);
       if (order.subscriptionId) {
         const remaining = await tx.order.count({ where: { subscriptionId: order.subscriptionId, status: { not: "CANCELLED" } } });
         if (remaining === 0) await tx.subscription.update({ where: { id: order.subscriptionId }, data: { status: "CANCELLED", cancelledAt: now } });

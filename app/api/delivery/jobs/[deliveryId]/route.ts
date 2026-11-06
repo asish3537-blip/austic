@@ -1,3 +1,4 @@
+import {canStartLocalDelivery,indiaMinutes} from "@/lib/service-windows";
 import { scheduleEntityPush } from "@/lib/web-push";
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -45,6 +46,7 @@ export async function PATCH(request: Request, context: { params: Promise<{ deliv
     if (!current) return NextResponse.json({ error: "This delivery is not assigned to your account." }, { status: 404 });
     if (nextDeliveryStatus[current.status] !== parsed.data.status) return NextResponse.json({ error: "Complete the current step before moving to the next one." }, { status: 409 });
     const timestamp = new Date();
+    if(parsed.data.status!=="DELIVERED"&&!canStartLocalDelivery(timestamp))return NextResponse.json({error:"New pickup / departure steps close at 20:30 IST. Contact operations; delivery ends at 21:00."},{status:409});
     let geofenceDetail = "Delivery partner updated the delivery status.";
     if (parsed.data.status === "PICKED_UP" || parsed.data.status === "DELIVERED") {
       const isPickup = parsed.data.status === "PICKED_UP";
@@ -74,7 +76,7 @@ export async function PATCH(request: Request, context: { params: Promise<{ deliv
       const nextOrderStatus = orderStatus[parsed.data.status];
       if (nextOrderStatus) {
         await tx.order.update({ where: { id: current.orderId }, data: { status: nextOrderStatus } });
-        await tx.orderEvent.create({ data: { orderId: current.orderId, actorUserId: user.id, status: nextOrderStatus, detail: geofenceDetail } });
+        await tx.orderEvent.create({ data: { orderId: current.orderId, actorUserId: user.id, status: nextOrderStatus, detail: geofenceDetail + (parsed.data.status==="DELIVERED" && indiaMinutes(timestamp)>=1260 ? " Late handover after 21:00 IST; operations review required." : "") } });
         await tx.notification.create({ data: { userId: current.order.customerId, title: "Delivery " + parsed.data.status.toLowerCase().replaceAll("_", " "), body: "Your courier updated order " + current.order.orderNumber + ".", kind: "DELIVERY", entityId: current.orderId } });
       }
     });

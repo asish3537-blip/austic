@@ -1,6 +1,6 @@
 import { DELIVERY_FEE_INR } from "@/lib/marketplace-rules";
 
-export type PlanMenu = { menuId: string; name: string; serviceDate: string; price: number; servings: number; category?: string; components?: string[]; deliveryTime?: string };
+export type PlanMenu = { mealPeriod?:string; menuId: string; name: string; serviceDate: string; price: number; servings: number; category?: string; components?: string[]; deliveryTime?: string };
 
 export function groupPlanMenus(menus: PlanMenu[]) {
   const groups = new Map<string, PlanMenu[]>();

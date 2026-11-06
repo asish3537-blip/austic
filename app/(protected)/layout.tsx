@@ -6,8 +6,8 @@ import Link from "next/link";
 
 
 const mobileNavigation = {
-  CUSTOMER: [{ label: "Discover", icon: "⌖", href: "/customer/dashboard#customer-discover" }, { label: "Orders", icon: "▤", href: "/customer/dashboard#order-history" }, { label: "Wallet", icon: "₹", href: "/customer/dashboard#wallet-section" }, { label: "Help", icon: "?", href: "/help" }, { label: "Website", icon: "↗", href: "/" }],
-  MOTHER: [{ label: "Kitchen", icon: "⌂", href: "/mother/dashboard#kitchen-summary" }, { label: "Menu", icon: "☷", href: "/mother/dashboard#weekly-menu" }, { label: "Orders", icon: "▤", href: "/mother/dashboard#incoming-orders" }, { label: "Meals", icon: "♨", href: "/mother/dashboard#scheduled-menu" }, { label: "Website", icon: "↗", href: "/" }],
+  CUSTOMER: [{ label: "Discover", icon: "⌖", href: "/customer/dashboard#customer-discover" }, { label: "Orders", icon: "▤", href: "/customer/dashboard#order-history" }, { label: "Wallet", icon: "₹", href: "/customer/dashboard#wallet-section" }, { label: "Marketplace", icon: "▧", href: "/customer/marketplace" }, { label: "Website", icon: "↗", href: "/" }],
+  MOTHER: [{ label: "Kitchen", icon: "⌂", href: "/mother/dashboard#kitchen-summary" }, { label: "Menu", icon: "☷", href: "/mother/dashboard#weekly-menu" }, { label: "Orders", icon: "▤", href: "/mother/dashboard#incoming-orders" }, { label: "Marketplace", icon: "▧", href: "/mother/marketplace" }, { label: "Website", icon: "↗", href: "/" }],
   DELIVERY_AGENT: [{ label: "Jobs", icon: "▣", href: "/delivery/dashboard#available-jobs" }, { label: "Route", icon: "↗", href: "/delivery/dashboard#delivery-route" }, { label: "Help", icon: "?", href: "/help#courier-onboarding" }, { label: "Website", icon: "⌂", href: "/" }],
   ADMIN: [{ label: "Overview", icon: "▦", href: "/admin/dashboard#admin-overview" }, { label: "Income", icon: "₹", href: "/admin/dashboard#admin-finance-title" }, { label: "Activity", icon: "↻", href: "/admin/dashboard#admin-activity-title" }, { label: "People", icon: "♙", href: "/admin/accounts" }, { label: "Website", icon: "↗", href: "/" }],
 } as const;
