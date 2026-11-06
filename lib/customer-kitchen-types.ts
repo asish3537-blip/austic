@@ -26,6 +26,7 @@ export type CustomerKitchen = {
   longitude?: number;
   distanceKm?: number;
   marketplaceRadiusKm?: number;
+  canDeliver?:boolean;
   isFavorite?: boolean;
   meals: KitchenMeal[];
 };

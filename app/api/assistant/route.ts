@@ -9,6 +9,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const requestSchema = z.object({
+  guidedOnly: z.boolean().default(false),
   messages: z.array(z.object({ role: z.enum(["user", "assistant"]), content: z.string().trim().min(1).max(4000) })).min(1).max(12),
 });
 
@@ -21,10 +22,10 @@ Paustik marketplace facts: families discover nearby mother-led kitchens and thei
 
 Be transparent: online payment checkout and bank payouts are not connected yet; an order or preview must never be described as paid unless the app explicitly confirms a recorded payment. Do not invent nearby availability, order status, account details, live income, delivery ETAs, eligibility, or policy beyond the facts above. You do not have access to the user's private records and cannot place, cancel, or refund orders, publish a menu, or change accounts. Direct users to their signed-in workspace for those actions. Never ask users to send passwords, one-time codes, full payment-card details, or bank credentials.`;
 
-export async function GET() {
+export async function GET(request:Request) {
   const user = await getCurrentUser();
   const role: HelpRole = user?.status === "ACTIVE" ? user.role : "GUEST";
-  return NextResponse.json({ mode: process.env.PAUSTIK_LIVE_AI_ENABLED === "true" && !!process.env.OPENAI_API_KEY ? "ai" : "guided", links: helpLinks(role), role }, { headers: { "Cache-Control": "private, no-store" } });
+  return NextResponse.json({ mode: new URL(request.url).searchParams.get("mode")!=="guided" && process.env.PAUSTIK_LIVE_AI_ENABLED === "true" && !!process.env.OPENAI_API_KEY ? "ai" : "guided", links: helpLinks(role), role }, { headers: { "Cache-Control": "private, no-store" } });
 }
 
 export async function POST(request: Request) {
@@ -43,6 +44,7 @@ export async function POST(request: Request) {
   }
 
   const fallback = guidedHelp(parsed.data.messages.at(-1)!.content, role);
+  if(parsed.data.guidedOnly)return NextResponse.json(fallback);
   if (!key || process.env.PAUSTIK_LIVE_AI_ENABLED !== "true" || !user || user.status !== "ACTIVE") return NextResponse.json(fallback);
 
   const now = Date.now();

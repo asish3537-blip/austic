@@ -24,7 +24,7 @@ export function MotherWorkspace() {
   const [message, setMessage] = useState("");
   const [editing, setEditing] = useState<MenuItem | null>(null);
   const [busyId, setBusyId] = useState("");
-  const [marketplaceRadiusKm, setMarketplaceRadiusKm] = useState(8);
+  const [marketplaceRadiusKm, setMarketplaceRadiusKm] = useState(25);
 
   const refresh = useCallback(async () => {
     try {
@@ -32,7 +32,7 @@ export function MotherWorkspace() {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Could not load your kitchen workspace.");
       setWorkspace(data);
-      setMarketplaceRadiusKm(data.kitchen.marketplaceRadiusKm || 8);
+      setMarketplaceRadiusKm(25);
       setProblem("");
     } catch (error) {
       setProblem(error instanceof Error ? error.message : "Could not load your kitchen workspace.");
@@ -177,7 +177,7 @@ export function MotherWorkspace() {
     </section>
 
     <section className="mother-location-panel">
-      <div><span className="eyebrow">Kitchen location</span><h2>{workspace.kitchen.hasLocation ? "Kitchen pin saved" : "Add your kitchen pickup pin"}</h2><p>Choose a customer service radius from 5–10 km. Couriers still use the separate 150 m pickup geofence at this pin.</p><label className="mother-radius-setting">Customer delivery area<select value={marketplaceRadiusKm} onChange={(event) => setMarketplaceRadiusKm(Number(event.target.value))}>{[5,6,7,8,9,10].map((radius) => <option key={radius} value={radius}>{radius} km</option>)}</select></label></div>
+      <div><span className="eyebrow">Kitchen location</span><h2>{workspace.kitchen.hasLocation ? "Kitchen pin saved" : "Add your kitchen pickup pin"}</h2><p>Customer delivery covers up to 25 km. Couriers still use the separate 150 m pickup geofence at this pin.</p><label className="mother-radius-setting">Customer delivery area<select value={marketplaceRadiusKm} onChange={(event) => setMarketplaceRadiusKm(Number(event.target.value))}>{[25].map((radius) => <option key={radius} value={radius}>{radius} km</option>)}</select></label></div>
       <button className="button button-small" type="button" onClick={pinKitchen} disabled={busyId === "location"}>{busyId === "location" ? "Waiting for GPS…" : workspace.kitchen.hasLocation ? "Refresh kitchen pin" : "Use this device location"}</button>
     </section>
 

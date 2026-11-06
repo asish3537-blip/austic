@@ -1,9 +1,9 @@
-import {componentsAllowed,slotAllowed} from "@/lib/service-windows";
+import {componentsAllowed,slotAllowed,indiaDate} from "@/lib/service-windows";
 import { readKitchenBranding } from "@/lib/kitchen-branding";
 import "server-only";
 import { isLocalAuthMode } from "@/lib/local-auth-mode";
 import { prisma } from "@/lib/prisma";
-import { distanceMeters, mealDeliveryInstant, mealPriceAllowed } from "@/lib/marketplace-rules";
+import { CUSTOMER_DELIVERY_RADIUS_METERS, distanceMeters, mealDeliveryInstant, mealPriceAllowed } from "@/lib/marketplace-rules";
 import type { CustomerKitchen } from "@/lib/customer-kitchen-types";
 
 const sampleKitchenSeeds = [
@@ -45,15 +45,14 @@ export async function loadCustomerKitchenDiscovery(customerId: string) {
 
 async function publishedKitchens(city: string | null | undefined, customerPin?: { latitude: number; longitude: number }, favoriteIds = new Set<string>()) {
   const now = new Date();
-  const today = new Date(now);
-  today.setUTCHours(0, 0, 0, 0);
+  const today = new Date(indiaDate(now)+"T00:00:00.000Z");
   const weekEnd = new Date(now.getTime() + 7 * 24 * 60 * 60_000);
   const menuWhere = { isAvailable: true, stockCount: { gt: 0 }, serviceDate: { gte: today, lte: weekEnd }, cycle: { status: "PUBLISHED" as const }, meal: { isAvailable: true } };
   const rows = await prisma.kitchen.findMany({
     where: {
       verificationStatus: "APPROVED", isAcceptingOrders: true, mother: { user: { status: "ACTIVE" } },
       // Match the order APIs' city rule, then check each kitchen's actual service radius.
-      ...(city ? { city: { equals: city, mode: "insensitive" as const } } : {}),
+      ...(city ? { city: { contains: city.trim(), mode: "insensitive" as const } } : {}),
       latitude: { not: null }, longitude: { not: null }, menus: { some: menuWhere },
     },
     orderBy: [{ mother: { rating: "desc" } }, { name: "asc" }],
@@ -64,17 +63,18 @@ async function publishedKitchens(city: string | null | undefined, customerPin?: 
     },
   });
 
-  const kitchens: CustomerKitchen[] = rows.map((kitchen) => ({
+  const kitchens: CustomerKitchen[] = rows.filter(k=>!city||k.city.trim().toLowerCase()===city.trim().toLowerCase()).map((kitchen) => ({
     id: kitchen.id, name: kitchen.name, motherName: kitchen.mother.user.name, locality: kitchen.locality, city: kitchen.city,
     profileImage: readKitchenBranding(kitchen.operatingHours)?.image, imageKind: readKitchenBranding(kitchen.operatingHours)?.kind,
     cuisine: kitchen.cuisine, rating: Number(kitchen.mother.rating), isFavorite: favoriteIds.has(kitchen.id),
-    latitude: Number(kitchen.latitude), longitude: Number(kitchen.longitude), marketplaceRadiusKm: kitchen.marketplaceRadiusMeters / 1000,
+    latitude: Number(kitchen.latitude), longitude: Number(kitchen.longitude), marketplaceRadiusKm: CUSTOMER_DELIVERY_RADIUS_METERS / 1000,
+    canDeliver: !customerPin || distanceMeters(customerPin,{latitude:Number(kitchen.latitude),longitude:Number(kitchen.longitude)})<=CUSTOMER_DELIVERY_RADIUS_METERS,
     distanceKm: customerPin ? distanceMeters(customerPin, { latitude: Number(kitchen.latitude), longitude: Number(kitchen.longitude) }) / 1000 : undefined,
     meals: kitchen.menus.filter((menu) => {
       const delivery = mealDeliveryInstant(menu.serviceDate, menu.deliveryTime);
       return componentsAllowed(menu.mealPeriod,menu.meal.components)&&slotAllowed(menu.mealPeriod,menu.deliveryTime) && mealPriceAllowed(menu.meal.tier, Number(menu.meal.price)) && delivery.getTime()>=now.getTime()+30*60000 && delivery <= weekEnd;
     }).map((menu) => ({ id: menu.meal.id, menuId: menu.id,mealPeriod:menu.mealPeriod, name: menu.meal.name, category: menu.meal.category, tier: menu.meal.tier, components: menu.meal.components, price: Number(menu.meal.price), serviceDate: menu.serviceDate.toISOString().slice(0, 10), deliveryTime: menu.deliveryTime, servings: menu.stockCount })),
-  })).filter((kitchen) => kitchen.meals.length > 0 && (kitchen.distanceKm === undefined || kitchen.distanceKm <= kitchen.marketplaceRadiusKm!))
+  })).filter((kitchen) => kitchen.meals.length > 0)
     .sort((a, b) => Number(Boolean(b.isFavorite)) - Number(Boolean(a.isFavorite)) || (a.distanceKm !== undefined && b.distanceKm !== undefined ? a.distanceKm - b.distanceKm : b.rating - a.rating));
 
   return kitchens;

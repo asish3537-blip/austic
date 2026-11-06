@@ -61,7 +61,7 @@ export async function GET() {
       prisma.earning.aggregate({ where: { motherId: mother.id, beneficiaryRole: "MOTHER" }, _sum: { netAmount: true } }),
     ]);
     return NextResponse.json({
-      kitchen: { name: mother.kitchen.name, approved: mother.kitchen.verificationStatus === "APPROVED", acceptingOrders: mother.kitchen.isAcceptingOrders, hasLocation: mother.kitchen.latitude !== null && mother.kitchen.longitude !== null, marketplaceRadiusKm: mother.kitchen.marketplaceRadiusMeters / 1000 },
+      kitchen: { name: mother.kitchen.name, approved: mother.kitchen.verificationStatus === "APPROVED", acceptingOrders: mother.kitchen.isAcceptingOrders, hasLocation: mother.kitchen.latitude !== null && mother.kitchen.longitude !== null, marketplaceRadiusKm: 25 },
       menus: menus.map((menu) => ({
         id: menu.id, mealId: menu.mealId, name: menu.meal.name, description: menu.meal.description,
         category: menu.meal.category, price: Number(menu.meal.price), serviceDate: menu.serviceDate.toISOString().slice(0, 10),

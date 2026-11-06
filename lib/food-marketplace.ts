@@ -2,10 +2,10 @@ import {onlineCouriers} from "@/lib/delivery-availability";
 import {courierCovers} from "@/lib/courier-offers";
 import {createHash} from "node:crypto";
 import {prisma} from "@/lib/prisma";
-import {distanceMeters} from "@/lib/marketplace-rules";
+import {CUSTOMER_DELIVERY_RADIUS_METERS,distanceMeters} from "@/lib/marketplace-rules";
 import {validProductSlot} from "@/lib/service-windows";
 import type {Prisma} from "@/app/generated/prisma/client";
-export const PRODUCT_DELIVERY_RADIUS_METERS=25000;
+export const PRODUCT_DELIVERY_RADIUS_METERS=CUSTOMER_DELIVERY_RADIUS_METERS;
 export class MarketError extends Error{constructor(message:string,public status=409){super(message);}}
 export const productInclude={meal:{include:{kitchen:{include:{mother:{include:{user:{select:{id:true,status:true}}}}}}}}} satisfies Prisma.FoodProductInclude;
 export type LoadedProduct=Prisma.FoodProductGetPayload<{include:typeof productInclude}>;

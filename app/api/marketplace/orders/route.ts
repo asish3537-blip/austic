@@ -9,7 +9,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { rejectCrossOrigin, serviceUnavailable } from "@/lib/http";
 import { prisma } from "@/lib/prisma";
 import { ensurePilotWallet } from "@/lib/pilot-wallet";
-import { CANCELLATION_CUTOFF_HOURS, CANCELLATION_OPERATION_FEE_INR, DELIVERY_FEE_INR, distanceMeters, lockWallet, mealDeliveryInstant, mealPriceAllowed, walletBalance } from "@/lib/marketplace-rules";
+import { CUSTOMER_DELIVERY_RADIUS_METERS, CANCELLATION_CUTOFF_HOURS, CANCELLATION_OPERATION_FEE_INR, DELIVERY_FEE_INR, distanceMeters, lockWallet, mealDeliveryInstant, mealPriceAllowed, walletBalance } from "@/lib/marketplace-rules";
 
 export const runtime = "nodejs";
 const orderSchema = z.object({ menuId: z.string().uuid(), quantity: z.number().int().min(1).max(8) });
@@ -53,7 +53,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "This kitchen currently serves " + menu.kitchen.city + ". Choose a kitchen serving your delivery city." }, { status: 409 });
     }
     const kitchenDistance = distanceMeters({ latitude: Number(address.latitude), longitude: Number(address.longitude) }, { latitude: Number(menu.kitchen.latitude), longitude: Number(menu.kitchen.longitude) });
-    if (kitchenDistance > menu.kitchen.marketplaceRadiusMeters) return NextResponse.json({ error: "This kitchen is outside its " + (menu.kitchen.marketplaceRadiusMeters / 1000).toFixed(1) + " km neighbourhood delivery area." }, { status: 409 });
+    if (kitchenDistance > CUSTOMER_DELIVERY_RADIUS_METERS) return NextResponse.json({ error: "This kitchen is outside its " + (CUSTOMER_DELIVERY_RADIUS_METERS / 1000).toFixed(1) + " km neighbourhood delivery area." }, { status: 409 });
     const subtotal = Number(menu.meal.price) * parsed.data.quantity;
     const total = subtotal + DELIVERY_FEE_INR;
     const scheduledFor = mealDeliveryInstant(menu.serviceDate, menu.deliveryTime);

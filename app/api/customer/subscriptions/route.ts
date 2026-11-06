@@ -7,7 +7,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getCurrentUser } from "@/lib/auth";
 import { rejectCrossOrigin, serviceUnavailable } from "@/lib/http";
-import { CANCELLATION_CUTOFF_HOURS, CANCELLATION_OPERATION_FEE_INR, DELIVERY_FEE_INR, distanceMeters, lockWallet, mealDeliveryInstant, mealPriceAllowed, walletBalance } from "@/lib/marketplace-rules";
+import { CUSTOMER_DELIVERY_RADIUS_METERS, CANCELLATION_CUTOFF_HOURS, CANCELLATION_OPERATION_FEE_INR, DELIVERY_FEE_INR, distanceMeters, lockWallet, mealDeliveryInstant, mealPriceAllowed, walletBalance } from "@/lib/marketplace-rules";
 import { prisma } from "@/lib/prisma";
 import { ensurePilotWallet } from "@/lib/pilot-wallet";
 
@@ -44,7 +44,7 @@ export async function POST(request: Request) {
     }
     if (address.city.trim().toLocaleLowerCase("en-IN") !== kitchen.city.trim().toLocaleLowerCase("en-IN")) return NextResponse.json({ error: "This kitchen currently serves " + kitchen.city + ". Choose a kitchen serving your delivery city." }, { status: 409 });
     const distance = distanceMeters({ latitude: Number(address.latitude), longitude: Number(address.longitude) }, { latitude: Number(kitchen.latitude), longitude: Number(kitchen.longitude) });
-    if (distance > kitchen.marketplaceRadiusMeters) return NextResponse.json({ error: "This kitchen is outside its " + (kitchen.marketplaceRadiusMeters / 1000).toFixed(1) + " km neighbourhood delivery area." }, { status: 409 });
+    if (distance > CUSTOMER_DELIVERY_RADIUS_METERS) return NextResponse.json({ error: "This kitchen is outside its " + (CUSTOMER_DELIVERY_RADIUS_METERS / 1000).toFixed(1) + " km neighbourhood delivery area." }, { status: 409 });
     if(new Set(menus.map(m=>m.mealPeriod)).size!==1)return NextResponse.json({error:"Choose one meal period per plan. Create separate breakfast, lunch or dinner plans."},{status:400});
     const sorted = [...menus].sort((a, b) => a.serviceDate.getTime() - b.serviceDate.getTime());
     if (new Set(sorted.map((menu) => menu.serviceDate.toISOString().slice(0, 10))).size !== sorted.length) return NextResponse.json({ error: "Choose one meal on each selected day." }, { status: 400 });

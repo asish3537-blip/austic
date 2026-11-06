@@ -11,7 +11,7 @@
       "headers": [
         {
           "key": "Permissions-Policy",
-          "value": "geolocation=(self), camera=(), microphone=()"
+          "value": "geolocation=(self), camera=(), microphone=(self)"
         },
         {
           "key": "Referrer-Policy",
