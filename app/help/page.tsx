@@ -2,6 +2,7 @@ import { UiText } from "@/components/ui-language";
 import Link from "next/link";
 
 const guides = [
+ {slug:"account-profile",title:"Your profile, settings and order history",status:"Photo, language and device push",text:"Tap your profile beside the Paustik logo to open your personal menu.",steps:["Open My profile to upload, replace or remove your photo and save your name. Email and phone are read-only; this screen does not change your role or sign-in identity.","Settings links to Orders & history, Wallet, language, help, delivery location and password reset. Your personal photo is visible in your own account; kitchen listing photos are managed separately by the mother.","Open Push notifications in Settings to enable device push when supported. Permission is requested only after you press Enable device push. Notification inbox remains available without device permission.","Discover starts with highlights and three choices: subscriptions, one-time meals and homemade products. Search or filter nearby kitchens; your recent orders follow discovery. Open Orders for full tracking, feedback, cancellation and history."]},
   { slug: "notifications-and-maps", title: "Notifications and Google Maps", status: "In-app updates and map controls", text: "Open Notifications for your account updates and device push settings.", steps: ["Enable device push only if you want browser notifications. Approve the browser prompt; no permission is requested automatically. Live push needs server signing keys.", "Use Turn off device push to opt out. Signing out stops future dispatch for that session. Lock-screen alerts hide private order details.", "Kitchen profiles, admin map points and fresh courier tracking include Google Maps controls. Tapping them sends the selected coordinates to Google Maps; the app does not load a Google map automatically.", "Browser/PWA push support varies by device. On iPhone/iPad open the installed Home Screen app. Native Android background push needs separate Firebase configuration."] },
   {
     slug: "account-setup",
@@ -24,12 +25,12 @@ const guides = [
     text: "Choose a nearby mother-led kitchen, open its daily menu, then build a 3–7-day subscription with a clear price breakdown.",
     steps: [
       "Create a Customer account and sign in using the code delivered by SMS or WhatsApp. Real code delivery requires Paustik’s messaging provider to be connected.",
-      "Your orders & tracking appears at the top once you have orders. Open Track order for the timeline; active orders refresh while the page is visible. Use Older orders to browse the rest of your history.",
+      "Your home starts with highlights, ordering choices and nearby kitchens. Recent orders appear below discovery. Open Orders from the bottom navigation or your profile menu for full order history, plans, tracking and cancellations.",
       "Use my location to save your drop-off pin. Paustik uses it to calculate nearby kitchens and shares it with the assigned courier for an order.",
       "Switch between the compact kitchen list and grid. Photos or logos help identify the mother. Search by a mother’s name, cuisine or dish, filter vegetarian or non-vegetarian menus, and save favourite kitchens. With a delivery pin, the list shows kitchens whose 5–10 km service area reaches you.",
       "Open View menu on a kitchen to see that mother’s dated menu, three meal components, price, delivery time and available servings. Choose a date to browse its meals. Sample kitchens are labelled and cannot create real orders.",
       "Select Build my subscription. Choose 3–7 days, one meal per day and your number of servings. The 3, 5, 6 and 7-day shortcuts select the first available days; review or change each meal before reserving. Meals and ₹30-per-day delivery are itemised in the summary. Plans cover one week and renew manually.",
-      "For a single meal, expand Prefer this meal for one day beneath that dish. Your saved orders and subscriptions appear in the customer workspace. OpenStreetMap links share coordinates with that map provider.",
+      "For a single meal, press Order meal on the dish. New meal, subscription and product purchases open the dedicated Orders page. Google Maps controls share selected coordinates only when opened.",
       "Online checkout is not connected. No payment is taken here; use the pilot collection process with Paustik admin if a payment is collected outside the app.",
       "Cancel a meal day at least five hours before its scheduled delivery. The eligible amount already paid, minus the ₹5 processing fee, is credited to your Paustik wallet. No credit is issued for an unpaid amount.",
       "Track kitchen and courier status in Your orders & tracking. A current courier point appears after pickup when the courier has opted in to GPS sharing.",
@@ -126,7 +127,7 @@ export default function HelpPage() {
       <section className="help-grid" aria-label="Paustik video help guides">
         {guides.map((guide, index) => (
           <article className="help-card" id={guide.slug} key={guide.slug}>
-            {guide.slug !== "marketplace-roadmap" && <video className="help-video" controls playsInline preload="none" poster={`/assets/help-${guide.slug}.png`} aria-label={`${guide.title} help video`}>
+            {!["marketplace-roadmap","customer-workspace","account-profile"].includes(guide.slug) && <video className="help-video" controls playsInline preload="none" poster={`/assets/help-${guide.slug}.png`} aria-label={`${guide.title} help video`}>
               <source src={`/help-videos/${guide.slug}.webm`} type="video/webm" />
               Your browser does not support this help video. Use the written steps below.
             </video>}
@@ -135,7 +136,7 @@ export default function HelpPage() {
               <h2>{guide.title}</h2>
               <p>{guide.text}</p>
               <details className="help-transcript">
-                <summary>{guide.slug === "marketplace-roadmap" ? "Read the marketplace steps" : "Read the video transcript"}</summary>
+                <summary>{["marketplace-roadmap","customer-workspace","account-profile"].includes(guide.slug) ? "Read the current steps" : "Read the video transcript"}</summary>
                 <ol>{guide.steps.map((step) => <li key={step}>{step}</li>)}</ol>
               </details>
             </div>

@@ -81,7 +81,7 @@ export function PlaceOrderButton({ menuId, servings }: { menuId: string; serving
       if (!response.ok) throw new Error(data.error || "Could not place this order.");
       setMessage(data.amountDue > 0 ? "Order " + data.orderNumber + " saved. ₹" + data.amountDue + " remains due; no payment was taken." : "Order " + data.orderNumber + " saved using wallet credit.");
       window.dispatchEvent(new Event("paustik-wallet-updated"));
-      router.push("/customer/dashboard#order-history");
+      router.push("/customer/orders#order-history");
       router.refresh();
     } catch (cause) {
       setError(true);

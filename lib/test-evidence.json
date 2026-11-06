@@ -1,7 +1,7 @@
 {
   "runId": "pilot-1793818743911",
   "environment": "Isolated local test system",
-  "capturedAt": "2026-11-06T06:22:15.298Z",
+  "capturedAt": "2026-11-06T07:29:28.277Z",
   "checks": [
     "Wallet: one-time ₹555, ₹500 cap, idempotent retry and concurrent requests",
     "Reservation: one date rejected, three dates reserved, wallet debited atomically",
@@ -27,7 +27,8 @@
     "Changed allergens invalidate old agreements; stale stock edits cannot overwrite a new inventory state",
     "Breakfast one-time and 3-day plan work; light dinner accepts 21:00 and rejects 21:01; mixed periods and one-day subscriptions are rejected; cancellation preserves menu pause",
     "Product order completes the shared kitchen, courier claim, GPS pickup/drop-off and separate feedback lifecycle",
-    "Browser form flow: mother publishes, customer requests time, mother accepts, customer confirms checkout and lands on Orders; mobile and admin screens have no overflow"
+    "Browser form flow: mother publishes, customer requests time, mother accepts, customer confirms checkout and lands on Orders; mobile and admin screens have no overflow",
+    "Customer home: highlights and kitchens before recent orders, separated history/wallet, saved profile photo, language and notification settings"
   ],
   "screenshots": [
     {
@@ -495,6 +496,51 @@
       "file": "52-admin-marketplace.png",
       "group": "Food marketplace pilot",
       "note": "Isolated synthetic accounts; real browser/API workflow. No real payment or food fulfilment.",
+      "width": 1440,
+      "height": 1000
+    },
+    {
+      "id": "53-customer-discovery-home",
+      "title": "Discovery-first customer home",
+      "file": "53-customer-discovery-home.png",
+      "group": "Customer discovery and profile",
+      "note": "Synthetic local accounts. Saved name/photo, order access and filters tested; no real payment or notification dispatch.",
+      "width": 390,
+      "height": 900
+    },
+    {
+      "id": "54-customer-profile-settings",
+      "title": "Saved profile photo and account settings",
+      "file": "54-customer-profile-settings.png",
+      "group": "Customer discovery and profile",
+      "note": "Synthetic local accounts. Saved name/photo, order access and filters tested; no real payment or notification dispatch.",
+      "width": 390,
+      "height": 900
+    },
+    {
+      "id": "55-orders-and-tracking",
+      "title": "Separate Orders, history and tracking",
+      "file": "55-orders-and-tracking.png",
+      "group": "Customer discovery and profile",
+      "note": "Synthetic local accounts. Saved name/photo, order access and filters tested; no real payment or notification dispatch.",
+      "width": 390,
+      "height": 900
+    },
+    {
+      "id": "56-profile-menu",
+      "title": "Customer profile menu",
+      "file": "56-profile-menu.png",
+      "group": "Customer discovery and profile",
+      "note": "Synthetic local accounts. Saved name/photo, order access and filters tested; no real payment or notification dispatch.",
+      "width": 390,
+      "height": 900
+    },
+    {
+      "id": "57-customer-desktop",
+      "title": "Customer home on desktop",
+      "file": "57-customer-desktop.png",
+      "group": "Customer discovery and profile",
+      "note": "Synthetic local accounts. Saved name/photo, order access and filters tested; no real payment or notification dispatch.",
       "width": 1440,
       "height": 1000
     }

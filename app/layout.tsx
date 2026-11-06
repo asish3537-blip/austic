@@ -18,6 +18,7 @@ import "./app-workspace.css";
 import "./notifications-maps.css";
 import "./journey-branding.css";
 import "./food-marketplace.css";
+import "./customer-home.css";
 
 export const metadata: Metadata = {
   title: {
@@ -41,7 +42,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="en" data-scroll-behavior="smooth">
       <body>
         <LanguageProvider>
         <header className="site-header">

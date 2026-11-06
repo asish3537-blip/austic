@@ -43,7 +43,7 @@ export function WeeklyPlanPicker({ menus:allMenus, kitchenName, preview = false,
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Could not reserve those meal days.");
       setMessage(data.message + (data.orders.some((order: { amountDue: number }) => order.amountDue > 0) ? " Any amount not covered by your wallet remains due; no online payment was taken." : " Wallet credit covered each day."));
-      router.push("/customer/dashboard#order-history");
+      router.push("/customer/orders#order-history");
       setSelected([]);
       window.dispatchEvent(new Event("paustik-wallet-updated"));
       router.refresh();
@@ -73,7 +73,7 @@ export function WeeklyPlanPicker({ menus:allMenus, kitchenName, preview = false,
       {!preview && !enoughDays && <p className="kitchen-plan-notice" id="reservation-minimum"><UiText text="A subscription requires at least three different days; multiple servings on one day still count as one day."/>{availableDays.length >= 3 && <button type="button" className="button button-light" disabled={busy} onClick={() => selectFirstDays(3)}><UiText text="Select first 3 available days"/></button>}</p>}
       <button className="button" type="button" aria-describedby={!enoughDays ? "reservation-minimum" : undefined} disabled={busy || !enoughDays || preview || !canReserve} onClick={createPlan}>{preview ? "Sample subscription" : busy ? "Reserving your meals…" : !enoughDays ? <UiText text="Choose at least 3 days"/> : <UiText text="Reserve selected meal days"/>}</button>
       <small className="kitchen-plan-terms">One week only. No automatic renewal. Cancel a day 5+ hours before delivery; eligible paid value less ₹5 returns to your wallet.</small>
-      {message && <div className={"kitchen-plan-message " + (error ? "is-error" : "")} role={error ? "alert" : "status"}><p>{message}</p>{!error && <Link href="/customer/dashboard#order-history">View my orders and plans →</Link>}</div>}
+      {message && <div className={"kitchen-plan-message " + (error ? "is-error" : "")} role={error ? "alert" : "status"}><p>{message}</p>{!error && <Link href="/customer/orders#order-history">View my orders and plans →</Link>}</div>}
     </aside>
   </div>;
 }

@@ -184,6 +184,7 @@ enum PaymentCategory {
 }
 
 model User {
+  avatarImage String? @map("avatar_image") @db.Text
   productRequests ProductRequest[]
   id                   String                   @id @default(uuid()) @db.Uuid
   name                 String
