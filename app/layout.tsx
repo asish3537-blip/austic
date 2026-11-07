@@ -21,6 +21,7 @@ import "./journey-branding.css";
 import "./food-marketplace.css";
 import "./customer-home.css";
 import "./voice-help.css";
+import "./editorial-home.css";
 
 export const metadata: Metadata = {
   title: {
@@ -53,7 +54,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
               <Image className="brand-wordmark" src="/assets/paustik-mother-wordmark.webp" alt="Paustik" width={640} height={310} priority />
               
             </Link>
-            <nav className="header-nav" aria-label="Main navigation"><Link href="/#customers">Customers</Link><Link href="/#for-mothers">Mother Kitchens</Link><Link href="/#for-delivery">Delivery Partners</Link></nav>
+            <nav className="header-nav" aria-label="Main navigation"><Link href="/#customers">Customers</Link><Link href="/#for-mothers">Mother Kitchens</Link><Link href="/#for-delivery">Delivery Partners</Link><Link href="/#download">Get the app</Link></nav>
             <div className="header-controls">
               <LanguageSelector />
               <MobileNavigation>
