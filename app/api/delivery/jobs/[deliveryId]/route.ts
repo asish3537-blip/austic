@@ -1,89 +1,87 @@
-import {canStartLocalDelivery,indiaMinutes} from "@/lib/service-windows";
-import { scheduleEntityPush } from "@/lib/web-push";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getCurrentUser } from "@/lib/auth";
 import { rejectCrossOrigin, serviceUnavailable } from "@/lib/http";
 import { prisma } from "@/lib/prisma";
+import { canStartLocalDelivery, indiaMinutes } from "@/lib/service-windows";
+import { distanceMeters, lockWallet } from "@/lib/marketplace-rules";
+import { loadDispatchPolicy } from "@/lib/dispatch-policy";
+import { lockCourier } from "@/lib/delivery-batches";
+import { matchesHandoverCode } from "@/lib/delivery-handover";
+import { scheduleEntityPush } from "@/lib/web-push";
 
 export const runtime = "nodejs";
-const updateSchema = z.object({ status: z.enum(["GOING_TO_PICKUP", "PICKED_UP", "OUT_FOR_DELIVERY", "DELIVERED"]) });
-const nextDeliveryStatus: Record<string, string> = {
-  ACCEPTED: "GOING_TO_PICKUP",
-  GOING_TO_PICKUP: "PICKED_UP",
-  PICKED_UP: "OUT_FOR_DELIVERY",
-  OUT_FOR_DELIVERY: "DELIVERED",
-};
-const orderStatus: Record<string, "PICKED_UP" | "OUT_FOR_DELIVERY" | "DELIVERED"> = {
-  PICKED_UP: "PICKED_UP",
-  OUT_FOR_DELIVERY: "OUT_FOR_DELIVERY",
-  DELIVERED: "DELIVERED",
-};
-
-function metersBetween(lat1: number, lon1: number, lat2: number, lon2: number) {
-  const earth = 6371000;
-  const rad = (value: number) => value * Math.PI / 180;
-  const deltaLat = rad(lat2 - lat1);
-  const deltaLon = rad(lon2 - lon1);
-  const a = Math.sin(deltaLat / 2) ** 2 + Math.cos(rad(lat1)) * Math.cos(rad(lat2)) * Math.sin(deltaLon / 2) ** 2;
-  return earth * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-}
+const schema = z.object({ status: z.enum(["GOING_TO_PICKUP", "PICKED_UP", "OUT_FOR_DELIVERY", "DELIVERED"]), method: z.enum(["OTP", "GPS"]).default("GPS"), otp: z.string().regex(/^\d{6}$/).optional() });
+const nextStatus: Record<string, string> = { ACCEPTED: "GOING_TO_PICKUP", GOING_TO_PICKUP: "PICKED_UP", PICKED_UP: "OUT_FOR_DELIVERY", OUT_FOR_DELIVERY: "DELIVERED" };
 
 export async function PATCH(request: Request, context: { params: Promise<{ deliveryId: string }> }) {
-  const originError = rejectCrossOrigin(request);
-  if (originError) return originError;
+  const blocked = rejectCrossOrigin(request);
+  if (blocked) return blocked;
   const user = await getCurrentUser();
-  if (!user || user.role !== "DELIVERY_AGENT" || user.status !== "ACTIVE") return NextResponse.json({ error: "An active delivery account is required." }, { status: 403 });
-  let body: unknown;
-  try { body = await request.json(); } catch { return NextResponse.json({ error: "Choose the next delivery step." }, { status: 400 }); }
-  const parsed = updateSchema.safeParse(body);
-  if (!parsed.success) return NextResponse.json({ error: "Choose a valid delivery step." }, { status: 400 });
+  if (!user || user.role !== "DELIVERY_AGENT" || user.status !== "ACTIVE") return NextResponse.json({ error: "Active courier access required." }, { status: 403 });
+  const parsed = schema.safeParse(await request.json().catch(() => null));
+  if (!parsed.success) return NextResponse.json({ error: "Choose a delivery step and enter a six-digit code if using OTP." }, { status: 400 });
   const { deliveryId } = await context.params;
   try {
-    const agent = await prisma.deliveryAgentProfile.findUnique({ where: { userId: user.id }, select: { id: true, verificationStatus: true } });
-    if (!agent || agent.verificationStatus !== "APPROVED") return NextResponse.json({ error: "Your delivery partner application still needs approval." }, { status: 403 });
-    const current = await prisma.delivery.findFirst({ where: { id: deliveryId, agentId: agent.id }, include: { order: { include: { kitchen: { select: { latitude: true, longitude: true } }, address: { select: { latitude: true, longitude: true } } } } } });
-    if (!current) return NextResponse.json({ error: "This delivery is not assigned to your account." }, { status: 404 });
-    if (nextDeliveryStatus[current.status] !== parsed.data.status) return NextResponse.json({ error: "Complete the current step before moving to the next one." }, { status: 409 });
-    const timestamp = new Date();
-    if(parsed.data.status!=="DELIVERED"&&!canStartLocalDelivery(timestamp))return NextResponse.json({error:"New pickup / departure steps close at 20:30 IST. Contact operations; delivery ends at 21:00."},{status:409});
-    let geofenceDetail = "Delivery partner updated the delivery status.";
-    if (parsed.data.status === "PICKED_UP" || parsed.data.status === "DELIVERED") {
-      const isPickup = parsed.data.status === "PICKED_UP";
-      const targetLatitude = isPickup ? current.order.kitchen.latitude : current.order.address.latitude;
-      const targetLongitude = isPickup ? current.order.kitchen.longitude : current.order.address.longitude;
-      if (targetLatitude === null || targetLongitude === null) {
-        return NextResponse.json({ error: isPickup ? "The kitchen pickup pin is missing. Ask Paustik operations to update it before pickup." : "The customer delivery pin is missing. Ask the customer to set a drop-off pin before handover." }, { status: 409 });
+    const agent = await prisma.deliveryAgentProfile.findUnique({ where: { userId: user.id } });
+    if (!agent || agent.verificationStatus !== "APPROVED") return NextResponse.json({ error: "Courier approval required." }, { status: 403 });
+    const policy = await loadDispatchPolicy();
+    const x = parsed.data;
+    const owner = await prisma.delivery.findFirst({ where: { id: deliveryId, agentId: agent.id }, select: { order: { select: { customerId: true } } } });
+    if (!owner) return NextResponse.json({ error: "Delivery not found." }, { status: 404 });
+    const result = await prisma.$transaction(async tx => {
+      await lockWallet(tx, owner.order.customerId);
+      await lockCourier(tx, agent.id);
+      await tx.$queryRaw`SELECT 1 FROM pg_advisory_xact_lock(hashtextextended(${"delivery:" + deliveryId},0))`;
+      const delivery = await tx.delivery.findFirst({ where: { id: deliveryId, agentId: agent.id }, include: { order: { include: { kitchen: true, address: true } } } });
+      if (!delivery) return { error: "This delivery is not assigned to you.", code: 404 };
+      if (delivery.status === x.status) return { updated: true, status: x.status, orderId: delivery.orderId };
+      if (nextStatus[delivery.status] !== x.status || ["CANCELLED", "FAILED"].includes(delivery.order.status)) return { error: "Refresh and complete the current delivery step first.", code: 409 };
+      const now = new Date();
+      if (x.status !== "DELIVERED" && !canStartLocalDelivery(now)) return { error: "New pickups and departures close at 20:30 IST. Contact operations.", code: 409 };
+      if (x.status === "OUT_FOR_DELIVERY" && delivery.batchId) {
+        const pending = await tx.delivery.count({ where: { batchId: delivery.batchId, agentId: agent.id, status: { in: ["ACCEPTED", "GOING_TO_PICKUP"] } } });
+        if (pending) return { error: "Collect every order in your batch before starting the delivery route.", code: 409 };
       }
-      if (!current.locationConsentAt || current.currentLatitude === null || current.currentLongitude === null || current.currentAccuracyMeters === null || !current.locationUpdatedAt || timestamp.getTime() - current.locationUpdatedAt.getTime() > 120_000) {
-        return NextResponse.json({ error: "Start location sharing and send a current GPS fix before confirming this geofence step." }, { status: 409 });
+      let detail = "Courier updated the delivery step.";
+      const handover = x.status === "PICKED_UP" || x.status === "DELIVERED";
+      if (handover && x.method === "OTP") {
+        if (delivery.handoverLockedUntil && delivery.handoverLockedUntil > now) return { error: "Too many incorrect codes. Try again after 15 minutes or contact operations.", code: 429 };
+        const codeId = x.status === "PICKED_UP" ? delivery.id + ":pickup" : delivery.id;
+        if (!x.otp || !matchesHandoverCode(codeId, delivery.handoverNonce ?? "legacy", x.otp)) {
+          const attempts = delivery.handoverLockedUntil ? 1 : delivery.handoverAttempts + 1;
+          await tx.delivery.update({ where: { id: delivery.id }, data: { handoverAttempts: attempts, handoverLockedUntil: attempts >= 5 ? new Date(now.getTime() + 15 * 60_000) : null } });
+          return { error: attempts >= 5 ? "Code entry is locked for 15 minutes. Contact operations if needed." : "That code does not match this order.", code: attempts >= 5 ? 429 : 400 };
+        }
+        detail = x.status === "PICKED_UP" ? "Kitchen pickup confirmed with its one-time code." : "Customer handover verified with its one-time code.";
       }
-      const distance = metersBetween(Number(current.currentLatitude), Number(current.currentLongitude), Number(targetLatitude), Number(targetLongitude));
-      const uncertainty = Number(current.currentAccuracyMeters);
-      const radiusMeters = 150;
-      if (distance + uncertainty > radiusMeters) {
-        return NextResponse.json({ error: "You are outside the 150 m geofence. Current distance is about " + Math.round(distance) + " m; move closer and send a fresh GPS fix." }, { status: 409 });
+      if (handover && x.method === "GPS") {
+        if (x.status === "DELIVERED" && !policy.allowGpsHandover) return { error: "Ask the customer for the delivery code. GPS completion is disabled.", code: 409 };
+        const target = x.status === "PICKED_UP" ? delivery.order.kitchen : delivery.order.address;
+        if (target.latitude === null || target.longitude === null || !delivery.locationConsentAt || delivery.currentLatitude === null || delivery.currentLongitude === null || delivery.currentAccuracyMeters === null || !delivery.locationUpdatedAt || now.getTime() - delivery.locationUpdatedAt.getTime() > 120_000) return { error: "Send a fresh GPS fix or choose handover by code.", code: 409 };
+        const distance = distanceMeters({ latitude: Number(delivery.currentLatitude), longitude: Number(delivery.currentLongitude) }, { latitude: Number(target.latitude), longitude: Number(target.longitude) });
+        const radius = x.status === "PICKED_UP" ? 150 : policy.handoverRadiusMeters;
+        if (distance + Number(delivery.currentAccuracyMeters) > radius) return { error: `Move within ${radius} m with an accurate GPS fix, or use the handover code.`, code: 409 };
+        detail = `GPS handover verified within ${radius} m.`;
       }
-      geofenceDetail = (isPickup ? "Pickup" : "Delivery") + " geofence confirmed within " + radiusMeters + " m.";
-    }
-    await prisma.$transaction(async (tx) => {
-      await tx.delivery.update({ where: { id: current.id }, data: {
-        status: parsed.data.status,
-        ...(parsed.data.status === "PICKED_UP" ? { pickupAt: timestamp } : {}),
-        ...(parsed.data.status === "DELIVERED" ? { deliveredAt: timestamp } : {}),
-        ...(parsed.data.status === "DELIVERED" ? { currentLatitude: null, currentLongitude: null, currentAccuracyMeters: null, locationUpdatedAt: null, locationConsentAt: null } : {}),
+      await tx.delivery.update({ where: { id: delivery.id }, data: { status: x.status,
+        ...(handover ? { handoverAttempts: 0, handoverLockedUntil: null } : {}),
+        ...(x.status === "PICKED_UP" ? { pickupAt: now } : {}),
+        ...(x.status === "DELIVERED" ? { deliveredAt: now, handoverMethod: x.method, handoverNonce: null, currentLatitude: null, currentLongitude: null, currentAccuracyMeters: null, locationUpdatedAt: null, locationConsentAt: null } : {}),
       } });
-      const nextOrderStatus = orderStatus[parsed.data.status];
-      if (nextOrderStatus) {
-        await tx.order.update({ where: { id: current.orderId }, data: { status: nextOrderStatus } });
-        await tx.orderEvent.create({ data: { orderId: current.orderId, actorUserId: user.id, status: nextOrderStatus, detail: geofenceDetail + (parsed.data.status==="DELIVERED" && indiaMinutes(timestamp)>=1260 ? " Late handover after 21:00 IST; operations review required." : "") } });
-        await tx.notification.create({ data: { userId: current.order.customerId, title: "Delivery " + parsed.data.status.toLowerCase().replaceAll("_", " "), body: "Your courier updated order " + current.order.orderNumber + ".", kind: "DELIVERY", entityId: current.orderId } });
+      if (x.status !== "GOING_TO_PICKUP") {
+        await tx.order.update({ where: { id: delivery.orderId }, data: { status: x.status } });
+        await tx.orderEvent.create({ data: { orderId: delivery.orderId, actorUserId: user.id, status: x.status, detail: detail + (x.status === "DELIVERED" && indiaMinutes(now) >= 1260 ? " Late handover after 21:00 IST." : "") } });
+        await tx.notification.create({ data: { userId: delivery.order.customerId, title: x.status === "DELIVERED" ? "Your order has arrived" : "Delivery update", body: delivery.order.orderNumber + " · " + x.status.toLowerCase().replaceAll("_", " "), kind: "DELIVERY", entityId: delivery.orderId } });
+        if (x.status === "DELIVERED") await tx.deliveryAgentProfile.update({ where: { id: agent.id }, data: { completedDeliveries: { increment: 1 } } });
+        if (x.status === "DELIVERED") await tx.bulkDeliveryRequest.updateMany({ where: { orderId: delivery.orderId, status: "DISPATCHED" }, data: { status: "DELIVERED", version: { increment: 1 } } });
       }
+      return { updated: true, status: x.status, orderId: delivery.orderId };
     });
-    scheduleEntityPush([current.orderId]);
-    return NextResponse.json({ updated: true, status: parsed.data.status });
-  } catch (error) {
-    console.error("Paustik delivery progress update failed.", error instanceof Error ? error.name : "unknown error");
+    if ("error" in result) return NextResponse.json({ error: result.error }, { status: result.code });
+    scheduleEntityPush([result.orderId]);
+    return NextResponse.json({ updated: result.updated, status: result.status });
+  } catch {
     return serviceUnavailable();
   }
 }

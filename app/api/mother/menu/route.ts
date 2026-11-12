@@ -11,10 +11,11 @@ export const runtime = "nodejs";
 const mealSchema = z.object({
   name: z.string().trim().min(3).max(90),
   description: z.string().trim().max(400).optional().default(""),
+  oneTimeOnly: z.boolean().default(false),
   tier: z.enum(["BASE", "EGG", "CHEESE", "CHICKEN"]),
   mealPeriod:z.enum(["BREAKFAST","LUNCH","DINNER"]).default("LUNCH"),
   components: z.array(z.string().trim().min(1).max(70)).min(1).max(3),
-  price: z.number().finite().min(69).max(500),
+  price: z.number().finite().min(1).max(10000),
   servings: z.number().int().min(1).max(200),
   serviceDate: z.iso.date(),
   deliveryTime: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/),
@@ -22,9 +23,9 @@ const mealSchema = z.object({
   allergens: z.string().max(300).optional().default(""),
 }).superRefine((meal, context) => {
   if(!slotAllowed(meal.mealPeriod,meal.deliveryTime))context.addIssue({code:"custom",message:"Use breakfast 06:00–10:59, lunch 11:00–16:59 or dinner 17:00–21:00 IST."});
-  if(!componentsAllowed(meal.mealPeriod,meal.components))context.addIssue({code:"custom",message:"Lunch needs three components; breakfast and light dinner need one to three."});
+  if(!meal.oneTimeOnly && !componentsAllowed(meal.mealPeriod,meal.components))context.addIssue({code:"custom",message:"Lunch needs three components; breakfast and light dinner need one to three."});
   const rule = MEAL_PRICE_TIERS[meal.tier];
-  if (meal.price < rule.startingPrice || meal.price > rule.maxPrice) context.addIssue({ code: "custom", message: rule.label + " must be priced between ₹" + rule.startingPrice + " and ₹" + rule.maxPrice + "." });
+  if (!meal.oneTimeOnly && (meal.price < rule.startingPrice || meal.price > rule.maxPrice)) context.addIssue({ code: "custom", message: rule.label + " must be priced between ₹" + rule.startingPrice + " and ₹" + rule.maxPrice + "." });
 });
 
 function mondayFor(date: Date) {
@@ -65,7 +66,7 @@ export async function GET() {
       menus: menus.map((menu) => ({
         id: menu.id, mealId: menu.mealId, name: menu.meal.name, description: menu.meal.description,
         category: menu.meal.category, price: Number(menu.meal.price), serviceDate: menu.serviceDate.toISOString().slice(0, 10),
-        mealPeriod:menu.mealPeriod, tier: menu.meal.tier, components: menu.meal.components, deliveryTime: menu.deliveryTime,
+        oneTimeOnly:menu.meal.oneTimeOnly, mealPeriod:menu.mealPeriod, tier: menu.meal.tier, components: menu.meal.components, deliveryTime: menu.deliveryTime,
         servings: menu.stockCount, isAvailable: menu.isAvailable, isPublished: menu.cycle.status === "PUBLISHED",
       })),
       orders: orders.map((order) => ({
@@ -123,6 +124,7 @@ export async function POST(request: Request) {
         description: parsed.data.description || null,
         category: parsed.data.tier === "EGG" || parsed.data.tier === "CHICKEN" ? "NON_VEGETARIAN" : "VEGETARIAN",
         tier: parsed.data.tier,
+        oneTimeOnly: parsed.data.oneTimeOnly,
         components: parsed.data.components,
         cuisine: mother.kitchen.cuisine,
         price: parsed.data.price,

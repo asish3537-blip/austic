@@ -4,7 +4,7 @@ export function filterCustomerKitchens(kitchens:CustomerKitchen[],f:DiscoveryFil
  const query=f.query.trim().toLocaleLowerCase("en-IN");
  const result=kitchens.flatMap(k=>{
   if((f.savedOnly&&!k.isFavorite)||(f.cuisine&&k.cuisine!==f.cuisine))return [];
-  const meals=k.meals.filter(m=>(f.diet==="all"||(f.diet==="vegetarian"?m.category!=="NON_VEGETARIAN":m.category==="NON_VEGETARIAN"))&&(f.period==="ALL"||(m.mealPeriod??"LUNCH")===f.period)&&m.price<=f.maxPrice&&[k.name,k.motherName,k.cuisine,k.locality,m.name,...m.components].join(" ").toLocaleLowerCase("en-IN").includes(query));
+  const meals=k.meals.filter(m=>(f.mode!=="subscription"||!m.oneTimeOnly)&&(f.diet==="all"||(f.diet==="vegetarian"?m.category!=="NON_VEGETARIAN":m.category==="NON_VEGETARIAN"))&&(f.period==="ALL"||(m.mealPeriod??"LUNCH")===f.period)&&m.price<=f.maxPrice&&[k.name,k.motherName,k.cuisine,k.locality,m.name,...m.components].join(" ").toLocaleLowerCase("en-IN").includes(query));
   if(!meals.length)return [];
   if(f.mode==="subscription"&&!['BREAKFAST','LUNCH','DINNER'].some(period=>new Set(meals.filter(m=>(m.mealPeriod??"LUNCH")===period).map(m=>m.serviceDate)).size>=3))return [];
   return [{...k,meals}];

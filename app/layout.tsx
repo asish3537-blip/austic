@@ -1,5 +1,5 @@
+import { SiteFooter } from "@/components/site-footer";
 import { PaustikHelp as PausstikAssistant } from "@/components/paustik-help";
-import {WHATSAPP_SUPPORT_URL} from "@/lib/whatsapp-support";
 import { UiText } from "@/components/ui-language";
 import type { Metadata, Viewport } from "next";
 import Image from "next/image";
@@ -22,6 +22,7 @@ import "./food-marketplace.css";
 import "./customer-home.css";
 import "./voice-help.css";
 import "./editorial-home.css";
+import "./pilot-refresh.css";
 
 export const metadata: Metadata = {
   title: {
@@ -70,11 +71,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <PwaRuntime />
         {children}
         <PausstikAssistant />
-        <footer className="site-footer">
-          <Link href="/" className="footer-brand" aria-label="Paustik home"><Image src="/assets/paustik-mother-wordmark.webp" alt="Paustik" width={140} height={68}/></Link>
-          <span className="footer-links"><Link href="/"><UiText text="Website"/></Link><Link href="/help"><UiText text="Help"/></Link><a href={WHATSAPP_SUPPORT_URL} target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer">WhatsApp ↗</a><span className="admin-footer-entry"><Link href="/admin-sign-in"><UiText text="Admin"/></Link><span className="admin-footer-menu"><Link href="/admin/paustik-admin"><UiText text="Admin dashboard"/></Link><Link href="/admin-sign-in"><UiText text="Admin sign in"/></Link></span></span></span>
-          <small className="footer-copyright">© 2026 Paustik. All rights reserved.</small>
-        </footer>
+        <SiteFooter />
         </LanguageProvider>
       </body>
     </html>

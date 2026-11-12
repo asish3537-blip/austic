@@ -1,4 +1,5 @@
 export type KitchenMeal = {
+  oneTimeOnly?: boolean;
   id: string;
   menuId?: string;
   mealPeriod?:string;

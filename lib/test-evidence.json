@@ -1,7 +1,7 @@
 {
-  "runId": "pilot-1793818743911",
+  "runId": "pilot-dispatch-2026-11-12",
   "environment": "Isolated local test system",
-  "capturedAt": "2026-11-06T07:29:28.277Z",
+  "capturedAt": "2026-11-12T18:19:10.376Z",
   "checks": [
     "Wallet: one-time ₹555, ₹500 cap, idempotent retry and concurrent requests",
     "Reservation: one date rejected, three dates reserved, wallet debited atomically",
@@ -28,7 +28,12 @@
     "Breakfast one-time and 3-day plan work; light dinner accepts 21:00 and rejects 21:01; mixed periods and one-day subscriptions are rejected; cancellation preserves menu pause",
     "Product order completes the shared kitchen, courier claim, GPS pickup/drop-off and separate feedback lifecycle",
     "Browser form flow: mother publishes, customer requests time, mother accepts, customer confirms checkout and lands on Orders; mobile and admin screens have no overflow",
-    "Customer home: highlights and kitchens before recent orders, separated history/wallet, saved profile photo, language and notification settings"
+    "Customer home: highlights and kitchens before recent orders, separated history/wallet, saved profile photo, language and notification settings",
+    "Dispatch release: 110 unit/regression tests and 13 isolated API/database scenarios passed",
+    "One-hour overdue cancellation: one full paid-value wallet credit under concurrent refresh",
+    "Three-order batching, code lockout/privacy, optional GPS and arranged bulk delivery",
+    "Distance quote, vouchers, subscription discount allocation and checkout replay",
+    "Private kitchen evidence, inspection and training follow-up; mobile role screens checked"
   ],
   "screenshots": [
     {
@@ -543,6 +548,60 @@
       "note": "Synthetic local accounts. Saved name/photo, order access and filters tested; no real payment or notification dispatch.",
       "width": 1440,
       "height": 1000
+    },
+    {
+      "id": "pilot-dispatch-customer-mobile",
+      "file": "pilot-dispatch-customer-mobile.png",
+      "title": "Customer discovery",
+      "group": "Neighbourhood dispatch pilot",
+      "note": "12 November release: synthetic isolated accounts; controlled 13 November daytime server clock. No real money, physical delivery or external message was sent.",
+      "width": 65536,
+      "height": 4292542531
+    },
+    {
+      "id": "pilot-dispatch-customer-orders-mobile",
+      "file": "pilot-dispatch-customer-orders-mobile.png",
+      "title": "Customer order tracking and cancellation",
+      "group": "Neighbourhood dispatch pilot",
+      "note": "12 November release: synthetic isolated accounts; controlled 13 November daytime server clock. No real money, physical delivery or external message was sent.",
+      "width": 65536,
+      "height": 4292542531
+    },
+    {
+      "id": "pilot-dispatch-mother-quality-mobile",
+      "file": "pilot-dispatch-mother-quality-mobile.png",
+      "title": "Private kitchen evidence and training",
+      "group": "Neighbourhood dispatch pilot",
+      "note": "12 November release: synthetic isolated accounts; controlled 13 November daytime server clock. No real money, physical delivery or external message was sent.",
+      "width": 65536,
+      "height": 4292542531
+    },
+    {
+      "id": "pilot-dispatch-courier-mobile",
+      "file": "pilot-dispatch-courier-mobile.png",
+      "title": "Courier capacity and arranged delivery",
+      "group": "Neighbourhood dispatch pilot",
+      "note": "12 November release: synthetic isolated accounts; controlled 13 November daytime server clock. No real money, physical delivery or external message was sent.",
+      "width": 65536,
+      "height": 4292542531
+    },
+    {
+      "id": "pilot-dispatch-courier-offer-mobile",
+      "file": "pilot-dispatch-courier-offer-mobile.png",
+      "title": "Incoming courier offer",
+      "group": "Neighbourhood dispatch pilot",
+      "note": "12 November release: synthetic isolated accounts; controlled 13 November daytime server clock. No real money, physical delivery or external message was sent.",
+      "width": 65536,
+      "height": 4292542531
+    },
+    {
+      "id": "pilot-dispatch-admin-dispatch-desktop",
+      "file": "pilot-dispatch-admin-dispatch-desktop.png",
+      "title": "Admin pricing, offers and contribution",
+      "group": "Neighbourhood dispatch pilot",
+      "note": "12 November release: synthetic isolated accounts; controlled 13 November daytime server clock. No real money, physical delivery or external message was sent.",
+      "width": 65536,
+      "height": 4292542531
     }
   ]
 }

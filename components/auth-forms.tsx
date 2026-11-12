@@ -69,7 +69,7 @@ export function SignInForm({ kitchen }: { kitchen?: string }) {
     <p className="auth-intro">Phone sign-in below will be available once messaging is activated. For now, choose email/password or a demo profile above.</p>
     <p className="auth-intro">Your saved account role opens your customer, mother or delivery dashboard automatically. Partner accounts awaiting approval open their application status.</p>
     {error && <Alert>{error}</Alert>}
-    <form onSubmit={submit}>
+    <form method="post" onSubmit={submit}>
       <div className="form-grid">
         <div className="field full">
           <label htmlFor="signin-phone"><UiText text="Phone number"/></label>
@@ -118,7 +118,7 @@ export function ResendVerificationForm({ initialEmail = "" }: { initialEmail?: s
     }
   }
 
-  return <form className="resend-verification" onSubmit={submit}>
+  return <form method="post" className="resend-verification" onSubmit={submit}>
     <div className="field"><label htmlFor="resend-verification-email">Need another verification link?</label><input id="resend-verification-email" name="email" type="email" autoComplete="email" defaultValue={initialEmail} maxLength={254} required /></div>
     {error && <Alert>{error}</Alert>}{message && <Alert success>{message}{verificationUrl && <><br /><Link href={verificationUrl}>Open local verification link</Link></>}</Alert>}
     <button className="plain-button" type="submit" disabled={busy}>{busy ? "Sending…" : "Resend verification email"}</button>
@@ -163,7 +163,7 @@ export function SignUpForm({ initialRole = "CUSTOMER" }: { initialRole?: Role })
     <span className="eyebrow">Join the neighbourhood table</span><h2>Create your account</h2>
     {error && <Alert>{error}</Alert>}
     {success && <><Alert success>{success.message}{success.verificationUrl && <><br /><Link href={success.verificationUrl}>Verify this development email</Link></>}</Alert>{!success.verificationUrl && <><p className="form-note">Check your inbox and spam folder at <strong>{success.email}</strong>. If no email arrives, request another link below.</p><ResendVerificationForm initialEmail={success.email} /></>}<p className="form-footer">After confirming your email, <Link className="text-link" href="/sign-in">sign in with your password</Link></p></>}
-    {!success && <form onSubmit={submit}>
+    {!success && <form method="post" onSubmit={submit}>
       <div className="role-grid" role="radiogroup" aria-label="Account type">
         {roles.map((item) => <label className="role-option" key={item.id}><input type="radio" name="role-choice" value={item.id} checked={role === item.id} onChange={() => setRole(item.id)} /><span><b>{item.name}</b><small>{item.note}</small></span></label>)}
       </div>

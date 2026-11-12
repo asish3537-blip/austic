@@ -49,7 +49,7 @@ export function AdminSignInForm() {
     <span className="eyebrow">Paustik operations</span><h2><UiText text="Admin sign in"/></h2>
     <p className="auth-intro">Enter your username or email and password.</p>
     {error && <Notice>{error}</Notice>}
-    <form onSubmit={submit} aria-busy={busy}>
+    <form method="post" onSubmit={submit} aria-busy={busy}>
       <div className="form-grid">
         <div className="field full"><label htmlFor="admin-username">Username or email</label><input id="admin-username" name="username" autoComplete="username" minLength={3} maxLength={254} required disabled={busy} onChange={() => { setRequiresAuthenticator(false); setError(""); }} /></div>
         <div className="field full"><label htmlFor="admin-password"><UiText text="Password"/></label><input id="admin-password" name="password" type="password" autoComplete="current-password" minLength={8} maxLength={72} required disabled={busy} /><small>Use at least 8 characters.</small></div>

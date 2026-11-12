@@ -1,5 +1,6 @@
 "use client";
 
+import { CheckoutReview, useCheckoutQuote } from "@/components/checkout-review";
 import { UiText } from "@/components/ui-language";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -70,14 +71,17 @@ export function PlaceOrderButton({ menuId, servings }: { menuId: string; serving
   const [message, setMessage] = useState("");
   const [error, setError] = useState(false);
 
+  const review = useCheckoutQuote({ menuIds: [menuId], quantity });
+
   async function placeOrder() {
+    if (!review.quote || busy) return;
     setBusy(true);
     setMessage("");
     setError(false);
     try {
       const response = await fetch("/api/marketplace/orders", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ menuId, quantity }),
+        body: JSON.stringify({ menuId, quantity, quoteId: review.quote.quoteId, couponCode: review.quote.couponCode }),
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Could not place this order.");
@@ -94,11 +98,12 @@ export function PlaceOrderButton({ menuId, servings }: { menuId: string; serving
   }
 
   return <div className="customer-order-action">
+    <CheckoutReview review={review}/>
     <div className="customer-order-controls">
       <label><UiText text="Servings"/><select aria-label="Servings" value={quantity} onChange={(event) => setQuantity(Number(event.target.value))}>
         {Array.from({ length: Math.min(8, servings) }, (_, index) => <option key={index + 1} value={index + 1}>{index + 1}</option>)}
       </select></label>
-      <button type="button" className="button button-small" onClick={placeOrder} disabled={busy || servings < 1 || !delivery?.available}>{busy ? "Saving…" : <UiText text="Order meal"/>}</button>
+      <button type="button" className="button button-small" onClick={placeOrder} disabled={busy || servings < 1 || !delivery?.available || !review.quote}>{busy ? "Saving…" : <UiText text="Order meal"/>}</button>
     </div>
     {<p className="customer-order-message" role="status">{delivery?.message??"Checking delivery partners…"}</p>}
     {message && <p className={"customer-order-message " + (error ? "is-error" : "")}>{message}</p>}

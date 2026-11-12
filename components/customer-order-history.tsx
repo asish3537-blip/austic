@@ -1,3 +1,4 @@
+import { expireOverdueOrders } from "@/lib/overdue-orders";
 import { OrdersRefresh } from "@/components/orders-refresh";
 import { UiText } from "@/components/ui-language";
 import { razorpayConfig } from "@/lib/razorpay";
@@ -41,6 +42,7 @@ export default async function CustomerOrderHistory({ searchParams,productsOnly=f
 
   if (!isLocalAuthMode()) {
     try {
+      await expireOverdueOrders(user.id);
       [orders, subscriptions, orderCount] = await loadCustomerActivity(user.id, page,productsOnly);
       const lastPage = Math.max(1, Math.ceil(orderCount / 20));
       if (page > lastPage) { page = lastPage; [orders, subscriptions, orderCount] = await loadCustomerActivity(user.id, page,productsOnly); }
@@ -58,7 +60,7 @@ export default async function CustomerOrderHistory({ searchParams,productsOnly=f
         <div className="customer-panel-heading"><div><span className="eyebrow">Order history</span><h2><UiText text={productsOnly?"Product purchases & tracking":"Your orders & tracking"}/></h2><p>{productsOnly?"Follow your product delivery agreements and purchases.":"Follow each meal from kitchen to doorstep."}</p></div><span className="customer-count">{orderCount}</span><OrdersRefresh active={orders.some(order => !["DELIVERED", "CANCELLED", "FAILED"].includes(order.status))}/></div>
         {!activityAvailable ? <p className="customer-empty">We couldn’t load your account activity right now. Refresh this page in a moment.</p> : orders.length ? <ul className="customer-record-list">
           {orders.map((order, index) => <li id={"order-"+order.id} key={order.id}>
-            <div className="customer-record-main"><strong>{order.orderNumber}</strong><span>{order.kitchen.name} · {order.items.map((item) => `${item.quantity} × ${item.mealName}`).join(", ")}</span><small>Ordered {date(order.orderedAt)} · For {date(order.scheduledFor)}</small>{order.status !== "CANCELLED" && <CustomerDeliveryTracking orderId={order.id} orderNumber={order.orderNumber} initiallyOpen={index === 0 && !["DELIVERED", "CANCELLED", "FAILED"].includes(order.status)} />}{order.status === "DELIVERED" && <OrderFeedback orderId={order.id} initial={{ mealScore: order.ratings.find(r => r.mealScore !== null)?.mealScore ?? null, deliveryScore: order.ratings.find(r => r.deliveryScore !== null)?.deliveryScore ?? null }} />}</div>
+            <div className="customer-record-main"><strong>{order.orderNumber}</strong><span>{order.kitchen.name} · {order.items.map((item) => `${item.quantity} × ${item.mealName}`).join(", ")}</span><small>Ordered {date(order.orderedAt)} · For {date(order.scheduledFor)}</small><details className="order-price-breakdown"><summary>Payment breakdown</summary><p>Food {money(Number(order.subtotal), order.currency)} + delivery {money(Number(order.deliveryFee), order.currency)} + tax {money(Number(order.taxAmount), order.currency)} − discount {money(Number(order.discountAmount), order.currency)}</p><strong>Total {money(Number(order.totalAmount), order.currency)}</strong></details>{order.status !== "CANCELLED" && <CustomerDeliveryTracking orderId={order.id} orderNumber={order.orderNumber} initiallyOpen={index === 0 && !["DELIVERED", "CANCELLED", "FAILED"].includes(order.status)} />}{order.status === "DELIVERED" && <OrderFeedback orderId={order.id} initial={{ mealScore: order.ratings.find(r => r.mealScore !== null)?.mealScore ?? null, deliveryScore: order.ratings.find(r => r.deliveryScore !== null)?.deliveryScore ?? null }} />}</div>
             <div className="customer-record-meta">{(upiReceiver() || razorpayConfig()) && order.paymentStatus === "PENDING" && !["CANCELLED", "FAILED"].includes(order.status) && (razorpayConfig() ? <RazorpayPayment orderId={order.id} /> : <UpiPayment orderId={order.id} />)}<b>{money(Number(order.totalAmount), order.currency)}</b><span className={`customer-status customer-status-${order.status.toLowerCase()}`}>{title(order.status)}</span></div>
           </li>)}
         </ul> : <div className="customer-empty-state"><span className="card-icon" aria-hidden="true">⌑</span><strong>{productsOnly?"Your product purchases will appear here":"Your first order will show up here"}</strong><Link className="text-link" href={productsOnly?"/customer/marketplace":"/customer/dashboard#customer-discover"}>{productsOnly?"Browse products":"Explore kitchens"} <span aria-hidden="true">→</span></Link></div>}

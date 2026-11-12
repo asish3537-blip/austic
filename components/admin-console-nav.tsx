@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 const links = [
   ["Overview", "/admin/paustik-admin", "▦"], ["Orders", "/admin/orders", "▤"], ["App preview", "/admin/app-preview", "▣"],
+  ["Dispatch & offers", "/admin/dispatch", "↗"], ["Bulk delivery", "/admin/bulk", "▤"], ["Kitchen quality", "/admin/quality", "✓"],
   ["Analytics", "/admin/analytics", "↗"], ["Operations map", "/admin/map", "⌖"], ["Kitchens & menus", "/admin/menus", "☷"],
   ["Product marketplace", "/admin/marketplace", "▧"],
   ["Demo marketplace & P&L", "/admin/demo-marketplace", "◉"],

@@ -14,7 +14,7 @@ export async function loadCustomerActivity(customerId: string, page: number, pro
         paymentStatus: true,
         orderedAt: true,
         scheduledFor: true,
-        totalAmount: true,
+        totalAmount: true, subtotal: true, deliveryFee: true, discountAmount: true, taxAmount: true,
         currency: true,
         kitchen: { select: { name: true } },
         items: { select: { mealName: true, quantity: true } },

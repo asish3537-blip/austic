@@ -13,15 +13,15 @@ export function readKitchenBranding(value: unknown): KitchenBranding | null {
 }
 
 // Accept the small, non-interlaced PNG produced by the upload canvas. Keep only image chunks.
-export function normalizeKitchenImage(value: string) {
-  if (!/^data:image\/png;base64,[A-Za-z0-9+/]+={0,2}$/.test(value) || value.length > 280000) throw new Error("Use a smaller PNG image.");
+export function normalizeKitchenImage(value: string, limits = { maxLength: 280000, maxDimension: 256, maxChunk: 200000 }) {
+  if (!/^data:image\/png;base64,[A-Za-z0-9+/]+={0,2}$/.test(value) || value.length > limits.maxLength) throw new Error("Use a smaller PNG image.");
   const data = Buffer.from(value.slice(22), "base64");
   if (!data.subarray(0, 8).equals(Buffer.from([137,80,78,71,13,10,26,10]))) throw new Error("Invalid PNG image.");
   let offset = 8, width = 0, height = 0, channels = 0, ended = false;
   const chunks: Buffer[] = [], compressed: Buffer[] = [];
   while (offset + 12 <= data.length) {
     const size = data.readUInt32BE(offset), end = offset + size + 12;
-    if (size > 200000 || end > data.length) throw new Error("Invalid image size.");
+    if (size > limits.maxChunk || end > data.length) throw new Error("Invalid image size.");
     const type = data.toString("ascii", offset + 4, offset + 8);
     if (crc32(data.subarray(offset + 4, end - 4)) !== data.readUInt32BE(end - 4)) throw new Error("Corrupt image chunk.");
     if (offset === 8 && type !== "IHDR") throw new Error("Missing image header.");
@@ -29,7 +29,7 @@ export function normalizeKitchenImage(value: string) {
       if (width || size !== 13) throw new Error("Invalid image header.");
       width = data.readUInt32BE(offset + 8); height = data.readUInt32BE(offset + 12);
       channels = data[offset + 17] === 6 ? 4 : data[offset + 17] === 2 ? 3 : 0;
-      if (!width || !height || width > 256 || height > 256 || !channels || data[offset + 16] !== 8 || data[offset + 18] || data[offset + 19] || data[offset + 20]) throw new Error("Upload a resized photo using the image picker.");
+      if (!width || !height || width > limits.maxDimension || height > limits.maxDimension || !channels || data[offset + 16] !== 8 || data[offset + 18] || data[offset + 19] || data[offset + 20]) throw new Error("Upload a resized photo using the image picker.");
     }
     if (["IHDR", "IDAT", "IEND"].includes(type)) chunks.push(data.subarray(offset, end));
     if (type === "IDAT") compressed.push(data.subarray(offset + 8, end - 4));

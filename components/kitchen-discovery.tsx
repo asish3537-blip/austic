@@ -18,7 +18,7 @@ function KitchenCard({ kitchen, sample, onSelect,mode="all" }: { kitchen: Custom
   return <article className="kitchen-result-card kitchen-compact-card">{onSelect ? <button type="button" className="kitchen-result-main" onClick={() => onSelect(kitchen)} aria-label={`View ${kitchen.name}, menu and subscriptions`}>{content}</button> : <Link className="kitchen-result-main" href={"/customer/kitchens/" + encodeURIComponent(kitchen.id)+(mode==="subscription"?"#kitchen-subscription":mode==="once"?"#kitchen-menu":"")} aria-label={`View ${kitchen.name}, menu and subscriptions`}>{content}</Link>}{!sample && <div className="kitchen-result-save"><FavoriteKitchenButton kitchenId={kitchen.id} initiallySaved={Boolean(kitchen.isFavorite)}/></div>}</article>;
 }
 
-export function KitchenDiscovery({ kitchens, sampleKitchens, hasDeliveryPin, deliveryArea, available, previewOnly = false, onPreviewSelect,initialMode="all" }: {
+export function KitchenDiscovery({ kitchens, sampleKitchens, hasDeliveryPin, deliveryArea, available, previewOnly = false, onPreviewSelect,initialMode="all",initialQuery="" }: {
   kitchens: CustomerKitchen[];
   sampleKitchens: CustomerKitchen[];
   hasDeliveryPin: boolean;
@@ -26,10 +26,10 @@ export function KitchenDiscovery({ kitchens, sampleKitchens, hasDeliveryPin, del
   available: boolean;
   previewOnly?: boolean;
   onPreviewSelect?: (kitchen: CustomerKitchen) => void;
-  initialMode?:string;
+  initialMode?:string; initialQuery?:string;
 }) {
-  const [view, setView] = useState<"list" | "grid">("list");
-  const [search, setSearch] = useState("");
+  const [view, setView] = useState<"list" | "grid">("grid");
+  const [search, setSearch] = useState(initialQuery);
   const [diet, setDiet] = useState<Diet>("all");
   const [savedOnly, setSavedOnly] = useState(false);
   const [showSamples, setShowSamples] = useState(false);

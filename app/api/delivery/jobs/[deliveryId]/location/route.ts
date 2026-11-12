@@ -43,13 +43,14 @@ export async function POST(request: Request, context: { params: Promise<{ delive
       const distance = metersBetween(Number(delivery.currentLatitude), Number(delivery.currentLongitude), parsed.data.latitude, parsed.data.longitude);
       if (elapsedSeconds > 0 && distance / elapsedSeconds > 55) return NextResponse.json({ error: "That GPS update moved too far to verify. Try again after your location settles." }, { status: 400 });
     }
-    await prisma.delivery.update({ where: { id: delivery.id }, data: {
+    const saved = await prisma.delivery.updateMany({ where: { id: delivery.id, agentId: agent.id, status: { notIn: ["DELIVERED", "CANCELLED", "FAILED"] } }, data: {
       currentLatitude: parsed.data.latitude,
       currentLongitude: parsed.data.longitude,
       currentAccuracyMeters: parsed.data.accuracyMeters,
       locationUpdatedAt: now,
       locationConsentAt: delivery.locationUpdatedAt ? undefined : now,
     } });
+    if (!saved.count) return NextResponse.json({ error: "Delivery already closed." }, { status: 409 });
     return NextResponse.json({ saved: true, updatedAt: now.toISOString() });
   } catch (error) {
     console.error("Paustik courier location update failed.", error instanceof Error ? error.name : "unknown error");
