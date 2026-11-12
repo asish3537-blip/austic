@@ -48,3 +48,7 @@ The Android wrapper continues to load the live app; this release does not create
 ## Pilot limits and owner actions
 
 No physical-phone GPS, real push receipt, SMS/WhatsApp delivery, bank payout or live financial charge was tested in this run. Keep payment-provider setup and real-device UAT separate. Existing no-courier notices remain intentional. The production deployment and schedule must report success before considering background cancellation live. Add actual social profile URLs after creating channels. Inspect preparation evidence and verify partner licence details before real fulfilment.
+
+## Production verification
+
+Release 85bc0d7 deployed successfully on paustik.in. Vercel reported the overdue-orders Production schedule Active, every 15 minutes. Its manual execution completed successfully in 1.4 seconds with 0% errors. The signed-in customer history showed the 8 November order cancelled; the wallet displayed full paid-value delivery-delay credits. Protected cleanup rejected unauthenticated access (401); admin dispatch and kitchen evidence rejected unauthenticated access (403). The video, installation QR and existing APK returned 200. No live purchase, SMS or bank payout was made during these checks.
