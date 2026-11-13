@@ -1,11 +1,8 @@
 import { after } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { distanceMeters } from "@/lib/marketplace-rules";
+import { courierCovers } from "@/lib/courier-area";
+export { courierCovers, type CourierArea } from "@/lib/courier-area";
 import { sendPendingPush } from "@/lib/web-push";
-export type CourierArea = { isAvailable: boolean; serviceCity: string | null; serviceLatitude: unknown; serviceLongitude: unknown; serviceRadiusMeters: number };
-export function courierCovers(area: CourierArea, kitchen: { city: string; latitude: unknown; longitude: unknown }) {
-  return area.isAvailable && Boolean(area.serviceCity) && area.serviceCity!.trim().toLowerCase() === kitchen.city.trim().toLowerCase() && area.serviceLatitude != null && area.serviceLongitude != null && kitchen.latitude != null && kitchen.longitude != null && distanceMeters({ latitude:Number(area.serviceLatitude),longitude:Number(area.serviceLongitude) }, { latitude:Number(kitchen.latitude),longitude:Number(kitchen.longitude) }) <= area.serviceRadiusMeters;
-}
 export function scheduleCourierOffers(orderIds: string[]) {
   after(async () => {
     try {

@@ -45,7 +45,8 @@ export function MotherWorkspace() {
 
   useEffect(() => {
     const timer = window.setTimeout(() => { void refresh(); }, 0);
-    return () => window.clearTimeout(timer);
+    const poll=window.setInterval(()=>{if(document.visibilityState === "visible")void refresh();},15000);
+    return () => {window.clearTimeout(timer);window.clearInterval(poll);};
   }, [refresh]);
 
   async function saveMenu(event: FormEvent<HTMLFormElement>) {

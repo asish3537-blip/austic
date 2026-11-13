@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
     const age = order.delivery?.locationUpdatedAt ? Date.now() - order.delivery.locationUpdatedAt.getTime() : Infinity;
     const live = Boolean(age >= 0 && age <= 120_000 && order.delivery?.locationConsentAt && order.delivery?.currentLatitude !== null && order.delivery?.currentLongitude !== null && order.delivery?.currentAccuracyMeters !== null && Number(order.delivery?.currentAccuracyMeters) <= 50 && !["DELIVERED", "CANCELLED", "FAILED"].includes(order.status) && ["PICKED_UP", "OUT_FOR_DELIVERY"].includes(order.delivery?.status ?? ""));
     return NextResponse.json({
-      handoverCode: order.delivery && ["PICKED_UP", "OUT_FOR_DELIVERY"].includes(order.delivery.status) && !["DELIVERED","CANCELLED","FAILED"].includes(order.status) ? deliveryHandoverCode(order.delivery.id, order.delivery.handoverNonce ?? "legacy") : null,
+      handoverCode: order.delivery && ["ACCEPTED", "GOING_TO_PICKUP", "PICKED_UP", "OUT_FOR_DELIVERY"].includes(order.delivery.status) && !["DELIVERED","CANCELLED","FAILED"].includes(order.status) ? deliveryHandoverCode(order.delivery.id, order.delivery.handoverNonce ?? "legacy") : null,
       handoverMethod: order.delivery?.handoverMethod,
       orderNumber: order.orderNumber,
       orderStatus: order.status,

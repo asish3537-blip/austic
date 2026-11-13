@@ -3,7 +3,7 @@
 import { PartnerIncomePanel } from "@/components/partner-income-panel";
 import { incomeMoney, type EstimatePolicy } from "@/lib/earnings-estimates";
 import { UiText } from "@/components/ui-language";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useEffectEvent, useRef, useState } from "react";
 
 type DeliveryJob = {
   estimatedPay:number;routeDistanceKm:number|null;alertAt:string;isUpcoming?:boolean;
@@ -12,7 +12,7 @@ type DeliveryJob = {
   pickupPinned: boolean; dropoffPinned: boolean; isSharingLocation: boolean;
   pickupNavigation: string | null; dropoffNavigation: string | null;
 };
-type Jobs = { available: DeliveryJob[]; assigned: DeliveryJob[]; upcoming:DeliveryJob[];userScope?:string;area?:{online:boolean;city:string;radiusKm:number};zones?:{id:string;name:string;locality:string;city:string}[];policy?:EstimatePolicy;dispatch?:{handoverRadiusMeters:number;allowGpsHandover:boolean};capacity?:{arrangedBulk?:boolean;maxOrders:number;mealCapacity:number;activeOrders:number;activeMeals:number};route?:{id:string;kind:string}[] };
+type Jobs = { available: DeliveryJob[]; assigned: DeliveryJob[]; upcoming:DeliveryJob[];userScope?:string;area?:{online:boolean;city:string;radiusKm:number;pin?:{latitude:number;longitude:number}|null;pickupsOpen?:boolean};zones?:{id:string;name:string;locality:string;city:string}[];policy?:EstimatePolicy;dispatch?:{handoverRadiusMeters:number;allowGpsHandover:boolean};capacity?:{arrangedBulk?:boolean;maxOrders:number;mealCapacity:number;activeOrders:number;activeMeals:number};route?:{id:string;kind:string}[] };
 const nextAction: Record<string, { status: string; label: string }> = {
   ACCEPTED: { status: "GOING_TO_PICKUP", label: "Head to pickup" },
   GOING_TO_PICKUP: { status: "PICKED_UP", label: "Confirm pickup" },
@@ -34,7 +34,9 @@ export function DeliveryWorkspace() {
   const [zoneId,setZoneId]=useState("");
   const [mealCapacity,setMealCapacity]=useState(6);
   const [handoverCodes,setHandoverCodes]=useState<Record<string,string>>({});
-  const [city,setCity]=useState("");const [radius,setRadius]=useState(8);const [areaBusy,setAreaBusy]=useState(false);
+  const [radius,setRadius]=useState(25);
+  const autoLocationStarted=useRef(false);
+  const [areaMessage,setAreaMessage]=useState("");const [areaBusy,setAreaBusy]=useState(false);
   const modal=useRef<HTMLDialogElement|null>(null);const seen=useRef(new Set<string>());const initialOffers=useRef(true);
   const watchId = useRef<number | null>(null);
   const lastSentAt = useRef(0);
@@ -46,12 +48,10 @@ export function DeliveryWorkspace() {
       if (!response.ok) throw new Error(data.error || "Could not load delivery jobs.");
       setJobs({...data,upcoming:data.upcoming||[]});
       assignedJobs.current=data.assigned||[];
-      setCity(current=>current||data.area?.city||"");
       const offers=[...(data.available||[]),...(data.upcoming||[])];
       const fresh=offers.find((job:DeliveryJob)=>{const key=data.userScope+":"+job.deliveryId+":"+job.deliveryStatus;let stored=false;try{stored=sessionStorage.getItem("paustik-offer:"+key)==="seen";}catch{}return !seen.current.has(key)&&!stored&&(!initialOffers.current||Date.now()-new Date(job.alertAt).getTime()<600000);});
       for(const job of offers){const key=data.userScope+":"+job.deliveryId+":"+job.deliveryStatus;seen.current.add(key);try{sessionStorage.setItem("paustik-offer:"+key,"seen");}catch{}}
       if(initialOffers.current)setMealCapacity(data.capacity?.mealCapacity||6);
-      if(initialOffers.current)setRadius(data.area?.radiusKm||8);
       initialOffers.current=false;
       setOffer(current=>current?(offers.find((j:DeliveryJob)=>j.orderId===current.orderId)||fresh||null):(fresh||null));
       setMessage("");
@@ -73,7 +73,28 @@ export function DeliveryWorkspace() {
   }, [refresh]);
 
   useEffect(()=>{const dialog=modal.current;if(offer&&!dialog?.open)dialog?.showModal();if(!offer&&dialog?.open)dialog.close();},[offer]);
-  async function availability(online:boolean,selectedZone?:string){setAreaBusy(true);setMessage("");try{let payload:object={isAvailable:false};if(online&&selectedZone){payload={isAvailable:true,zoneId:selectedZone,city:jobs.zones?.find(zone=>zone.id===selectedZone)?.city||city,radiusKm:radius,mealCapacity,consent:true};}else if(online){if(city.trim().length<2)throw new Error("Enter the city shown on your nearby kitchens.");const position=await new Promise<GeolocationPosition>((resolve,reject)=>navigator.geolocation?navigator.geolocation.getCurrentPosition(resolve,reject,{enableHighAccuracy:true,timeout:15000,maximumAge:0}):reject(new Error("GPS is unavailable.")));payload={isAvailable:true,city,latitude:position.coords.latitude,longitude:position.coords.longitude,radiusKm:radius,consent:true,mealCapacity};}const r=await fetch("/api/delivery/availability",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});const d=await r.json();if(!r.ok)throw new Error(d.error||"Availability could not save.");await refresh();setMessage(d.message);}catch(e){setMessage(e instanceof Error?e.message:"Location permission is needed to go online.");}finally{setAreaBusy(false);}}
+  async function availability(online:boolean,selectedZone?:string){
+    setAreaBusy(true);setAreaMessage("");
+    try {
+      let payload:object={isAvailable:false};
+      if(online&&selectedZone){payload={isAvailable:true,zoneId:selectedZone,radiusKm:radius,mealCapacity,consent:true};}
+      else if(online){
+        const position=await new Promise<GeolocationPosition>((resolve,reject)=>navigator.geolocation?navigator.geolocation.getCurrentPosition(resolve,reject,{enableHighAccuracy:true,timeout:15000,maximumAge:0}):reject(new Error("GPS is unavailable. Choose a pickup area below.")));
+        if(!Number.isFinite(position.coords.accuracy)||position.coords.accuracy>1000)throw new Error("Your location is too approximate. Enable precise location or choose a pickup area below.");
+        payload={isAvailable:true,latitude:position.coords.latitude,longitude:position.coords.longitude,radiusKm:radius,consent:true,mealCapacity};
+      }
+      const r=await fetch("/api/delivery/availability",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+      const d=await r.json();if(!r.ok)throw new Error(d.error||"Availability could not save.");
+      await refresh();setAreaMessage(d.message);
+    }catch(e){setAreaMessage(typeof e === "object" && e !== null && "code" in e ? "Location could not be read. Enable location access and tap Use current GPS, or choose a pickup area below." : e instanceof Error?e.message:"Location permission is needed to go online.");}
+    finally{setAreaBusy(false);}
+  }
+  const startWithCurrentLocation=useEffectEvent(()=>{void availability(true);});
+  useEffect(()=>{
+    if(!jobs.userScope||autoLocationStarted.current)return;
+    autoLocationStarted.current=true;
+    startWithCurrentLocation();
+  },[jobs.userScope]);
   async function reviewBatch() {
     setMessage("");
     try {
@@ -182,7 +203,18 @@ export function DeliveryWorkspace() {
 
   if (loading) return <div className="dashboard-banner">Loading delivery board…</div>;
   return <div className="delivery-workspace">
-    <section className="courier-availability"><div><span className="eyebrow">Your neighbourhood</span><h2>{jobs.area?.online?"Online for nearby offers":"Go online for delivery offers"}</h2><p>Choose a neighbourhood zone or use GPS, then set your 5–10 km service area. Nearby ready orders can be accepted in a batch of up to three.</p></div><label>Neighbourhood zone<select value={zoneId} onChange={e=>setZoneId(e.target.value)}><option value="">Choose a nearby kitchen area</option>{jobs.zones?.map(zone=><option key={zone.id} value={zone.id}>{zone.locality}, {zone.city} · {zone.name}</option>)}</select></label><button type="button" className="button" disabled={areaBusy||!zoneId} onClick={()=>void availability(true,zoneId)}>Go online in this neighbourhood</button><label>Service city<input value={city} onChange={e=>setCity(e.target.value)} maxLength={100} placeholder="e.g. Bhubaneswar"/></label><label>Radius<select value={radius} onChange={e=>setRadius(Number(e.target.value))}>{[5,6,7,8,9,10].map(n=><option key={n} value={n}>{n} km</option>)}</select></label><label>Carrying capacity · meal units<input type="number" min={1} max={30} value={mealCapacity} onChange={e=>setMealCapacity(Number(e.target.value))}/></label><button className="button" type="button" disabled={areaBusy} onClick={()=>void availability(true)}>{areaBusy?"Updating…":jobs.area?.online?"Update my service area":"Go online using my location"}</button>{jobs.area?.online&&<button className="plain-button" onClick={()=>void availability(false)} disabled={areaBusy}>Go offline</button>}</section>
+    <section className="courier-availability">
+      <div><span className="eyebrow">Your delivery area</span><h2>{areaBusy?"Finding your nearby pickups…":jobs.area?.online?"Online for nearby offers":"Offline for new offers"}</h2>
+      <p>We use your current location when you open this workspace and look for pickups within 25 km. Allow location access when asked. You can go offline at any time.</p>
+      <p role="status">{jobs.area?.pin ? <>Saved pickup area: {jobs.area.pin.latitude.toFixed(4)}, {jobs.area.pin.longitude.toFixed(4)} · {jobs.area.radiusKm} km radius.</> : "No pickup-area pin saved yet. Use current GPS or choose an area below."}</p></div>
+      <label>Pickup search radius<select value={radius} onChange={e=>setRadius(Number(e.target.value))}>{Array.from({length:21},(_,i)=>i+5).map(n=><option key={n} value={n}>{n} km</option>)}</select></label>
+      <label>Carrying capacity · meal units<input type="number" min={1} max={30} value={mealCapacity} onChange={e=>setMealCapacity(Number(e.target.value))}/></label>
+      <button className="button" type="button" disabled={areaBusy} onClick={()=>void availability(true)}>{areaBusy?"Updating location…":"Use current GPS"}</button>
+      {jobs.area?.online&&<button className="plain-button" onClick={()=>void availability(false)} disabled={areaBusy}>Go offline</button>}
+      <details><summary>GPS not accurate? Choose a pickup area</summary><label>Pickup area<select value={zoneId} onChange={e=>setZoneId(e.target.value)}><option value="">Choose a nearby kitchen area</option>{jobs.zones?.map(zone=><option key={zone.id} value={zone.id}>{zone.locality}, {zone.city} · {zone.name}</option>)}</select></label><button type="button" className="button" disabled={areaBusy||!zoneId} onClick={()=>void availability(true,zoneId)}>Use this pickup area</button><p>This changes your offer-search centre only. It does not confirm a pickup or delivery.</p></details>
+      {areaMessage&&<p className="workspace-message" role="status">{areaMessage}</p>}
+      <a href="/school-tiffins">ScooFoo school pickups →</a>
+    </section>
     <section className="courier-batch-summary"><h2>Your collection batch</h2>{jobs.capacity?.arrangedBulk ? <p>Arranged bulk delivery · {jobs.capacity.activeMeals} meal units · use the vehicle agreed with operations.</p> : <><p>{jobs.capacity?.activeOrders??0} / 3 orders · {jobs.capacity?.activeMeals??0} / {jobs.capacity?.mealCapacity??mealCapacity} meal units</p><p>Collect all orders first. Nearby pickups and drop-offs must fit a 2 km cluster and a 30-minute delivery window.</p></>}<ol>{jobs.route?.map((stop,index)=><li key={stop.kind+stop.id}>{index+1}. {stop.kind==="PICKUP"?"Collect":"Deliver"} · {jobs.assigned.find(job=>job.deliveryId===stop.id)?.orderNumber}</li>)}</ol></section><PartnerIncomePanel role="DELIVERY_AGENT"/>
     <dialog ref={modal} className="delivery-offer-dialog" onCancel={()=>setOffer(null)} aria-labelledby="delivery-offer-title">{offer&&<><button className="offer-close" type="button" aria-label="Close delivery offer" onClick={()=>setOffer(null)}>×</button><span className="eyebrow">{offer.isUpcoming?"New nearby order":"Ready for pickup"}</span><h2 id="delivery-offer-title">{offer.isUpcoming?"An upcoming delivery nearby":"New delivery request"}</h2><strong className="offer-pay">{incomeMoney(offer.estimatedPay)}<small>estimated courier pay</small></strong><p>{offer.pickup}</p><small>Drop-off area: {offer.dropoff}</small><p>{new Date(offer.scheduledFor).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</p><small>{offer.routeDistanceKm===null?"Distance not available":offer.routeDistanceKm.toFixed(1)+" km straight-line estimate"}. Final route and settlement can differ.</small>{offer.isUpcoming?<p>The kitchen is confirming or preparing this order. You can accept once it is ready.</p>:<button className="button" type="button" disabled={busyId===offer.deliveryId} onClick={()=>void claim(offer)}>{busyId===offer.deliveryId?"Accepting…":"Accept delivery"}</button>}<button className="plain-button" type="button" onClick={()=>setOffer(null)}>Not now</button></>}</dialog>
     <section className="delivery-privacy-note"><strong>GPS is opt-in.</strong> Your location is shared with the customer only while the order is picked up or out for delivery. Paustik stores one latest point and clears it at handover or when you stop sharing.</section>
@@ -194,7 +226,7 @@ export function DeliveryWorkspace() {
           <label className="batch-select"><input type="checkbox" checked={selectedJobs.includes(job.deliveryId)} disabled={Boolean(busyId)||(!selectedJobs.includes(job.deliveryId)&&selectedJobs.length>=3)} onChange={e=>setSelectedJobs(current=>e.target.checked?[...current,job.deliveryId]:current.filter(id=>id!==job.deliveryId))}/> Add to collection batch</label><div className="workspace-record-head"><strong>{job.orderNumber}</strong><span className="customer-status customer-status-active"><UiText text="Ready for pickup"/></span></div>
           <p>{job.items.join(", ")}</p><strong className="courier-job-pay">{incomeMoney(job.estimatedPay)} estimated pay</strong><small>Pickup: {job.pickup} · Drop-off: {job.dropoff}</small>
           <button className="button button-small" type="button" onClick={() => claim(job)} disabled={busyId === job.deliveryId}>{busyId === job.deliveryId ? "Accepting…" : "Accept delivery"}</button>
-        </article>)}</div> : <div className="customer-empty-state"><strong>No ready jobs nearby</strong><span>New deliveries appear after a kitchen marks an order ready for pickup.</span></div>}
+        </article>)}</div> : <div className="customer-empty-state"><strong>No ready jobs nearby</strong><span>{!jobs.area?.online?"Go online with your location to receive offers.":jobs.area?.pickupsOpen===false?"New pickups are available from 06:00 to 20:30 IST. Your assigned deliveries remain below.":"No unassigned orders are ready within your saved area. Preparing orders appear under Upcoming; kitchen readiness is required before accepting."}</span></div>}
       </article>
       <article className="dashboard-card">
         <div className="workspace-section-heading"><div><span className="eyebrow">Your route</span><h2 id="delivery-route">Assigned deliveries</h2></div><span className="customer-count">{jobs.assigned.length}</span></div>

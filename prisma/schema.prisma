@@ -351,7 +351,7 @@ model DeliveryAgentProfile {
   serviceCity String? @map("service_city")
   serviceLatitude Decimal? @map("service_latitude") @db.Decimal(10,7)
   serviceLongitude Decimal? @map("service_longitude") @db.Decimal(10,7)
-  serviceRadiusMeters Int @default(8000) @map("service_radius_meters")
+  serviceRadiusMeters Int @default(25000) @map("service_radius_meters")
   isAvailable Boolean @default(false) @map("is_available")
   id                  String             @id @default(uuid()) @db.Uuid
   userId              String             @unique @map("user_id") @db.Uuid

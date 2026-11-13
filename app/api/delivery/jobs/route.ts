@@ -8,7 +8,7 @@ import { newHandoverNonce } from "@/lib/delivery-handover";
 import {canStartLocalDelivery} from "@/lib/service-windows";
 import { loadEstimatePolicy, orderDistance } from "@/lib/partner-income";
 import { estimateShares } from "@/lib/earnings-estimates";
-import { courierCovers } from "@/lib/courier-offers";
+import { courierCovers, courierKitchenBounds, courierPin } from "@/lib/courier-area";
 import { scheduleEntityPush } from "@/lib/web-push";
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
@@ -32,9 +32,10 @@ export async function GET() {
     if (!agent || agent.verificationStatus !== "APPROVED") return NextResponse.json({ error: "Your delivery partner application still needs approval." }, { status: 403 });
     const policy = await loadEstimatePolicy();
     const dispatch = await loadDispatchPolicy();
+    const bounds = courierKitchenBounds(agent);
     const [available, assigned, upcoming] = await Promise.all([
-      !agent.isAvailable || !agent.serviceCity ? Promise.resolve([]) : prisma.delivery.findMany({
-        where: { agentId: null, status: "ASSIGNED", order: { status: "READY_FOR_PICKUP", orderNumber: { not: { startsWith: "TEST-LIFE-" } }, bulkDeliveryRequest: null, kitchen: { city: { equals: agent.serviceCity, mode: "insensitive" } } } },
+      !bounds ? Promise.resolve([]) : prisma.delivery.findMany({
+        where: { agentId: null, status: "ASSIGNED", order: { status: "READY_FOR_PICKUP", orderNumber: { not: { startsWith: "TEST-LIFE-" } }, bulkDeliveryRequest: null, kitchen: bounds! } },
         orderBy: { createdAt: "asc" }, take: 100,
         include: { order: { include: { kitchen: true, address: true, items: { select: { mealName: true, quantity: true } } } } },
       }),
@@ -43,7 +44,7 @@ export async function GET() {
         orderBy: { updatedAt: "desc" }, take: 20,
         include: { order: { include: { kitchen: true, address: true, items: { select: { mealName: true, quantity: true } }, bulkDeliveryRequest: {select:{id:true}} } } },
       }),
-      !agent.isAvailable || !agent.serviceCity ? Promise.resolve([]) : prisma.order.findMany({ where: { bulkDeliveryRequest: null, status: { in: ["ORDER_PLACED","CONFIRMED","PREPARING"] }, orderNumber: { not: { startsWith: "TEST-LIFE-" } }, kitchen: { city: { equals: agent.serviceCity, mode: "insensitive" } }, scheduledFor: { gte: new Date(Date.now()-7200000), lte: new Date(Date.now()+7*86400000) } }, include: { kitchen: true, address: true, items: { select: { mealName:true,quantity:true } } }, orderBy: { orderedAt:"desc" },take:100 }),
+      !bounds ? Promise.resolve([]) : prisma.order.findMany({ where: { bulkDeliveryRequest: null, status: { in: ["ORDER_PLACED","CONFIRMED","PREPARING"] }, orderNumber: { not: { startsWith: "TEST-LIFE-" } }, kitchen: bounds!, scheduledFor: { gte: new Date(Date.now()-7200000), lte: new Date(Date.now()+7*86400000) } }, include: { kitchen: true, address: true, items: { select: { mealName:true,quantity:true } } }, orderBy: { orderedAt:"desc" },take:100 }),
     ]);
     const route = batchRoute(assigned.map(d => deliveryStop(d.id, d.order)));
     const zones = await prisma.kitchen.findMany({ where: { verificationStatus: "APPROVED", isAcceptingOrders: true, latitude: { not: null }, longitude: { not: null }, mother: { user: { status: "ACTIVE" } } }, select: { id: true, name: true, locality: true, city: true }, take: 100, orderBy: { name: "asc" } });
@@ -67,7 +68,7 @@ export async function GET() {
         ? `${delivery.order.address.latitude},${delivery.order.address.longitude}`
         : [delivery.order.address.addressLine1, delivery.order.address.locality, delivery.order.address.city, delivery.order.address.pinCode].join(", "),
     });
-    return NextResponse.json({ userScope: user.id, policy, dispatch, zones, route: route.filter(stop=>stop.kind!=="PICKUP"||assigned.some(d=>d.id===stop.id&&["ACCEPTED","GOING_TO_PICKUP"].includes(d.status))), capacity: { arrangedBulk: assigned.some(d => Boolean(d.order.bulkDeliveryRequest)), maxOrders: 3, mealCapacity: agent.mealCapacity, activeOrders: assigned.length, activeMeals: assigned.reduce((sum, d) => sum + d.order.items.reduce((n, item) => n + item.quantity, 0), 0) }, area: { online: agent.isAvailable, city: agent.serviceCity || "", radiusKm: agent.serviceRadiusMeters/1000 }, available: available.filter(d=>courierCovers(agent,d.order.kitchen)&&canStartLocalDelivery()).slice(0,20).map((delivery) => mapJob(delivery, false)), assigned: assigned.map((delivery) => mapJob(delivery, true)), upcoming: upcoming.filter(o=>courierCovers(agent,o.kitchen)).slice(0,20).map(o=>({ deliveryId:"upcoming:"+o.id,orderId:o.id,orderNumber:o.orderNumber,deliveryStatus:"UPCOMING",orderStatus:o.status,trackingReference:null,pickup:o.kitchen.name+" · "+o.kitchen.locality,dropoff:o.address.locality+", "+o.address.city,items:o.items.map(i=>i.quantity+" × "+i.mealName),scheduledFor:o.scheduledFor.toISOString(),pickupPinned:o.kitchen.latitude!==null,dropoffPinned:o.address.latitude!==null,isSharingLocation:false,pickupNavigation:null,dropoffNavigation:null,estimatedPay:estimateShares(Number(o.subtotal),Number(o.deliveryFee),orderDistance(o.kitchen,o.address),policy).courier,routeDistanceKm:orderDistance(o.kitchen,o.address),alertAt:o.orderedAt.toISOString(),isUpcoming:true})) }, { headers: { "Cache-Control": "private, no-store" } });
+    return NextResponse.json({ userScope: user.id, policy, dispatch, zones, route: route.filter(stop=>stop.kind!=="PICKUP"||assigned.some(d=>d.id===stop.id&&["ACCEPTED","GOING_TO_PICKUP"].includes(d.status))), capacity: { arrangedBulk: assigned.some(d => Boolean(d.order.bulkDeliveryRequest)), maxOrders: 3, mealCapacity: agent.mealCapacity, activeOrders: assigned.length, activeMeals: assigned.reduce((sum, d) => sum + d.order.items.reduce((n, item) => n + item.quantity, 0), 0) }, area: { online: agent.isAvailable, city: agent.serviceCity || "", radiusKm: agent.serviceRadiusMeters/1000, pin: courierPin(agent), pickupsOpen: canStartLocalDelivery() }, available: available.filter(d=>courierCovers(agent,d.order.kitchen)&&canStartLocalDelivery()).slice(0,20).map((delivery) => mapJob(delivery, false)), assigned: assigned.map((delivery) => mapJob(delivery, true)), upcoming: upcoming.filter(o=>courierCovers(agent,o.kitchen)).slice(0,20).map(o=>({ deliveryId:"upcoming:"+o.id,orderId:o.id,orderNumber:o.orderNumber,deliveryStatus:"UPCOMING",orderStatus:o.status,trackingReference:null,pickup:o.kitchen.name+" · "+o.kitchen.locality,dropoff:o.address.locality+", "+o.address.city,items:o.items.map(i=>i.quantity+" × "+i.mealName),scheduledFor:o.scheduledFor.toISOString(),pickupPinned:o.kitchen.latitude!==null,dropoffPinned:o.address.latitude!==null,isSharingLocation:false,pickupNavigation:null,dropoffNavigation:null,estimatedPay:estimateShares(Number(o.subtotal),Number(o.deliveryFee),orderDistance(o.kitchen,o.address),policy).courier,routeDistanceKm:orderDistance(o.kitchen,o.address),alertAt:o.orderedAt.toISOString(),isUpcoming:true})) }, { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) {
     console.error("Paustik delivery jobs could not load.", error instanceof Error ? error.name : "unknown error");
     return serviceUnavailable();
