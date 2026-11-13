@@ -73,11 +73,12 @@ export function DeliveryWorkspace() {
   }, [refresh]);
 
   useEffect(()=>{const dialog=modal.current;if(offer&&!dialog?.open)dialog?.showModal();if(!offer&&dialog?.open)dialog.close();},[offer]);
-  async function availability(online:boolean,selectedZone?:string){
+  async function availability(online:boolean,selectedZone?:string,useSavedPin=false){
     setAreaBusy(true);setAreaMessage("");
     try {
       let payload:object={isAvailable:false};
-      if(online&&selectedZone){payload={isAvailable:true,zoneId:selectedZone,radiusKm:radius,mealCapacity,consent:true};}
+      if(online&&useSavedPin){payload={isAvailable:true,useSavedPin:true,radiusKm:radius,mealCapacity,consent:true};}
+      else if(online&&selectedZone){payload={isAvailable:true,zoneId:selectedZone,radiusKm:radius,mealCapacity,consent:true};}
       else if(online){
         const position=await new Promise<GeolocationPosition>((resolve,reject)=>navigator.geolocation?navigator.geolocation.getCurrentPosition(resolve,reject,{enableHighAccuracy:true,timeout:15000,maximumAge:0}):reject(new Error("GPS is unavailable. Choose a pickup area below.")));
         if(!Number.isFinite(position.coords.accuracy)||position.coords.accuracy>1000)throw new Error("Your location is too approximate. Enable precise location or choose a pickup area below.");
@@ -211,7 +212,7 @@ export function DeliveryWorkspace() {
       <label>Carrying capacity · meal units<input type="number" min={1} max={30} value={mealCapacity} onChange={e=>setMealCapacity(Number(e.target.value))}/></label>
       <button className="button" type="button" disabled={areaBusy} onClick={()=>void availability(true)}>{areaBusy?"Updating location…":"Use current GPS"}</button>
       {jobs.area?.online&&<button className="plain-button" onClick={()=>void availability(false)} disabled={areaBusy}>Go offline</button>}
-      <details><summary>GPS not accurate? Choose a pickup area</summary><label>Pickup area<select value={zoneId} onChange={e=>setZoneId(e.target.value)}><option value="">Choose a nearby kitchen area</option>{jobs.zones?.map(zone=><option key={zone.id} value={zone.id}>{zone.locality}, {zone.city} · {zone.name}</option>)}</select></label><button type="button" className="button" disabled={areaBusy||!zoneId} onClick={()=>void availability(true,zoneId)}>Use this pickup area</button><p>This changes your offer-search centre only. It does not confirm a pickup or delivery.</p></details>
+      <details><summary>GPS not accurate? Choose a pickup area</summary>{jobs.area?.pin&&<button type="button" className="button button-quiet" disabled={areaBusy} onClick={()=>void availability(true,undefined,true)}>Apply radius to saved area</button>}<label>Pickup area<select value={zoneId} onChange={e=>setZoneId(e.target.value)}><option value="">Choose a nearby kitchen area</option>{jobs.zones?.map(zone=><option key={zone.id} value={zone.id}>{zone.locality}, {zone.city} · {zone.name}</option>)}</select></label><button type="button" className="button" disabled={areaBusy||!zoneId} onClick={()=>void availability(true,zoneId)}>Use this pickup area</button><p>This changes your offer-search centre only. It does not confirm a pickup or delivery.</p></details>
       {areaMessage&&<p className="workspace-message" role="status">{areaMessage}</p>}
       <a href="/school-tiffins">ScooFoo school pickups →</a>
     </section>
