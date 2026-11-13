@@ -1627,3 +1627,5 @@ Object.assign(uiTranslations,{"School tiffins":["स्कूल टिफिन
 Object.assign(uiTranslations, schoolTranslations);
 const lower = Object.fromEntries(Object.entries(uiTranslations).map(([k,v]) => [k.toLowerCase(),v]));
 export function translated(text: string, language: UiLanguage) { return language === "en" ? text : (uiTranslations[text] ?? lower[text.trim().replace(/\s+/g," ").replaceAll("_"," ").toLowerCase()])?.[language === "hi" ? 0 : 1] ?? text; }
+
+Object.assign(uiTranslations,{"Download app":["ऐप डाउनलोड करें","ଆପ୍ ଡାଉନଲୋଡ୍ କରନ୍ତୁ"]});

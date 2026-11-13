@@ -100,3 +100,28 @@ body:has(.app-bottom-nav) .paustik-footer .paustik-footer-columns{display:grid}b
 .editorial-home .eh-hero{padding-inline:max(24px,calc((100% - 1160px)/2))}.sf-shell{width:min(1160px,calc(100% - 48px))}.paustik-footer{padding-inline:24px}
 .role-app-shell .customer-app-header{padding-inline:max(28px,calc((100% - 1064px)/2));border-bottom:0;box-shadow:none}.customer-app-header .app-brand-link img{transform:translateX(-5px)}.role-app-shell:has(.sf-shell) .customer-app-header{padding-inline:max(24px,calc((100% - 1160px)/2))}
 @media(max-width:700px){.site-header .header-inner{width:calc(100% - 40px);padding:6px 0;gap:12px}.site-header .brand-wordmark{transform:translateX(-5px)}.editorial-home .eh-hero{padding-inline:20px}.sf-shell{width:calc(100% - 40px)}.paustik-footer{padding-inline:20px}.role-app-shell .customer-app-header{padding-inline:16px;gap:8px}.customer-app-header .app-brand-link img{transform:translateX(-4px)}.role-app-shell:has(.sf-shell) .customer-app-header{padding-inline:20px}}
+
+/* A single opening video canvas, with the navigation floating above it. */
+body:has(.editorial-home)>.site-header,
+body:has(.editorial-home) .site-header{position:absolute;inset:0 0 auto;width:100%;z-index:40;background:transparent;backdrop-filter:none;border:0}
+body:has(.editorial-home) .site-header .brand{background:transparent;border-radius:0;padding:0 7px;flex-shrink:0}
+body:has(.editorial-home) .site-header .brand-wordmark{background:transparent;filter:drop-shadow(0 0 .65px #fffaf4) drop-shadow(0 1px 1.2px #ffffff66)}
+body:has(.editorial-home) .site-header .header-nav>a:not(.sf-nav-link){color:#fffaf4;text-shadow:0 1px 5px #26071180}
+body:has(.editorial-home) .site-header .header-nav>a:not(.sf-nav-link):hover{color:#fff;text-decoration:underline;text-underline-offset:5px}
+body:has(.editorial-home) .site-header .language-selector select,
+body:has(.editorial-home) .site-header .mobile-nav>summary{background:#fffaf4ed;color:#193d50;border-color:#fffaf480}
+body:has(.editorial-home) .editorial-home .eh-hero{margin-top:0;padding-top:150px;padding-bottom:72px;min-height:690px;border-radius:0}
+.site-header .sf-nav-link{border-radius:8px;background:#328168;min-height:42px}
+.site-header .sf-nav-link:hover,.site-header .sf-nav-link:focus-visible{background:#193d50;color:#fff}
+.site-header .sf-nav-link:hover .sf-nav-wordmark>span,.site-header .sf-nav-link:focus-visible .sf-nav-wordmark>span{color:#a9e4cf}
+.site-header .header-actions .button,.site-header .language-selector select,.site-header .mobile-nav>summary{border-radius:8px}
+@media(max-width:700px){
+ body:has(.editorial-home) .editorial-home .eh-hero{padding-top:124px;padding-bottom:68px;min-height:650px}
+ body:has(.editorial-home) .site-header .header-inner{width:calc(100% - 32px);gap:8px;display:flex;flex-wrap:nowrap}
+ body:has(.editorial-home) .site-header .brand{padding:0 5px}
+ body:has(.editorial-home) .site-header .brand-wordmark{width:125px;height:60px}
+ body:has(.editorial-home) .site-header .header-controls{margin-left:auto;gap:8px}
+ body:has(.editorial-home) .site-header .language-selector select{width:92px;padding-inline:8px}
+ body:has(.editorial-home) .site-header .mobile-nav>summary{padding-inline:10px}
+}
+@media(max-width:360px){body:has(.editorial-home) .site-header .brand-wordmark{width:106px}body:has(.editorial-home) .site-header .header-controls{gap:5px}}

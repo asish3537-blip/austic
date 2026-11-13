@@ -14,7 +14,7 @@ const mealWays=[
 ];
 export function EditorialHome(){return <main className="editorial-home">
  <section className="eh-hero eh-container" aria-labelledby="eh-title">
-  <HeroFoodVideo/><div className="eh-hero-copy"><span className="eh-eyebrow"><UiText text="From a Mother Kitchen to your table"/></span><h1 id="eh-title"><UiText text="A little home."/><br/><UiText text="In every"/>{" "}<em><UiText text="meal."/></em></h1><p><UiText text="Home-style food, lovingly cooked by mothers in your neighbourhood. Find your everyday comfort, one fresh meal at a time."/></p><div className="eh-actions"><Link className="button" href="/install"><UiText text="Get the app"/> <span aria-hidden="true">↓</span></Link><Link className="hero-secondary-link" href="/app"><UiText text="Explore meals"/> <span aria-hidden="true">↗</span></Link></div><p className="hero-platform-note"><UiText text="Android download · iPhone & web app"/></p></div>
+  <HeroFoodVideo/><div className="eh-hero-copy"><span className="eh-eyebrow"><UiText text="From a Mother Kitchen to your table"/></span><h1 id="eh-title"><UiText text="A little home."/><br/><UiText text="In every"/>{" "}<em><UiText text="meal."/></em></h1><p><UiText text="Home-style food, lovingly cooked by mothers in your neighbourhood. Find your everyday comfort, one fresh meal at a time."/></p><div className="eh-actions"><Link className="button" href="/install"><UiText text="Download app"/> <span aria-hidden="true">↓</span></Link><Link className="hero-secondary-link" href="/scoofoo"><UiText text="Explore ScooFoo"/> <span aria-hidden="true">↗</span></Link></div><p className="hero-platform-note"><UiText text="Android download · iPhone & web app"/></p></div>
 
  </section>
  <ScoofooPromo/>
