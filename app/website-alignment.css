@@ -8,6 +8,7 @@ button,input,select,textarea{font-family:inherit}
 h1,h2,h3,.brand,.display-font{font-family:inherit}
 .paustik-native-wordmark{display:inline-flex;align-items:center;gap:6px;color:var(--paustik-red);white-space:nowrap;line-height:1.3;max-width:100%;height:auto}
 .paustik-native-wordmark svg{width:35px;height:40px;flex-shrink:0}.paustik-native-wordmark strong{font-family:'Paustik Odia','Nirmala UI',sans-serif;font-size:34px;font-weight:800;letter-spacing:-1px}.paustik-native-wordmark strong span{color:var(--paustik-green)}
+.paustik-hindi-wordmark strong{font-family:'Paustik Hindi','Nirmala UI',sans-serif;letter-spacing:-.03em}
 .site-header .header-inner{min-height:76px;padding-block:6px}.site-header .brand-wordmark{width:180px;height:64px;object-fit:contain}.site-header .paustik-native-wordmark{height:64px}
 .site-header .header-actions .button,.editorial-home .button{background:var(--paustik-red);border-color:var(--paustik-red);color:#fff}
 .editorial-home{--eh-ink:#4f2027;--eh-clay:#bd2832;--eh-paper:#fffaf3;--eh-muted:#716061;font-family:inherit}
