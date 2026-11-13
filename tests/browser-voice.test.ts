@@ -5,6 +5,9 @@ class Recognition implements BrowserRecognition{
  onresult:((e:RecognitionResultEvent)=>void)|null=null;onerror:((e:{error:string})=>void)|null=null;onend:(()=>void)|null=null;
  constructor(){Recognition.instance=this;}start(){this.started=true;}abort(){this.aborted=true;}
 }
+test("voice capture follows the selected Hindi or Odia language",()=>{
+ for(const language of ["hi-IN","or-IN"]){const stop=startVoiceCapture(Recognition,{text:()=>{},error:()=>{},ended:()=>{}},20000,language);assert.equal(Recognition.instance.lang,language);stop();}
+});
 test("voice is single-utterance, transcribes for review, and stops without an app action",()=>{
  const words:string[]=[],errors:string[]=[];let ended=0;const stop=startVoiceCapture(Recognition,{text:t=>words.push(t),error:e=>errors.push(e),ended:()=>ended++});const r=Recognition.instance;
  assert(r.started);assert.equal(r.lang,"en-IN");assert.equal(r.continuous,false);assert.equal(r.interimResults,false);r.onresult?.({results:[[{transcript:"Where are my meals?"}]]});assert.deepEqual(words,["Where are my meals?"]);assert(r.aborted);assert.equal(ended,1);stop();assert.equal(ended,1);assert.equal(r.onresult,null);assert.deepEqual(errors,[]);

@@ -3,7 +3,7 @@ import { UiText } from "@/components/ui-language";
 import { requireAuthenticatedUser } from "@/lib/auth";
 
 import Link from "next/link";
-import Image from "next/image";
+import { BrandWordmark } from "@/components/brand-wordmark";
 import {AccountMenu} from "@/components/account-menu";
 
 
@@ -16,7 +16,7 @@ const mobileNavigation = {
 
 export default async function ProtectedLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const user = await requireAuthenticatedUser();
-  if(user.role==="CUSTOMER")return <div className="customer-app-shell"><header className="customer-app-header"><Link href="/customer/dashboard" aria-label="Paustik app home"><Image src="/assets/paustik-mother-wordmark.webp" alt="Paustik" width={160} height={78} priority/></Link><AccountMenu name={user.name} role={user.role}/></header>{children}<nav className="app-bottom-nav" aria-label="customer app navigation">{mobileNavigation.CUSTOMER.map(item=><Link href={item.href} key={item.label}><span aria-hidden="true">{item.icon}</span><UiText text={item.label}/></Link>)}</nav></div>;
+  if(user.role==="CUSTOMER")return <div className="customer-app-shell"><header className="customer-app-header"><Link href="/customer/dashboard" aria-label="Paustik app home"><BrandWordmark width={160} height={78} priority/></Link><AccountMenu name={user.name} role={user.role}/></header>{children}<nav className="app-bottom-nav" aria-label="customer app navigation">{mobileNavigation.CUSTOMER.map(item=><Link href={item.href} key={item.label}><span aria-hidden="true">{item.icon}</span><UiText text={item.label}/></Link>)}</nav></div>;
   return <>
     <div className="dashboard-topline"><span>{user.name} <span className="muted">· {user.role.replaceAll("_", " ").toLowerCase()}</span></span><AccountMenu name={user.name} role={user.role}/></div>
     {user.role !== "ADMIN" && user.status === "ACTIVE" && <div className="notification-toolbar"><NotificationCenter/></div>}

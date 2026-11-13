@@ -18,3 +18,5 @@ export function LanguageSelector() {
   const ready = useSyncExternalStore(hydrationSubscribe, () => true, () => false);
   return <label className="language-selector" htmlFor={id}><span>Language / ଭାଷା</span><select id={id} value={language} disabled={!ready} onChange={e => { try { localStorage.setItem(key, e.target.value); document.cookie = `${key}=${e.target.value}; Path=/; Max-Age=31536000; SameSite=Lax`; } catch {} window.dispatchEvent(new Event("paustik-language")); }}><option value="en">English</option><option value="hi">हिन्दी</option><option value="or">ଓଡ଼ିଆ</option></select></label>;
 }
+
+export function WebsiteSearchInput(){const {t}=useUiLanguage();return <input id="hero-food-query" name="q" placeholder={t("Search a kitchen, cuisine or dish")} maxLength={100}/>;}

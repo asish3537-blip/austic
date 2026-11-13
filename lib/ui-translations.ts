@@ -1013,5 +1013,609 @@ Object.assign(uiTranslations,{
   ]
 });
 Object.assign(uiTranslations, {Jobs:["डिलीवरी के काम","ଡେଲିଭରି କାମ"],Route:["मेरा रास्ता","ମୋ ରାସ୍ତା"]});
+Object.assign(uiTranslations,{
+  "Customers": [
+    "ग्राहक",
+    "ଗ୍ରାହକ"
+  ],
+  "Mother Kitchens": [
+    "माँ की रसोई",
+    "ମା’ଙ୍କ ରୋଷେଇଘର"
+  ],
+  "Delivery Partners": [
+    "डिलीवरी साथी",
+    "ଡେଲିଭରି ସାଥୀ"
+  ],
+  "Paustik": [
+    "Paustik",
+    "ପୌଷ୍ଟିକ"
+  ],
+  "Made by mothers. Made for your everyday.": [
+    "माँ के हाथों से। आपके हर दिन के लिए।",
+    "ମା’ଙ୍କ ହାତରେ ତିଆରି। ଆପଣଙ୍କ ପ୍ରତିଦିନ ପାଇଁ।"
+  ],
+  "Meet Paustik ↗": [
+    "Paustik को जानें ↗",
+    "ପୌଷ୍ଟିକକୁ ଜାଣନ୍ତୁ ↗"
+  ],
+  "From a Mother Kitchen to your table": [
+    "माँ की रसोई से आपकी थाली तक",
+    "ମା’ଙ୍କ ରୋଷେଇଘରୁ ଆପଣଙ୍କ ଥାଳି ପର୍ଯ୍ୟନ୍ତ"
+  ],
+  "A little home.": [
+    "घर का अपनापन।",
+    "ଘରର ସେହି ଆପଣାପଣ।"
+  ],
+  "In every": [
+    "हर",
+    "ପ୍ରତି"
+  ],
+  "meal.": [
+    "निवाले में।",
+    "ଭୋଜନରେ।"
+  ],
+  "Home-style food, lovingly cooked by mothers in your neighbourhood. Find your everyday comfort, one fresh meal at a time.": [
+    "आपके पड़ोस की माताओं के हाथों का प्यार भरा, घर जैसा खाना। हर दिन ताज़ा भोजन और घर का अपनापन।",
+    "ଆପଣଙ୍କ ପଡ଼ୋଶୀ ମା’ମାନଙ୍କ ସ୍ନେହଭରା ଘରୋଇ ଭୋଜନ। ପ୍ରତିଦିନ ତାଜା ଖାଦ୍ୟରେ ଘରର ଆପଣାପଣ।"
+  ],
+  "Find your next meal": [
+    "अपना भोजन चुनें",
+    "ନିଜ ଭୋଜନ ବାଛନ୍ତୁ"
+  ],
+  "How Paustik works ↗": [
+    "Paustik कैसे काम करता है ↗",
+    "ପୌଷ୍ଟିକ କିପରି କାମ କରେ ↗"
+  ],
+  "Find your neighbourhood flavour": [
+    "पड़ोस का स्वाद खोजें",
+    "ପଡ଼ୋଶୀଙ୍କ ସ୍ୱାଦ ଖୋଜନ୍ତୁ"
+  ],
+  "Search a kitchen, cuisine or dish": [
+    "रसोई या पसंद का खाना खोजें",
+    "ରୋଷେଇଘର ବା ପସନ୍ଦର ଖାଦ୍ୟ ଖୋଜନ୍ତୁ"
+  ],
+  "Find meals": [
+    "भोजन खोजें",
+    "ଭୋଜନ ଖୋଜନ୍ତୁ"
+  ],
+  "Good food. Greater purpose.": [
+    "अच्छा खाना। बेहतर अवसर।",
+    "ଭଲ ଭୋଜନ। ବଡ଼ ଉଦ୍ଦେଶ୍ୟ।"
+  ],
+  "Supporting mothers on their entrepreneurial journey.": [
+    "माताओं के अपने व्यवसाय की शुरुआत में साथ।",
+    "ମା’ମାନଙ୍କ ଉଦ୍ୟୋଗୀ ଯାତ୍ରାରେ ସାଥୀ।"
+  ],
+  "Home-style": [
+    "घर जैसा",
+    "ଘର ପରି"
+  ],
+  "with care": [
+    "प्यार से",
+    "ଯତ୍ନରେ"
+  ],
+  "From her kitchen": [
+    "माँ की रसोई से",
+    "ମା’ଙ୍କ ରୋଷେଇଘରୁ"
+  ],
+  "A little comfort, made with care.": [
+    "हर भोजन में थोड़ा अपनापन।",
+    "ପ୍ରତି ଭୋଜନରେ କିଛି ଆପଣାପଣ।"
+  ],
+  "✳ Thoughtfully prepared": [
+    "✳ ध्यान से तैयार",
+    "✳ ଯତ୍ନରେ ପ୍ରସ୍ତୁତ"
+  ],
+  "♡ Mother-led kitchens": [
+    "♡ माताओं की रसोई",
+    "♡ ମା’ମାନଙ୍କ ରୋଷେଇଘର"
+  ],
+  "◷ Fits your everyday": [
+    "◷ हर दिन के लिए",
+    "◷ ପ୍ରତିଦିନ ପାଇଁ"
+  ],
+  "⌂ A neighbourhood connection": [
+    "⌂ अपने पड़ोस से जुड़ें",
+    "⌂ ନିଜ ପଡ଼ୋଶୀଙ୍କ ସହ ସମ୍ପର୍କ"
+  ],
+  "Your daily dose of comfort": [
+    "हर दिन घर का स्वाद",
+    "ପ୍ରତିଦିନ ଘରର ସ୍ୱାଦ"
+  ],
+  "Choose your kitchen.": [
+    "अपनी रसोई चुनें।",
+    "ନିଜ ରୋଷେଇଘର ବାଛନ୍ତୁ।"
+  ],
+  "Find your kind of food.": [
+    "अपनी पसंद का खाना पाएं।",
+    "ନିଜ ପସନ୍ଦର ଭୋଜନ ପାଆନ୍ତୁ।"
+  ],
+  "A little everyday comfort.": [
+    "हर दिन थोड़ा अपनापन।",
+    "ପ୍ରତିଦିନ କିଛି ଆପଣାପଣ।"
+  ],
+  "Choose an available meal when you need it. No subscription required.": [
+    "ज़रूरत के समय उपलब्ध भोजन चुनें। सदस्यता ज़रूरी नहीं।",
+    "ଦରକାର ସମୟରେ ଉପଲବ୍ଧ ଭୋଜନ ବାଛନ୍ତୁ। ସବସ୍କ୍ରିପସନ୍ ଦରକାର ନାହିଁ।"
+  ],
+  "Explore one-time meals": [
+    "एक बार का भोजन देखें",
+    "ଏକ ଥରର ଭୋଜନ ଦେଖନ୍ତୁ"
+  ],
+  "Make it a routine": [
+    "हर दिन की योजना",
+    "ପ୍ରତିଦିନର ଯୋଜନା"
+  ],
+  "Your week, a little easier.": [
+    "आपका सप्ताह, थोड़ा आसान।",
+    "ଆପଣଙ୍କ ସପ୍ତାହ, କିଛି ସହଜ।"
+  ],
+  "Find your favourite Mother Kitchen and plan 3–7 meal days at a time.": [
+    "अपनी पसंद की माँ की रसोई चुनें और 3–7 दिन का भोजन तय करें।",
+    "ପସନ୍ଦର ମା’ଙ୍କ ରୋଷେଇଘର ବାଛି ୩–୭ ଦିନର ଭୋଜନ ଯୋଜନା କରନ୍ତୁ।"
+  ],
+  "Explore meal subscriptions": [
+    "भोजन की योजनाएं देखें",
+    "ଭୋଜନ ଯୋଜନା ଦେଖନ୍ତୁ"
+  ],
+  "Find your flavour": [
+    "अपना स्वाद खोजें",
+    "ନିଜ ସ୍ୱାଦ ଖୋଜନ୍ତୁ"
+  ],
+  "Something that feels like home.": [
+    "कुछ ऐसा, जो घर जैसा लगे।",
+    "ଏମିତି କିଛି, ଯାହା ଘର ପରି ଲାଗେ।"
+  ],
+  "Browse breakfast, lunch and light dinner. Check each kitchen’s latest menu.": [
+    "नाश्ता, दोपहर और हल्का रात का भोजन देखें। हर रसोई का नया मेन्यू जांचें।",
+    "ଜଳଖିଆ, ମଧ୍ୟାହ୍ନ ଓ ହାଲୁକା ରାତ୍ରି ଭୋଜନ ଦେଖନ୍ତୁ। ପ୍ରତି ରୋଷେଇଘରର ନୂଆ ମେନୁ ଯାଞ୍ଚ କରନ୍ତୁ।"
+  ],
+  "Discover Mother Kitchens": [
+    "माँ की रसोई खोजें",
+    "ମା’ଙ୍କ ରୋଷେଇଘର ଖୋଜନ୍ତୁ"
+  ],
+  "Meal inspiration pictured. Actual dishes and availability vary by kitchen.": [
+    "तस्वीरें उदाहरण हैं। असली व्यंजन और उपलब्धता रसोई के अनुसार बदलते हैं।",
+    "ଛବିଗୁଡ଼ିକ ଉଦାହରଣ। ପ୍ରକୃତ ଭୋଜନ ଓ ଉପଲବ୍ଧତା ରୋଷେଇଘର ଅନୁଯାୟୀ ବଦଳେ।"
+  ],
+  "Simple, clear starting prices": [
+    "आसान और स्पष्ट शुरुआती कीमतें",
+    "ସହଜ ଓ ସ୍ପଷ୍ଟ ଆରମ୍ଭ ମୂଲ୍ୟ"
+  ],
+  "Find the menu that’s right for you.": [
+    "अपने लिए सही मेन्यू चुनें।",
+    "ନିଜ ପାଇଁ ଠିକ୍ ମେନୁ ବାଛନ୍ତୁ।"
+  ],
+  "Food price per serving. Delivery and the total are shown in the app.": [
+    "प्रति भोजन की कीमत। डिलीवरी शुल्क और कुल राशि ऐप में दिखेंगे।",
+    "ପ୍ରତି ଭୋଜନର ମୂଲ୍ୟ। ଡେଲିଭରି ଦେୟ ଓ ମୋଟ ରାଶି ଆପ୍‌ରେ ଦେଖାଯିବ।"
+  ],
+  "Less planning. More living.": [
+    "कम चिंता। आसान दिन।",
+    "କମ୍ ଚିନ୍ତା। ସହଜ ଦିନ।"
+  ],
+  "Your next meal, made simple.": [
+    "अगला भोजन, आसानी से।",
+    "ପରବର୍ତ୍ତୀ ଭୋଜନ, ସହଜରେ।"
+  ],
+  "Find your comfort.": [
+    "घर का स्वाद खोजें।",
+    "ଘରର ସ୍ୱାଦ ଖୋଜନ୍ତୁ।"
+  ],
+  "Discover the mothers cooking near you and explore their available menus.": [
+    "पास की माताओं की रसोई और उनके उपलब्ध मेन्यू देखें।",
+    "ପାଖରେ ରୋଷେଇ କରୁଥିବା ମା’ମାନଙ୍କୁ ଓ ତାଙ୍କ ଉପଲବ୍ଧ ମେନୁ ଦେଖନ୍ତୁ।"
+  ],
+  "Make it your routine.": [
+    "इसे हर दिन का हिस्सा बनाएं।",
+    "ଏହାକୁ ପ୍ରତିଦିନର ଅଂଶ କରନ୍ତୁ।"
+  ],
+  "Choose a one-time meal or reserve 3–7 days from your favourite kitchen.": [
+    "एक बार का भोजन लें या पसंद की रसोई से 3–7 दिन बुक करें।",
+    "ଏକ ଥରର ଭୋଜନ ନିଅନ୍ତୁ ବା ପସନ୍ଦର ରୋଷେଇଘରୁ ୩–୭ ଦିନ ବୁକ୍ କରନ୍ତୁ।"
+  ],
+  "Follow it to your door.": [
+    "दरवाज़े तक स्थिति देखें।",
+    "ଘର ଦ୍ୱାର ପର୍ଯ୍ୟନ୍ତ ସ୍ଥିତି ଦେଖନ୍ତୁ।"
+  ],
+  "Check preparation, pickup and delivery updates in your app.": [
+    "ऐप में तैयारी, पिकअप और डिलीवरी की स्थिति देखें।",
+    "ଆପ୍‌ରେ ପ୍ରସ୍ତୁତି, ପିକଅପ୍ ଓ ଡେଲିଭରି ସ୍ଥିତି ଦେଖନ୍ତୁ।"
+  ],
+  "Made with care.": [
+    "प्यार से बनाया।",
+    "ଯତ୍ନରେ ତିଆରି।"
+  ],
+  "Shared with love.": [
+    "अपनापन परोसा।",
+    "ସ୍ନେହରେ ପରିବେଷିତ।"
+  ],
+  "Her recipes. Her own beginning.": [
+    "उनके व्यंजन। उनकी नई शुरुआत।",
+    "ତାଙ୍କ ରୋଷେଇ। ତାଙ୍କ ନିଜ ଆରମ୍ଭ।"
+  ],
+  "Paustik for Mother Kitchen Partners": [
+    "माँ की रसोई के साथ Paustik",
+    "ମା’ଙ୍କ ରୋଷେଇଘର ସହ ପୌଷ୍ଟିକ"
+  ],
+  "Behind every kitchen,": [
+    "हर रसोई के पीछे,",
+    "ପ୍ରତି ରୋଷେଇଘର ପଛରେ,"
+  ],
+  "a mother with a dream.": [
+    "एक माँ का सपना।",
+    "ଜଣେ ମା’ଙ୍କ ସ୍ୱପ୍ନ।"
+  ],
+  "Turn your cooking into an opportunity, close to home. Share your menu with your neighbourhood, manage the orders you can take, and build your own food business.": [
+    "अपनी रसोई से नया अवसर बनाएं। पड़ोस में मेन्यू साझा करें, अपनी क्षमता के अनुसार ऑर्डर लें और अपना भोजन व्यवसाय शुरू करें।",
+    "ନିଜ ରୋଷେଇରୁ ନୂଆ ସୁଯୋଗ ସୃଷ୍ଟି କରନ୍ତୁ। ପଡ଼ୋଶୀଙ୍କ ସହ ମେନୁ ବାଣ୍ଟନ୍ତୁ, ନିଜ କ୍ଷମତା ଅନୁଯାୟୀ ଅର୍ଡର୍ ନିଅନ୍ତୁ ଓ ନିଜ ଖାଦ୍ୟ ବ୍ୟବସାୟ ଆରମ୍ଭ କରନ୍ତୁ।"
+  ],
+  "Good food creates connections. Together, we can create more opportunities for mothers.": [
+    "अच्छा खाना लोगों को जोड़ता है। मिलकर माताओं के लिए नए अवसर बनाएं।",
+    "ଭଲ ଖାଦ୍ୟ ସମ୍ପର୍କ ଗଢ଼େ। ଏକାଠି ମା’ମାନଙ୍କ ପାଇଁ ନୂଆ ସୁଯୋଗ ସୃଷ୍ଟି କରିବା।"
+  ],
+  "Become a Mother Kitchen Partner ↗": [
+    "माँ की रसोई के साथी बनें ↗",
+    "ମା’ଙ୍କ ରୋଷେଇଘର ସାଥୀ ହୁଅନ୍ତୁ ↗"
+  ],
+  "Paustik for Delivery Partners": [
+    "डिलीवरी साथियों के लिए Paustik",
+    "ଡେଲିଭରି ସାଥୀଙ୍କ ପାଇଁ ପୌଷ୍ଟିକ"
+  ],
+  "Deliver nearby.": [
+    "अपने आसपास पहुंचाएं।",
+    "ନିଜ ପାଖରେ ପହଞ୍ଚାନ୍ତୁ।"
+  ],
+  "Be part of something good.": [
+    "एक अच्छे काम के साथी बनें।",
+    "ଏକ ଭଲ କାମର ସାଥୀ ହୁଅନ୍ତୁ।"
+  ],
+  "Connect local kitchens with their neighbours. Find pickup opportunities, follow your deliveries and see your earning estimates in the app.": [
+    "पास की रसोई को पड़ोस से जोड़ें। पिकअप के अवसर, डिलीवरी की स्थिति और अनुमानित कमाई ऐप में देखें।",
+    "ପାଖର ରୋଷେଇଘରକୁ ପଡ଼ୋଶୀଙ୍କ ସହ ଯୋଡ଼ନ୍ତୁ। ପିକଅପ୍ ସୁଯୋଗ, ଡେଲିଭରି ସ୍ଥିତି ଓ ଆନୁମାନିକ ରୋଜଗାର ଆପ୍‌ରେ ଦେଖନ୍ତୁ।"
+  ],
+  "Become a Delivery Partner ↗": [
+    "डिलीवरी साथी बनें ↗",
+    "ଡେଲିଭରି ସାଥୀ ହୁଅନ୍ତୁ ↗"
+  ],
+  "A little home. In your pocket.": [
+    "घर का अपनापन। अब आपकी जेब में।",
+    "ଘରର ଆପଣାପଣ। ଏବେ ଆପଣଙ୍କ ପକେଟ୍‌ରେ।"
+  ],
+  "Your everyday comfort,": [
+    "हर दिन का अपनापन,",
+    "ପ୍ରତିଦିନର ଆପଣାପଣ,"
+  ],
+  "wherever you are.": [
+    "आप जहां भी हों।",
+    "ଆପଣ ଯେଉଁଠି ଥାଆନ୍ତୁ।"
+  ],
+  "Find nearby Mother Kitchens, choose your meals and follow every order. Your Paustik day, all in one place.": [
+    "पास की माँ की रसोई खोजें, भोजन चुनें और हर ऑर्डर की स्थिति देखें। सब कुछ एक जगह।",
+    "ପାଖର ମା’ଙ୍କ ରୋଷେଇଘର ଖୋଜନ୍ତୁ, ଭୋଜନ ବାଛନ୍ତୁ ଓ ପ୍ରତି ଅର୍ଡର୍ ସ୍ଥିତି ଦେଖନ୍ତୁ। ସବୁକିଛି ଗୋଟିଏ ସ୍ଥାନରେ।"
+  ],
+  "For Android · direct download": [
+    "Android के लिए · सीधे डाउनलोड करें",
+    "Android ପାଇଁ · ସିଧା ଡାଉନଲୋଡ୍"
+  ],
+  "Download the app": [
+    "ऐप डाउनलोड करें",
+    "ଆପ୍ ଡାଉନଲୋଡ୍ କରନ୍ତୁ"
+  ],
+  "For iPhone & web": [
+    "iPhone और वेब के लिए",
+    "iPhone ଓ ୱେବ୍ ପାଇଁ"
+  ],
+  "Add to Home Screen": [
+    "होम स्क्रीन पर जोड़ें",
+    "ହୋମ୍ ସ୍କ୍ରିନ୍‌ରେ ଯୋଡ଼ନ୍ତୁ"
+  ],
+  "Android v1.3 · Android 7 or newer. On iPhone, install the web app from Safari.": [
+    "Android v1.3 · Android 7 या नया। iPhone पर Safari से वेब ऐप इंस्टॉल करें।",
+    "Android v1.3 · Android 7 ବା ନୂଆ। iPhone ରେ Safari ରୁ ୱେବ୍ ଆପ୍ ଇନଷ୍ଟଲ୍ କରନ୍ତୁ।"
+  ],
+  "Prefer your browser? Open the web app →": [
+    "ब्राउज़र में इस्तेमाल करें →",
+    "ବ୍ରାଉଜର୍‌ରେ ବ୍ୟବହାର କରନ୍ତୁ →"
+  ],
+  "Take Paustik with you": [
+    "Paustik को साथ रखें",
+    "ପୌଷ୍ଟିକକୁ ସାଥିରେ ରଖନ୍ତୁ"
+  ],
+  "Scan to get": [
+    "स्कैन करके पाएं",
+    "ସ୍କାନ୍ କରି ପାଆନ୍ତୁ"
+  ],
+  "the app.": [
+    "अपना ऐप।",
+    "ନିଜ ଆପ୍।"
+  ],
+  "Android download": [
+    "Android डाउनलोड",
+    "Android ଡାଉନଲୋଡ୍"
+  ],
+  "iPhone Home Screen install": [
+    "iPhone होम स्क्रीन पर जोड़ें",
+    "iPhone ହୋମ୍ ସ୍କ୍ରିନ୍‌ରେ ଯୋଡ଼ନ୍ତୁ"
+  ],
+  "Open installation guide ↗": [
+    "इंस्टॉल करने का तरीका ↗",
+    "ଇନଷ୍ଟଲ୍ କରିବା ପଦ୍ଧତି ↗"
+  ],
+  "Scan with your phone’s camera · paustik.in/install": [
+    "फोन के कैमरे से स्कैन करें · paustik.in/install",
+    "ଫୋନ୍ କ୍ୟାମେରାରେ ସ୍କାନ୍ କରନ୍ତୁ · paustik.in/install"
+  ],
+  "A little more clarity": [
+    "कुछ और जानकारी",
+    "ଆଉ କିଛି ଜାଣନ୍ତୁ"
+  ],
+  "A few things you may be wondering.": [
+    "आपके कुछ सवाल।",
+    "ଆପଣଙ୍କ କିଛି ପ୍ରଶ୍ନ।"
+  ],
+  "Can I order just one meal?": [
+    "क्या मैं एक बार का भोजन ले सकता हूँ?",
+    "ମୁଁ କେବଳ ଏକ ଥରର ଭୋଜନ ନେଇପାରିବି କି?"
+  ],
+  "Yes. Choose One-time meals in the app to see published dishes and available servings. A new booking needs an eligible delivery partner online for that kitchen.": [
+    "हाँ। ऐप में एक बार का भोजन चुनें। नए ऑर्डर के लिए उस रसोई में उपयुक्त डिलीवरी साथी ऑनलाइन होना चाहिए।",
+    "ହଁ। ଆପ୍‌ରେ ଏକ ଥରର ଭୋଜନ ବାଛନ୍ତୁ। ନୂଆ ଅର୍ଡର୍ ପାଇଁ ସେହି ରୋଷେଇଘରର ଉପଯୁକ୍ତ ଡେଲିଭରି ସାଥୀ ଅନଲାଇନ୍ ରହିବା ଆବଶ୍ୟକ।"
+  ],
+  "How do meal subscriptions work?": [
+    "भोजन सदस्यता कैसे काम करती है?",
+    "ଭୋଜନ ସବସ୍କ୍ରିପସନ୍ କିପରି କାମ କରେ?"
+  ],
+  "Choose 3–7 different meal days from one Mother Kitchen within a week. Review your food, delivery and wallet totals before reserving. Renew manually when you’re ready.": [
+    "एक सप्ताह में एक रसोई से 3–7 अलग दिन चुनें। भोजन, डिलीवरी और वॉलेट राशि जांचकर बुक करें। अगला सप्ताह स्वयं नवीनीकृत करें।",
+    "ଗୋଟିଏ ସପ୍ତାହରେ ଗୋଟିଏ ରୋଷେଇଘରୁ ୩–୭ଟି ଭିନ୍ନ ଦିନ ବାଛନ୍ତୁ। ଭୋଜନ, ଡେଲିଭରି ଓ ୱାଲେଟ୍ ରାଶି ଯାଞ୍ଚ କରି ବୁକ୍ କରନ୍ତୁ। ପରବର୍ତ୍ତୀ ସପ୍ତାହ ନିଜେ ନବୀକରଣ କରନ୍ତୁ।"
+  ],
+  "Will a kitchen deliver to my neighbourhood?": [
+    "क्या रसोई मेरे इलाके में पहुंचाएगी?",
+    "ରୋଷେଇଘର ମୋ ଅଞ୍ଚଳରେ ପହଞ୍ଚାଇବ କି?"
+  ],
+  "Set your delivery pin in the app. Paustik checks the kitchen’s 25 km delivery area and shows current booking availability. Existing subscribed deliveries remain scheduled when partners go offline.": [
+    "ऐप में डिलीवरी की जगह सहेजें। Paustik रसोई का 25 किमी क्षेत्र जांचता है। डिलीवरी साथी ऑफलाइन होने पर पहले से बुक भोजन का समय बना रहता है।",
+    "ଆପ୍‌ରେ ଡେଲିଭରି ଅବସ୍ଥାନ ସଞ୍ଚୟ କରନ୍ତୁ। ପୌଷ୍ଟିକ ରୋଷେଇଘରର ୨୫ କିମି ଅଞ୍ଚଳ ଯାଞ୍ଚ କରେ। ସାଥୀ ଅଫଲାଇନ୍ ହେଲେ ପୂର୍ବ ବୁକ୍ ଭୋଜନର ନିର୍ଦ୍ଧାରିତ ସମୟ ରହିଥାଏ।"
+  ],
+  "How can I join as a Mother Kitchen Partner?": [
+    "माँ की रसोई का साथी कैसे बनें?",
+    "ମା’ଙ୍କ ରୋଷେଇଘର ସାଥୀ କିପରି ହେବି?"
+  ],
+  "Create a Mother account": [
+    "माँ का खाता बनाएं",
+    "ମା’ଙ୍କ ଖାତା ଖୋଲନ୍ତୁ"
+  ],
+  ", share your cooking specialties and kitchen details, then complete the approval steps shown in your workspace.": [
+    ", अपने व्यंजन और रसोई की जानकारी भरें, फिर कार्यक्षेत्र में दिखाए मंज़ूरी के चरण पूरे करें।",
+    ", ନିଜ ରୋଷେଇ ଓ ରୋଷେଇଘର ବିବରଣୀ ଦିଅନ୍ତୁ, ତା’ପରେ ଦେଖାଯାଇଥିବା ଅନୁମୋଦନ ପଦକ୍ଷେପ ପୂରା କରନ୍ତୁ।"
+  ],
+  "A little home in every meal.": [
+    "हर भोजन में घर का अपनापन।",
+    "ପ୍ରତି ଭୋଜନରେ ଘରର ଆପଣାପଣ।"
+  ],
+  "Find your Mother Kitchen ↗": [
+    "अपनी माँ की रसोई खोजें ↗",
+    "ନିଜ ମା’ଙ୍କ ରୋଷେଇଘର ଖୋଜନ୍ତୁ ↗"
+  ],
+  "Made for the way you eat": [
+    "आपकी पसंद के अनुसार",
+    "ଆପଣଙ୍କ ପସନ୍ଦ ଅନୁଯାୟୀ"
+  ],
+  "What’s waiting for you": [
+    "आपके लिए क्या है",
+    "ଆପଣଙ୍କ ପାଇଁ କ’ଣ ଅଛି"
+  ],
+  "on the Paustik app?": [
+    "Paustik ऐप में?",
+    "ପୌଷ୍ଟିକ ଆପ୍‌ରେ?"
+  ],
+  "Everyday meals, occasional cravings and homemade favourites, all close to home.": [
+    "हर दिन का भोजन और घर के पसंदीदा व्यंजन, आपके पास।",
+    "ପ୍ରତିଦିନର ଭୋଜନ ଓ ପସନ୍ଦର ଘରୋଇ ଖାଦ୍ୟ, ଆପଣଙ୍କ ପାଖରେ।"
+  ],
+  "Any day you choose.": [
+    "जिस दिन आप चाहें।",
+    "ଆପଣ ଯେଉଁ ଦିନ ଚାହାନ୍ତି।"
+  ],
+  "Find your next meal →": [
+    "अपना भोजन चुनें →",
+    "ନିଜ ଭୋଜନ ବାଛନ୍ତୁ →"
+  ],
+  "Illustrative app preview": [
+    "ऐप का उदाहरण",
+    "ଆପ୍‌ର ଉଦାହରଣ"
+  ],
+  "One-time specials": [
+    "एक दिन के खास व्यंजन",
+    "ଗୋଟିଏ ଦିନର ବିଶେଷ ଖାଦ୍ୟ"
+  ],
+  "Offers & wallet": [
+    "ऑफ़र और वॉलेट",
+    "ଅଫର୍ ଓ ୱାଲେଟ୍"
+  ],
+  "Order tracking": [
+    "ऑर्डर की स्थिति",
+    "ଅର୍ଡର୍ ସ୍ଥିତି"
+  ],
+  "Meet the mothers behind your meals": [
+    "अपने भोजन की माताओं से मिलें",
+    "ନିଜ ଭୋଜନ ପ୍ରସ୍ତୁତ କରୁଥିବା ମା’ମାନଙ୍କୁ ଜାଣନ୍ତୁ"
+  ],
+  "Local kitchens. Familiar flavours.": [
+    "पास की रसोई। अपना सा स्वाद।",
+    "ପାଖର ରୋଷେଇଘର। ଚିହ୍ନା ସ୍ୱାଦ।"
+  ],
+  "Explore published dishes and food ratings from completed orders. Set your delivery location in the app to check availability.": [
+    "उपलब्ध व्यंजन और पिछले ऑर्डर की रेटिंग देखें। उपलब्धता जांचने के लिए ऐप में डिलीवरी की जगह सहेजें।",
+    "ଉପଲବ୍ଧ ଭୋଜନ ଓ ପୂର୍ବ ଅର୍ଡର୍‌ର ରେଟିଂ ଦେଖନ୍ତୁ। ଉପଲବ୍ଧତା ଯାଞ୍ଚ ପାଇଁ ଆପ୍‌ରେ ଡେଲିଭରି ଅବସ୍ଥାନ ସଞ୍ଚୟ କରନ୍ତୁ।"
+  ],
+  "View kitchen →": [
+    "रसोई देखें →",
+    "ରୋଷେଇଘର ଦେଖନ୍ତୁ →"
+  ],
+  "By": [
+    "द्वारा",
+    "ଦ୍ୱାରା"
+  ],
+  "Your neighbourhood’s next favourite.": [
+    "आपके पड़ोस का नया पसंदीदा स्वाद।",
+    "ଆପଣଙ୍କ ପଡ଼ୋଶୀଙ୍କ ନୂଆ ପସନ୍ଦର ସ୍ୱାଦ।"
+  ],
+  "Open the app to discover available kitchens and menus for your delivery area.": [
+    "अपने इलाके की रसोई और मेन्यू के लिए ऐप खोलें।",
+    "ନିଜ ଅଞ୍ଚଳର ରୋଷେଇଘର ଓ ମେନୁ ପାଇଁ ଆପ୍ ଖୋଲନ୍ତୁ।"
+  ],
+  "Find Mother Kitchens →": [
+    "माँ की रसोई खोजें →",
+    "ମା’ଙ୍କ ରୋଷେଇଘର ଖୋଜନ୍ତୁ →"
+  ],
+  "Food photography is illustrative. Kitchen profile images and listed dishes come from partners.": [
+    "भोजन की तस्वीरें उदाहरण हैं। रसोई की तस्वीरें और सूचीबद्ध व्यंजन साझेदार देते हैं।",
+    "ଭୋଜନ ଛବିଗୁଡ଼ିକ ଉଦାହରଣ। ରୋଷେଇଘର ଛବି ଓ ତାଲିକାଭୁକ୍ତ ଖାଦ୍ୟ ସାଥୀମାନେ ଦିଅନ୍ତି।"
+  ],
+  "by Paustik": [
+    "Paustik द्वारा",
+    "ପୌଷ୍ଟିକ ଦ୍ୱାରା"
+  ],
+  "Your cooking.": [
+    "आपके हाथों का खाना।",
+    "ଆପଣଙ୍କ ହାତର ଭୋଜନ।"
+  ],
+  "Their school lunch.": [
+    "बच्चों का स्कूल लंच।",
+    "ପିଲାଙ୍କ ସ୍କୁଲ୍ ଭୋଜନ।"
+  ],
+  "Home-packed tiffins, collected from you and handed to school reception before lunch.": [
+    "घर से पैक टिफिन लेकर, दोपहर के भोजन से पहले स्कूल रिसेप्शन तक।",
+    "ଘରେ ପ୍ୟାକ୍ ଟିଫିନ୍ ନେଇ ମଧ୍ୟାହ୍ନ ଭୋଜନ ପୂର୍ବରୁ ସ୍କୁଲ୍ ରିସେପସନ୍‌ରେ ପହଞ୍ଚାଯାଏ।"
+  ],
+  "Explore school tiffins": [
+    "स्कूल टिफिन देखें",
+    "ସ୍କୁଲ୍ ଟିଫିନ୍ ଦେଖନ୍ତୁ"
+  ],
+  "Request school pickup": [
+    "स्कूल पिकअप मांगें",
+    "ସ୍କୁଲ୍ ପିକଅପ୍ ଅନୁରୋଧ କରନ୍ତୁ"
+  ],
+  "at reception": [
+    "रिसेप्शन पर",
+    "ରିସେପସନ୍‌ରେ"
+  ],
+  "School": [
+    "स्कूल",
+    "ସ୍କୁଲ୍"
+  ],
+  "Home → Reception → Lunch": [
+    "घर → रिसेप्शन → भोजन",
+    "ଘର → ରିସେପସନ୍ → ଭୋଜନ"
+  ],
+  "Homemade care, delivered nearby.": [
+    "घर का प्यार, आपके आसपास।",
+    "ଘରର ସ୍ନେହ, ଆପଣଙ୍କ ପାଖରେ।"
+  ],
+  "How it works": [
+    "कैसे काम करता है",
+    "କିପରି କାମ କରେ"
+  ],
+  "Find Mother Kitchens": [
+    "माँ की रसोई खोजें",
+    "ମା’ଙ୍କ ରୋଷେଇଘର ଖୋଜନ୍ତୁ"
+  ],
+  "ScooFoo school tiffins": [
+    "ScooFoo स्कूल टिफिन",
+    "ScooFoo ସ୍କୁଲ୍ ଟିଫିନ୍"
+  ],
+  "Meals for a group": [
+    "समूह के लिए भोजन",
+    "ଦଳ ପାଇଁ ଭୋଜନ"
+  ],
+  "Learn more": [
+    "और जानें",
+    "ଅଧିକ ଜାଣନ୍ତୁ"
+  ],
+  "Help & support": [
+    "मदद और सहायता",
+    "ସହାୟତା"
+  ],
+  "Ordering policies": [
+    "ऑर्डर के नियम",
+    "ଅର୍ଡର୍ ନିୟମ"
+  ],
+  "Chat on WhatsApp": [
+    "WhatsApp पर बात करें",
+    "WhatsApp ରେ କଥା ହୁଅନ୍ତୁ"
+  ],
+  "For Mother Kitchens": [
+    "माँ की रसोई के लिए",
+    "ମା’ଙ୍କ ରୋଷେଇଘର ପାଇଁ"
+  ],
+  "Become a Mother Kitchen Partner": [
+    "माँ की रसोई के साथी बनें",
+    "ମା’ଙ୍କ ରୋଷେଇଘର ସାଥୀ ହୁଅନ୍ତୁ"
+  ],
+  "Kitchen workspace": [
+    "रसोई का काम",
+    "ରୋଷେଇଘର କାମ"
+  ],
+  "For delivery partners": [
+    "डिलीवरी साथियों के लिए",
+    "ଡେଲିଭରି ସାଥୀଙ୍କ ପାଇଁ"
+  ],
+  "Become a Delivery Partner": [
+    "डिलीवरी साथी बनें",
+    "ଡେଲିଭରି ସାଥୀ ହୁଅନ୍ତୁ"
+  ],
+  "Delivery workspace": [
+    "डिलीवरी का काम",
+    "ଡେଲିଭରି କାମ"
+  ],
+  "Social links": [
+    "सोशल मीडिया",
+    "ସୋସିଆଲ୍ ମିଡିଆ"
+  ],
+  "↓ Download for Android": [
+    "↓ Android के लिए डाउनलोड",
+    "↓ Android ପାଇଁ ଡାଉନଲୋଡ୍"
+  ],
+  "Direct APK · v1.3": [
+    "सीधा APK · v1.3",
+    "ସିଧା APK · v1.3"
+  ],
+  "＋ Install the web app": [
+    "＋ वेब ऐप इंस्टॉल करें",
+    "＋ ୱେବ୍ ଆପ୍ ଇନଷ୍ଟଲ୍ କରନ୍ତୁ"
+  ],
+  "iPhone & browser": [
+    "iPhone और ब्राउज़र",
+    "iPhone ଓ ବ୍ରାଉଜର୍"
+  ],
+  "© 2026 Paustik. All rights reserved.": [
+    "© 2026 Paustik. सर्वाधिकार सुरक्षित।",
+    "© 2026 ପୌଷ୍ଟିକ। ସମସ୍ତ ଅଧିକାର ସଂରକ୍ଷିତ।"
+  ],
+  "Watch the Paustik story": [
+    "Paustik की कहानी देखें",
+    "ପୌଷ୍ଟିକର କାହାଣୀ ଦେଖନ୍ତୁ"
+  ],
+  "Paustik’s illustrated introduction. App scenes include sample data.": [
+    "Paustik का परिचय। ऐप के दृश्यों में उदाहरण डेटा है।",
+    "ପୌଷ୍ଟିକର ପରିଚୟ। ଆପ୍ ଦୃଶ୍ୟରେ ଉଦାହରଣ ତଥ୍ୟ ଅଛି।"
+  ],
+  "No active orders": [
+    "अभी कोई चालू ऑर्डर नहीं है",
+    "ଏବେ କୌଣସି ଚାଲୁ ଅର୍ଡର୍ ନାହିଁ"
+  ],
+  "Your new orders will appear here. Previous orders are in history below.": [
+    "नए ऑर्डर यहां दिखेंगे। पुराने ऑर्डर नीचे इतिहास में हैं।",
+    "ନୂଆ ଅର୍ଡର୍ ଏଠାରେ ଦେଖାଯିବ। ପୁରୁଣା ଅର୍ଡର୍ ତଳେ ଇତିହାସରେ ଅଛି।"
+  ],
+  "Completed and cancelled orders": [
+    "पूरे और रद्द किए गए ऑर्डर",
+    "ସମ୍ପୂର୍ଣ୍ଣ ଓ ବାତିଲ୍ ଅର୍ଡର୍"
+  ]
+});
+Object.assign(uiTranslations,{"Search a kitchen, cuisine or dish":["रसोई, व्यंजन या पकवान खोजें","ରୋଷେଇଘର, ଖାଦ୍ୟ ପ୍ରକାର ବା ପଦ ଖୋଜନ୍ତୁ"],"Hi! Ask me how to find meals, reserve days, track orders or use your Paustik workspace. Type, or use voice input on a supported browser.":["नमस्ते! भोजन ढूँढने, दिन बुक करने, ऑर्डर देखने या अपना Paustik खाता इस्तेमाल करने के बारे में पूछें। नीचे लिखें या समर्थित ब्राउज़र में बोलें।","ନମସ୍କାର! ଭୋଜନ ଖୋଜିବା, ଦିନ ବୁକ୍ କରିବା, ଅର୍ଡର୍ ଦେଖିବା ବା ପୌଷ୍ଟିକ ବ୍ୟବହାର ବିଷୟରେ ପଚାରନ୍ତୁ। ତଳେ ଲେଖନ୍ତୁ ବା ସମର୍ଥିତ ବ୍ରାଉଜରରେ କହନ୍ତୁ।"],"Guided help · voice & text":["निर्देशित सहायता · आवाज़ और टेक्स्ट","ମାର୍ଗଦର୍ଶନ · ସ୍ୱର ଓ ଲେଖା"],"Live AI · voice & text":["लाइव AI · आवाज़ और टेक्स्ट","ଲାଇଭ୍ AI · ସ୍ୱର ଓ ଲେଖା"],"Your workspace links":["आपके काम के लिंक","ଆପଣଙ୍କ କାର୍ଯ୍ୟ ଲିଙ୍କ୍"],"Ask a Paustik question…":["Paustik से सवाल पूछें…","ପୌଷ୍ଟିକକୁ ପ୍ରଶ୍ନ ପଚାରନ୍ତୁ…"],"🎙 Talk to Paustik":["🎙 Paustik से बोलें","🎙 ପୌଷ୍ଟିକ ସହ କଥା ହୁଅନ୍ତୁ"],"■ Stop listening":["■ सुनना बंद करें","■ ଶୁଣିବା ବନ୍ଦ କରନ୍ତୁ"],"Read reply aloud":["जवाब सुनें","ଉତ୍ତର ଶୁଣନ୍ତୁ"],"Stop reading":["पढ़ना बंद करें","ପଢ଼ିବା ବନ୍ଦ କରନ୍ତୁ"],"Clear":["साफ करें","ସଫା କରନ୍ତୁ"],"Finding guidance…":["मदद खोज रहे हैं…","ସହାୟତା ଖୋଜୁଛି…"],"Listening… tap Stop listening to finish.":["सुन रहे हैं… समाप्त करने के लिए सुनना बंद करें दबाएं।","ଶୁଣୁଛି… ସାରିବା ପାଇଁ ଶୁଣିବା ବନ୍ଦ କରନ୍ତୁ ଦବାନ୍ତୁ।"],"This device has no voice for the selected language. You can read the reply or change language.":["इस डिवाइस पर चुनी भाषा की आवाज़ उपलब्ध नहीं है। जवाब पढ़ें या भाषा बदलें।","ଏହି ଉପକରଣରେ ବଛା ଭାଷାର ସ୍ୱର ନାହିଁ। ଉତ୍ତର ପଢ଼ନ୍ତୁ ବା ଭାଷା ବଦଳାନ୍ତୁ।"],"How do weekly meal plans work?":["साप्ताहिक भोजन योजना कैसे काम करती है?","ସାପ୍ତାହିକ ଭୋଜନ ଯୋଜନା କିପରି କାମ କରେ?"],"Where are my product purchases?":["मेरे खरीदे उत्पाद कहाँ हैं?","ମୋ କିଣା ଉତ୍ପାଦ କେଉଁଠି ଅଛି?"],"How do I track an order?":["ऑर्डर कैसे ट्रैक करूँ?","ଅର୍ଡର୍ କିପରି ଦେଖିବି?"]});
+Object.assign(uiTranslations, {"Paustik help":["Paustik सहायता","ପୌଷ୍ଟିକ ସହାୟତା"],"Our social channels are being set up.":["हमारे सोशल चैनल तैयार हो रहे हैं।","ଆମ ସୋସିଆଲ୍ ଚ୍ୟାନେଲ୍ ପ୍ରସ୍ତୁତ ହେଉଛି।"]});
 const lower = Object.fromEntries(Object.entries(uiTranslations).map(([k,v]) => [k.toLowerCase(),v]));
 export function translated(text: string, language: UiLanguage) { return language === "en" ? text : (uiTranslations[text] ?? lower[text.trim().replace(/\s+/g," ").replaceAll("_"," ").toLowerCase()])?.[language === "hi" ? 0 : 1] ?? text; }

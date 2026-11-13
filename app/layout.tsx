@@ -3,7 +3,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { PaustikHelp as PausstikAssistant } from "@/components/paustik-help";
 import { UiText } from "@/components/ui-language";
 import type { Metadata, Viewport } from "next";
-import Image from "next/image";
+import { BrandWordmark } from "@/components/brand-wordmark";
 import Link from "next/link";
 import { PwaRuntime } from "@/components/pwa-runtime";
 import { MobileNavigation } from "@/components/mobile-navigation";
@@ -25,6 +25,7 @@ import "./voice-help.css";
 import "./editorial-home.css";
 import "./pilot-refresh.css";
 import "./action-first.css";
+import "./website-alignment.css";
 
 export const metadata: Metadata = {
   title: {
@@ -54,15 +55,15 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <header className="site-header">
           <div className="header-inner">
             <Link className="brand" href="/" aria-label="Paustik home">
-              <Image className="brand-wordmark" src="/assets/paustik-mother-wordmark.webp" alt="Paustik" width={640} height={310} priority />
+              <BrandWordmark className="brand-wordmark" width={640} height={310} priority/>
               
             </Link>
-            <nav className="header-nav" aria-label="Main navigation"><Link href="/#customers">Customers</Link><Link href="/#for-mothers">Mother Kitchens</Link><Link href="/#for-delivery">Delivery Partners</Link><Link href="/#download">Get the app</Link></nav>
+            <nav className="header-nav" aria-label="Main navigation"><Link href="/#customers"><UiText text="Customers"/></Link><Link href="/#for-mothers"><UiText text="Mother Kitchens"/></Link><Link href="/#for-delivery"><UiText text="Delivery Partners"/></Link><Link href="/#download"><UiText text="Get the app"/></Link></nav>
             <div className="header-controls">
               <LanguageSelector />
               <MobileNavigation>
                 <summary aria-label="Navigation menu"><span className="menu-icon" aria-hidden="true"><i></i><i></i><i></i></span><span><UiText text="Menu"/></span></summary>
-                <nav className="mobile-nav-panel" aria-label="Mobile navigation"><Link href="/#customers">Customers</Link><Link href="/#for-mothers">Mother Kitchens</Link><Link href="/#for-delivery">Delivery Partners</Link><Link href="/#meal-plans"><UiText text="Meals"/></Link><Link href="/install"><UiText text="Get the app"/></Link><Link href="/help"><UiText text="Help"/></Link></nav>
+                <nav className="mobile-nav-panel" aria-label="Mobile navigation"><Link href="/#customers"><UiText text="Customers"/></Link><Link href="/#for-mothers"><UiText text="Mother Kitchens"/></Link><Link href="/#for-delivery"><UiText text="Delivery Partners"/></Link><Link href="/#meal-plans"><UiText text="Meals"/></Link><Link href="/install"><UiText text="Get the app"/></Link><Link href="/help"><UiText text="Help"/></Link></nav>
               </MobileNavigation>
               <div className="header-actions">
                 <Link className="button button-small" href="/app"><UiText text="Open app"/></Link>

@@ -1,13 +1,6 @@
 import "server-only";
 import {prisma} from "@/lib/prisma";
-export async function loadCustomerActivity(customerId: string, page: number, productsOnly=false) {
-  return Promise.all([
-    prisma.order.findMany({
-      where: { customerId,...(productsOnly?{productRequest:{isNot:null}}:{productRequest:{is:null}}) },
-      orderBy: { orderedAt: "desc" },
-      take: 20,
-      skip: (page - 1) * 20,
-      select: {
+const orderSelect = (customerId:string)=>({
         id: true,
         orderNumber: true,
         status: true,
@@ -21,7 +14,16 @@ export async function loadCustomerActivity(customerId: string, page: number, pro
         items: { select: { mealName: true, quantity: true } },
         delivery: { select: { status: true } },
         ratings: { where: { authorId: customerId }, select: { mealScore: true, deliveryScore: true } },
-      },
+      } as const);
+const terminal = ["DELIVERED", "CANCELLED", "FAILED"] as const;
+export async function loadCustomerActivity(customerId: string, page: number, productsOnly=false) {
+  return Promise.all([
+    prisma.order.findMany({
+      where: { customerId,status:{in:[...terminal]},...(productsOnly?{productRequest:{isNot:null}}:{productRequest:{is:null}}) },
+      orderBy: { orderedAt: "desc" },
+      take: 20,
+      skip: (page - 1) * 20,
+      select: orderSelect(customerId),
     }),
     prisma.subscription.findMany({
       where: { customerId },
@@ -36,7 +38,8 @@ export async function loadCustomerActivity(customerId: string, page: number, pro
         mealPlan: { select: { name: true, cadence: true, mealCount: true, price: true, currency: true } },
       },
     }),
-    prisma.order.count({ where: { customerId,...(productsOnly?{productRequest:{isNot:null}}:{productRequest:{is:null}}) } }),
+    prisma.order.count({ where: { customerId,status:{in:[...terminal]},...(productsOnly?{productRequest:{isNot:null}}:{productRequest:{is:null}}) } }),
+    prisma.order.findMany({where:{customerId,status:{notIn:[...terminal]},...(productsOnly?{productRequest:{isNot:null}}:{productRequest:{is:null}})},orderBy:{scheduledFor:"asc"},select:orderSelect(customerId)}),
   ]);
 }
 

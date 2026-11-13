@@ -17,11 +17,11 @@ export function recognitionError(error:string){
  if(error==="network")return "Your browser could not reach its speech service. Check your connection or type your question.";
  return "Voice input is unavailable on this device. You can still type your question.";
 }
-export function startVoiceCapture(ctor:RecognitionConstructor,callbacks:{text:(value:string)=>void;error:(message:string)=>void;ended:()=>void},timeoutMs=20000){
+export function startVoiceCapture(ctor:RecognitionConstructor,callbacks:{text:(value:string)=>void;error:(message:string)=>void;ended:()=>void},timeoutMs=20000,language="en-IN"){
  let recognition:BrowserRecognition;
  try{recognition=new ctor();}catch{callbacks.error("Voice input could not start. You can type your question instead.");callbacks.ended();return ()=>{};}
  let active=true;
- recognition.lang="en-IN";recognition.continuous=false;recognition.interimResults=false;recognition.maxAlternatives=1;
+ recognition.lang=language;recognition.continuous=false;recognition.interimResults=false;recognition.maxAlternatives=1;
  const release=()=>{if(!active)return;active=false;clearTimeout(timer);recognition.onresult=null;recognition.onerror=null;recognition.onend=null;callbacks.ended();};
  const stop=()=>{if(!active)return;release();try{recognition.abort();}catch{}};
  const timer=setTimeout(stop,timeoutMs);

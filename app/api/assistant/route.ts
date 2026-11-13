@@ -10,6 +10,7 @@ export const dynamic = "force-dynamic";
 
 const requestSchema = z.object({
   guidedOnly: z.boolean().default(false),
+  language:z.enum(["en","hi","or"]).default("en"),
   messages: z.array(z.object({ role: z.enum(["user", "assistant"]), content: z.string().trim().min(1).max(4000) })).min(1).max(12),
 });
 
@@ -18,14 +19,14 @@ const MAX_REQUESTS_PER_MINUTE = 12;
 
 const PAUSSTIK_INSTRUCTIONS = `You are Paustik's in-app helper. Help customers, mother entrepreneurs, couriers, and administrators understand how to use this app. Keep replies clear, concise, kind, and practical. Answer in the language the user used when feasible.
 
-Paustik marketplace facts: families discover nearby mother-led kitchens and their menus; kitchens set a service area from 5–10 km; sample meal prices are Base ₹69, Egg ₹79, Cheese ₹89, Chicken ₹99, with three components per meal; customers can choose 3–7 meal days for one week, then renew manually; cancel a meal at least five hours before delivery, and eligible collected value less a ₹5 processing fee is returned to the wallet; sample delivery fee is ₹30 per order. Couriers accept jobs, confirm kitchen pickup and customer handover, and may share GPS only while an assigned order is active. Admin access is created and managed through the restricted admin area.
+Paustik marketplace facts: families discover nearby mother-led kitchens and their menus; customer discovery and courier offer search cover up to 25 km; sample meal prices are Base ₹69, Egg ₹79, Cheese ₹89, Chicken ₹99, with three components per meal; customers can choose 3–7 meal days for one week, then renew manually; cancel a meal at least five hours before delivery, and eligible collected value less a ₹5 processing fee is returned to the wallet; delivery fees are calculated at checkout and can vary by distance and offers. Couriers accept jobs, confirm kitchen pickup and customer handover, and may share GPS only while an assigned order is active. Admin access is created and managed through the restricted admin area.
 
-Be transparent: online payment checkout and bank payouts are not connected yet; an order or preview must never be described as paid unless the app explicitly confirms a recorded payment. Do not invent nearby availability, order status, account details, live income, delivery ETAs, eligibility, or policy beyond the facts above. You do not have access to the user's private records and cannot place, cancel, or refund orders, publish a menu, or change accounts. Direct users to their signed-in workspace for those actions. Never ask users to send passwords, one-time codes, full payment-card details, or bank credentials.`;
+Be transparent: Razorpay checkout may be configured in Test Mode or Live Mode; use the mode displayed in Payment methods. Bank payouts are separate and must never be implied by a customer payment; an order or preview must never be described as paid unless the app explicitly confirms a recorded payment. Do not invent nearby availability, order status, account details, live income, delivery ETAs, eligibility, or policy beyond the facts above. You do not have access to the user's private records and cannot place, cancel, or refund orders, publish a menu, or change accounts. Direct users to their signed-in workspace for those actions. Never ask users to send passwords, one-time codes, full payment-card details, or bank credentials.`;
 
 export async function GET(request:Request) {
   const user = await getCurrentUser();
   const role: HelpRole = user?.status === "ACTIVE" ? user.role : "GUEST";
-  return NextResponse.json({ mode: new URL(request.url).searchParams.get("mode")!=="guided" && process.env.PAUSTIK_LIVE_AI_ENABLED === "true" && !!process.env.OPENAI_API_KEY ? "ai" : "guided", links: helpLinks(role), role }, { headers: { "Cache-Control": "private, no-store" } });
+  return NextResponse.json({ mode: new URL(request.url).searchParams.get("mode")!=="guided" && process.env.PAUSTIK_LIVE_AI_ENABLED === "true" && !!process.env.OPENAI_API_KEY && user?.status==="ACTIVE" ? "ai" : "guided", links: helpLinks(role), role }, { headers: { "Cache-Control": "private, no-store" } });
 }
 
 export async function POST(request: Request) {
@@ -43,7 +44,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Send a valid message to continue." }, { status: 400 });
   }
 
-  const fallback = guidedHelp(parsed.data.messages.at(-1)!.content, role);
+  const fallback = guidedHelp(parsed.data.messages.at(-1)!.content, role,parsed.data.language);
   if(parsed.data.guidedOnly)return NextResponse.json(fallback);
   if (!key || process.env.PAUSTIK_LIVE_AI_ENABLED !== "true" || !user || user.status !== "ACTIVE") return NextResponse.json(fallback);
 
