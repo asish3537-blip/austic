@@ -192,8 +192,7 @@ export function MotherWorkspace() {
           </div>
         </article>)}</div> : <div className="customer-empty-state"><strong><UiText text="No open orders yet"/></strong><span><UiText text="New customer orders will appear here for you to accept and prepare."/></span></div>}
       </article>
-    <nav className="task-jumps" aria-label="Kitchen shortcuts"><a href="#weekly-menu"><UiText text="Add / update meals ↓"/></a><a href="/mother/marketplace#product-requests"><UiText text="Product requests →"/></a><a href="/mother/marketplace"><UiText text="Sell homemade products →"/></a></nav>
-    <nav className="customer-quick-links" aria-label="Kitchen tools"><Link href="/mother/bulk"><UiText text="Bulk bookings →"/></Link><Link href="/mother/quality"><UiText text="Photos, FSSAI & inspections →"/></Link></nav>
+    <nav className="mother-shortcuts" aria-label="Kitchen tools"><a href="#weekly-menu"><UiText text="Add / update meals ↓"/></a><Link href="/mother/marketplace#product-requests"><UiText text="Product requests →"/></Link><Link href="/mother/marketplace"><UiText text="Sell homemade products →"/></Link><Link href="/mother/bulk"><UiText text="Bulk bookings →"/></Link><Link href="/mother/quality"><UiText text="Photos, FSSAI & inspections →"/></Link></nav>
     <section className="mother-summary-grid" id="kitchen-summary" aria-label="Kitchen status">
       <article><span><UiText text="Kitchen"/></span><strong>{workspace.kitchen.name}</strong><small><UiText text={workspace.kitchen.approved ? "Paustik verified" : "Waiting for Paustik approval"}/></small></article>
       <article><span><UiText text="Menu items"/></span><strong>{workspace.menus.filter((item) => item.isPublished && item.isAvailable).length}</strong><small><UiText text="Live and available to customers"/></small></article>
