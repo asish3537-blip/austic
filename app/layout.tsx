@@ -1,3 +1,4 @@
+import "./scoofoo.css";
 import { SiteFooter } from "@/components/site-footer";
 import { PaustikHelp as PausstikAssistant } from "@/components/paustik-help";
 import { UiText } from "@/components/ui-language";

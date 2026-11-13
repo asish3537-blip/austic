@@ -1,6 +1,7 @@
 import { timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
 import { expireOverdueOrders } from "@/lib/overdue-orders";
+import { flagLateSchoolTiffins } from "@/lib/scoofoo";
 
 export async function GET(request: Request) {
   const expected = process.env.CRON_SECRET;
@@ -8,5 +9,6 @@ export async function GET(request: Request) {
   const actual = request.headers.get("authorization") ?? "";
   const token = "Bearer " + expected;
   if (Buffer.byteLength(actual) !== Buffer.byteLength(token) || !timingSafeEqual(Buffer.from(actual), Buffer.from(token))) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  return NextResponse.json(await expireOverdueOrders());
+  const [orders,school]=await Promise.all([expireOverdueOrders(),flagLateSchoolTiffins()]);
+  return NextResponse.json({...orders,...school});
 }

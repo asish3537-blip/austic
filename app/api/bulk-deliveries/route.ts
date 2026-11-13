@@ -99,6 +99,7 @@ export async function POST(request: Request) {
         await lockWallet(tx, row.customerId);
         await lockCourier(tx, row.agentId);
         const agent = await tx.deliveryAgentProfile.findFirst({ where: { id: row.agentId, verificationStatus: "APPROVED", user: { status: "ACTIVE" } } });
+        if(await tx.scoofooBooking.count({where:{courierId:row.agentId,status:{in:["CONFIRMED","READY","PICKED_UP","AT_SCHOOL","EXCEPTION"]}}}))throw new DispatchError("Complete the dedicated ScooFoo school route before bulk dispatch.");
         if (!agent || await tx.delivery.count({ where: { agentId: row.agentId, status: { notIn: ["DELIVERED", "CANCELLED", "FAILED"] } } })) throw new DispatchError("The arranged courier must be approved and free of other active deliveries.");
         const delivery = await tx.delivery.findUnique({ where: { orderId: row.orderId }, include: { order: true } });
         if (!delivery || delivery.agentId || delivery.order.status !== "READY_FOR_PICKUP") throw new DispatchError("The kitchen must mark this order ready before bulk dispatch.");

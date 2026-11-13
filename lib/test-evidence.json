@@ -1,7 +1,7 @@
 {
-  "runId": "pilot-dispatch-2026-11-12",
+  "runId": "ScooFoo-and-mobile-controls-2026-11-13",
   "environment": "Isolated local test system",
-  "capturedAt": "2026-11-12T18:19:10.376Z",
+  "capturedAt": "2026-11-13T04:39:47.508Z",
   "checks": [
     "Wallet: one-time ₹555, ₹500 cap, idempotent retry and concurrent requests",
     "Reservation: one date rejected, three dates reserved, wallet debited atomically",
@@ -33,7 +33,11 @@
     "One-hour overdue cancellation: one full paid-value wallet credit under concurrent refresh",
     "Three-order batching, code lockout/privacy, optional GPS and arranged bulk delivery",
     "Distance quote, vouchers, subscription discount allocation and checkout replay",
-    "Private kitchen evidence, inspection and training follow-up; mobile role screens checked"
+    "Private kitchen evidence, inspection and training follow-up; mobile role screens checked",
+    "ScooFoo: 117 unit/regression tests and 14 isolated API/database scenarios passed",
+    "School reception: scoped manifest, independent adult receipt and verified email required",
+    "School courier: explicit acceptance/decline, private pickup code, three-home batch and safe-return resolution",
+    "Mobile highlights: no overlapping controls at 320px and 390px; video dialog and slide navigation verified"
   ],
   "screenshots": [
     {
@@ -600,6 +604,33 @@
       "title": "Admin pricing, offers and contribution",
       "group": "Neighbourhood dispatch pilot",
       "note": "12 November release: synthetic isolated accounts; controlled 13 November daytime server clock. No real money, physical delivery or external message was sent.",
+      "width": 65536,
+      "height": 4292542531
+    },
+    {
+      "id": "scoofoo-landing-mobile",
+      "file": "scoofoo-landing-mobile.png",
+      "title": "ScooFoo school-tiffin introduction",
+      "group": "ScooFoo school pilot",
+      "note": "Synthetic local accounts and controlled school-morning clock. No real child data, school delivery, payment or external message. The real campus remains pending contact/desk setup.",
+      "width": 65536,
+      "height": 4292542531
+    },
+    {
+      "id": "scoofoo-parent-mobile",
+      "file": "scoofoo-parent-mobile.png",
+      "title": "Parent school pickup request",
+      "group": "ScooFoo school pilot",
+      "note": "Synthetic local accounts and controlled school-morning clock. No real child data, school delivery, payment or external message. The real campus remains pending contact/desk setup.",
+      "width": 65536,
+      "height": 4292542531
+    },
+    {
+      "id": "scoofoo-carousel-mobile",
+      "file": "scoofoo-carousel-mobile.png",
+      "title": "Corrected mobile carousel controls",
+      "group": "ScooFoo school pilot",
+      "note": "Synthetic local accounts and controlled school-morning clock. No real child data, school delivery, payment or external message. The real campus remains pending contact/desk setup.",
       "width": 65536,
       "height": 4292542531
     }

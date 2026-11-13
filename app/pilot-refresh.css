@@ -178,3 +178,26 @@ body:has(.app-bottom-nav) .paustik-footer-bottom { margin-top: 12px; padding-top
   .hero-film video { display: none; }
   .featured-kitchen-grid { scroll-behavior: auto; }
 }
+
+/* Carousel controls take part in layout so media buttons cannot overlap them. */
+section.customer-highlights { display: flex; flex-direction: column; align-items: stretch; gap: 0; padding: 28px 28px 20px; }
+.customer-highlights .highlight-content { order: 0; padding: 6px 0 12px; width: 100%; max-width: 630px; }
+.customer-highlights .hero-film-actions { position: relative; order: 1; left: auto; right: auto; bottom: auto; width: 100%; margin: 5px 0 14px; justify-content: flex-start; }
+.customer-highlights .hero-film-actions button { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 10px 14px; font-size: 12px; }
+.customer-highlights .hero-film-actions button:last-child { display: inline-flex; }
+.customer-highlights .highlight-controls { position: relative; order: 2; left: auto; right: auto; bottom: auto; display: grid; grid-template-columns: 44px minmax(0,1fr) 44px; gap: 8px; width: 100%; max-width: 430px; align-self: center; padding-top: 10px; border-top: 1px solid #ffffff35; }
+.customer-highlights .highlight-controls > div { grid-column: 2; grid-row: 1; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; margin: 0; min-width: 0; gap: 0; }
+.customer-highlights .highlight-controls > div button { width: 24px; min-width: 24px; height: 44px; padding: 0; }
+.customer-highlights .highlight-controls > button { width: 44px; height: 44px; background: #123d33e6; border: 1px solid #ffffff75; color: white; }
+.customer-highlights .highlight-controls > button:nth-of-type(2) { grid-column: 1; grid-row: 1; }
+.customer-highlights .highlight-controls > button:nth-of-type(3) { grid-column: 3; grid-row: 1; }
+.customer-highlights .highlight-controls > .highlight-playback { grid-column: 1 / -1; grid-row: 2; justify-self: center; width: auto; height: 36px; min-width: 110px; padding: 5px 14px; font-size: 11px; border-color: #ffffff50; border-radius: 20px; }
+@media(max-width:650px){section.customer-highlights { padding: 23px 20px 17px; min-height: 390px; }.customer-highlights .highlight-content { padding-bottom: 10px; }.customer-highlights .hero-film-actions { justify-content: flex-start; }.customer-highlights .highlight-controls { gap: 5px; }}
+@media(max-width:360px){
+ .customer-app-header { gap: 8px; padding-inline: 12px; }
+ .customer-app-header > a img { width: 100px; height: auto; }
+ .customer-app-header .account-menu { min-width: 0; max-width: calc(100% - 108px); }
+ .customer-app-header .account-trigger { min-width: 0; max-width: 100%; gap: 6px; }
+ .customer-app-header .account-trigger small { display: none; }
+ .customer-app-header .account-trigger strong { max-width: 54px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+}

@@ -8,6 +8,85 @@ datasource db {
   schemas  = ["paustik_marketplace"]
 }
 
+model ScoofooSchool {
+  id String @id @default(uuid()) @db.Uuid
+  name String
+  city String
+  address String
+  receptionPoint String @default("Reception — confirm exact gate") @map("reception_point")
+  contactName String @default("") @map("contact_name")
+  contactPhone String @default("") @map("contact_phone")
+  staffUserIds String[] @default([]) @map("staff_user_ids") @db.Uuid
+  status String @default("SETTING_UP")
+  lunchAt String @default("12:30") @map("lunch_at")
+  arriveBy String @default("12:00") @map("arrive_by")
+  pickupBy String @default("11:00") @map("pickup_by")
+  bookingCutoff String @default("09:00") @map("booking_cutoff")
+  weekdays Int[] @default([1,2,3,4,5])
+  holidays String[] @default([])
+  dailyCapacity Int @default(30) @map("daily_capacity")
+  agreementNote String @default("") @map("agreement_note")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  bookings ScoofooBooking[]
+  @@map("scoofoo_schools")
+  @@schema("paustik_marketplace")
+}
+
+model ScoofooBooking {
+  id String @id @default(uuid()) @db.Uuid
+  reference String @unique
+  guardianId String @map("guardian_id") @db.Uuid
+  schoolId String @map("school_id") @db.Uuid
+  courierId String? @map("courier_id") @db.Uuid
+  courierAcceptedAt DateTime? @map("courier_accepted_at") @db.Timestamptz(6)
+  serviceDate String @map("service_date")
+  tiffinLabel String @map("tiffin_label")
+  classSection String @map("class_section")
+  boxCount Int @default(1) @map("box_count")
+  pickupSnapshot Json @map("pickup_snapshot")
+  schoolSnapshot Json @map("school_snapshot")
+  pickupDeadline DateTime @map("pickup_deadline") @db.Timestamptz(6)
+  arrivalDeadline DateTime @map("arrival_deadline") @db.Timestamptz(6)
+  status String @default("REQUESTED")
+  consentAt DateTime @map("consent_at") @db.Timestamptz(6)
+  pickupNonce String @map("pickup_nonce")
+  pickupAttempts Int @default(0) @map("pickup_attempts")
+  lockedUntil DateTime? @map("locked_until") @db.Timestamptz(6)
+  pickedUpAt DateTime? @map("picked_up_at") @db.Timestamptz(6)
+  receivedAt DateTime? @map("received_at") @db.Timestamptz(6)
+  receivedBy String? @map("received_by")
+  receiptMethod String? @map("receipt_method")
+  lateAlertAt DateTime? @map("late_alert_at") @db.Timestamptz(6)
+  latitude Decimal? @db.Decimal(10,7)
+  longitude Decimal? @db.Decimal(10,7)
+  accuracyMeters Int? @map("accuracy_meters")
+  locationUpdatedAt DateTime? @map("location_updated_at") @db.Timestamptz(6)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  school ScoofooSchool @relation(fields:[schoolId],references:[id],onDelete:Restrict)
+  events ScoofooEvent[]
+  @@unique([guardianId,schoolId,serviceDate,tiffinLabel])
+  @@index([guardianId,serviceDate])
+  @@index([courierId,status])
+  @@index([schoolId,serviceDate,status])
+  @@map("scoofoo_bookings")
+  @@schema("paustik_marketplace")
+}
+
+model ScoofooEvent {
+  id String @id @default(uuid()) @db.Uuid
+  bookingId String @map("booking_id") @db.Uuid
+  actorId String? @map("actor_id") @db.Uuid
+  status String
+  note String
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  booking ScoofooBooking @relation(fields:[bookingId],references:[id],onDelete:Restrict)
+  @@index([bookingId,createdAt])
+  @@map("scoofoo_events")
+  @@schema("paustik_marketplace")
+}
+
 enum UserRole {
   CUSTOMER
   MOTHER

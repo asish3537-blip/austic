@@ -1,0 +1,12 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import {schoolDateTime,schoolBookingProblem,schoolWindowValid,schoolTransitionAllowed,indiaSchoolDate} from "../lib/scoofoo-rules";
+import {guidedHelp} from "../lib/assistant-guides";
+const school={weekdays:[1,2,3,4,5],holidays:["2026-11-16"],bookingCutoff:"09:00"};
+test("school times and date boundaries use India time",()=>{assert.equal(schoolDateTime("2026-11-13","12:00").toISOString(),"2026-11-13T06:30:00.000Z");assert.equal(indiaSchoolDate(new Date("2026-11-12T20:00:00Z")),"2026-11-13");});
+test("arrival precedes lunch with at least a 15 minute buffer",()=>{const s={bookingCutoff:"09:00",pickupBy:"11:00",arriveBy:"12:00",lunchAt:"12:30"};assert.equal(schoolWindowValid(s),true);assert.equal(schoolWindowValid({...s,arriveBy:"12:20"}),false);assert.equal(schoolWindowValid({...s,pickupBy:"12:10"}),false);});
+test("weekends, holidays and malformed calendar dates cannot be booked",()=>{const now=new Date("2026-11-13T02:30:00Z");for(const date of ["2026-11-14","2026-11-16","2026-11-31","not-a-date"])assert.ok(schoolBookingProblem(date,school,now));assert.equal(schoolBookingProblem("2026-11-17",school,now),null);});
+test("booking closes at the cutoff, not after it",()=>{assert.equal(schoolBookingProblem("2026-11-13",school,new Date("2026-11-13T03:29:59Z")),null);assert.match(schoolBookingProblem("2026-11-13",school,new Date("2026-11-13T03:30:00Z"))!,/closed/);});
+test("only pre-pickup requests can be cancelled and school receipt follows arrival",()=>{assert.equal(schoolTransitionAllowed("PICKED_UP","cancel"),false);assert.equal(schoolTransitionAllowed("READY","cancel"),true);assert.equal(schoolTransitionAllowed("READY","receive"),false);assert.equal(schoolTransitionAllowed("AT_SCHOOL","receive"),true);});
+test("exceptions have an explicit return or school receipt resolution",()=>{assert.equal(schoolTransitionAllowed("EXCEPTION","returned"),true);assert.equal(schoolTransitionAllowed("RECEIVED","returned"),false);assert.equal(schoolTransitionAllowed("RECEIVED","receive"),false);});
+test("school help uses ScooFoo rules without ordinary subscription limits",()=>{const answer=guidedHelp("school lunch tiffin for my child","CUSTOMER");assert.match(answer.reply,/authorised school reception/i);assert.ok(answer.links.some(l=>l.href==="/school-tiffins"));assert.ok(!answer.links.some(l=>l.href.startsWith('/admin')));assert.ok(guidedHelp('ScooFoo','ADMIN').links.some(l=>l.href==='/admin/scoofoo'));});

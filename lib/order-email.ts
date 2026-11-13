@@ -3,7 +3,8 @@ import {emailConfig} from "@/lib/email";
 
 export function orderEmailContent(notification:{title:string;body:string},role:string){
  const product=/product|\bPP-/i.test(notification.title+" "+notification.body);
- const path=role==="MOTHER"?(product?"/mother/marketplace":"/mother/dashboard#incoming-orders"):(product?"/customer/purchases":"/customer/orders");
+ const school=/scoofoo|\bSF-/i.test(notification.title+" "+notification.body);
+ const path=school?"/school-tiffins":role==="MOTHER"?(product?"/mother/marketplace":"/mother/dashboard#incoming-orders"):(product?"/customer/purchases":"/customer/orders");
  return {subject:"Paustik · "+notification.title.replace(/[\r\n]/g," ").slice(0,150),text:notification.title+"\n\n"+notification.body+"\n\nOpen your Paustik account: https://paustik.in"+path+"\n\nThis is an order update, not a payment receipt."};
 }
 
