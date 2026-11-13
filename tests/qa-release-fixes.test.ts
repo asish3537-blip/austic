@@ -1,0 +1,11 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {canUseBusinessSession} from '../lib/admin-access';
+import {HERO_VIDEOS,SCHOOL_HERO_VIDEOS,nextHeroVideo} from '../lib/hero-videos';
+import {schoolTranslations} from '../lib/school-translations';
+import {translated} from '../lib/ui-translations';
+test('administrators must finish authenticator enrollment before business access',()=>{assert.equal(canUseBusinessSession({role:'ADMIN'}),false);assert.equal(canUseBusinessSession({role:'ADMIN',adminAuthenticatorEnabled:false}),false);assert.equal(canUseBusinessSession({role:'ADMIN',adminAuthenticatorEnabled:true}),true)});
+test('mandatory admin enrollment does not block customer or partner sessions',()=>{for(const role of ['CUSTOMER','MOTHER','DELIVERY_AGENT'])assert.equal(canUseBusinessSession({role}),true)});
+test('sector playlists contain four distinct, separate clips',()=>{assert.equal(new Set(HERO_VIDEOS).size,4);assert.equal(new Set(SCHOOL_HERO_VIDEOS).size,4);assert.ok(SCHOOL_HERO_VIDEOS.every(x=>!HERO_VIDEOS.includes(x as never)))});
+test('hero playlist wraps, skips broken clips, and stops when none can play',()=>{assert.equal(nextHeroVideo(3,new Set()),0);assert.equal(nextHeroVideo(0,new Set([1,2])),3);assert.equal(nextHeroVideo(0,new Set([1,2,3])),0);assert.equal(nextHeroVideo(1,new Set([0,1,2,3])),null)});
+test('school process, consent, safety and action copy have Hindi and Odia translations',()=>{for(const [key,pair] of Object.entries(schoolTranslations)){assert.equal(pair.length,2);assert.match(pair[0],/[\u0900-\u097f]/,key);assert.match(pair[1],/[\u0b00-\u0b7f]/,key);assert.equal(translated(key,'hi'),pair[0]);assert.equal(translated(key,'or'),pair[1]);assert.equal(translated(key,'en'),key)}});

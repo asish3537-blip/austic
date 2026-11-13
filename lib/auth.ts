@@ -4,6 +4,7 @@ import { signInLink } from "@/lib/kitchen-handoff";
 import { redirect } from "next/navigation";
 import { cache } from "react";
 import { prisma } from "@/lib/prisma";
+import {canUseBusinessSession} from "@/lib/admin-access";
 import { isLocalAuthMode } from "@/lib/local-auth-mode";
 
 const SESSION_COOKIE = "paustik_session";
@@ -19,6 +20,7 @@ export type SessionUser = {
   status: "PENDING" | "ACTIVE" | "SUSPENDED" | "REJECTED";
   emailVerifiedAt: Date | null;
   adminAuthVersion?: number;
+  adminAuthenticatorEnabled?: boolean;
 };
 
 function sha256(value: string) {
@@ -69,7 +71,8 @@ export async function clearSession() {
   cookieStore.delete(SESSION_COOKIE);
 }
 
-export const getCurrentUser = cache(async (): Promise<SessionUser | null> => {
+// Only setup pages and the authenticator endpoint may use this restricted session.
+export const getSecuritySetupUser = cache(async (): Promise<SessionUser | null> => {
   const rawToken = (await cookies()).get(SESSION_COOKIE)?.value;
   if (!rawToken) return null;
   if (isLocalAuthMode()) {
@@ -87,7 +90,7 @@ export const getCurrentUser = cache(async (): Promise<SessionUser | null> => {
   }
   const session = await prisma.authSession.findUnique({
     where: { tokenHash: sha256(rawToken) },
-    include: { user: true },
+    include: { user: { include: {adminAuthenticator: {select: {enabledAt:true}}} } },
   });
   if (!session || session.revokedAt || session.expiresAt <= new Date()) return null;
   if (session.user.role === "ADMIN" && session.adminAuthVersion !== session.user.adminAuthVersion) return null;
@@ -106,7 +109,13 @@ export const getCurrentUser = cache(async (): Promise<SessionUser | null> => {
     status: session.user.status,
     emailVerifiedAt: session.user.emailVerifiedAt,
     adminAuthVersion: session.user.adminAuthVersion,
+    adminAuthenticatorEnabled: Boolean(session.user.adminAuthenticator?.enabledAt),
   };
+});
+
+export const getCurrentUser = cache(async (): Promise<SessionUser | null> => {
+ const user = await getSecuritySetupUser();
+ return user && canUseBusinessSession(user) ? user : null;
 });
 
 export function roleHome(user: Pick<SessionUser, "role" | "status">) {
@@ -120,7 +129,7 @@ export function roleHome(user: Pick<SessionUser, "role" | "status">) {
 }
 
 export async function requireAuthenticatedUser() {
-  const user = await getCurrentUser();
+  const user = await getSecuritySetupUser();
   if (!user) {
     const requestHeaders = await headers();
     if (requestHeaders.get("x-pausstik-admin") === "true") redirect("/admin-sign-in");
@@ -129,10 +138,11 @@ export async function requireAuthenticatedUser() {
   return user;
 }
 
-export async function requireRole(role: AppRole) {
+export async function requireRole(role: AppRole, allowSecuritySetup = false) {
   const user = await requireAuthenticatedUser();
   if (user.status !== "ACTIVE") redirect("/account/pending");
   if (user.role !== role) redirect(roleHome(user));
+  if (!allowSecuritySetup && !canUseBusinessSession(user)) redirect("/admin/security?setup=1");
   return user;
 }
 

@@ -2,7 +2,7 @@ import bcrypt from "bcryptjs";
 import QRCode from "qrcode";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { getCurrentUser, createSession } from "@/lib/auth";
+import { getSecuritySetupUser, createSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { rejectCrossOrigin, serviceUnavailable } from "@/lib/http";
 import { AdminAuthError, consumeAdminFactor, invalidateAdminSessions, lockAdmin, reserveAdminAttempt } from "@/lib/admin-authenticator";
@@ -18,7 +18,7 @@ const actionSchema = z.discriminatedUnion("action", [
 
 export async function GET() {
   try {
-    const user = await getCurrentUser();
+    const user = await getSecuritySetupUser();
     if (!user || user.role !== "ADMIN" || user.status !== "ACTIVE") return NextResponse.json({ error: "Sign in as an administrator to manage your authenticator." }, { status: 403, headers });
     const factor = await prisma.adminAuthenticator.findUnique({ where: { userId: user.id }, select: { enabledAt: true } });
     const enabled = Boolean(factor?.enabledAt);
@@ -31,7 +31,7 @@ export async function POST(request: Request) {
   const originError = rejectCrossOrigin(request);
   if (originError) return originError;
   try {
-    const session = await getCurrentUser();
+    const session = await getSecuritySetupUser();
     if (!session || session.role !== "ADMIN" || session.status !== "ACTIVE") throw new AdminAuthError("Sign in as an administrator to manage your authenticator.", 403);
     const parsed = actionSchema.safeParse(await request.json().catch(() => null));
     if (!parsed.success) throw new AdminAuthError("Enter your password and the requested authenticator code.");

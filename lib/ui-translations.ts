@@ -1,3 +1,4 @@
+import {schoolTranslations} from "@/lib/school-translations";
 export type UiLanguage = "en" | "hi" | "or";
 export const uiTranslations: Record<string, [string, string]> = {
 "My account":["मेरा खाता","ମୋ ଖାତା"],
@@ -1623,5 +1624,6 @@ Object.assign(uiTranslations,{"Paustik Pay":["पौष्टिक पे","ପ
 Object.assign(uiTranslations, {"Home":["होम","ହୋମ୍"]});
 Object.assign(uiTranslations,{"Explore ScooFoo":["ScooFoo देखें","ScooFoo ଦେଖନ୍ତୁ"]});
 Object.assign(uiTranslations,{"School tiffins":["स्कूल टिफिन","ସ୍କୁଲ୍ ଟିଫିନ୍"],"School reception":["स्कूल रिसेप्शन","ସ୍କୁଲ୍ ରିସେପସନ୍"],"Paustik meals":["पौष्टिक भोजन","ପୌଷ୍ଟିକ ଭୋଜନ"],"Open ScooFoo":["ScooFoo खोलें","ScooFoo ଖୋଲନ୍ତୁ"],"© 2026 Paustik. All rights reserved. ScooFoo is a service by Paustik.":["© 2026 Paustik. सर्वाधिकार सुरक्षित। ScooFoo, Paustik की एक सेवा है।","© ୨୦୨୬ ପୌଷ୍ଟିକ। ସମସ୍ତ ଅଧିକାର ସଂରକ୍ଷିତ। ScooFoo ପୌଷ୍ଟିକର ଏକ ସେବା।"],"Availability and delivery slots depend on service-area coverage. School tiffins require confirmed school reception.":["उपलब्धता और डिलीवरी स्लॉट सेवा क्षेत्र पर निर्भर हैं। स्कूल टिफिन के लिए स्कूल रिसेप्शन की पुष्टि ज़रूरी है।","ଉପଲବ୍ଧତା ଓ ଡେଲିଭରି ସମୟ ସେବା ଅଞ୍ଚଳ ଉପରେ ନିର୍ଭର କରେ। ସ୍କୁଲ୍ ଟିଫିନ୍ ପାଇଁ ସ୍କୁଲ୍ ରିସେପସନ୍‌ର ପୁଷ୍ଟି ଦରକାର।"]});
+Object.assign(uiTranslations, schoolTranslations);
 const lower = Object.fromEntries(Object.entries(uiTranslations).map(([k,v]) => [k.toLowerCase(),v]));
 export function translated(text: string, language: UiLanguage) { return language === "en" ? text : (uiTranslations[text] ?? lower[text.trim().replace(/\s+/g," ").replaceAll("_"," ").toLowerCase()])?.[language === "hi" ? 0 : 1] ?? text; }

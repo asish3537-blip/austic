@@ -141,9 +141,6 @@ body:has(.simple-auth)::before { content: ''; position: fixed; inset: 0; z-index
 .paustik-footer a:hover { color: white; }
 .paustik-footer .footer-app-link { display: block; border: 1px solid #8b9e8f; border-radius: 8px; padding: 11px 14px; margin-top: 12px; text-decoration: none; color: white; font-size: 13px; }
 .footer-app-link small { display: block; font-size: 10px; color: #b4c2b5; margin-top: 3px; }
-.paustik-social-links { display: flex; gap: 10px; margin-bottom: 17px; }
-.paustik-social-links a { display: grid; place-items: center; width: 33px; height: 33px; border-radius: 50%; background: #fffaf0; color: #263e2f; font-weight: 700; text-decoration: none; }
-.paustik-social-links small { color: #b4c2b5; font-size: 12px; }
 .paustik-footer-bottom { display: block; margin-top: 35px; padding-top: 22px; border-top: 1px solid #49554c; color: #acbaaf; font-size: 11px; }
 body:has(.app-bottom-nav) .paustik-footer { padding-top: 22px; }
 body:has(.app-bottom-nav) .paustik-footer-columns,

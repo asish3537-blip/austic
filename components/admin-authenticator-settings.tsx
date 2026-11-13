@@ -193,7 +193,7 @@ export function AdminAuthenticatorSettings() {
       <div><span className="eyebrow">Authenticator app</span><h2 id="authenticator-heading">Protect your admin account</h2></div>
       {status && <span className={`admin-security-badge${status.enabled ? " is-enabled" : ""}`}>{status.enabled ? "Authenticator on" : "Authenticator off"}</span>}
     </div>
-    <p className="admin-security-help">Google Authenticator and Microsoft Authenticator both work. Once linked, the app creates a new six-digit code every 30 seconds for your admin sign-in. Customers, mothers and delivery agents continue using SMS or WhatsApp phone verification.</p>
+    <p className="admin-security-help">Google Authenticator and Microsoft Authenticator both work. Once linked, the app creates a new six-digit code every 30 seconds for your admin sign-in. Customers, Mother Kitchen partners and delivery partners sign in with email and password. WhatsApp is available for support. Complete authenticator setup before accessing administrator operations.</p>
     {error && <div className="form-alert" role="alert">{error}</div>}
     {message && <div className="form-success" role="status">{message}</div>}
     {loading && <p className="admin-security-help" role="status">Loading your security settings…</p>}

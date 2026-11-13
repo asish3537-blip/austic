@@ -4,7 +4,7 @@ import { requireRole } from "@/lib/auth";
 import "@/app/admin-security.css";
 
 export default async function AdminSecurityPage() {
-  await requireRole("ADMIN");
+  await requireRole("ADMIN", true);
 
   return <main className="dashboard-shell admin-dashboard admin-security-page">
     <div className="dashboard-head admin-dashboard-head">
