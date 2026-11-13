@@ -1,4 +1,5 @@
 "use client";
+import { UiText } from "@/components/ui-language";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 type Result = { razorpay_payment_id: string; razorpay_signature: string };
@@ -53,6 +54,6 @@ export function RazorpayPayment({ orderId }: { orderId: string }) {
     catch (e) { setMessage(e instanceof Error ? e.message : "Could not check payment."); }
     finally { setBusy(false); }
   }
-  return <div className="upi-payment"><button type="button" className="button button-small" onClick={pay} disabled={busy}>{busy ? "Processing…" : "Pay securely"}</button><button type="button" className="plain-button" disabled={busy} onClick={reconcile}>Already paid? Check status</button>{message && <p role="status">{message}</p>}</div>;
+  return <div className="upi-payment"><button type="button" className="button button-small" onClick={pay} disabled={busy}><UiText text={busy ? "Processing…" : "Pay securely"}/></button><button type="button" className="plain-button" disabled={busy} onClick={reconcile}><UiText text="Already paid? Check status"/></button>{message && <p role="status"><UiText text={message}/></p>}</div>;
 }
 

@@ -1,0 +1,18 @@
+/* Active work precedes discovery, setup and earnings in the document order. */
+.task-jumps{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 24px}
+.task-jumps a{display:inline-flex;align-items:center;min-height:46px;padding:10px 16px;border:1px solid #c9dbce;border-radius:14px;background:#edf5eb;color:#17553e;font-weight:700;text-decoration:none}
+.delivery-workspace>.delivery-jobs-grid{grid-template-columns:minmax(0,1fr);margin-top:0}
+.delivery-workspace>.delivery-jobs-grid>.dashboard-card:first-child,.mother-workspace>.mother-orders-panel,.customer-recent-orders{border-top:4px solid #1b6549}
+.mother-workspace>.mother-orders-panel{margin-bottom:20px}
+.mother-workspace .mother-work-grid{grid-template-columns:minmax(0,1fr)}
+.delivery-workspace .courier-handover{width:100%;padding:16px;background:#edf5eb;border:1px solid #b9d3c1;border-radius:14px}
+.delivery-workspace .courier-handover input{font-size:22px;letter-spacing:.15em;min-height:48px}
+.workspace-record-actions button,.food-marketplace button,.delivery-workspace button{min-height:46px}
+.food-marketplace>.market-requests{margin:0 0 24px}
+.food-marketplace .market-intro>small,.mother-workspace>.dashboard-banner{display:none}
+.payment-methods{padding:16px;border:1px solid #d7dfd4;border-radius:16px;margin:16px 0;background:#f4f8f0}
+.payment-methods summary{cursor:pointer;font-weight:700;min-height:30px}
+.payment-pending{color:#8b421b;max-width:28ch}
+html[lang="or"] body,html[lang="hi"] body{font-family:"Nirmala UI","Noto Sans Oriya","Noto Sans Devanagari",sans-serif;line-height:1.75}
+html[lang="or"] button,html[lang="hi"] button{line-height:1.6;white-space:normal}
+@media(max-width:640px){.task-jumps{display:grid;grid-template-columns:1fr 1fr}.task-jumps a{font-size:14px;padding:10px;line-height:1.5}.courier-availability{display:block}.courier-availability>label,.courier-availability>button,.courier-availability>details{margin:12px 0}.workspace-record-actions,.delivery-location-actions{display:flex;flex-wrap:wrap;gap:10px}.workspace-record-actions button,.delivery-location-actions>.button,.courier-handover>.button{flex:1 1 100%;width:100%}.customer-recent-orders li{gap:12px;align-items:flex-start}.customer-recent-orders li>div{min-width:0}.customer-recent-orders .text-link{display:inline-flex;min-height:44px;align-items:center}.food-marketplace .market-requests .dashboard-card{padding:18px}.food-marketplace .market-requests form{display:grid;gap:10px}}

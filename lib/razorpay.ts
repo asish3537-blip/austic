@@ -1,5 +1,5 @@
 import { scheduleEntityPush } from "@/lib/web-push";
-import { createHmac, timingSafeEqual } from "node:crypto";
+export { validRazorpaySignature } from "@/lib/razorpay-signature";
 import { prisma } from "@/lib/prisma";
 import { lockWallet } from "@/lib/marketplace-rules";
 
@@ -7,10 +7,6 @@ export function razorpayConfig() {
   const id = process.env.RAZORPAY_KEY_ID?.trim();
   const secret = process.env.RAZORPAY_KEY_SECRET?.trim();
   return id && /^rzp_(live|test)_[A-Za-z0-9]+$/.test(id) && secret ? { id, secret } : null;
-}
-export function validRazorpaySignature(message: string, signature: string, secret: string) {
-  if (!/^[a-f0-9]{64}$/i.test(signature)) return false;
-  return timingSafeEqual(Buffer.from(createHmac("sha256", secret).update(message).digest("hex"), "hex"), Buffer.from(signature, "hex"));
 }
 export async function razorpayRequest(path: string, data?: unknown) {
   const config = razorpayConfig();

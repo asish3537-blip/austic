@@ -12,6 +12,7 @@ export async function loadCustomerActivity(customerId: string, page: number, pro
         orderNumber: true,
         status: true,
         paymentStatus: true,
+        payments: { where: { status: "PENDING" }, select: { amount: true } },
         orderedAt: true,
         scheduledFor: true,
         totalAmount: true, subtotal: true, deliveryFee: true, discountAmount: true, taxAmount: true,

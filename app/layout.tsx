@@ -24,6 +24,7 @@ import "./customer-home.css";
 import "./voice-help.css";
 import "./editorial-home.css";
 import "./pilot-refresh.css";
+import "./action-first.css";
 
 export const metadata: Metadata = {
   title: {
