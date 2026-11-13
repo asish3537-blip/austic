@@ -1,8 +1,8 @@
 export type AppRole="CUSTOMER"|"MOTHER"|"DELIVERY_AGENT"|"ADMIN";
 export const appNavigation={
- CUSTOMER:[{label:"Home",icon:"home",href:"/customer/dashboard"},{label:"Orders",icon:"orders",href:"/customer/orders"},{label:"Paustik Pay",icon:"pay",href:"/customer/wallet"},{label:"Food shop",icon:"shop",href:"/customer/marketplace"},{label:"Website",icon:"globe",href:"/"}],
- MOTHER:[{label:"Kitchen",icon:"home",href:"/mother/dashboard"},{label:"Menu",icon:"menu",href:"/mother/dashboard#weekly-menu"},{label:"Orders",icon:"orders",href:"/mother/dashboard#incoming-orders"},{label:"Food shop",icon:"shop",href:"/mother/marketplace"},{label:"Website",icon:"globe",href:"/"}],
- DELIVERY_AGENT:[{label:"Jobs",icon:"jobs",href:"/delivery/dashboard#available-jobs"},{label:"Route",icon:"route",href:"/delivery/dashboard#delivery-route"},{label:"Help",icon:"help",href:"/help#courier-onboarding"},{label:"Website",icon:"globe",href:"/"}],
+ CUSTOMER:[{label:"Home",icon:"home",href:"/customer/dashboard"},{label:"Orders",icon:"orders",href:"/customer/orders"},{label:"Paustik Pay",icon:"pay",href:"/customer/wallet"},{label:"Food shop",icon:"shop",href:"/customer/marketplace"},{label:"ScooFoo",icon:"school",href:"/school-tiffins"}],
+ MOTHER:[{label:"Kitchen",icon:"home",href:"/mother/dashboard"},{label:"Menu",icon:"menu",href:"/mother/dashboard#weekly-menu"},{label:"Orders",icon:"orders",href:"/mother/dashboard#incoming-orders"},{label:"Food shop",icon:"shop",href:"/mother/marketplace"},{label:"ScooFoo",icon:"school",href:"/school-tiffins"}],
+ DELIVERY_AGENT:[{label:"Jobs",icon:"jobs",href:"/delivery/dashboard#available-jobs"},{label:"Route",icon:"route",href:"/delivery/dashboard#delivery-route"},{label:"Help",icon:"help",href:"/help#courier-onboarding"},{label:"ScooFoo",icon:"school",href:"/school-tiffins"}],
  ADMIN:[{label:"Overview",icon:"menu",href:"/admin/paustik-admin"},{label:"Income",icon:"pay",href:"/admin/analytics"},{label:"Activity",icon:"orders",href:"/admin/orders"},{label:"People",icon:"people",href:"/admin/accounts"},{label:"Website",icon:"globe",href:"/"}]
 } as const;
 export type AppIcon=typeof appNavigation[AppRole][number]["icon"]|"bell";

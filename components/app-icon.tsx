@@ -11,7 +11,8 @@ export function AppIcon({name}:{name:IconName}){
   route:<><circle cx="6" cy="5" r="2"/><circle cx="18" cy="19" r="2"/><path d="M6 7v7a4 4 0 0 0 4 4h1M18 17V7a4 4 0 0 0-4-4h-1"/></>,
   help:<><circle cx="12" cy="12" r="9"/><path d="M9 8a3 3 0 0 1 6 0c0 2-3 2-3 5M12 17h.01"/></>,
   people:<><circle cx="9" cy="7" r="3"/><path d="M3 21v-3a6 6 0 0 1 12 0v3M16 4a3 3 0 0 1 0 6M18 14a5 5 0 0 1 3 4v3"/></>,
-  bell:<><path d="M6 9a6 6 0 0 1 12 0v5l2 3H4l2-3ZM10 21h4"/></>
+  bell:<><path d="M6 9a6 6 0 0 1 12 0v5l2 3H4l2-3ZM10 21h4"/></>,
+  school:<><path d="m3 10 9-7 9 7M5 9v12h14V9M10 21v-6h4v6M8 11h1m6 0h1M12 3V1h5"/></>
  };
  return <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">{paths[name]}</svg>;
 }

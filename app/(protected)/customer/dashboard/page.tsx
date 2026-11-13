@@ -5,6 +5,7 @@ import {prisma} from "@/lib/prisma";
 import {isLocalAuthMode} from "@/lib/local-auth-mode";
 import {CustomerDeliveryPin} from "@/components/customer-marketplace-controls";
 import {KitchenDiscovery} from "@/components/kitchen-discovery";
+import {CustomerSchoolHero} from "@/components/customer-school-hero";
 import {CustomerHighlights} from "@/components/customer-highlights";
 import {loadCustomerKitchenDiscovery,sampleCustomerKitchens} from "@/lib/customer-kitchens";
 import {OrdersRefresh} from "@/components/orders-refresh";
@@ -23,7 +24,7 @@ export default async function CustomerDashboard({searchParams}:{searchParams:Pro
   </section>
   </>}
     <nav className="customer-shop-paths" aria-label="Choose how to order"><Link href="/customer/dashboard?mode=subscription#customer-discover" aria-current={mode==="subscription"?"page":undefined}><span aria-hidden="true">☷</span><strong><UiText text="Meal subscriptions"/></strong><small><UiText text="Plan 3–7 days"/></small></Link><Link href="/customer/dashboard?mode=once#customer-discover" aria-current={mode==="once"?"page":undefined}><span aria-hidden="true">◷</span><strong><UiText text="One-time meals"/></strong><small><UiText text="Just one day"/></small></Link><Link href="/customer/marketplace"><span aria-hidden="true">▧</span><strong><UiText text="Homemade products"/></strong><small><UiText text="Sattu, sweets & more"/></small></Link></nav>
-<Link className="sf-app-entry" href="/scoofoo"><span><strong><UiText text="ScooFoo · home to school"/></strong><small><UiText text="Pack at home. Follow pickup and school reception handover."/></small></span><span aria-hidden="true">↗</span></Link>
+<CustomerSchoolHero/>
 
   {discovery.hasDeliveryPin?<div className="customer-location-strip"><span>⌖ {discovery.deliveryArea||"Your saved delivery location"}</span><Link href="/account/settings#delivery-address"><UiText text="Change →"/></Link></div>:<CustomerDeliveryPin/>}
   <KitchenDiscovery initialQuery={(params.q||"").slice(0,100)} key={mode} initialMode={mode} kitchens={discovery.kitchens} sampleKitchens={sampleCustomerKitchens()} hasDeliveryPin={discovery.hasDeliveryPin} deliveryArea={discovery.deliveryArea} available={discovery.available}/>
