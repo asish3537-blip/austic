@@ -1619,5 +1619,7 @@ Object.assign(uiTranslations,{"Search a kitchen, cuisine or dish":["रसोई
 Object.assign(uiTranslations, {"Paustik help":["Paustik सहायता","ପୌଷ୍ଟିକ ସହାୟତା"],"Our social channels are being set up.":["हमारे सोशल चैनल तैयार हो रहे हैं।","ଆମ ସୋସିଆଲ୍ ଚ୍ୟାନେଲ୍ ପ୍ରସ୍ତୁତ ହେଉଛି।"]});
 Object.assign(uiTranslations,{"Get the app":["ऐप पाएं","ଆପ୍ ପାଆନ୍ତୁ"],"Explore meals":["भोजन देखें","ଭୋଜନ ଦେଖନ୍ତୁ"],"Android download · iPhone & web app":["Android डाउनलोड · iPhone और वेब ऐप","Android ଡାଉନଲୋଡ୍ · iPhone ଓ ୱେବ୍ ଆପ୍"],"Pause background":["वीडियो रोकें","ଭିଡିଓ ରୋକନ୍ତୁ"],"Play background":["वीडियो चलाएं","ଭିଡିଓ ଚଲାନ୍ତୁ"]});
 Object.assign(uiTranslations,{"Our story":["हमारी कहानी","ଆମ କାହାଣୀ"]});
+Object.assign(uiTranslations,{"Paustik Pay":["पौष्टिक पे","ପୌଷ୍ଟିକ ପେ"],"Food shop":["खाद्य दुकान","ଖାଦ୍ୟ ଦୋକାନ"],"Bulk meal bookings":["समूह के लिए भोजन","ଦଳ ପାଇଁ ଭୋଜନ"],"Bulk bookings":["बड़े ऑर्डर","ବଡ଼ ଅର୍ଡର୍"],"Quality & evidence":["गुणवत्ता और प्रमाण","ଗୁଣବତ୍ତା ଓ ପ୍ରମାଣ"]});
+Object.assign(uiTranslations, {"Home":["होम","ହୋମ୍"]});
 const lower = Object.fromEntries(Object.entries(uiTranslations).map(([k,v]) => [k.toLowerCase(),v]));
 export function translated(text: string, language: UiLanguage) { return language === "en" ? text : (uiTranslations[text] ?? lower[text.trim().replace(/\s+/g," ").replaceAll("_"," ").toLowerCase()])?.[language === "hi" ? 0 : 1] ?? text; }

@@ -1,0 +1,8 @@
+import {test} from "node:test";import assert from "node:assert/strict";
+import {activeNavigationIndex,appNavigation} from "../lib/app-navigation";
+import {translated} from "../lib/ui-translations";
+test("customer order tracking and kitchen detail pages retain the right destination",()=>{assert.equal(activeNavigationIndex("CUSTOMER","/customer/purchases"),1);assert.equal(activeNavigationIndex("CUSTOMER","/customer/kitchens/example"),0);assert.equal(activeNavigationIndex("CUSTOMER","/customer/wallet"),2);});
+test("Mother menu and orders anchors select different tabs on the same route",()=>{assert.equal(activeNavigationIndex("MOTHER","/mother/dashboard"),0);assert.equal(activeNavigationIndex("MOTHER","/mother/dashboard","#weekly-menu"),1);assert.equal(activeNavigationIndex("MOTHER","/mother/dashboard","#incoming-orders"),2);});
+test("courier route selection and compact navigation labels remain role-specific",()=>{assert.equal(activeNavigationIndex("DELIVERY_AGENT","/delivery/dashboard","#delivery-route"),1);assert.equal(activeNavigationIndex("MOTHER","/customer/wallet"),-1);assert.deepEqual(appNavigation.CUSTOMER.map(i=>i.label),["Home","Orders","Paustik Pay","Food shop","Website"]);});
+test("food detail routes stay highlighted in Food shop without selecting unrelated pages",()=>{assert.equal(activeNavigationIndex("CUSTOMER","/customer/marketplace/products/example"),3);assert.equal(activeNavigationIndex("CUSTOMER","/notifications"),-1);});
+test("every customer navigation destination is translated in Hindi and Odia",()=>{for(const language of ["hi","or"] as const)for(const item of appNavigation.CUSTOMER)assert.notEqual(translated(item.label,language),item.label);});

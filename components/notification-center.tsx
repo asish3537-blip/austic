@@ -56,7 +56,7 @@ export function NotificationCenter({ full = false }: { full?: boolean }) {
     } catch (e) { setMessage(e instanceof Error ? e.message : "Notification settings are unavailable."); } finally { setBusy(false); }
   }
   async function markRead(id?: string) {
-    try { const r = await fetch("/api/notifications", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(id ? { id } : { all: true }) }); if (!r.ok) throw new Error(); setItems(current => current.map(item => !id || item.id === id ? { ...item, readAt: new Date().toISOString() } : item)); setUnread(n => id ? Math.max(0,n-1) : 0); } catch { setMessage("Could not mark notifications as read. Try again."); }
+    try { const r = await fetch("/api/notifications", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(id ? { id } : { all: true }) }); if (!r.ok) throw new Error(); setItems(current => current.map(item => !id || item.id === id ? { ...item, readAt: new Date().toISOString() } : item)); setUnread(n => id ? Math.max(0,n-1) : 0); window.dispatchEvent(new Event("paustik-notifications-changed")); } catch { setMessage("Could not mark notifications as read. Try again."); }
   }
   return <div className={"notification-center " + (full ? "notification-full" : "")}>
     {!full && <button type="button" className="notification-bell" aria-expanded={open} onClick={() => setOpen(!open)}><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="M6 9a6 6 0 0 1 12 0v5l2 3H4l2-3V9Z"/><path d="M9 20h6"/></svg> Notifications{unread > 0 && <b>{unread > 99 ? "99+" : unread}</b>}</button>}
