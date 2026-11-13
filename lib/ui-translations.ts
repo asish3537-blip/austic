@@ -1012,5 +1012,6 @@ Object.assign(uiTranslations,{
     "ନିୟମିତ ଭୋଜନ ₹69 / ₹79 / ₹89 / ₹99 ରୁ। ନିୟମିତ ଚିକେନ୍ ସର୍ବାଧିକ ₹100। ଗୋଟିଏ ଦିନର ବିଶେଷ ଭୋଜନର ନିଜ ମୂଲ୍ୟ ରଖିପାରିବେ।"
   ]
 });
+Object.assign(uiTranslations, {Jobs:["डिलीवरी के काम","ଡେଲିଭରି କାମ"],Route:["मेरा रास्ता","ମୋ ରାସ୍ତା"]});
 const lower = Object.fromEntries(Object.entries(uiTranslations).map(([k,v]) => [k.toLowerCase(),v]));
 export function translated(text: string, language: UiLanguage) { return language === "en" ? text : (uiTranslations[text] ?? lower[text.trim().replace(/\s+/g," ").replaceAll("_"," ").toLowerCase()])?.[language === "hi" ? 0 : 1] ?? text; }
