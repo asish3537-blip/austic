@@ -1,4 +1,5 @@
-import { UiText, WebsiteSearchInput } from "@/components/ui-language";
+import { UiText } from "@/components/ui-language";
+import { HeroFoodVideo } from "@/components/hero-food-video";
 import { ScoofooPromo } from "@/components/scoofoo-promo";
 
 import { AppFeatureShowcase } from "@/components/app-feature-showcase";
@@ -12,9 +13,8 @@ const mealWays=[
  {image:"/assets/home-fresh.avif",tag:"Find your flavour",name:"Something that feels like home.",copy:"Browse breakfast, lunch and light dinner. Check each kitchen’s latest menu.",cta:"Discover Mother Kitchens",href:"/app"},
 ];
 export function EditorialHome(){return <main className="editorial-home">
- <div className="eh-announcement"><UiText text="Made by mothers. Made for your everyday."/>{" "}<a href="#for-mothers"><UiText text="Meet Paustik ↗"/></a></div>
  <section className="eh-hero eh-container" aria-labelledby="eh-title">
-  <div className="hero-food-backdrop" aria-hidden="true"><Image src="/assets/home-thali.avif" alt="" fill priority sizes="100vw"/></div><div className="eh-hero-copy"><span className="eh-eyebrow"><UiText text="From a Mother Kitchen to your table"/></span><h1 id="eh-title"><UiText text="A little home."/><br/><UiText text="In every"/>{" "}<em><UiText text="meal."/></em></h1><p><UiText text="Home-style food, lovingly cooked by mothers in your neighbourhood. Find your everyday comfort, one fresh meal at a time."/></p><div className="eh-actions"><Link className="button" href="/app"><UiText text="Find your next meal"/>{" "}<span aria-hidden="true">↗</span></Link><a className="eh-text-link" href="#how-it-works"><UiText text="How Paustik works ↗"/></a></div><form className="hero-meal-search" action="/customer/dashboard"><label htmlFor="hero-food-query"><UiText text="Find your neighbourhood flavour"/></label><div><span aria-hidden="true">⌕</span><WebsiteSearchInput/><button className="button" type="submit"><UiText text="Find meals"/></button></div></form><div className="eh-purpose"><span aria-hidden="true">♡</span><div><strong><UiText text="Good food. Greater purpose."/></strong><small><UiText text="Supporting mothers on their entrepreneurial journey."/></small></div></div></div>
+  <HeroFoodVideo/><div className="eh-hero-copy"><span className="eh-eyebrow"><UiText text="From a Mother Kitchen to your table"/></span><h1 id="eh-title"><UiText text="A little home."/><br/><UiText text="In every"/>{" "}<em><UiText text="meal."/></em></h1><p><UiText text="Home-style food, lovingly cooked by mothers in your neighbourhood. Find your everyday comfort, one fresh meal at a time."/></p><div className="eh-actions"><Link className="button" href="/install"><UiText text="Get the app"/> <span aria-hidden="true">↓</span></Link><Link className="hero-secondary-link" href="/app"><UiText text="Explore meals"/> <span aria-hidden="true">↗</span></Link></div><p className="hero-platform-note"><UiText text="Android download · iPhone & web app"/></p></div>
 
  </section>
  <ScoofooPromo/>
