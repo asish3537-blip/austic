@@ -76,3 +76,5 @@ section.customer-highlights.customer-home-hero{align-items:flex-start;justify-co
 @media(max-width:700px){.brand>.scoofoo-wordmark{min-height:48px}.scoofoo-wordmark strong{font-size:28px}.customer-app-header .scoofoo-wordmark strong{font-size:25px}.customer-app-header .scoofoo-wordmark small{font-size:8px}.paustik-footer .paustik-footer-heading.footer-brand-pair{gap:20px;flex-wrap:nowrap}.footer-school-logo .scoofoo-wordmark strong{font-size:26px}.footer-service-disclaimer{font-size:11px}.footer-school-logo .scoofoo-wordmark small{font-size:9px}}
 .paustik-footer .paustik-footer-heading.footer-brand-pair{flex-direction:row}
 .paustik-footer .paustik-footer-heading.footer-brand-pair{justify-content:space-between}.footer-brand-pair .footer-school-logo{margin-left:auto}
+
+body:has(.app-bottom-nav) .paustik-footer .paustik-footer-columns{display:grid}body:has(.app-bottom-nav) .paustik-footer .paustik-footer-heading img{width:145px}.paustik-footer .paustik-footer-columns{align-items:start}.paustik-footer .paustik-footer-columns h2:first-child{margin-top:0}@media(max-width:700px){body:has(.app-bottom-nav) .paustik-footer .paustik-footer-heading img{width:130px}}
