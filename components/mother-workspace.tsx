@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { KitchenPickupCode } from "@/components/kitchen-pickup-code";
+import {SavedMealScheduler} from "@/components/saved-meal-scheduler";
 
 import { UiText } from "@/components/ui-language";
 import { useCallback, useEffect, useState } from "react";
@@ -194,18 +195,19 @@ export function MotherWorkspace() {
       </article>
     <nav className="mother-shortcuts" aria-label="Kitchen tools"><a href="#weekly-menu"><UiText text="Add / update meals ↓"/></a><Link href="/mother/marketplace#product-requests"><UiText text="Product requests →"/></Link><Link href="/mother/marketplace"><UiText text="Sell homemade products →"/></Link><Link href="/mother/bulk"><UiText text="Bulk bookings →"/></Link><Link href="/mother/quality"><UiText text="Photos, FSSAI & inspections →"/></Link><Link href="/mother-guide"><UiText text="Start your Mother Kitchen"/> →</Link></nav>
     <section className="mother-summary-grid" id="kitchen-summary" aria-label="Kitchen status">
-      <article><span><UiText text="Kitchen"/></span><strong>{workspace.kitchen.name}</strong><small><UiText text={workspace.kitchen.approved ? "Paustik verified" : "Waiting for Paustik approval"}/></small></article>
+      <article><span><UiText text="Kitchen"/></span><strong>{workspace.kitchen.name}</strong><small><UiText text={workspace.kitchen.approved ? "Kitchen account approved" : "Waiting for Paustik approval"}/></small><Link href="/mother/quality"><UiText text="Check FSSAI & inspection status"/> →</Link></article>
       <article><span><UiText text="Menu items"/></span><strong>{workspace.menus.filter((item) => item.isPublished && item.isAvailable).length}</strong><small><UiText text="Live and available to customers"/></small></article>
       
     </section>
 
     <section className="mother-location-panel">
-      <div><span className="eyebrow"><UiText text="Kitchen location"/></span><h2><UiText text={workspace.kitchen.hasLocation ? "Kitchen pin saved" : "Add your kitchen pickup pin"}/></h2><p><UiText text="Customer delivery covers up to 25 km. Couriers still use the separate 150 m pickup geofence at this pin."/></p><label className="mother-radius-setting"><UiText text="Customer delivery area"/><select value={marketplaceRadiusKm} onChange={(event) => setMarketplaceRadiusKm(Number(event.target.value))}>{[25].map((radius) => <option key={radius} value={radius}>{radius} <UiText text="km"/></option>)}</select></label></div>
+      <div><span className="eyebrow"><UiText text="Kitchen location"/></span><h2><UiText text={workspace.kitchen.hasLocation ? "Kitchen pin saved" : "Add your kitchen pickup pin"}/></h2><p><UiText text="Customers within 25 km can order when delivery is available. Use your pickup code for handover; GPS is optional."/></p><label className="mother-radius-setting"><UiText text="Customer delivery area"/><select value={marketplaceRadiusKm} onChange={(event) => setMarketplaceRadiusKm(Number(event.target.value))}>{[25].map((radius) => <option key={radius} value={radius}>{radius} <UiText text="km"/></option>)}</select></label></div>
       <button className="button button-small" type="button" onClick={pinKitchen} disabled={busyId === "location"}><UiText text={busyId === "location" ? "Waiting for GPS…" : workspace.kitchen.hasLocation ? "Refresh kitchen pin" : "Use this device location"}/></button>
     </section>
 
 
 
+    <SavedMealScheduler onSaved={refresh}/>
     <section className="mother-work-grid" id="mother-orders">
       <article className="dashboard-card mother-menu-editor">
         <div className="workspace-section-heading"><div><span className="eyebrow"><UiText text="Weekly menu"/></span><h2 id="weekly-menu"><UiText text={editing ? "Update meal" : "Add a meal"}/></h2></div><button className="button button-quiet" type="button" onClick={publishDrafts} disabled={busyId === "publish" || !workspace.kitchen.approved || !workspace.kitchen.hasLocation}><UiText text={busyId === "publish" ? "Publishing…" : "Publish menu"}/></button></div>

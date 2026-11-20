@@ -3139,6 +3139,84 @@ Object.assign(uiTranslations,{
   "ଗୁଣବତ୍ତା ଓ ପ୍ରମାଣ"
  ]
 });
+Object.assign(uiTranslations,{
+ "Schedule a saved dish for up to 7 days": [
+  "पुराना पकवान 7 दिनों तक निर्धारित करें",
+  "ସଞ୍ଚିତ ଖାଦ୍ୟକୁ ୭ ଦିନ ପର୍ଯ୍ୟନ୍ତ ଧାର୍ଯ୍ୟ କରନ୍ତୁ"
+ ],
+ "Reuse your saved meal and price. Each date gets its own stock. Existing bookings and stock are never overwritten.": [
+  "सहेजे भोजन और कीमत का उपयोग करें। हर तारीख का अलग स्टॉक होगा। मौजूदा बुकिंग और स्टॉक नहीं बदलेंगे।",
+  "ସଞ୍ଚିତ ଭୋଜନ ଓ ମୂଲ୍ୟ ବ୍ୟବହାର କରନ୍ତୁ। ପ୍ରତ୍ୟେକ ତାରିଖର ଅଲଗା ଷ୍ଟକ୍ ରହିବ। ଚାଲୁ ବୁକିଂ ଓ ଷ୍ଟକ୍ ବଦଳିବ ନାହିଁ।"
+ ],
+ "Loading saved dishes…": [
+  "सहेजे पकवान लोड हो रहे हैं…",
+  "ସଞ୍ଚିତ ଖାଦ୍ୟ ଲୋଡ୍ ହେଉଛି…"
+ ],
+ "No saved meal dishes yet. Add a meal below first. Homemade products stay in Food shop.": [
+  "अभी कोई सहेजा पकवान नहीं है। पहले नीचे भोजन जोड़ें। घर के उत्पाद Food shop में रहेंगे।",
+  "ଏବେ ସଞ୍ଚିତ ଭୋଜନ ନାହିଁ। ପ୍ରଥମେ ତଳେ ଭୋଜନ ଯୋଡ଼ନ୍ତୁ। ଘରୋଇ ଉତ୍ପାଦ ଖାଦ୍ୟ ଦୋକାନରେ ରହିବ।"
+ ],
+ "Saved meal": [
+  "सहेजा भोजन",
+  "ସଞ୍ଚିତ ଭୋଜନ"
+ ],
+ "Choose a saved dish": [
+  "सहेजा पकवान चुनें",
+  "ସଞ୍ଚିତ ଖାଦ୍ୟ ବାଛନ୍ତୁ"
+ ],
+ "One-time specials only; excluded from subscriptions.": [
+  "केवल एक बार के विशेष भोजन; सदस्यता में नहीं।",
+  "କେବଳ ଏକ ଥରର ବିଶେଷ ଭୋଜନ; ସବସ୍କ୍ରିପସନ୍‌ରେ ନୁହେଁ।"
+ ],
+ "Available for one-time meals and eligible subscriptions.": [
+  "एक बार के भोजन और पात्र सदस्यता के लिए उपलब्ध।",
+  "ଏକ ଥରର ଭୋଜନ ଓ ଯୋଗ୍ୟ ସବସ୍କ୍ରିପସନ୍ ପାଇଁ ଉପଲବ୍ଧ।"
+ ],
+ "Ingredients & allergens": [
+  "सामग्री और एलर्जी",
+  "ସାମଗ୍ରୀ ଓ ଆଲର୍ଜି"
+ ],
+ "Not recorded": [
+  "दर्ज नहीं है",
+  "ରେକର୍ଡ ହୋଇନାହିଁ"
+ ],
+ "Start date": [
+  "शुरू की तारीख",
+  "ଆରମ୍ଭ ତାରିଖ"
+ ],
+ "Number of days": [
+  "दिनों की संख्या",
+  "ଦିନ ସଂଖ୍ୟା"
+ ],
+ "Servings each day": [
+  "हर दिन की मात्रा",
+  "ପ୍ରତି ଦିନର ଭୋଜନ ପରିମାଣ"
+ ],
+ "Schedule selected days": [
+  "चुने दिन निर्धारित करें",
+  "ବଛା ଦିନଗୁଡ଼ିକ ଧାର୍ଯ୍ୟ କରନ୍ତୁ"
+ ],
+ "Saved dish scheduled and listed for the selected days.": [
+  "सहेजा पकवान चुने दिनों के लिए सूचीबद्ध हो गया।",
+  "ସଞ୍ଚିତ ଖାଦ୍ୟ ବଛା ଦିନଗୁଡ଼ିକ ପାଇଁ ତାଲିକାଭୁକ୍ତ ହେଲା।"
+ ],
+ "Saved dish scheduled as draft. Kitchen approval, accepting orders and a pickup pin are required.": [
+  "पकवान ड्राफ्ट में निर्धारित है। रसोई स्वीकृति, ऑर्डर स्वीकार करना और पिकअप पिन ज़रूरी हैं।",
+  "ଖାଦ୍ୟ ଡ୍ରାଫ୍ଟରେ ଧାର୍ଯ୍ୟ ହେଲା। ରୋଷେଇଘର ଅନୁମୋଦନ, ଅର୍ଡର୍ ଗ୍ରହଣ ଓ ପିକଅପ୍ ପିନ୍ ଦରକାର।"
+ ],
+ "This dish already has a slot on one of those dates. Your existing stock was not changed.": [
+  "इस पकवान का किसी चुनी तारीख पर स्लॉट है। मौजूदा स्टॉक नहीं बदला।",
+  "ବଛା ତାରିଖ ମଧ୍ୟରୁ ଗୋଟିଏରେ ଏହି ଖାଦ୍ୟ ଆଗରୁ ଅଛି। ଚାଲୁ ଷ୍ଟକ୍ ବଦଳାଯାଇନାହିଁ।"
+ ],
+ "Kitchen account approved": [
+  "रसोई खाता स्वीकृत",
+  "ରୋଷେଇଘର ଖାତା ଅନୁମୋଦିତ"
+ ],
+ "Customers within 25 km can order when delivery is available. Use your pickup code for handover; GPS is optional.": [
+  "डिलीवरी उपलब्ध होने पर 25 किमी के ग्राहक ऑर्डर कर सकते हैं। पिकअप के लिए अपना कोड दें; GPS वैकल्पिक है।",
+  "ଡେଲିଭରି ଉପଲବ୍ଧ ଥିଲେ ୨୫ କିମି ଭିତର ଗ୍ରାହକ ଅର୍ଡର୍ କରିପାରିବେ। ପିକଅପ୍ ପାଇଁ ନିଜ କୋଡ୍ ଦିଅନ୍ତୁ; GPS ଇଚ୍ଛାଧୀନ।"
+ ]
+});
 const lower = Object.fromEntries(Object.entries(uiTranslations).map(([k,v]) => [k.toLowerCase(),v]));
 const templateTranslations=Object.entries(uiTranslations).filter(([key])=>/\{\w+\}/.test(key)).map(([key,value])=>{
  const names:string[]=[];
