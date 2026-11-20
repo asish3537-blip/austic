@@ -2913,6 +2913,14 @@ Object.assign(uiTranslations,{
  "Resend confirmation email":["पुष्टि ईमेल दोबारा भेजें","ପୁଷ୍ଟି ଇମେଲ୍ ପୁଣି ପଠାନ୍ତୁ"],
  "After customer sign-in, your selected kitchen will reopen.":["साइन इन के बाद आपकी चुनी हुई रसोई फिर खुलेगी।","ସାଇନ୍ ଇନ୍ ପରେ ଆପଣ ବାଛିଥିବା ରୋଷେଇଘର ପୁଣି ଖୋଲିବ।"]
 });
+Object.assign(uiTranslations,{
+ "Your product shop at a glance":["आपकी उत्पाद दुकान की झलक","ଆପଣଙ୍କ ଉତ୍ପାଦ ଦୋକାନର ଝଲକ"],
+ "Made at home. Shared nearby.":["घर पर बना। पड़ोस तक पहुँचा।","ଘରେ ତିଆରି। ପଡ଼ୋଶରେ ପହଞ୍ଚେ।"],
+ "List your favourites. Confirm requests. Prepare with care.":["अपने उत्पाद जोड़ें। अनुरोध स्वीकारें। प्यार से तैयार करें।","ଉତ୍ପାଦ ଯୋଡ଼ନ୍ତୁ। ଅନୁରୋଧ ଗ୍ରହଣ କରନ୍ତୁ। ଯତ୍ନରେ ତିଆରି କରନ୍ତୁ।"],
+ "Listed products":["सूचीबद्ध उत्पाद","ତାଲିକାଭୁକ୍ତ ଉତ୍ପାଦ"],
+ "Active requests":["सक्रिय अनुरोध","ଚାଲୁଥିବା ଅନୁରୋଧ"],
+ "New requests will appear here for you to review.":["नए अनुरोध समीक्षा के लिए यहाँ दिखेंगे।","ସମୀକ୍ଷା ପାଇଁ ନୂଆ ଅନୁରୋଧ ଏଠାରେ ଦେଖାଯିବ।"]
+});
 const lower = Object.fromEntries(Object.entries(uiTranslations).map(([k,v]) => [k.toLowerCase(),v]));
 const templateTranslations=Object.entries(uiTranslations).filter(([key])=>/\{\w+\}/.test(key)).map(([key,value])=>{
  const names:string[]=[];
