@@ -127,7 +127,7 @@ export default function HelpPage() {
         <p>Authenticator protection applies to administrators only. Password reset keeps it enabled. Customer, mother and delivery accounts use email/password and email confirmation. WhatsApp is a support chat option.</p>
         <Link className="text-link" href="/admin-sign-in">Administrator sign-in</Link><span aria-hidden="true"> · </span><Link className="text-link" href="/admin/security">Admin security</Link>
       </section>
-      <section className="help-grid" aria-label="Paustik video help guides">
+      <p><Link className="button" href="/app-demo"><UiText text="App preview"/></Link></p><section className="help-grid" aria-label="Paustik video help guides">
         {guides.map((guide, index) => (
           <article className="help-card" id={guide.slug} key={guide.slug}>
             {!["marketplace-roadmap","customer-workspace","account-profile"].includes(guide.slug) && <video className="help-video" controls playsInline preload="none" poster={`/assets/help-${guide.slug}.png`} aria-label={`${guide.title} help video`}>
@@ -150,3 +150,4 @@ export default function HelpPage() {
     </main>
   );
 }
+

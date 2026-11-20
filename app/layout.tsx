@@ -10,6 +10,7 @@ import { MobileNavigation } from "@/components/mobile-navigation";
 import { LanguageProvider, LanguageSelector } from "@/components/ui-language";
 import "./globals.css";
 import "./app-demo.css";
+import "./app-review.css";
 import "./bottom-navigation.css";
 import "./install.css";
 import "./simple.css";
@@ -28,6 +29,7 @@ import "./action-first.css";
 import "./website-alignment.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://paustik.in"),
   title: {
     default: "Paustik — Purity. Hygiene. Delivered.",
     template: "%s | Paustik",
