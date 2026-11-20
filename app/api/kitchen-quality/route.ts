@@ -4,10 +4,11 @@ import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { rejectCrossOrigin, serviceUnavailable } from "@/lib/http";
 import { normalizeKitchenImage } from "@/lib/kitchen-branding";
+import { fssaiEvidenceExpiry } from "@/lib/kitchen-license";
 
 class QualityError extends Error {}
 const schema = z.discriminatedUnion("action", [
-  z.object({ action: z.literal("upload"), kind: z.enum(["PREPARATION", "FSSAI", "KITCHEN"]), caption: z.string().trim().min(5).max(300), image: z.string().max(2800000), licenseNumber: z.string().regex(/^\d{14}$/).optional(), validUntil: z.iso.date().optional() }),
+  z.object({ action: z.literal("upload"), kind: z.enum(["PREPARATION", "FSSAI", "KITCHEN"]), caption: z.string().trim().min(5).max(300), image: z.string().max(2800000), licenseNumber: z.string().regex(/^\d{14}$/).optional(), validUntil: z.iso.date().optional(), perpetual:z.boolean().optional() }),
   z.object({ action: z.literal("review"), id: z.string().uuid(), status: z.enum(["APPROVED", "NEEDS_ACTION", "REJECTED"]), notes: z.string().trim().min(5).max(1000) }),
   z.object({ action: z.literal("inspection"), kitchenId: z.string().uuid(), status: z.enum(["PASS", "NEEDS_ACTION", "FAIL"]), score: z.number().min(0).max(100), notes: z.string().trim().min(10).max(1500), correctiveAction: z.string().max(1000), inspectedAt: z.iso.datetime() }),
   z.object({ action: z.literal("training"), kitchenId: z.string().uuid(), topic: z.string().trim().min(4).max(120), notes: z.string().trim().min(5).max(1000), dueAt: z.iso.datetime() }),
@@ -56,9 +57,10 @@ export async function POST(request: Request) {
         const kitchen = await tx.kitchen.findFirstOrThrow({ where: { mother: { userId: user.id } } });
         await tx.$queryRaw`SELECT 1 FROM pg_advisory_xact_lock(hashtextextended(${"evidence:" + kitchen.id},0))`;
         if (await tx.kitchenEvidence.count({ where: { kitchenId: kitchen.id } }) >= 50) throw new QualityError("Your evidence library has reached 50 photos. Contact operations for review.");
-        if (x.kind === "FSSAI" && (!x.licenseNumber || !x.validUntil)) throw new QualityError("Add the 14-digit FSSAI number and expiry date with its document photo.");
+        let certificateExpiry:Date|null|undefined;
+        if(x.kind==="FSSAI"){try{certificateExpiry=fssaiEvidenceExpiry(x);}catch(error){throw new QualityError(error instanceof Error?error.message:"Check the FSSAI certificate details.");}}
         const image = normalizeKitchenImage(x.image, { maxLength: 2800000, maxDimension: 1280, maxChunk: 2100000 });
-        const evidence = await tx.kitchenEvidence.create({ data: { kitchenId: kitchen.id, uploadedBy: user.id, kind: x.kind, caption: x.caption, image, licenseNumber: x.kind === "FSSAI" ? x.licenseNumber : undefined, validUntil: x.kind === "FSSAI" ? new Date(x.validUntil!) : undefined } });
+        const evidence = await tx.kitchenEvidence.create({ data: { kitchenId: kitchen.id, uploadedBy: user.id, kind: x.kind, caption: x.caption, image, licenseNumber: x.kind === "FSSAI" ? x.licenseNumber : undefined, validUntil:certificateExpiry } });
         const admins = await tx.user.findMany({ where: { role: "ADMIN", status: "ACTIVE" }, select: { id: true }, take: 20 });
         await tx.notification.createMany({ data: admins.map(admin => ({ userId: admin.id, title: "Kitchen evidence awaiting review", body: kitchen.name + " · " + x.kind, kind: "QUALITY", entityId: evidence.id })) });
       } else if (x.action === "review") {
@@ -66,7 +68,7 @@ export async function POST(request: Request) {
         await tx.kitchenEvidence.update({ where: { id: x.id }, data: { reviewStatus: x.status, reviewNotes: x.notes, reviewedBy: user.id, reviewedAt: new Date() } });
         const kitchen = await tx.kitchen.findUniqueOrThrow({ where: { id: evidence.kitchenId }, include: { mother: true } });
         if (x.status === "APPROVED" && evidence.kind === "FSSAI") {
-          if (!evidence.validUntil || evidence.validUntil < new Date()) throw new QualityError("This document has expired. Ask for a current FSSAI document.");
+          if (!evidence.licenseNumber || (evidence.validUntil && evidence.validUntil < new Date())) throw new QualityError("Check the FSSAI number and certificate validity before approval.");
           await tx.motherProfile.update({ where: { id: kitchen.motherId }, data: { fssaiNumber: evidence.licenseNumber } });
         }
         await tx.notification.create({ data: { userId: kitchen.mother.userId, title: "Kitchen evidence reviewed", body: x.status + " · " + x.notes, kind: "QUALITY", entityId: evidence.id } });

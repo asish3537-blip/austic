@@ -2921,6 +2921,224 @@ Object.assign(uiTranslations,{
  "Active requests":["सक्रिय अनुरोध","ଚାଲୁଥିବା ଅନୁରୋଧ"],
  "New requests will appear here for you to review.":["नए अनुरोध समीक्षा के लिए यहाँ दिखेंगे।","ସମୀକ୍ଷା ପାଇଁ ନୂଆ ଅନୁରୋଧ ଏଠାରେ ଦେଖାଯିବ।"]
 });
+Object.assign(uiTranslations,{
+ "Start your Mother Kitchen": [
+  "अपनी Mother Kitchen शुरू करें",
+  "ନିଜ ମା’ଙ୍କ ରୋଷେଇଘର ଆରମ୍ଭ କରନ୍ତୁ"
+ ],
+ "A food business can begin at her own kitchen table. More choice over her hours, less need to sell outside, and a chance to earn from skills her neighbourhood can value.": [
+  "अपनी रसोई से खाद्य व्यवसाय की शुरुआत। अपने समय पर अधिक नियंत्रण, बाहर बेचने की कम जरूरत और अपने हुनर से पड़ोस में कमाने का अवसर।",
+  "ନିଜ ରୋଷେଇଘରୁ ଖାଦ୍ୟ ବ୍ୟବସାୟର ଆରମ୍ଭ। ନିଜ ସମୟ ଉପରେ ଅଧିକ ନିୟନ୍ତ୍ରଣ, ବାହାରେ ବିକ୍ରି କରିବାର କମ୍ ଆବଶ୍ୟକତା ଓ ନିଜ ଦକ୍ଷତାରୁ ପଡ଼ୋଶରେ ରୋଜଗାରର ସୁଯୋଗ।"
+ ],
+ "FSSAI food registration & licence": [
+  "FSSAI खाद्य पंजीकरण और लाइसेंस",
+  "FSSAI ଖାଦ୍ୟ ପଞ୍ଜୀକରଣ ଓ ଲାଇସେନ୍ସ"
+ ],
+ "Starting at home? Follow the guide, apply on FoSCoS, then upload your certificate for review.": [
+  "घर से शुरुआत? गाइड पढ़ें, FoSCoS पर आवेदन करें और प्रमाणपत्र समीक्षा के लिए अपलोड करें।",
+  "ଘରୁ ଆରମ୍ଭ କରୁଛନ୍ତି? ଗାଇଡ୍ ପଢ଼ନ୍ତୁ, FoSCoSରେ ଆବେଦନ କରି ପ୍ରମାଣପତ୍ର ସମୀକ୍ଷା ପାଇଁ ଅପଲୋଡ୍ କରନ୍ତୁ।"
+ ],
+ "Apply on FoSCoS": [
+  "FoSCoS पर आवेदन करें",
+  "FoSCoSରେ ଆବେଦନ କରନ୍ତୁ"
+ ],
+ "Certificate has perpetual validity / no expiry date": [
+  "प्रमाणपत्र की स्थायी वैधता / समाप्ति तिथि नहीं है",
+  "ପ୍ରମାଣପତ୍ରର ସ୍ଥାୟୀ ବୈଧତା / ମିଆଦ ତାରିଖ ନାହିଁ"
+ ],
+ "Expiry date printed on certificate": [
+  "प्रमाणपत्र पर छपी समाप्ति तिथि",
+  "ପ୍ରମାଣପତ୍ରରେ ଲେଖା ମିଆଦ ତାରିଖ"
+ ],
+ "Use the validity stated on your certificate. Paustik will review the document before approval.": [
+  "प्रमाणपत्र पर दी गई वैधता लिखें। मंजूरी से पहले Paustik दस्तावेज़ की समीक्षा करेगा।",
+  "ପ୍ରମାଣପତ୍ରର ବୈଧତା ଦିଅନ୍ତୁ। ଅନୁମୋଦନ ପୂର୍ବରୁ ପୌଷ୍ଟିକ ଦସ୍ତାବିଜ ସମୀକ୍ଷା କରିବ।"
+ ],
+ "FSSAI number recorded": [
+  "FSSAI नंबर दर्ज है",
+  "FSSAI ନମ୍ବର ରେକର୍ଡ ହୋଇଛି"
+ ],
+ "FSSAI certificate status": [
+  "FSSAI प्रमाणपत्र की स्थिति",
+  "FSSAI ପ୍ରମାଣପତ୍ର ଅବସ୍ଥା"
+ ],
+ "Awaiting document review": [
+  "दस्तावेज़ समीक्षा की प्रतीक्षा",
+  "ଦସ୍ତାବିଜ ସମୀକ୍ଷା ଅପେକ୍ଷାରେ"
+ ],
+ "No expiry date supplied · check certificate": [
+  "समाप्ति तिथि नहीं दी गई · प्रमाणपत्र जाँचें",
+  "ମିଆଦ ତାରିଖ ଦିଆଯାଇନାହିଁ · ପ୍ରମାଣପତ୍ର ଯାଞ୍ଚ କରନ୍ତୁ"
+ ],
+ "Expires": [
+  "समाप्ति",
+  "ମିଆଦ"
+ ],
+ "Photos and licence documents are private to the kitchen account and Paustik administrators. Document approval records an operations review.": [
+  "फ़ोटो और लाइसेंस दस्तावेज़ केवल रसोई खाते और Paustik प्रशासकों के लिए हैं। दस्तावेज़ स्वीकृति संचालन समीक्षा है।",
+  "ଫଟୋ ଓ ଲାଇସେନ୍ସ ଦସ୍ତାବିଜ କେବଳ ରୋଷେଇଘର ଖାତା ଓ ପୌଷ୍ଟିକ ପ୍ରଶାସକଙ୍କ ପାଇଁ। ଦସ୍ତାବିଜ ଅନୁମୋଦନ ଏକ ପରିଚାଳନା ସମୀକ୍ଷା।"
+ ],
+ "Evidence type": [
+  "प्रमाण का प्रकार",
+  "ପ୍ରମାଣ ପ୍ରକାର"
+ ],
+ "Prepared meal / packing photo": [
+  "तैयार भोजन / पैकिंग की फ़ोटो",
+  "ପ୍ରସ୍ତୁତ ଭୋଜନ / ପ୍ୟାକିଂ ଫଟୋ"
+ ],
+ "Kitchen and hygiene photo": [
+  "रसोई और स्वच्छता की फ़ोटो",
+  "ରୋଷେଇଘର ଓ ପରିଚ୍ଛନ୍ନତା ଫଟୋ"
+ ],
+ "FSSAI licence photo": [
+  "FSSAI लाइसेंस की फ़ोटो",
+  "FSSAI ଲାଇସେନ୍ସ ଫଟୋ"
+ ],
+ "Caption and meal/date reference": [
+  "विवरण और भोजन/तारीख का संदर्भ",
+  "ବିବରଣୀ ଓ ଭୋଜନ/ତାରିଖ ସନ୍ଦର୍ଭ"
+ ],
+ "14-digit FSSAI number": [
+  "14 अंकों का FSSAI नंबर",
+  "୧୪ ଅଙ୍କର FSSAI ନମ୍ବର"
+ ],
+ "Photo": [
+  "फ़ोटो",
+  "ଫଟୋ"
+ ],
+ "Upload for review": [
+  "समीक्षा के लिए अपलोड करें",
+  "ସମୀକ୍ଷା ପାଇଁ ଅପଲୋଡ୍ କରନ୍ତୁ"
+ ],
+ "Review ·": [
+  "समीक्षा ·",
+  "ସମୀକ୍ଷା ·"
+ ],
+ "Decision": [
+  "निर्णय",
+  "ନିଷ୍ପତ୍ତି"
+ ],
+ "Reviewed and approved": [
+  "समीक्षा के बाद स्वीकृत",
+  "ସମୀକ୍ଷା ପରେ ଅନୁମୋଦିତ"
+ ],
+ "Needs action": [
+  "कार्रवाई ज़रूरी",
+  "କାର୍ଯ୍ୟାନୁଷ୍ଠାନ ଦରକାର"
+ ],
+ "Rejected": [
+  "अस्वीकृत",
+  "ପ୍ରତ୍ୟାଖ୍ୟାତ"
+ ],
+ "Review notes": [
+  "समीक्षा नोट्स",
+  "ସମୀକ୍ଷା ଟିପ୍ପଣୀ"
+ ],
+ "Record review": [
+  "समीक्षा दर्ज करें",
+  "ସମୀକ୍ଷା ରେକର୍ଡ କରନ୍ତୁ"
+ ],
+ "Inspections": [
+  "निरीक्षण",
+  "ଯାଞ୍ଚ"
+ ],
+ "Record a completed inspection": [
+  "पूरा निरीक्षण दर्ज करें",
+  "ସମ୍ପୂର୍ଣ୍ଣ ଯାଞ୍ଚ ରେକର୍ଡ କରନ୍ତୁ"
+ ],
+ "Inspection time · IST": [
+  "निरीक्षण समय · IST",
+  "ଯାଞ୍ଚ ସମୟ · IST"
+ ],
+ "Outcome": [
+  "परिणाम",
+  "ଫଳାଫଳ"
+ ],
+ "Pass": [
+  "उत्तीर्ण",
+  "ସଫଳ"
+ ],
+ "Fail": [
+  "अनुत्तीर्ण",
+  "ବିଫଳ"
+ ],
+ "Inspection score · 0–100": [
+  "निरीक्षण अंक · 0–100",
+  "ଯାଞ୍ଚ ସ୍କୋର୍ · ୦–୧୦୦"
+ ],
+ "Evidence and observations": [
+  "प्रमाण और अवलोकन",
+  "ପ୍ରମାଣ ଓ ପର୍ଯ୍ୟବେକ୍ଷଣ"
+ ],
+ "Corrective actions": [
+  "सुधार की कार्रवाई",
+  "ସୁଧାର କାର୍ଯ୍ୟ"
+ ],
+ "Save inspection": [
+  "निरीक्षण सहेजें",
+  "ଯାଞ୍ଚ ସଞ୍ଚୟ କରନ୍ତୁ"
+ ],
+ "No inspection recorded yet.": [
+  "अभी कोई निरीक्षण दर्ज नहीं है।",
+  "ଏବେ କୌଣସି ଯାଞ୍ଚ ରେକର୍ଡ ହୋଇନାହିଁ।"
+ ],
+ "Training & follow-ups": [
+  "प्रशिक्षण और अनुवर्ती कार्य",
+  "ତାଲିମ ଓ ପରବର୍ତ୍ତୀ କାମ"
+ ],
+ "Assign a training follow-up": [
+  "प्रशिक्षण का कार्य सौंपें",
+  "ତାଲିମ ପରବର୍ତ୍ତୀ କାମ ଦିଅନ୍ତୁ"
+ ],
+ "Topic": [
+  "विषय",
+  "ବିଷୟ"
+ ],
+ "Action and completion evidence": [
+  "कार्य और पूर्णता का प्रमाण",
+  "କାର୍ଯ୍ୟ ଓ ସମ୍ପୂର୍ଣ୍ଣତାର ପ୍ରମାଣ"
+ ],
+ "Due · IST": [
+  "अंतिम समय · IST",
+  "ଶେଷ ସମୟ · IST"
+ ],
+ "Assign follow-up": [
+  "अनुवर्ती कार्य सौंपें",
+  "ପରବର୍ତ୍ତୀ କାମ ଦିଅନ୍ତୁ"
+ ],
+ "No training follow-ups assigned.": [
+  "कोई प्रशिक्षण कार्य नहीं सौंपा गया है।",
+  "କୌଣସି ତାଲିମ ପରବର୍ତ୍ତୀ କାମ ଦିଆଯାଇନାହିଁ।"
+ ],
+ "Due": [
+  "अंतिम समय",
+  "ଶେଷ ସମୟ"
+ ],
+ "Confirm completion": [
+  "पूर्णता की पुष्टि करें",
+  "ସମ୍ପୂର୍ଣ୍ଣତା ପୁଷ୍ଟି କରନ୍ତୁ"
+ ],
+ "Submit for completion review": [
+  "पूर्णता समीक्षा के लिए भेजें",
+  "ସମ୍ପୂର୍ଣ୍ଣତା ସମୀକ୍ଷା ପାଇଁ ପଠାନ୍ତୁ"
+ ],
+ "Food & delivery feedback": [
+  "भोजन और डिलीवरी की प्रतिक्रिया",
+  "ଭୋଜନ ଓ ଡେଲିଭରି ମତାମତ"
+ ],
+ "No customer ratings recorded yet.": [
+  "अभी ग्राहक रेटिंग दर्ज नहीं है।",
+  "ଏବେ କୌଣସି ଗ୍ରାହକ ରେଟିଂ ରେକର୍ଡ ହୋଇନାହିଁ।"
+ ],
+ "Trust in your kitchen": [
+  "आपकी रसोई पर भरोसा",
+  "ଆପଣଙ୍କ ରୋଷେଇଘରରେ ଭରସା"
+ ],
+ "Quality & evidence": [
+  "गुणवत्ता और प्रमाण",
+  "ଗୁଣବତ୍ତା ଓ ପ୍ରମାଣ"
+ ]
+});
 const lower = Object.fromEntries(Object.entries(uiTranslations).map(([k,v]) => [k.toLowerCase(),v]));
 const templateTranslations=Object.entries(uiTranslations).filter(([key])=>/\{\w+\}/.test(key)).map(([key,value])=>{
  const names:string[]=[];
