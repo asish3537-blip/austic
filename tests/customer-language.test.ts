@@ -1,0 +1,8 @@
+import assert from "node:assert/strict";
+import {test} from "node:test";
+import {translated} from "../lib/ui-translations";
+import {nextHeroVideo} from "../lib/hero-videos";
+const labels=["A little planning. A lot of home.","Choose your Mother Kitchen and plan 3–7 meal days.","One good meal. Just when you need it.","Homemade favourites, close to you.","Search kitchens or meals","Kitchens near you","No published meals in this area yet.","Browse sample menus","Ingredients, allergens & storage","Coupon or voucher","Food subtotal","Requests & orders","Device push is on","Next slide","Previous slide"];
+test("customer feature, discovery and checkout labels resolve in Hindi and Odia",()=>{for(const locale of ["hi","or"] as const)for(const label of labels){const result=translated(label,locale);assert.notEqual(result,label,label);assert.match(result,locale==="hi"?/[\u0900-\u097f]/:/[\u0b00-\u0b7f]/);assert.equal(translated(label,"en"),label);}});
+test("late catalog entries and interpolated delivery details use the selected language",()=>{assert.equal(translated("non vegetarian","hi"),"मांसाहारी");const result=translated("This kitchen serves your pin within its 25 km area.","or");assert.match(result,/25/);assert.match(result,/[\u0b00-\u0b7f]/);assert(!result.includes("This kitchen"));assert.equal(translated("Sonali home cuisine","or"),"Sonali home cuisine");});
+test("feature-specific video lists stay in range and fail to the poster safely",()=>{assert.equal(nextHeroVideo(0,new Set(),1),0);assert.equal(nextHeroVideo(0,new Set([0]),1),null);assert.equal(nextHeroVideo(0,new Set([1]),3),2);});

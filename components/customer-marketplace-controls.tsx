@@ -1,7 +1,7 @@
 "use client";
 
 import { CheckoutReview, useCheckoutQuote } from "@/components/checkout-review";
-import { UiText } from "@/components/ui-language";
+import { UiText,useUiLanguage } from "@/components/ui-language";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -58,8 +58,8 @@ export function CustomerDeliveryPin({ initialPinned = false, manage = false }: {
 
   if(state === "ready" && !manage) return null;
   return <aside className={"customer-pin-card " + (state === "ready" ? "is-ready" : "")}>
-    <div><strong>{state === "ready" ? "Delivery location ready" : "Set your delivery pin"}</strong><span>{message || (state === "ready" ? "Your drop-off pin is shared only with the courier assigned to your order." : "A precise drop-off pin lets the courier verify delivery at the right address." )}</span></div>
-    <button type="button" className="button button-small" onClick={savePin} disabled={state === "loading" || state === "saving"}>{state === "saving" ? "Waiting for GPS…" : state === "ready" ? "Update location" : "Use my location"}</button>
+    <div><strong><UiText text={state === "ready" ? "Delivery location ready" : "Set your delivery pin"}/></strong><span><UiText text={message || (state === "ready" ? "Your drop-off pin is shared only with the courier assigned to your order." : "A precise drop-off pin lets the courier verify delivery at the right address." )}/></span></div>
+    <button type="button" className="button button-small" onClick={savePin} disabled={state === "loading" || state === "saving"}><UiText text={state === "saving" ? "Waiting for GPS…" : state === "ready" ? "Update location" : "Use my location"}/></button>
   </aside>;
 }
 
@@ -107,8 +107,8 @@ export function PlaceOrderButton({ menuId, servings }: { menuId: string; serving
       </select></label>
       <button type="button" className="button button-small" onClick={()=>checkoutOpen?void placeOrder():setCheckoutOpen(true)} disabled={busy || servings < 1 || (checkoutOpen&&(!delivery?.available || !review.quote))}>{busy ? "Saving…" : <UiText text={checkoutOpen?"Place order":"Order one meal"}/>}</button>
     </div>
-    {<p className="customer-order-message" role="status">{delivery?.message??"Checking delivery partners…"}</p>}
-    {message && <p className={"customer-order-message " + (error ? "is-error" : "")}>{message}</p>}
+    {<p className="customer-order-message" role="status"><UiText text={delivery?.message??"Checking delivery partners…"}/></p>}
+    {message && <p className={"customer-order-message " + (error ? "is-error" : "")}><UiText text={message}/></p>}
   </div>;
 }
 
@@ -132,16 +132,17 @@ export function FavoriteKitchenButton({ kitchenId, initiallySaved = false }: { k
     } catch (cause) { setMessage(cause instanceof Error ? cause.message : "Could not update your favourite kitchens."); }
     finally { setBusy(false); }
   }
-  return <div className="favorite-kitchen-action"><button type="button" aria-pressed={saved} onClick={toggle} disabled={busy}>{busy ? "Saving…" : saved ? "♥ Mother saved" : "♡ Save this mother"}</button>{message && <small role="status">{message}</small>}</div>;
+  return <div className="favorite-kitchen-action"><button type="button" aria-pressed={saved} onClick={toggle} disabled={busy}><UiText text={busy ? "Saving…" : saved ? "♥ Mother saved" : "♡ Save this mother"}/></button>{message && <small role="status"><UiText text={message}/></small>}</div>;
 }
 
 export function CancelOrderButton({ orderId, scheduledFor, orderStatus }: { orderId: string; scheduledFor: string; orderStatus: string }) {
+  const {locale}=useUiLanguage();
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   const eligible = ["ORDER_PLACED", "CONFIRMED"].includes(orderStatus);
   if (!eligible) return null;
-  const cutoffAt = new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata" }).format(new Date(new Date(scheduledFor).getTime() - 5 * 60 * 60 * 1000));
+  const cutoffAt = new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata" }).format(new Date(new Date(scheduledFor).getTime() - 5 * 60 * 60 * 1000));
   async function cancelDay() {
     if (!window.confirm("Cancel this meal day? Eligible paid value will return to your Paustik wallet after a ₹5 processing fee.")) return;
     setBusy(true); setMessage("");
@@ -155,7 +156,7 @@ export function CancelOrderButton({ orderId, scheduledFor, orderStatus }: { orde
     } catch (cause) { setMessage(cause instanceof Error ? cause.message : "Could not cancel this meal day."); }
     finally { setBusy(false); }
   }
-  return <div className="customer-cancel-action"><small>Cancel by {cutoffAt}</small><button type="button" onClick={cancelDay} disabled={busy}>{busy ? "Cancelling…" : "Cancel this day"}</button>{message && <small role="status">{message}</small>}</div>;
+  return <div className="customer-cancel-action"><small><UiText text={"Cancel by"}/>{" "}{cutoffAt}</small><button type="button" onClick={cancelDay} disabled={busy}><UiText text={busy ? "Cancelling…" : "Cancel this day"}/></button>{message && <small role="status"><UiText text={message}/></small>}</div>;
 }
 
 export { OrderTracking as CustomerDeliveryTracking } from "@/components/order-tracking";

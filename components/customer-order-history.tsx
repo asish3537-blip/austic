@@ -1,7 +1,7 @@
 import { PaymentMethods } from "@/components/payment-methods";
 import { expireOverdueOrders } from "@/lib/overdue-orders";
 import { OrdersRefresh } from "@/components/orders-refresh";
-import { UiText } from "@/components/ui-language";
+import { UiText,UiDate } from "@/components/ui-language";
 import { razorpayConfig } from "@/lib/razorpay";
 import { RazorpayPayment } from "@/components/razorpay-payment";
 import { UpiPayment } from "@/components/upi-payment";
@@ -15,9 +15,7 @@ import { CancelOrderButton, CustomerDeliveryTracking } from "@/components/custom
 
 import { OrderFeedback } from "@/components/order-feedback";
 
-function date(value: Date) {
-  return new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeZone: "Asia/Kolkata" }).format(value);
-}
+function date(value:Date){return <UiDate value={value.toISOString()} dateOnly/>;}
 
 function money(value: number, currency: string) {
   try {
@@ -73,7 +71,7 @@ export default async function CustomerOrderHistory({ searchParams,productsOnly=f
         <div className="customer-panel-heading"><div><span className="eyebrow"><UiText text="Meal plans"/></span><h2><UiText text="Your plans"/></h2></div><span className="customer-count">{subscriptions.length}</span></div>
         {!activityAvailable ? <p className="customer-empty"><UiText text="We couldn’t load your meal plans right now. Refresh this page in a moment."/></p> : subscriptions.length ? <ul className="customer-record-list customer-plan-list">
           {subscriptions.map((subscription) => <li key={subscription.id}>
-            <div className="customer-record-main"><strong>{subscription.mealPlan.name}</strong><span>{title(subscription.mealPlan.cadence)} · {subscription.mealPlan.mealCount} <UiText text="meals"/></span><small><UiText text="Started"/>{date(subscription.startsAt)}{subscription.endsAt ? ` · Ends ${date(subscription.endsAt)}` : ""}{subscription.nextRenewalAt ? ` · Next renewal ${date(subscription.nextRenewalAt)}` : ""}</small></div>
+            <div className="customer-record-main"><strong>{subscription.mealPlan.name}</strong><span>{title(subscription.mealPlan.cadence)} · {subscription.mealPlan.mealCount} <UiText text="meals"/></span><small><UiText text="Started"/>{date(subscription.startsAt)}<UiText text={subscription.endsAt ? ` · Ends ${date(subscription.endsAt)}` : ""}/><UiText text={subscription.nextRenewalAt ? ` · Next renewal ${date(subscription.nextRenewalAt)}` : ""}/></small></div>
             <div className="customer-record-meta"><b>{money(Number(subscription.mealPlan.price), subscription.mealPlan.currency)}</b><span className={`customer-status customer-status-${subscription.status.toLowerCase()}`}>{title(subscription.status)}</span></div>
           </li>)}
         </ul> : <div className="customer-empty-state"><span className="card-icon" aria-hidden="true">☷</span><strong><UiText text="No meal plan yet"/></strong><span><UiText text="When you choose a plan through the live marketplace, its status and renewal details will appear here."/></span><Link className="text-link" href="/customer/dashboard#customer-discover"><UiText text="Find a kitchen"/><span aria-hidden="true">→</span></Link></div>}

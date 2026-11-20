@@ -36,8 +36,8 @@ export function kitchenMoney(value: number) {
   return new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(value);
 }
 
-export function kitchenMenuDate(day: string) {
-  return new Intl.DateTimeFormat("en-IN", { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" }).format(new Date(day + "T00:00:00.000Z"));
+export function kitchenMenuDate(day: string, locale="en-IN") {
+  return new Intl.DateTimeFormat(locale, { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" }).format(new Date(day + "T00:00:00.000Z"));
 }
 
 export function mealCategoryLabel(category: string) {

@@ -1,6 +1,7 @@
 import type {AppIcon as IconName} from "@/lib/app-navigation";
 export function AppIcon({name}:{name:IconName}){
  const paths={
+  meal:<><circle cx="12" cy="12" r="6"/><path d="M2 3v6m3-6v6M2 6h3M3.5 9v12M21 3v18M21 3c-3 3-3 7 0 8"/></>,
   home:<><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1Z"/></>,
   orders:<><path d="M6 3h12v18l-3-2-3 2-3-2-3 2Z"/><path d="M9 8h6M9 12h6"/></>,
   pay:<><path d="M20 7H5a2 2 0 0 1 0-4h13v4M4 5v14a2 2 0 0 0 2 2h14V7M20 11h-6v6h6"/><circle cx="16.5" cy="14" r=".6"/></>,

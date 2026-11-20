@@ -1625,8 +1625,18 @@ Object.assign(uiTranslations, {"Home":["होम","ହୋମ୍"]});
 Object.assign(uiTranslations,{"Explore ScooFoo":["ScooFoo देखें","ScooFoo ଦେଖନ୍ତୁ"]});
 Object.assign(uiTranslations,{"School tiffins":["स्कूल टिफिन","ସ୍କୁଲ୍ ଟିଫିନ୍"],"School reception":["स्कूल रिसेप्शन","ସ୍କୁଲ୍ ରିସେପସନ୍"],"Paustik meals":["पौष्टिक भोजन","ପୌଷ୍ଟିକ ଭୋଜନ"],"Open ScooFoo":["ScooFoo खोलें","ScooFoo ଖୋଲନ୍ତୁ"],"© 2026 Paustik. All rights reserved. ScooFoo is a service by Paustik.":["© 2026 Paustik. सर्वाधिकार सुरक्षित। ScooFoo, Paustik की एक सेवा है।","© ୨୦୨୬ ପୌଷ୍ଟିକ। ସମସ୍ତ ଅଧିକାର ସଂରକ୍ଷିତ। ScooFoo ପୌଷ୍ଟିକର ଏକ ସେବା।"],"Availability and delivery slots depend on service-area coverage. School tiffins require confirmed school reception.":["उपलब्धता और डिलीवरी स्लॉट सेवा क्षेत्र पर निर्भर हैं। स्कूल टिफिन के लिए स्कूल रिसेप्शन की पुष्टि ज़रूरी है।","ଉପଲବ୍ଧତା ଓ ଡେଲିଭରି ସମୟ ସେବା ଅଞ୍ଚଳ ଉପରେ ନିର୍ଭର କରେ। ସ୍କୁଲ୍ ଟିଫିନ୍ ପାଇଁ ସ୍କୁଲ୍ ରିସେପସନ୍‌ର ପୁଷ୍ଟି ଦରକାର।"]});
 Object.assign(uiTranslations, schoolTranslations);
-const lower = Object.fromEntries(Object.entries(uiTranslations).map(([k,v]) => [k.toLowerCase(),v]));
-export function translated(text: string, language: UiLanguage) { return language === "en" ? text : (uiTranslations[text] ?? lower[text.trim().replace(/\s+/g," ").replaceAll("_"," ").toLowerCase()])?.[language === "hi" ? 0 : 1] ?? text; }
+export function translated(text:string,language:UiLanguage){
+ if(language==="en")return text;
+ const normalized=text.trim().replace(/\s+/g," "),index=language==="hi"?0:1;
+ const direct=uiTranslations[text]??lower[normalized.replaceAll("_"," ").toLowerCase()];
+ if(direct)return direct[index];
+ if(normalized.length<2000)for(const item of templateTranslations){
+  const match=item.pattern.exec(normalized);if(!match)continue;
+  const values=Object.fromEntries(item.names.map((name,i)=>[name,match[i+1]]));
+  return item.value[index].replace(/\{(\w+)\}/g,(token,name:string)=>values[name]??token);
+ }
+ return text;
+}
 
 Object.assign(uiTranslations,{"Download app":["ऐप डाउनलोड करें","ଆପ୍ ଡାଉନଲୋଡ୍ କରନ୍ତୁ"]});
 
@@ -1642,3 +1652,1258 @@ Object.assign(uiTranslations,{
 });
 
 Object.assign(uiTranslations,{"Choose a meal plan, a one-time meal or homemade favourites.":["भोजन योजना, एक बार का भोजन या घर के बने पसंदीदा उत्पाद चुनें।","ଭୋଜନ ଯୋଜନା, ଗୋଟିଏ ଥରର ଭୋଜନ ବା ଘରୋଇ ପସନ୍ଦର ଉତ୍ପାଦ ବାଛନ୍ତୁ।"]});
+
+Object.assign(uiTranslations,{
+ "Respond before": [
+  "इससे पहले जवाब दें",
+  "ଏହା ପୂର୍ବରୁ ଉତ୍ତର ଦିଅନ୍ତୁ"
+ ],
+ ". No stock held yet.": [
+  "। अभी स्टॉक आरक्षित नहीं है।",
+  "। ଏଯାଏଁ ଷ୍ଟକ୍ ସଂରକ୍ଷିତ ହୋଇନାହିଁ।"
+ ],
+ "· Shelf life": [
+  "· उपयोग अवधि",
+  "· ବ୍ୟବହାର ଅବଧି"
+ ],
+ "hours after preparation.": [
+  "बनने के बाद घंटे।",
+  "ପ୍ରସ୍ତୁତି ପରେ ଘଣ୍ଟା।"
+ ],
+ "Ready batch expiry:": [
+  "तैयार बैच की समाप्ति:",
+  "ପ୍ରସ୍ତୁତ ବ୍ୟାଚ୍‌ର ଶେଷ ସମୟ:"
+ ],
+ "· requested delivery": [
+  "· अनुरोधित डिलीवरी",
+  "· ଅନୁରୋଧିତ ଡେଲିଭରି"
+ ],
+ "Homemade sattu, sweets, pickles and more, from Mother Kitchens near your saved delivery address.": [
+  "आपके पते के पास की माँ रसोइयों से सत्तू, मिठाइयाँ और अचार।",
+  "ଆପଣଙ୍କ ଠିକଣା ନିକଟର ମା’ଙ୍କ ରୋଷେଇଘରୁ ସତ୍ତୁ, ମିଠା ଓ ଆଚାର।"
+ ],
+ "India time · delivery ends 9 p.m. · new pickups close 8:30 p.m.": [
+  "भारतीय समय · डिलीवरी रात 9 बजे तक · नया पिकअप 8:30 बजे तक",
+  "ଭାରତୀୟ ସମୟ · ଡେଲିଭରି ରାତି ୯ଟା ପର୍ଯ୍ୟନ୍ତ · ନୂଆ ପିକଅପ୍ ୮:୩୦ ପର୍ଯ୍ୟନ୍ତ"
+ ],
+ "The mother confirms readiness or proposes a time. You can agree or counter-propose. Confirm checkout after agreement; requests hold no stock and take no payment. Ready products must arrive before batch expiry. Review ingredients, allergens, storage and shelf life.": [
+  "माँ तैयारी और समय की पुष्टि करेंगी। आप समय स्वीकार या बदल सकते हैं। सहमति के बाद चेकआउट करें। अनुरोध पर स्टॉक आरक्षित या भुगतान नहीं होता। बैच समाप्त होने से पहले डिलीवरी होनी चाहिए। सामग्री, एलर्जी और भंडारण जाँचें।",
+  "ମା’ ପ୍ରସ୍ତୁତି ଓ ସମୟ ନିଶ୍ଚିତ କରିବେ। ଆପଣ ସମୟ ମାନିପାରିବେ ବା ବଦଳାଇପାରିବେ। ସହମତି ପରେ ଚେକଆଉଟ୍ କରନ୍ତୁ। ଅନୁରୋଧରେ ଷ୍ଟକ୍ ସଂରକ୍ଷଣ ବା ଦେୟ ହୁଏନାହିଁ। ବ୍ୟାଚ୍ ଅବଧି ପୂର୍ବରୁ ଡେଲିଭରି ଦରକାର। ସାମଗ୍ରୀ, ଆଲର୍ଜି ଓ ସଂରକ୍ଷଣ ଯାଞ୍ଚ କରନ୍ତୁ।"
+ ],
+ "Loading marketplace…": [
+  "दुकान लोड हो रही है…",
+  "ଦୋକାନ ଲୋଡ୍ ହେଉଛି…"
+ ],
+ "Vegan": [
+  "पूर्णतः वनस्पति आधारित",
+  "ସମ୍ପୂର୍ଣ୍ଣ ଉଦ୍ଭିଦ ଆଧାରିତ"
+ ],
+ "A further 30-minute travel buffer applies.": [
+  "यात्रा के लिए अतिरिक्त 30 मिनट रखें।",
+  "ଯାତ୍ରା ପାଇଁ ଅତିରିକ୍ତ ୩୦ ମିନିଟ୍ ରଖନ୍ତୁ।"
+ ],
+ "Ready batch expires · IST": [
+  "तैयार बैच का अंतिम समय · भारतीय समय",
+  "ପ୍ରସ୍ତୁତ ବ୍ୟାଚ୍‌ର ଶେଷ ସମୟ · ଭାରତୀୟ ସମୟ"
+ ],
+ "Shelf life after preparation · hours": [
+  "बनने के बाद उपयोग अवधि · घंटे",
+  "ପ୍ରସ୍ତୁତି ପରେ ବ୍ୟବହାର ଅବଧି · ଘଣ୍ଟା"
+ ],
+ "List while this kitchen is approved and accepting orders": [
+  "स्वीकृत रसोई के ऑर्डर लेते समय उत्पाद दिखाएँ",
+  "ଅନୁମୋଦିତ ରୋଷେଇଘର ଅର୍ଡର୍ ନେଉଥିବା ବେଳେ ଉତ୍ପାଦ ଦେଖାନ୍ତୁ"
+ ],
+ "Set a delivery address and pin to see products that can reach you.": [
+  "उपलब्ध उत्पाद देखने के लिए डिलीवरी पता और पिन सहेजें।",
+  "ଉପଲବ୍ଧ ଉତ୍ପାଦ ଦେଖିବା ପାଇଁ ଡେଲିଭରି ଠିକଣା ଓ ପିନ୍ ସଞ୍ଚୟ କରନ୍ତୁ।"
+ ],
+ "Set delivery location →": [
+  "डिलीवरी स्थान चुनें →",
+  "ଡେଲିଭରି ଅବସ୍ଥାନ ବାଛନ୍ତୁ →"
+ ],
+ "Latest 100 products and 60 delivery-time requests. Completed purchases also appear in Orders and Partner earnings.": [
+  "नवीनतम 100 उत्पाद और 60 समय अनुरोध। पूरी खरीद ऑर्डर और साझेदार आय में भी दिखती है।",
+  "ନୂଆ ୧୦୦ ଉତ୍ପାଦ ଓ ୬୦ ସମୟ ଅନୁରୋଧ। ସମ୍ପୂର୍ଣ୍ଣ କିଣାକିଣି ଅର୍ଡର୍ ଓ ସାଥୀଙ୍କ ଆୟରେ ମଧ୍ୟ ଦେଖାଯାଏ।"
+ ],
+ "Draft / not listed. Confirm product details, enable listing and set stock. No separate product approval is required; your kitchen must be approved and open.": [
+  "ड्राफ्ट: विवरण और स्टॉक की पुष्टि करके सूची चालू करें। अलग उत्पाद स्वीकृति नहीं चाहिए; रसोई स्वीकृत और खुली होनी चाहिए।",
+  "ଡ୍ରାଫ୍ଟ: ବିବରଣୀ ଓ ଷ୍ଟକ୍ ନିଶ୍ଚିତ କରି ତାଲିକା ସକ୍ରିୟ କରନ୍ତୁ। ଅଲଗା ଉତ୍ପାଦ ଅନୁମୋଦନ ଦରକାର ନାହିଁ; ରୋଷେଇଘର ଅନୁମୋଦିତ ଓ ଖୋଲା ଥିବା ଦରକାର।"
+ ],
+ "units · minimum": [
+  "पैक · न्यूनतम",
+  "ପ୍ୟାକ୍ · ସର୍ବନିମ୍ନ"
+ ],
+ "· preparation": [
+  "· तैयारी",
+  "· ପ୍ରସ୍ତୁତି"
+ ],
+ "min + travel": [
+  "मिनट + यात्रा",
+  "ମିନିଟ୍ + ଯାତ୍ରା"
+ ],
+ "Ingredients, allergens & storage": [
+  "सामग्री, एलर्जी और भंडारण",
+  "ସାମଗ୍ରୀ, ଆଲର୍ଜି ଓ ସଂରକ୍ଷଣ"
+ ],
+ "Prepared batch expiry:": [
+  "तैयार बैच की समाप्ति:",
+  "ପ୍ରସ୍ତୁତ ବ୍ୟାଚ୍‌ର ଶେଷ ସମୟ:"
+ ],
+ "This product is outside the 25 km delivery area around its kitchen.": [
+  "यह उत्पाद रसोई के 25 किमी डिलीवरी क्षेत्र से बाहर है।",
+  "ଏହି ଉତ୍ପାଦ ରୋଷେଇଘରର ୨୫ କିମି ଡେଲିଭରି ଅଞ୍ଚଳ ବାହାରେ ଅଛି।"
+ ],
+ "Check your saved pin →": [
+  "सहेजा पिन जाँचें →",
+  "ସଞ୍ଚିତ ପିନ୍ ଯାଞ୍ଚ କରନ୍ତୁ →"
+ ],
+ "No products to show yet.": [
+  "अभी कोई उत्पाद उपलब्ध नहीं है।",
+  "ଏବେ କୌଣସି ଉତ୍ପାଦ ଉପଲବ୍ଧ ନାହିଁ।"
+ ],
+ "Made for your everyday": [
+  "आपके हर दिन के लिए",
+  "ଆପଣଙ୍କ ପ୍ରତିଦିନ ପାଇଁ"
+ ],
+ "A little planning. A lot of home.": [
+  "थोड़ी योजना। घर जैसा सुकून।",
+  "ଟିକିଏ ଯୋଜନା। ଘରର ଆପଣାପଣ।"
+ ],
+ "Choose how to order": [
+  "ऑर्डर करने का तरीका चुनें",
+  "ଅର୍ଡର୍ କରିବାର ଉପାୟ ବାଛନ୍ତୁ"
+ ],
+ "Pack at home. Follow pickup and school reception handover.": [
+  "घर पर पैक करें। पिकअप और स्कूल रिसेप्शन तक की जानकारी पाएँ।",
+  "ଘରେ ପ୍ୟାକ୍ କରନ୍ତୁ। ପିକଅପ୍ ଓ ସ୍କୁଲ୍ ରିସେପସନ୍ ହସ୍ତାନ୍ତର ଦେଖନ୍ତୁ।"
+ ],
+ "Ordered": [
+  "ऑर्डर किया",
+  "ଅର୍ଡର୍ ହୋଇଛି"
+ ],
+ "· For": [
+  "· डिलीवरी",
+  "· ଡେଲିଭରି"
+ ],
+ "Orders could not load.": [
+  "ऑर्डर लोड नहीं हो सके।",
+  "ଅର୍ଡର୍ ଲୋଡ୍ ହୋଇପାରିଲା ନାହିଁ।"
+ ],
+ "← Newer orders": [
+  "← नए ऑर्डर",
+  "← ନୂଆ ଅର୍ଡର୍"
+ ],
+ "Page": [
+  "पृष्ठ",
+  "ପୃଷ୍ଠା"
+ ],
+ "Older orders →": [
+  "पुराने ऑर्डर →",
+  "ପୁରୁଣା ଅର୍ଡର୍ →"
+ ],
+ "Meal plans": [
+  "भोजन योजनाएँ",
+  "ଭୋଜନ ଯୋଜନା"
+ ],
+ "We couldn’t load your meal plans right now. Refresh this page in a moment.": [
+  "भोजन योजनाएँ लोड नहीं हुईं। थोड़ी देर में पृष्ठ रीफ्रेश करें।",
+  "ଭୋଜନ ଯୋଜନା ଲୋଡ୍ ହୋଇନାହିଁ। ଟିକିଏ ପରେ ପୃଷ୍ଠା ପୁଣି ଖୋଲନ୍ତୁ।"
+ ],
+ "Started": [
+  "शुरुआत",
+  "ଆରମ୍ଭ"
+ ],
+ "No meal plan yet": [
+  "अभी कोई भोजन योजना नहीं",
+  "ଏଯାଏଁ ଭୋଜନ ଯୋଜନା ନାହିଁ"
+ ],
+ "When you choose a plan through the live marketplace, its status and renewal details will appear here.": [
+  "योजना चुनने के बाद उसकी स्थिति और नवीनीकरण यहाँ दिखेंगे।",
+  "ଯୋଜନା ବାଛିବା ପରେ ସ୍ଥିତି ଓ ନବୀକରଣ ବିବରଣୀ ଏଠାରେ ଦେଖାଯିବ।"
+ ],
+ "Find a kitchen": [
+  "रसोई खोजें",
+  "ରୋଷେଇଘର ଖୋଜନ୍ତୁ"
+ ],
+ "Plans stay flexible": [
+  "आपकी सुविधानुसार योजना",
+  "ଆପଣଙ୍କ ସୁବିଧା ଅନୁସାରେ ଯୋଜନା"
+ ],
+ "Cancel at least five hours before delivery. Eligible paid value, less the ₹5 processing fee, goes to your Paustik wallet.": [
+  "डिलीवरी से कम से कम पाँच घंटे पहले रद्द करें। पात्र भुगतान से ₹5 शुल्क काटकर Paustik वॉलेट में लौटेगा।",
+  "ଡେଲିଭରିର ଅତିକମରେ ପାଞ୍ଚ ଘଣ୍ଟା ପୂର୍ବରୁ ବାତିଲ୍ କରନ୍ତୁ। ଯୋଗ୍ୟ ଦେୟରୁ ₹୫ ଶୁଳ୍କ କଟି Paustik ୱାଲେଟ୍‌କୁ ଫେରିବ।"
+ ],
+ "Updates retry every 15 seconds while this panel is open.": [
+  "पैनल खुला रहने पर हर 15 सेकंड में अपडेट होगा।",
+  "ଏହି ପ୍ୟାନେଲ୍ ଖୋଲା ଥିବା ବେଳେ ପ୍ରତି ୧୫ ସେକେଣ୍ଡରେ ଅପଡେଟ୍ ହେବ।"
+ ],
+ "Loading your order timeline…": [
+  "ऑर्डर की गतिविधियाँ लोड हो रही हैं…",
+  "ଅର୍ଡର୍‌ର କାର୍ଯ୍ୟକଳାପ ଲୋଡ୍ ହେଉଛି…"
+ ],
+ "Handover verified ·": [
+  "हस्तांतरण सत्यापित ·",
+  "ହସ୍ତାନ୍ତର ଯାଞ୍ଚ ହୋଇଛି ·"
+ ],
+ "GPS accuracy ±": [
+  "जीपीएस सटीकता ±",
+  "ଜିପିଏସ୍ ସଠିକତା ±"
+ ],
+ "m · Updated": [
+  "मी · अपडेट",
+  "ମି · ଅପଡେଟ୍"
+ ],
+ "This is a GPS update, not a road route or traffic-based arrival estimate.": [
+  "यह जीपीएस स्थान है; सड़क मार्ग या ट्रैफिक के अनुसार अनुमान नहीं।",
+  "ଏହା ଜିପିଏସ୍ ଅବସ୍ଥାନ; ସଡ଼କ ମାର୍ଗ ବା ଟ୍ରାଫିକ୍ ଆଧାରିତ ପହଞ୍ଚିବା ଅନୁମାନ ନୁହେଁ।"
+ ],
+ "Refreshes every 15 seconds while open.": [
+  "खुले रहने पर हर 15 सेकंड में अपडेट।",
+  "ଖୋଲା ଥିବା ବେଳେ ପ୍ରତି ୧୫ ସେକେଣ୍ଡରେ ଅପଡେଟ୍।"
+ ],
+ "Veg & non-veg": [
+  "शाकाहारी और मांसाहारी",
+  "ନିରାମିଷ ଓ ଆମିଷ"
+ ],
+ "Non-veg": [
+  "मांसाहारी",
+  "ଆମିଷ"
+ ],
+ "From": [
+  "से शुरू",
+  "ଠାରୁ ଆରମ୍ଭ"
+ ],
+ "View menu →": [
+  "मेन्यू देखें →",
+  "ମେନୁ ଦେଖନ୍ତୁ →"
+ ],
+ "Outside 25 km delivery area · browse only": [
+  "25 किमी क्षेत्र से बाहर · केवल देखें",
+  "୨୫ କିମି ଅଞ୍ଚଳ ବାହାରେ · କେବଳ ଦେଖନ୍ତୁ"
+ ],
+ "Sample · no booking": [
+  "नमूना · बुकिंग नहीं",
+  "ନମୁନା · ବୁକିଂ ନାହିଁ"
+ ],
+ "Cooked for your day": [
+  "आपके दिन के लिए बना",
+  "ଆପଣଙ୍କ ଦିନ ପାଇଁ ପ୍ରସ୍ତୁତ"
+ ],
+ "Choose breakfast, lunch or light dinner. Order once or reserve 3–7 days. Dinner delivery ends by 9 p.m. IST.": [
+  "नाश्ता, दोपहर या हल्का रात का भोजन चुनें। एक बार या 3–7 दिन बुक करें। रात की डिलीवरी 9 बजे तक।",
+  "ଜଳଖିଆ, ମଧ୍ୟାହ୍ନ ବା ହାଲୁକା ରାତ୍ରି ଭୋଜନ ବାଛନ୍ତୁ। ଗୋଟିଏ ଥର ବା ୩–୭ ଦିନ ବୁକ୍ କରନ୍ତୁ। ରାତ୍ରି ଡେଲିଭରି ୯ଟା ପର୍ଯ୍ୟନ୍ତ।"
+ ],
+ "All periods": [
+  "सभी समय",
+  "ସମସ୍ତ ସମୟ"
+ ],
+ "meal": [
+  "भोजन",
+  "ଭୋଜନ"
+ ],
+ "for": [
+  "के लिए",
+  "ପାଇଁ"
+ ],
+ "One-time special": [
+  "एक बार का विशेष भोजन",
+  "ଗୋଟିଏ ଥରର ବିଶେଷ ଭୋଜନ"
+ ],
+ "· Delivery at": [
+  "· डिलीवरी समय",
+  "· ଡେଲିଭରି ସମୟ"
+ ],
+ "IST ·": [
+  "भारतीय समय ·",
+  "ଭାରତୀୟ ସମୟ ·"
+ ],
+ "Check delivery address to order →": [
+  "ऑर्डर के लिए पता जाँचें →",
+  "ଅର୍ଡର୍ ପାଇଁ ଠିକଣା ଯାଞ୍ଚ କରନ୍ତୁ →"
+ ],
+ "No meals match that preference on this day": [
+  "इस दिन आपकी पसंद का भोजन नहीं है",
+  "ଏହି ଦିନ ଆପଣଙ୍କ ପସନ୍ଦର ଭୋଜନ ନାହିଁ"
+ ],
+ "Choose another day or select “All meals”.": [
+  "दूसरा दिन या “सभी भोजन” चुनें।",
+  "ଅନ୍ୟ ଦିନ ବା “ସମସ୍ତ ଭୋଜନ” ବାଛନ୍ତୁ।"
+ ],
+ "Delivery location ready": [
+  "डिलीवरी स्थान सहेजा गया",
+  "ଡେଲିଭରି ଅବସ୍ଥାନ ସଞ୍ଚିତ"
+ ],
+ "Set your delivery pin": [
+  "डिलीवरी पिन चुनें",
+  "ଡେଲିଭରି ପିନ୍ ବାଛନ୍ତୁ"
+ ],
+ "Waiting for GPS…": [
+  "जीपीएस की प्रतीक्षा…",
+  "ଜିପିଏସ୍‌କୁ ଅପେକ୍ଷା…"
+ ],
+ "Update location": [
+  "स्थान बदलें",
+  "ଅବସ୍ଥାନ ବଦଳାନ୍ତୁ"
+ ],
+ "Use my location": [
+  "मेरा स्थान लें",
+  "ମୋ ଅବସ୍ଥାନ ନିଅନ୍ତୁ"
+ ],
+ "♥ Mother saved": [
+  "♥ माँ की रसोई सहेजी गई",
+  "♥ ମା’ଙ୍କ ରୋଷେଇଘର ସଞ୍ଚିତ"
+ ],
+ "♡ Save this mother": [
+  "♡ इस माँ की रसोई सहेजें",
+  "♡ ଏହି ମା’ଙ୍କ ରୋଷେଇଘର ସଞ୍ଚୟ କରନ୍ତୁ"
+ ],
+ "Cancel by": [
+  "इससे पहले रद्द करें",
+  "ଏହା ପୂର୍ବରୁ ବାତିଲ୍ କରନ୍ତୁ"
+ ],
+ "Cancelling…": [
+  "रद्द हो रहा है…",
+  "ବାତିଲ୍ ହେଉଛି…"
+ ],
+ "Cancel this day": [
+  "इस दिन का भोजन रद्द करें",
+  "ଏହି ଦିନର ଭୋଜନ ବାତିଲ୍ କରନ୍ତୁ"
+ ],
+ "Coupon or voucher": [
+  "कूपन या वाउचर",
+  "କୁପନ୍ ବା ଭାଉଚର୍"
+ ],
+ "Apply": [
+  "लागू करें",
+  "ଲାଗୁ କରନ୍ତୁ"
+ ],
+ "Retry": [
+  "फिर कोशिश करें",
+  "ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ"
+ ],
+ "Calculating your delivery and total…": [
+  "डिलीवरी और कुल राशि की गणना…",
+  "ଡେଲିଭରି ଓ ମୋଟ ଦେୟ ହିସାବ ହେଉଛି…"
+ ],
+ "Food subtotal": [
+  "भोजन का उप-योग",
+  "ଭୋଜନର ଉପମୋଟ"
+ ],
+ "Coupon": [
+  "कूपन",
+  "କୁପନ୍"
+ ],
+ "Order total": [
+  "ऑर्डर का कुल",
+  "ଅର୍ଡର୍‌ର ମୋଟ"
+ ],
+ "Wallet credit": [
+  "वॉलेट राशि",
+  "ୱାଲେଟ୍ ରାଶି"
+ ],
+ "Remaining payable": [
+  "बाकी देय",
+  "ବାକି ଦେୟ"
+ ],
+ "Quote valid for 15 minutes. Delivery uses the distance between saved pins. Wallet credit is checked again when you confirm.": [
+  "कुल राशि 15 मिनट मान्य है। डिलीवरी सहेजे पिनों की दूरी पर आधारित है। पुष्टि पर वॉलेट फिर जाँचा जाएगा।",
+  "ମୋଟ ରାଶି ୧୫ ମିନିଟ୍ ପାଇଁ ବୈଧ। ଡେଲିଭରି ସଞ୍ଚିତ ପିନ୍‌ର ଦୂରତା ଉପରେ ଆଧାରିତ। ପୁଷ୍ଟି ବେଳେ ୱାଲେଟ୍ ପୁଣି ଯାଞ୍ଚ ହେବ।"
+ ],
+ "Upload photo": [
+  "फोटो अपलोड करें",
+  "ଫଟୋ ଅପଲୋଡ୍ କରନ୍ତୁ"
+ ],
+ "Remove photo": [
+  "फोटो हटाएँ",
+  "ଫଟୋ ହଟାନ୍ତୁ"
+ ],
+ "PNG, JPG or WebP · up to 5 MB. Shown in your own account.": [
+  "PNG, JPG या WebP · अधिकतम 5 MB · आपके खाते में दिखेगी।",
+  "PNG, JPG ବା WebP · ସର୍ବାଧିକ ୫ MB · ଆପଣଙ୍କ ଖାତାରେ ଦେଖାଯିବ।"
+ ],
+ "Loading your profile…": [
+  "प्रोफ़ाइल लोड हो रही है…",
+  "ପ୍ରୋଫାଇଲ୍ ଲୋଡ୍ ହେଉଛି…"
+ ],
+ "Your updates": [
+  "आपकी सूचनाएँ",
+  "ଆପଣଙ୍କ ସୂଚନା"
+ ],
+ "Device push is on": [
+  "इस डिवाइस पर सूचनाएँ चालू हैं",
+  "ଏହି ଡିଭାଇସ୍‌ରେ ସୂଚନା ସକ୍ରିୟ"
+ ],
+ "Stay updated": [
+  "सूचनाएँ पाएँ",
+  "ସୂଚନା ପାଆନ୍ତୁ"
+ ],
+ "Order, kitchen, payment and delivery updates. Lock-screen messages hide account details.": [
+  "ऑर्डर, रसोई, भुगतान और डिलीवरी की सूचनाएँ। लॉक स्क्रीन पर खाते की जानकारी नहीं दिखेगी।",
+  "ଅର୍ଡର୍, ରୋଷେଇଘର, ଦେୟ ଓ ଡେଲିଭରି ସୂଚନା। ଲକ୍ ସ୍କ୍ରିନ୍‌ରେ ଖାତା ବିବରଣୀ ଲୁଚି ରହିବ।"
+ ],
+ "Updating…": [
+  "अपडेट हो रहा है…",
+  "ଅପଡେଟ୍ ହେଉଛି…"
+ ],
+ "Turn off device push": [
+  "डिवाइस सूचनाएँ बंद करें",
+  "ଡିଭାଇସ୍ ସୂଚନା ବନ୍ଦ କରନ୍ତୁ"
+ ],
+ "Enable device push": [
+  "डिवाइस सूचनाएँ चालू करें",
+  "ଡିଭାଇସ୍ ସୂଚନା ସକ୍ରିୟ କରନ୍ତୁ"
+ ],
+ "Send test notification": [
+  "जाँच सूचना भेजें",
+  "ଯାଞ୍ଚ ସୂଚନା ପଠାନ୍ତୁ"
+ ],
+ "Push activation is pending. In-app updates are available now.": [
+  "पुश सक्रिय होना बाकी है। ऐप में सूचनाएँ उपलब्ध हैं।",
+  "ପୁଶ୍ ସକ୍ରିୟ ହେବା ବାକି ଅଛି। ଆପ୍‌ରେ ସୂଚନା ଉପଲବ୍ଧ।"
+ ],
+ "Use a browser with Web Push support. On iPhone/iPad, open the installed Home Screen app.": [
+  "पुश समर्थित ब्राउज़र लें। iPhone/iPad पर होम स्क्रीन में इंस्टॉल ऐप खोलें।",
+  "ପୁଶ୍ ସମର୍ଥିତ ବ୍ରାଉଜର୍ ବ୍ୟବହାର କରନ୍ତୁ। iPhone/iPad ରେ ହୋମ୍ ସ୍କ୍ରିନ୍‌ରେ ଇନଷ୍ଟଲ୍ ଆପ୍ ଖୋଲନ୍ତୁ।"
+ ],
+ "Mark all as read": [
+  "सभी पढ़ा हुआ चिह्नित करें",
+  "ସବୁ ପଢ଼ାହୋଇଛି ଚିହ୍ନିତ କରନ୍ତୁ"
+ ],
+ "Open ScooFoo →": [
+  "ScooFoo खोलें →",
+  "ScooFoo ଖୋଲନ୍ତୁ →"
+ ],
+ "Mark as read": [
+  "पढ़ा हुआ चिह्नित करें",
+  "ପଢ଼ାହୋଇଛି ଚିହ୍ନିତ କରନ୍ତୁ"
+ ],
+ "Loading your updates…": [
+  "सूचनाएँ लोड हो रही हैं…",
+  "ସୂଚନା ଲୋଡ୍ ହେଉଛି…"
+ ],
+ "Your account updates will appear here.": [
+  "आपके खाते की सूचनाएँ यहाँ आएँगी।",
+  "ଆପଣଙ୍କ ଖାତାର ସୂଚନା ଏଠାରେ ଦେଖାଯିବ।"
+ ],
+ "Open notification inbox →": [
+  "सूचना इनबॉक्स खोलें →",
+  "ସୂଚନା ଇନବକ୍ସ ଖୋଲନ୍ତୁ →"
+ ],
+ "Subscription meal period": [
+  "सदस्यता के भोजन का समय",
+  "ସବସ୍କ୍ରିପସନ୍ ଭୋଜନ ସମୟ"
+ ],
+ "Each plan covers one period. Reserve a separate plan for another period.": [
+  "हर योजना एक भोजन समय के लिए है। दूसरे समय के लिए अलग योजना बुक करें।",
+  "ପ୍ରତି ଯୋଜନା ଗୋଟିଏ ଭୋଜନ ସମୟ ପାଇଁ। ଅନ୍ୟ ସମୟ ପାଇଁ ଅଲଗା ଯୋଜନା ବୁକ୍ କରନ୍ତୁ।"
+ ],
+ "Select one meal per day. You can change each choice before reserving.": [
+  "प्रतिदिन एक भोजन चुनें। बुकिंग से पहले बदल सकते हैं।",
+  "ପ୍ରତିଦିନ ଗୋଟିଏ ଭୋଜନ ବାଛନ୍ତୁ। ବୁକିଂ ପୂର୍ବରୁ ବଦଳାଇପାରିବେ।"
+ ],
+ "selected": [
+  "चुने गए",
+  "ବଛାଯାଇଛି"
+ ],
+ "including delivery": [
+  "डिलीवरी सहित",
+  "ଡେଲିଭରି ସହିତ"
+ ],
+ "food subtotal": [
+  "भोजन का उप-योग",
+  "ଭୋଜନର ଉପମୋଟ"
+ ],
+ "Review plan ↓": [
+  "योजना देखें ↓",
+  "ଯୋଜନା ଦେଖନ୍ତୁ ↓"
+ ],
+ "Select first available days:": [
+  "पहले उपलब्ध दिन चुनें:",
+  "ପ୍ରଥମ ଉପଲବ୍ଧ ଦିନ ବାଛନ୍ତୁ:"
+ ],
+ "This kitchen currently has": [
+  "इस रसोई में अभी",
+  "ଏହି ରୋଷେଇଘରେ ଏବେ"
+ ],
+ "available": [
+  "उपलब्ध",
+  "ଉପଲବ୍ଧ"
+ ],
+ "serving": [
+  "परोस",
+  "ପରିବେଷଣ"
+ ],
+ "servings": [
+  "परोस",
+  "ପରିବେଷଣ"
+ ],
+ ". A subscription needs at least three days. Try fewer servings or order an available meal for one day.": [
+  "। सदस्यता के लिए कम से कम तीन दिन चाहिए। परोस कम करें या एक दिन का भोजन चुनें।",
+  "। ସବସ୍କ୍ରିପସନ୍ ପାଇଁ ଅତିକମରେ ତିନି ଦିନ ଦରକାର। ପରିବେଷଣ କମାନ୍ତୁ ବା ଗୋଟିଏ ଦିନର ଭୋଜନ ବାଛନ୍ତୁ।"
+ ],
+ "/ serving": [
+  "/ परोस",
+  "/ ପରିବେଷଣ"
+ ],
+ "Your weekly table": [
+  "आपकी साप्ताहिक योजना",
+  "ଆପଣଙ୍କ ସାପ୍ତାହିକ ଯୋଜନା"
+ ],
+ "of 7 days selected": [
+  "/ 7 दिन चुने गए",
+  "/ ୭ ଦିନ ବଛାଯାଇଛି"
+ ],
+ "Your chosen meals and total will appear here.": [
+  "चुने हुए भोजन और कुल राशि यहाँ दिखेंगे।",
+  "ବଛାଯାଇଥିବା ଭୋଜନ ଓ ମୋଟ ରାଶି ଏଠାରେ ଦେଖାଯିବ।"
+ ],
+ "Meals ·": [
+  "भोजन ·",
+  "ଭୋଜନ ·"
+ ],
+ "Delivery ·": [
+  "डिलीवरी ·",
+  "ଡେଲିଭରି ·"
+ ],
+ "Select three different days to see the delivery quote and apply a coupon.": [
+  "डिलीवरी शुल्क और कूपन के लिए तीन अलग दिन चुनें।",
+  "ଡେଲିଭରି ଶୁଳ୍କ ଓ କୁପନ୍ ପାଇଁ ତିନିଟି ଅଲଗା ଦିନ ବାଛନ୍ତୁ।"
+ ],
+ "Preview total only. No booking or payment is created.": [
+  "केवल कुल राशि का नमूना। बुकिंग या भुगतान नहीं होगा।",
+  "କେବଳ ମୋଟ ରାଶିର ନମୁନା। ବୁକିଂ ବା ଦେୟ ହେବ ନାହିଁ।"
+ ],
+ "Wallet credit is applied when you reserve. Any remaining balance is due outside the app; no online payment is taken.": [
+  "बुकिंग पर वॉलेट राशि लगेगी। बाकी राशि ऐप से बाहर देय है; ऑनलाइन भुगतान नहीं लिया जाएगा।",
+  "ବୁକିଂ ବେଳେ ୱାଲେଟ୍ ରାଶି ଲାଗିବ। ବାକି ରାଶି ଆପ୍ ବାହାରେ ଦେୟ; ଅନଲାଇନ୍ ଦେୟ ନିଆଯିବ ନାହିଁ।"
+ ],
+ "Set your delivery pin above to confirm delivery before reserving.": [
+  "बुकिंग से पहले डिलीवरी पिन सहेजें।",
+  "ବୁକିଂ ପୂର୍ବରୁ ଡେଲିଭରି ପିନ୍ ସଞ୍ଚୟ କରନ୍ତୁ।"
+ ],
+ "One week only. No automatic renewal. Cancel a day 5+ hours before delivery; eligible paid value less ₹5 returns to your wallet.": [
+  "केवल एक सप्ताह। अपने आप नवीनीकरण नहीं। डिलीवरी से 5+ घंटे पहले रद्द करने पर पात्र राशि से ₹5 काटकर वॉलेट में लौटेगी।",
+  "କେବଳ ଗୋଟିଏ ସପ୍ତାହ। ସ୍ୱୟଂଚାଳିତ ନବୀକରଣ ନାହିଁ। ୫+ ଘଣ୍ଟା ପୂର୍ବରୁ ବାତିଲ୍ କଲେ ଯୋଗ୍ୟ ରାଶିରୁ ₹୫ କଟି ୱାଲେଟ୍‌କୁ ଫେରିବ।"
+ ],
+ "View my orders and plans →": [
+  "मेरे ऑर्डर और योजनाएँ →",
+  "ମୋ ଅର୍ଡର୍ ଓ ଯୋଜନା →"
+ ],
+ "Add test credit · ₹": [
+  "परीक्षण राशि जोड़ें · ₹",
+  "ପରୀକ୍ଷା ରାଶି ଯୋଡ଼ନ୍ତୁ · ₹"
+ ],
+ "Your credit and reservation activity will appear here.": [
+  "आपकी राशि और बुकिंग की गतिविधियाँ यहाँ दिखेंगी।",
+  "ଆପଣଙ୍କ ରାଶି ଓ ବୁକିଂ କାର୍ଯ୍ୟକଳାପ ଏଠାରେ ଦେଖାଯିବ।"
+ ],
+ "← All kitchens": [
+  "← सभी रसोइयाँ",
+  "← ସମସ୍ତ ରୋଷେଇଘର"
+ ],
+ "This kitchen’s menu isn’t available": [
+  "इस रसोई का मेन्यू उपलब्ध नहीं है",
+  "ଏହି ରୋଷେଇଘରର ମେନୁ ଉପଲବ୍ଧ ନାହିଁ"
+ ],
+ "We couldn’t load this menu": [
+  "मेन्यू लोड नहीं हो सका",
+  "ମେନୁ ଲୋଡ୍ ହୋଇପାରିଲା ନାହିଁ"
+ ],
+ "It may have sold out, paused orders or be outside your delivery area. Choose another kitchen to see available meals.": [
+  "स्टॉक समाप्त, ऑर्डर बंद या क्षेत्र से बाहर हो सकता है। दूसरी रसोई चुनें।",
+  "ଷ୍ଟକ୍ ଶେଷ, ଅର୍ଡର୍ ବନ୍ଦ ବା ଅଞ୍ଚଳ ବାହାରେ ଥାଇପାରେ। ଅନ୍ୟ ରୋଷେଇଘର ବାଛନ୍ତୁ।"
+ ],
+ "Please try again in a moment.": [
+  "थोड़ी देर में फिर प्रयास करें।",
+  "ଟିକିଏ ପରେ ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।"
+ ],
+ "Explore kitchens": [
+  "रसोइयाँ देखें",
+  "ରୋଷେଇଘର ଦେଖନ୍ତୁ"
+ ],
+ "Choose a kitchen": [
+  "रसोई चुनें",
+  "ରୋଷେଇଘର ବାଛନ୍ତୁ"
+ ],
+ "Explore its menu": [
+  "मेन्यू देखें",
+  "ମେନୁ ଦେଖନ୍ତୁ"
+ ],
+ "Build your subscription": [
+  "सदस्यता बनाएँ",
+  "ସବସ୍କ୍ରିପସନ୍ ବନାନ୍ତୁ"
+ ],
+ "Sample kitchen preview": [
+  "नमूना रसोई",
+  "ନମୁନା ରୋଷେଇଘର"
+ ],
+ "This menu, rating and availability are for demonstration. You can explore a subscription price, but no order or payment will be created.": [
+  "मेन्यू, रेटिंग और उपलब्धता नमूने हैं। कीमत देख सकते हैं; ऑर्डर या भुगतान नहीं होगा।",
+  "ମେନୁ, ରେଟିଂ ଓ ଉପଲବ୍ଧତା ନମୁନା। ଦାମ ଦେଖିପାରିବେ; ଅର୍ଡର୍ ବା ଦେୟ ହେବ ନାହିଁ।"
+ ],
+ "Meet a sample mother": [
+  "नमूना माँ रसोई",
+  "ନମୁନା ମା’ଙ୍କ ରୋଷେଇଘର"
+ ],
+ "From a mother-led kitchen": [
+  "माँ की रसोई से",
+  "ମା’ଙ୍କ ରୋଷେଇଘରୁ"
+ ],
+ "Prepared by": [
+  "बनाने वाली",
+  "ପ୍ରସ୍ତୁତ କରିଛନ୍ତି"
+ ],
+ "/ meal": [
+  "/ भोजन",
+  "/ ଭୋଜନ"
+ ],
+ "menu days": [
+  "मेन्यू के दिन",
+  "ମେନୁ ଦିନ"
+ ],
+ "km away": [
+  "किमी दूर",
+  "କିମି ଦୂରରେ"
+ ],
+ "Meal subscription →": [
+  "भोजन सदस्यता →",
+  "ଭୋଜନ ସବସ୍କ୍ରିପସନ୍ →"
+ ],
+ "Neighbourhood delivery": [
+  "पड़ोस में डिलीवरी",
+  "ପଡ଼ୋଶରେ ଡେଲିଭରି"
+ ],
+ "Clear daily pricing": [
+  "स्पष्ट दैनिक कीमत",
+  "ସ୍ପଷ୍ଟ ଦୈନିକ ମୂଲ୍ୟ"
+ ],
+ "Meal price + distance-based delivery, shown before booking": [
+  "भोजन + दूरी आधारित डिलीवरी; बुकिंग से पहले कुल दिखेगा",
+  "ଭୋଜନ + ଦୂରତା ଆଧାରିତ ଡେଲିଭରି; ବୁକିଂ ପୂର୍ବରୁ ମୋଟ ଦେଖାଯିବ"
+ ],
+ "Make it your everyday kitchen": [
+  "अपनी रोज़ की रसोई चुनें",
+  "ଆପଣଙ୍କ ପ୍ରତିଦିନର ରୋଷେଇଘର ବାଛନ୍ତୁ"
+ ],
+ "Choose 3–7 days from this mother’s available menu. Your meals, your days, one kitchen.": [
+  "इस माँ के मेन्यू से 3–7 दिन चुनें। आपका भोजन, आपके दिन, एक रसोई।",
+  "ଏହି ମା’ଙ୍କ ମେନୁରୁ ୩–୭ ଦିନ ବାଛନ୍ତୁ। ଆପଣଙ୍କ ଭୋଜନ, ଆପଣଙ୍କ ଦିନ, ଗୋଟିଏ ରୋଷେଇଘର।"
+ ],
+ "3 days minimum": [
+  "कम से कम 3 दिन",
+  "ଅତିକମରେ ୩ ଦିନ"
+ ],
+ "Good to know before you reserve": [
+  "बुकिंग से पहले जानें",
+  "ବୁକିଂ ପୂର୍ବରୁ ଜାଣନ୍ତୁ"
+ ],
+ "A flexible week": [
+  "सुविधानुसार सप्ताह",
+  "ସୁବିଧା ଅନୁସାରେ ସପ୍ତାହ"
+ ],
+ "Subscriptions cover your selected 3–7 days in one week. Renew manually when you are ready.": [
+  "एक सप्ताह के चुने 3–7 दिन शामिल हैं। तैयार होने पर खुद नवीनीकरण करें।",
+  "ଗୋଟିଏ ସପ୍ତାହର ବଛାଯାଇଥିବା ୩–୭ ଦିନ ଅନ୍ତର୍ଭୁକ୍ତ। ସୁବିଧା ହେଲେ ନିଜେ ନବୀକରଣ କରନ୍ତୁ।"
+ ],
+ "Need to skip a day?": [
+  "एक दिन छोड़ना है?",
+  "ଗୋଟିଏ ଦିନ ଛାଡ଼ିବେ?"
+ ],
+ "Cancel at least five hours before delivery. Eligible paid value, less the ₹5 processing fee, returns to your Paustik wallet.": [
+  "डिलीवरी से कम से कम पाँच घंटे पहले रद्द करें। पात्र राशि से ₹5 काटकर वॉलेट में लौटेगी।",
+  "ଡେଲିଭରିର ଅତିକମରେ ପାଞ୍ଚ ଘଣ୍ଟା ପୂର୍ବରୁ ବାତିଲ୍ କରନ୍ତୁ। ଯୋଗ୍ୟ ରାଶିରୁ ₹୫ କଟି ୱାଲେଟ୍‌କୁ ଫେରିବ।"
+ ],
+ "Pilot payments": [
+  "पायलट भुगतान",
+  "ପାଇଲଟ୍ ଦେୟ"
+ ],
+ "Existing wallet credit is used first. Online checkout is not connected; any remaining amount is due outside the app.": [
+  "पहले वॉलेट राशि लगेगी। ऑनलाइन चेकआउट जुड़ा नहीं है; बाकी राशि ऐप से बाहर देय है।",
+  "ପ୍ରଥମେ ୱାଲେଟ୍ ରାଶି ଲାଗିବ। ଅନଲାଇନ୍ ଚେକଆଉଟ୍ ଯୋଡ଼ା ହୋଇନାହିଁ; ବାକି ରାଶି ଆପ୍ ବାହାରେ ଦେୟ।"
+ ],
+ "Need help with your subscription? →": [
+  "सदस्यता में सहायता चाहिए? →",
+  "ସବସ୍କ୍ରିପସନ୍‌ରେ ସାହାଯ୍ୟ ଦରକାର? →"
+ ],
+ "Administrator authenticator →": [
+  "प्रशासक प्रमाणीकरण ऐप →",
+  "ପ୍ରଶାସକ ପ୍ରମାଣୀକରଣ ଆପ୍ →"
+ ],
+ "← Back to workspace": [
+  "← कार्यक्षेत्र पर लौटें",
+  "← କାର୍ଯ୍ୟକ୍ଷେତ୍ରକୁ ଫେରନ୍ତୁ"
+ ],
+ "Search kitchens or meals": [
+  "रसोई या भोजन खोजें",
+  "ରୋଷେଇଘର ବା ଭୋଜନ ଖୋଜନ୍ତୁ"
+ ],
+ "Filters": [
+  "फ़िल्टर",
+  "ଫିଲ୍ଟର୍"
+ ],
+ "Order type": [
+  "ऑर्डर का प्रकार",
+  "ଅର୍ଡର୍ ପ୍ରକାର"
+ ],
+ "All kitchens": [
+  "सभी रसोइयाँ",
+  "ସମସ୍ତ ରୋଷେଇଘର"
+ ],
+ "Cuisine": [
+  "पाक शैली",
+  "ରନ୍ଧନ ଶୈଳୀ"
+ ],
+ "All cuisines": [
+  "सभी पाक शैलियाँ",
+  "ସମସ୍ତ ରନ୍ଧନ ଶୈଳୀ"
+ ],
+ "Meal budget": [
+  "भोजन का बजट",
+  "ଭୋଜନ ବଜେଟ୍"
+ ],
+ "Any price": [
+  "कोई भी कीमत",
+  "ଯେକୌଣସି ମୂଲ୍ୟ"
+ ],
+ "Up to ₹79": [
+  "₹79 तक",
+  "₹୭୯ ପର୍ଯ୍ୟନ୍ତ"
+ ],
+ "Up to ₹99": [
+  "₹99 तक",
+  "₹୯୯ ପର୍ଯ୍ୟନ୍ତ"
+ ],
+ "Sort kitchens": [
+  "रसोइयों का क्रम",
+  "ରୋଷେଇଘରର କ୍ରମ"
+ ],
+ "Nearest first": [
+  "पहले सबसे पास",
+  "ପ୍ରଥମେ ସବୁଠାରୁ ନିକଟ"
+ ],
+ "Highest rated": [
+  "सबसे अधिक रेटिंग",
+  "ସର୍ବାଧିକ ରେଟିଂ"
+ ],
+ "Lowest meal price": [
+  "सबसे कम कीमत",
+  "ସର୍ବନିମ୍ନ ମୂଲ୍ୟ"
+ ],
+ "Saved kitchens": [
+  "सहेजी रसोइयाँ",
+  "ସଞ୍ଚିତ ରୋଷେଇଘର"
+ ],
+ "Clear filters": [
+  "फ़िल्टर हटाएँ",
+  "ଫିଲ୍ଟର୍ ହଟାନ୍ତୁ"
+ ],
+ "Kitchen view": [
+  "रसोई दृश्य",
+  "ରୋଷେଇଘର ଦୃଶ୍ୟ"
+ ],
+ "List": [
+  "सूची",
+  "ତାଲିକା"
+ ],
+ "Grid": [
+  "ग्रिड",
+  "ଗ୍ରିଡ୍"
+ ],
+ "{count} kitchens available": [
+  "{count} रसोइयाँ उपलब्ध",
+  "{count} ରୋଷେଇଘର ଉପଲବ୍ଧ"
+ ],
+ "Browse sample menus": [
+  "नमूना मेन्यू देखें",
+  "ନମୁନା ମେନୁ ଦେଖନ୍ତୁ"
+ ],
+ "Sample kitchens, menus and subscription prices. No orders are created.": [
+  "नमूना रसोइयाँ, मेन्यू और कीमतें। ऑर्डर नहीं बनेंगे।",
+  "ନମୁନା ରୋଷେଇଘର, ମେନୁ ଓ ଦାମ। ଅର୍ଡର୍ ହେବ ନାହିଁ।"
+ ],
+ "Discover Paustik": [
+  "Paustik देखें",
+  "Paustik ଦେଖନ୍ତୁ"
+ ],
+ "Carousel": [
+  "कैरसेल",
+  "କାରୋସେଲ୍"
+ ],
+ "Previous slide": [
+  "पिछली झलक",
+  "ପୂର୍ବ ଝଲକ"
+ ],
+ "Choose a feature": [
+  "सुविधा चुनें",
+  "ସୁବିଧା ବାଛନ୍ତୁ"
+ ],
+ "Next slide": [
+  "अगली झलक",
+  "ପରବର୍ତ୍ତୀ ଝଲକ"
+ ],
+ "One good meal. Just when you need it.": [
+  "अच्छा भोजन। जब ज़रूरत हो।",
+  "ଭଲ ଭୋଜନ। ଯେତେବେଳେ ଦରକାର।"
+ ],
+ "Choose a freshly prepared meal for one day. No subscription needed.": [
+  "एक दिन के लिए ताज़ा भोजन चुनें। सदस्यता ज़रूरी नहीं।",
+  "ଗୋଟିଏ ଦିନ ପାଇଁ ତାଜା ଭୋଜନ ବାଛନ୍ତୁ। ସବସ୍କ୍ରିପସନ୍ ଦରକାର ନାହିଁ।"
+ ],
+ "Homemade favourites, close to you.": [
+  "घर के पसंदीदा स्वाद, आपके पास।",
+  "ଘରୋଇ ପସନ୍ଦର ସ୍ୱାଦ, ଆପଣଙ୍କ ନିକଟରେ।"
+ ],
+ "Discover sattu, sweets and pickles from nearby Mother Kitchens.": [
+  "पास की माँ रसोइयों से सत्तू, मिठाइयाँ और अचार चुनें।",
+  "ନିକଟର ମା’ଙ୍କ ରୋଷେଇଘରୁ ସତ୍ତୁ, ମିଠା ଓ ଆଚାର ବାଛନ୍ତୁ।"
+ ],
+ "Choose your Mother Kitchen and plan 3–7 meal days.": [
+  "अपनी माँ रसोई चुनें और 3–7 दिन का भोजन तय करें।",
+  "ମା’ଙ୍କ ରୋଷେଇଘର ବାଛି ୩–୭ ଦିନର ଭୋଜନ ଯୋଜନା କରନ୍ତୁ।"
+ ],
+ "By": [
+  "द्वारा",
+  "ଦ୍ୱାରା"
+ ],
+ "km": [
+  "किमी",
+  "କିମି"
+ ],
+ "this week": [
+  "इस सप्ताह",
+  "ଏହି ସପ୍ତାହ"
+ ],
+ "No published meals in this area yet.": [
+  "इस क्षेत्र में अभी कोई प्रकाशित भोजन नहीं है।",
+  "ଏହି ଅଞ୍ଚଳରେ ଏବେ ପ୍ରକାଶିତ ଭୋଜନ ନାହିଁ।"
+ ],
+ "Kitchens near you": [
+  "आपके पास की रसोइयाँ",
+  "ଆପଣଙ୍କ ନିକଟର ରୋଷେଇଘର"
+ ],
+ "Explore mother-led kitchens": [
+  "माँ की रसोइयाँ देखें",
+  "ମା’ଙ୍କ ରୋଷେଇଘର ଦେଖନ୍ତୁ"
+ ],
+ "No kitchens match these filters": [
+  "इन फ़िल्टर में कोई रसोई नहीं मिली",
+  "ଏହି ଫିଲ୍ଟର୍‌ରେ କୌଣସି ରୋଷେଇଘର ମିଳିଲା ନାହିଁ"
+ ],
+ "Kitchen availability is temporarily unavailable": [
+  "अभी रसोई की उपलब्धता नहीं मिल रही",
+  "ଏବେ ରୋଷେଇଘର ଉପଲବ୍ଧତା ମିଳୁନାହିଁ"
+ ],
+ "Delivery · first delivery free": [
+  "डिलीवरी · पहली डिलीवरी मुफ्त",
+  "ଡେଲିଭରି · ପ୍ରଥମ ଡେଲିଭରି ମାଗଣା"
+ ],
+ "Delivery · {distance} km estimate": [
+  "डिलीवरी · लगभग {distance} किमी",
+  "ଡେଲିଭରି · ପ୍ରାୟ {distance} କିମି"
+ ],
+ "SATTU": [
+  "सत्तू",
+  "ସତ୍ତୁ"
+ ],
+ "SWEETS": [
+  "मिठाइयाँ",
+  "ମିଠା"
+ ],
+ "PICKLES": [
+  "अचार",
+  "ଆଚାର"
+ ],
+ "OTHER": [
+  "अन्य",
+  "ଅନ୍ୟ"
+ ]
+});
+Object.assign(uiTranslations,{
+ "New": [
+  "नया",
+  "ନୂଆ"
+ ],
+ "Sample availability": [
+  "नमूना उपलब्धता",
+  "ନମୁନା ଉପଲବ୍ଧତା"
+ ],
+ "{count} servings left": [
+  "{count} परोस बाकी",
+  "{count} ପରିବେଷଣ ବାକି"
+ ],
+ "Courier: {name}": [
+  "डिलीवरी साथी: {name}",
+  "ଡେଲିଭରି ସାଥୀ: {name}"
+ ],
+ "Waiting for a courier assignment.": [
+  "डिलीवरी साथी के आवंटन की प्रतीक्षा।",
+  "ଡେଲିଭରି ସାଥୀ ନିଯୁକ୍ତିକୁ ଅପେକ୍ଷା।"
+ ],
+ "Current courier position is available.": [
+  "डिलीवरी साथी का वर्तमान स्थान उपलब्ध है।",
+  "ଡେଲିଭରି ସାଥୀଙ୍କ ବର୍ତ୍ତମାନ ଅବସ୍ଥାନ ଉପଲବ୍ଧ।"
+ ],
+ "{distance} km from your delivery pin in a straight line.": [
+  "आपके पिन से सीधी दूरी {distance} किमी।",
+  "ଆପଣଙ୍କ ପିନ୍‌ରୁ ସିଧା ଦୂରତା {distance} କିମି।"
+ ],
+ "Sattu, chhena poda, pickles…": [
+  "सत्तू, छेना पोड़ा, अचार…",
+  "ସତ୍ତୁ, ଛେନାପୋଡ଼, ଆଚାର…"
+ ],
+ "Menu coming soon": [
+  "मेन्यू जल्द आएगा",
+  "ମେନୁ ଶୀଘ୍ର ଆସିବ"
+ ],
+ "Checking delivery partners…": [
+  "डिलीवरी साथी जाँचे जा रहे हैं…",
+  "ଡେଲିଭରି ସାଥୀ ଯାଞ୍ଚ ହେଉଛି…"
+ ],
+ "A delivery partner is online. Availability is checked again when you book.": [
+  "डिलीवरी साथी ऑनलाइन है। बुकिंग पर फिर जाँच होगी।",
+  "ଡେଲିଭରି ସାଥୀ ଅନଲାଇନ୍ ଅଛନ୍ତି। ବୁକିଂ ବେଳେ ପୁଣି ଯାଞ୍ଚ ହେବ।"
+ ],
+ "This menu is currently unavailable.": [
+  "यह मेन्यू अभी उपलब्ध नहीं है।",
+  "ଏହି ମେନୁ ଏବେ ଉପଲବ୍ଧ ନାହିଁ।"
+ ],
+ "Could not check delivery availability. Please refresh.": [
+  "डिलीवरी की उपलब्धता नहीं मिली। रीफ्रेश करें।",
+  "ଡେଲିଭରି ଉପଲବ୍ଧତା ମିଳିଲା ନାହିଁ। ପୁଣି ଖୋଲନ୍ତୁ।"
+ ],
+ "Non vegetarian": [
+  "मांसाहारी",
+  "ଆମିଷ"
+ ],
+ "BREAKFAST": [
+  "नाश्ता",
+  "ଜଳଖିଆ"
+ ],
+ "LUNCH": [
+  "दोपहर का भोजन",
+  "ମଧ୍ୟାହ୍ନ ଭୋଜନ"
+ ],
+ "DINNER": [
+  "रात का भोजन",
+  "ରାତ୍ରି ଭୋଜନ"
+ ],
+ "KITCHEN_REVIEW": [
+  "रसोई की समीक्षा बाकी",
+  "ରୋଷେଇଘରର ସମୀକ୍ଷା ବାକି"
+ ],
+ "CUSTOMER_CONFIRM": [
+  "ग्राहक की पुष्टि बाकी",
+  "ଗ୍ରାହକଙ୍କ ପୁଷ୍ଟି ବାକି"
+ ],
+ "EXPIRED": [
+  "समय समाप्त",
+  "ସମୟ ଶେଷ"
+ ],
+ "DECLINED": [
+  "अस्वीकृत",
+  "ଅଗ୍ରାହ୍ୟ"
+ ],
+ "REQUEST": [
+  "अनुरोध",
+  "ଅନୁରୋଧ"
+ ],
+ "CHECKOUT": [
+  "चेकआउट",
+  "ଚେକଆଉଟ୍"
+ ],
+ "COUNTER": [
+  "समय बदलने का अनुरोध",
+  "ସମୟ ବଦଳାଇବା ଅନୁରୋଧ"
+ ],
+ "OFFER": [
+  "प्रस्ताव",
+  "ପ୍ରସ୍ତାବ"
+ ],
+ "ACCEPT": [
+  "स्वीकार",
+  "ଗ୍ରହଣ"
+ ],
+ "CUSTOMER": [
+  "ग्राहक",
+  "ଗ୍ରାହକ"
+ ],
+ "MOTHER": [
+  "माँ रसोई साझेदार",
+  "ମା’ଙ୍କ ରୋଷେଇଘର ସାଥୀ"
+ ],
+ "Wallet credit is used first. Any remaining amount appears in checkout.": [
+  "पहले वॉलेट राशि लगेगी। बाकी राशि चेकआउट में दिखेगी।",
+  "ପ୍ରଥମେ ୱାଲେଟ୍ ରାଶି ଲାଗିବ। ବାକି ରାଶି ଚେକଆଉଟ୍‌ରେ ଦେଖାଯିବ।"
+ ]
+});
+Object.assign(uiTranslations,{
+ "Delivery eligibility is confirmed for real kitchens using your saved pin.": [
+  "वास्तविक रसोई की डिलीवरी आपके सहेजे पिन से जाँची जाती है।",
+  "ବାସ୍ତବ ରୋଷେଇଘରର ଡେଲିଭରି ଆପଣଙ୍କ ସଞ୍ଚିତ ପିନ୍‌ରୁ ଯାଞ୍ଚ ହୁଏ।"
+ ],
+ "Your saved pin is outside the 25 km delivery area. You can browse; update your location before booking.": [
+  "आपका पिन 25 किमी क्षेत्र से बाहर है। देख सकते हैं; बुकिंग से पहले स्थान बदलें।",
+  "ଆପଣଙ୍କ ପିନ୍ ୨୫ କିମି ଅଞ୍ଚଳ ବାହାରେ। ଦେଖିପାରିବେ; ବୁକିଂ ପୂର୍ବରୁ ଅବସ୍ଥାନ ବଦଳାନ୍ତୁ।"
+ ],
+ "This kitchen serves your pin within its {radius} km area.": [
+  "यह रसोई आपके पिन तक {radius} किमी क्षेत्र में पहुँचाती है।",
+  "ଏହି ରୋଷେଇଘର {radius} କିମି ଅଞ୍ଚଳରେ ଆପଣଙ୍କ ପିନ୍‌କୁ ପହଞ୍ଚାଏ।"
+ ],
+ "Add your delivery pin to confirm this kitchen can reach you.": [
+  "इस रसोई की डिलीवरी जाँचने के लिए अपना पिन जोड़ें।",
+  "ଏହି ରୋଷେଇଘରର ଡେଲିଭରି ଯାଞ୍ଚ ପାଇଁ ପିନ୍ ଯୋଡ଼ନ୍ତୁ।"
+ ],
+ "New kitchen": [
+  "नई रसोई",
+  "ନୂଆ ରୋଷେଇଘର"
+ ],
+ "Your drop-off pin is shared only with the courier assigned to your order.": [
+  "आपका डिलीवरी पिन केवल नियुक्त डिलीवरी साथी को दिखता है।",
+  "ଆପଣଙ୍କ ଡେଲିଭରି ପିନ୍ କେବଳ ନିଯୁକ୍ତ ଡେଲିଭରି ସାଥୀଙ୍କୁ ଦେଖାଯାଏ।"
+ ],
+ "A precise drop-off pin lets the courier verify delivery at the right address.": [
+  "सही पिन डिलीवरी साथी को सही पते की पुष्टि करने में मदद करता है।",
+  "ସଠିକ୍ ପିନ୍ ଡେଲିଭରି ସାଥୀଙ୍କୁ ଠିକ୍ ଠିକଣା ଯାଞ୍ଚରେ ସାହାଯ୍ୟ କରେ।"
+ ],
+ "{count} unread": [
+  "{count} अपठित",
+  "{count} ଅପଠିତ"
+ ],
+ "Enter code": [
+  "कोड डालें",
+  "କୋଡ୍ ଲେଖନ୍ତୁ"
+ ],
+ "View {kitchen}, menu and subscriptions": [
+  "{kitchen} का मेन्यू और सदस्यता देखें",
+  "{kitchen}ର ମେନୁ ଓ ସବସ୍କ୍ରିପସନ୍ ଦେଖନ୍ତୁ"
+ ],
+ "Product delivery time requested": [
+  "उत्पाद के डिलीवरी समय का अनुरोध",
+  "ଉତ୍ପାଦ ଡେଲିଭରି ସମୟ ଅନୁରୋଧ"
+ ],
+ "Product delivery request updated": [
+  "उत्पाद डिलीवरी अनुरोध अपडेट",
+  "ଉତ୍ପାଦ ଡେଲିଭରି ଅନୁରୋଧ ଅପଡେଟ୍"
+ ],
+ "Product order confirmed": [
+  "उत्पाद ऑर्डर की पुष्टि",
+  "ଉତ୍ପାଦ ଅର୍ଡର୍ ପୁଷ୍ଟି"
+ ],
+ "Product checkout completed": [
+  "उत्पाद चेकआउट पूरा",
+  "ଉତ୍ପାଦ ଚେକଆଉଟ୍ ସମ୍ପୂର୍ଣ୍ଣ"
+ ],
+ "New meal order": [
+  "नया भोजन ऑर्डर",
+  "ନୂଆ ଭୋଜନ ଅର୍ଡର୍"
+ ],
+ "Meal order placed": [
+  "भोजन ऑर्डर दर्ज हुआ",
+  "ଭୋଜନ ଅର୍ଡର୍ ହୋଇଛି"
+ ]
+});
+Object.assign(uiTranslations,{
+ "Send code using": [
+  "कोड भेजने का तरीका",
+  "କୋଡ୍ ପଠାଇବା ଉପାୟ"
+ ],
+ "Welcome back": [
+  "वापस स्वागत है",
+  "ପୁଣି ସ୍ୱାଗତ"
+ ],
+ "Sign in to Paustik": [
+  "Paustik में साइन इन करें",
+  "Paustik ରେ ସାଇନ୍ ଇନ୍ କରନ୍ତୁ"
+ ],
+ "Sign in as a customer to continue with the kitchen you selected.": [
+  "चुनी रसोई के लिए ग्राहक खाते से साइन इन करें।",
+  "ବଛାଯାଇଥିବା ରୋଷେଇଘର ପାଇଁ ଗ୍ରାହକ ଖାତାରେ ସାଇନ୍ ଇନ୍ କରନ୍ତୁ।"
+ ],
+ "Testing without SMS?": [
+  "बिना एसएमएस परीक्षण?",
+  "ଏସଏମଏସ୍ ବିନା ପରୀକ୍ଷା?"
+ ],
+ "Open a separate demo profile with an on-screen code": [
+  "स्क्रीन पर कोड वाले अलग डेमो खाते से खोलें",
+  "ସ୍କ୍ରିନ୍‌ରେ କୋଡ୍ ଥିବା ଅଲଗା ଡେମୋ ଖାତା ଖୋଲନ୍ତୁ"
+ ],
+ "Phone sign-in below will be available once messaging is activated. For now, choose email/password or a demo profile above.": [
+  "संदेश सेवा चालू होने पर फोन साइन-इन उपलब्ध होगा। अभी ईमेल/पासवर्ड या डेमो खाता चुनें।",
+  "ବାର୍ତ୍ତା ସେବା ଚାଲୁ ହେଲେ ଫୋନ୍ ସାଇନ୍-ଇନ୍ ଉପଲବ୍ଧ ହେବ। ଏବେ ଇମେଲ୍/ପାସୱାର୍ଡ ବା ଡେମୋ ଖାତା ବାଛନ୍ତୁ।"
+ ],
+ "Your saved account role opens your customer, mother or delivery dashboard automatically. Partner accounts awaiting approval open their application status.": [
+  "आपकी भूमिका के अनुसार ग्राहक, माँ या डिलीवरी डैशबोर्ड खुलेगा। स्वीकृति लंबित होने पर आवेदन की स्थिति दिखेगी।",
+  "ଆପଣଙ୍କ ଭୂମିକା ଅନୁସାରେ ଗ୍ରାହକ, ମା’ ବା ଡେଲିଭରି ଡ୍ୟାସବୋର୍ଡ ଖୋଲିବ। ଅନୁମୋଦନ ବାକି ଥିଲେ ଆବେଦନ ସ୍ଥିତି ଦେଖାଯିବ।"
+ ],
+ "Indian numbers can use 10 digits or include +91.": [
+  "भारतीय नंबर 10 अंक या +91 के साथ लिखें।",
+  "ଭାରତୀୟ ନମ୍ବର ୧୦ ଅଙ୍କ ବା +91 ସହ ଲେଖନ୍ତୁ।"
+ ],
+ "SMS and WhatsApp delivery are pending activation. Demo codes are available only through the separate demo link above.": [
+  "एसएमएस और WhatsApp सक्रिय होना बाकी है। डेमो कोड ऊपर दिए अलग डेमो लिंक पर मिलते हैं।",
+  "ଏସଏମଏସ୍ ଓ WhatsApp ସକ୍ରିୟ ହେବା ବାକି। ଡେମୋ କୋଡ୍ ଉପର ଅଲଗା ଡେମୋ ଲିଙ୍କରେ ମିଳେ।"
+ ],
+ "6-digit verification code": [
+  "6 अंकों का सत्यापन कोड",
+  "୬ ଅଙ୍କର ଯାଞ୍ଚ କୋଡ୍"
+ ],
+ "Paustik preview code:": [
+  "Paustik पूर्वावलोकन कोड:",
+  "Paustik ପୂର୍ବଦର୍ଶନ କୋଡ୍:"
+ ],
+ "Codes expire shortly and can be used once.": [
+  "कोड जल्द समाप्त होते हैं और एक बार उपयोग होते हैं।",
+  "କୋଡ୍ ଶୀଘ୍ର ଶେଷ ହୁଏ ଓ ଥରେ ବ୍ୟବହାର ହୁଏ।"
+ ],
+ "Prefer a password?": [
+  "पासवर्ड से प्रवेश करें?",
+  "ପାସୱାର୍ଡରେ ପ୍ରବେଶ କରିବେ?"
+ ],
+ "Sign in with email": [
+  "ईमेल से साइन इन करें",
+  "ଇମେଲ୍‌ରେ ସାଇନ୍ ଇନ୍ କରନ୍ତୁ"
+ ],
+ "Need a fresh email verification link?": [
+  "नया ईमेल सत्यापन लिंक चाहिए?",
+  "ନୂଆ ଇମେଲ୍ ଯାଞ୍ଚ ଲିଙ୍କ ଦରକାର?"
+ ],
+ "Administrator?": [
+  "प्रशासक हैं?",
+  "ପ୍ରଶାସକ କି?"
+ ],
+ "New to Paustik?": [
+  "Paustik पर नए हैं?",
+  "Paustik ରେ ନୂଆ କି?"
+ ],
+ "Create an account": [
+  "खाता बनाएँ",
+  "ଖାତା ଖୋଲନ୍ତୁ"
+ ],
+ "Need another verification link?": [
+  "दूसरा सत्यापन लिंक चाहिए?",
+  "ଆଉ ଏକ ଯାଞ୍ଚ ଲିଙ୍କ ଦରକାର?"
+ ],
+ "Open local verification link": [
+  "स्थानीय सत्यापन लिंक खोलें",
+  "ସ୍ଥାନୀୟ ଯାଞ୍ଚ ଲିଙ୍କ ଖୋଲନ୍ତୁ"
+ ],
+ "Join the neighbourhood table": [
+  "पड़ोस के भोजन से जुड़ें",
+  "ପଡ଼ୋଶର ଭୋଜନରେ ଯୋଗ ଦିଅନ୍ତୁ"
+ ],
+ "Create your account": [
+  "अपना खाता बनाएँ",
+  "ନିଜ ଖାତା ଖୋଲନ୍ତୁ"
+ ],
+ "Verify this development email": [
+  "यह विकास ईमेल सत्यापित करें",
+  "ଏହି ବିକାଶ ଇମେଲ୍ ଯାଞ୍ଚ କରନ୍ତୁ"
+ ],
+ "Check your inbox and spam folder at": [
+  "यहाँ अपना इनबॉक्स और स्पैम देखें",
+  "ଏଠାରେ ଇନବକ୍ସ ଓ ସ୍ପାମ୍ ଦେଖନ୍ତୁ"
+ ],
+ ". If no email arrives, request another link below.": [
+  "। ईमेल न आए तो नीचे दूसरा लिंक माँगें।",
+  "। ଇମେଲ୍ ନଆସିଲେ ତଳେ ଆଉ ଏକ ଲିଙ୍କ ମାଗନ୍ତୁ।"
+ ],
+ "After confirming your email,": [
+  "ईमेल की पुष्टि के बाद,",
+  "ଇମେଲ୍ ପୁଷ୍ଟି ପରେ,"
+ ],
+ "sign in with your password": [
+  "पासवर्ड से साइन इन करें",
+  "ପାସୱାର୍ଡରେ ସାଇନ୍ ଇନ୍ କରନ୍ତୁ"
+ ],
+ "Delivery contact number": [
+  "डिलीवरी संपर्क नंबर",
+  "ଡେଲିଭରି ଯୋଗାଯୋଗ ନମ୍ବର"
+ ],
+ "Email": [
+  "ईमेल",
+  "ଇମେଲ୍"
+ ],
+ "8+ characters with uppercase, lowercase and a number.": [
+  "8+ अक्षर: बड़ा अक्षर, छोटा अक्षर और अंक।",
+  "୮+ ଅକ୍ଷର: ବଡ଼ ଅକ୍ଷର, ଛୋଟ ଅକ୍ଷର ଓ ସଂଖ୍ୟା।"
+ ],
+ "Kitchen name": [
+  "रसोई का नाम",
+  "ରୋଷେଇଘର ନାମ"
+ ],
+ "Cooking specialties": [
+  "खाना बनाने की विशेषताएँ",
+  "ରନ୍ଧନର ବିଶେଷତା"
+ ],
+ "Meals you can prepare per day": [
+  "प्रतिदिन बना सकने वाले भोजन",
+  "ପ୍ରତିଦିନ ପ୍ରସ୍ତୁତ କରିପାରୁଥିବା ଭୋଜନ"
+ ],
+ "Available lunch days": [
+  "दोपहर के भोजन के उपलब्ध दिन",
+  "ମଧ୍ୟାହ୍ନ ଭୋଜନର ଉପଲବ୍ଧ ଦିନ"
+ ],
+ "Separate days with commas.": [
+  "दिनों को कॉमा से अलग करें।",
+  "ଦିନଗୁଡ଼ିକୁ କମା ଦେଇ ଅଲଗା କରନ୍ତୁ।"
+ ],
+ "Lunch service window": [
+  "दोपहर की सेवा का समय",
+  "ମଧ୍ୟାହ୍ନ ସେବା ସମୟ"
+ ],
+ "Vehicle type": [
+  "वाहन का प्रकार",
+  "ଯାନ ପ୍ରକାର"
+ ],
+ "Select vehicle": [
+  "वाहन चुनें",
+  "ଯାନ ବାଛନ୍ତୁ"
+ ],
+ "Bicycle": [
+  "साइकिल",
+  "ସାଇକେଲ୍"
+ ],
+ "Scooter": [
+  "स्कूटर",
+  "ସ୍କୁଟର୍"
+ ],
+ "Motorcycle": [
+  "मोटरसाइकिल",
+  "ମୋଟରସାଇକେଲ୍"
+ ],
+ "Car": [
+  "कार",
+  "କାର୍"
+ ],
+ "Street address": [
+  "सड़क का पता",
+  "ରାସ୍ତା ଠିକଣା"
+ ],
+ "Locality / neighbourhood": [
+  "इलाका / पड़ोस",
+  "ସ୍ଥାନୀୟ ଅଞ୍ଚଳ / ପଡ଼ୋଶ"
+ ],
+ "City": [
+  "शहर",
+  "ସହର"
+ ],
+ "PIN code": [
+  "पिन कोड",
+  "ପିନ୍ କୋଡ୍"
+ ],
+ "Your application will be reviewed after email confirmation.": [
+  "ईमेल पुष्टि के बाद आवेदन की समीक्षा होगी।",
+  "ଇମେଲ୍ ପୁଷ୍ଟି ପରେ ଆବେଦନ ସମୀକ୍ଷା ହେବ।"
+ ],
+ "Already registered?": [
+  "पहले से पंजीकृत हैं?",
+  "ପୂର୍ବରୁ ପଞ୍ଜୀକୃତ କି?"
+ ]
+});
+const lower = Object.fromEntries(Object.entries(uiTranslations).map(([k,v]) => [k.toLowerCase(),v]));
+const templateTranslations=Object.entries(uiTranslations).filter(([key])=>/\{\w+\}/.test(key)).map(([key,value])=>{
+ const names:string[]=[];
+ const pattern=key.trim().replace(/\s+/g," ").split(/(\{\w+\})/).map(part=>{const token=/^\{(\w+)\}$/.exec(part);if(token){names.push(token[1]);return "(.+?)";}return part.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");}).join("");
+ return {names,value,pattern:new RegExp("^"+pattern+"$","iu")};
+});

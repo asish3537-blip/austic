@@ -4,11 +4,12 @@ import {useEffect,useRef,useState} from "react";
 import {UiText,useUiLanguage} from "@/components/ui-language";
 import {HERO_VIDEOS,SCHOOL_HERO_VIDEOS,nextHeroVideo} from "@/lib/hero-videos";
 
-export function HeroFoodVideo({service="food"}:{service?:"food"|"school"}){
- const clips=service==="school"?SCHOOL_HERO_VIDEOS:HERO_VIDEOS;
+export function HeroFoodVideo({service="food",clips:customClips,showControl=true,stopAfter}:{service?:"food"|"school";clips?:readonly string[];showControl?:boolean;stopAfter?:number}){
+ const clips=customClips??(service==="school"?SCHOOL_HERO_VIDEOS:HERO_VIDEOS);
  const poster=service==="school"?"/assets/scoofoo-storyboard.webp":"/assets/home-fresh.avif";
  const {t}=useUiLanguage();
  const video=useRef<HTMLVideoElement>(null),failedClips=useRef(new Set<number>());
+ const [frameReady,setFrameReady]=useState(false);
  const [motion,setMotion]=useState(false),[playing,setPlaying]=useState(false),[failed,setFailed]=useState(false);
  const [index,setIndex]=useState(0),[userPaused,setUserPaused]=useState(false);
  useEffect(()=>{
@@ -35,8 +36,8 @@ export function HeroFoodVideo({service="food"}:{service?:"food"|"school"}){
  return <>
   <div className="hero-food-backdrop" aria-hidden="true">
    <Image src={poster} alt="" fill priority sizes="100vw"/>
-   {motion&&!failed&&<video key={clips[index]} ref={video} src={clips[index]} className={playing?"is-playing":""} autoPlay={!userPaused} muted playsInline preload="metadata" poster={poster} onPlaying={()=>setPlaying(true)} onPause={()=>setPlaying(false)} onEnded={()=>advance()} onError={()=>advance(true)}/>}
+   {motion&&!failed&&<video key={clips[index]} ref={video} src={clips[index]} className={playing||(Boolean(stopAfter)&&frameReady)?"is-playing":""} autoPlay={!userPaused} muted playsInline preload="metadata" poster={poster} onLoadedData={()=>setFrameReady(true)} onTimeUpdate={e=>{if(stopAfter&&e.currentTarget.currentTime>=stopAfter)e.currentTarget.pause();}} onPlaying={()=>setPlaying(true)} onPause={()=>setPlaying(false)} onEnded={()=>advance()} onError={()=>advance(true)}/>}
   </div>
-  {motion&&!failed&&<button className="hero-video-toggle" type="button" onClick={toggle} aria-pressed={playing} title={t(playing?"Pause background":"Play background")}><span aria-hidden="true">{playing?"Ⅱ":"▶"}</span><span className="visually-hidden"><UiText text={playing?"Pause background":"Play background"}/></span></button>}
+  {showControl&&motion&&!failed&&<button className="hero-video-toggle" type="button" onClick={toggle} aria-pressed={playing} title={t(playing?"Pause background":"Play background")}><span aria-hidden="true">{playing?"Ⅱ":"▶"}</span><span className="visually-hidden"><UiText text={playing?"Pause background":"Play background"}/></span></button>}
  </>;
 }

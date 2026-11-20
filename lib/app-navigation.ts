@@ -5,7 +5,7 @@ export const appNavigation={
  DELIVERY_AGENT:[{label:"Jobs",icon:"jobs",href:"/delivery/dashboard#available-jobs"},{label:"Route",icon:"route",href:"/delivery/dashboard#delivery-route"},{label:"Help",icon:"help",href:"/help#courier-onboarding"},{label:"ScooFoo",icon:"school",href:"/school-tiffins"}],
  ADMIN:[{label:"Overview",icon:"menu",href:"/admin/paustik-admin"},{label:"Income",icon:"pay",href:"/admin/analytics"},{label:"Activity",icon:"orders",href:"/admin/orders"},{label:"People",icon:"people",href:"/admin/accounts"},{label:"Website",icon:"globe",href:"/"}]
 } as const;
-export type AppIcon=typeof appNavigation[AppRole][number]["icon"]|"bell";
+export type AppIcon=typeof appNavigation[AppRole][number]["icon"]|"bell"|"meal";
 export function activeNavigationIndex(role:AppRole,path:string,hash=""){
  const items=appNavigation[role];
  const exact=items.findIndex(item=>item.href===path+hash);if(exact>=0)return exact;

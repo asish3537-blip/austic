@@ -5,7 +5,6 @@ import {prisma} from "@/lib/prisma";
 import {isLocalAuthMode} from "@/lib/local-auth-mode";
 import {CustomerDeliveryPin} from "@/components/customer-marketplace-controls";
 import {KitchenDiscovery} from "@/components/kitchen-discovery";
-import {CustomerSchoolHero} from "@/components/customer-school-hero";
 import {CustomerHighlights} from "@/components/customer-highlights";
 import {loadCustomerKitchenDiscovery,sampleCustomerKitchens} from "@/lib/customer-kitchens";
 import {OrdersRefresh} from "@/components/orders-refresh";
@@ -24,7 +23,7 @@ export default async function CustomerDashboard({searchParams}:{searchParams:Pro
   </section>
   </>}
 
-<CustomerSchoolHero/>
+
 
   {!discovery.hasDeliveryPin&&<CustomerDeliveryPin/>}
   <KitchenDiscovery initialQuery={(params.q||"").slice(0,100)} key={mode} initialMode={mode} kitchens={discovery.kitchens} sampleKitchens={sampleCustomerKitchens()} hasDeliveryPin={discovery.hasDeliveryPin} deliveryArea={discovery.deliveryArea} available={discovery.available}/>

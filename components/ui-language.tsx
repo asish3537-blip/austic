@@ -11,8 +11,8 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => { document.documentElement.lang = language; }, [language]);
   return <LanguageContext.Provider value={language}>{children}</LanguageContext.Provider>;
 }
-export function useUiLanguage() { const language = useContext(LanguageContext); return { language, t: (text: string) => translated(text, language) }; }
-export function UiText({ text }: { text: string }) { const { t } = useUiLanguage(); return <>{t(text)}</>; }
+export function useUiLanguage() { const language = useContext(LanguageContext); return { language, locale: language === "or" ? "or-IN" : language === "hi" ? "hi-IN" : "en-IN", t: (text: string, values?:Record<string,string|number>) => translated(text, language).replace(/\{(\w+)\}/g,(match,key:string)=>values?.[key]===undefined?match:String(values[key])) }; }
+export function UiText({ text, values }: { text: string; values?:Record<string,string|number> }) { const { t } = useUiLanguage(); return <>{t(text,values)}</>; }
 export function LanguageSelector() {
   const { language } = useUiLanguage(); const id = useId();
   const ready = useSyncExternalStore(hydrationSubscribe, () => true, () => false);
@@ -20,3 +20,5 @@ export function LanguageSelector() {
 }
 
 export function WebsiteSearchInput(){const {t}=useUiLanguage();return <input id="hero-food-query" name="q" placeholder={t("Search a kitchen, cuisine or dish")} maxLength={100}/>;}
+
+export function UiDate({value,dateOnly=false}:{value:string;dateOnly?:boolean}){const {locale}=useUiLanguage();const d=new Date(value);return <>{Number.isFinite(d.getTime())?new Intl.DateTimeFormat(locale,{timeZone:"Asia/Kolkata",dateStyle:"medium",...(dateOnly?{}:{timeStyle:"short" as const})}).format(d):"—"}</>;}

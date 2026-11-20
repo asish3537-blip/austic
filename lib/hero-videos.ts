@@ -4,7 +4,7 @@ export const HERO_VIDEOS = [
  "/media/hero-vegetables.mp4",
  "/media/hero-rice.mp4",
 ] as const;
-export function nextHeroVideo(current:number,failed:ReadonlySet<number>,count=HERO_VIDEOS.length):number|null{
+export function nextHeroVideo(current:number,failed:ReadonlySet<number>,count:number=HERO_VIDEOS.length):number|null{
  for(let step=1;step<=count;step++){const index=(current+step)%count;if(!failed.has(index))return index;}
  return null;
 }

@@ -201,7 +201,7 @@ export function MotherWorkspace() {
 
     <section className="mother-location-panel">
       <div><span className="eyebrow"><UiText text="Kitchen location"/></span><h2><UiText text={workspace.kitchen.hasLocation ? "Kitchen pin saved" : "Add your kitchen pickup pin"}/></h2><p><UiText text="Customer delivery covers up to 25 km. Couriers still use the separate 150 m pickup geofence at this pin."/></p><label className="mother-radius-setting"><UiText text="Customer delivery area"/><select value={marketplaceRadiusKm} onChange={(event) => setMarketplaceRadiusKm(Number(event.target.value))}>{[25].map((radius) => <option key={radius} value={radius}>{radius} <UiText text="km"/></option>)}</select></label></div>
-      <button className="button button-small" type="button" onClick={pinKitchen} disabled={busyId === "location"}>{busyId === "location" ? "Waiting for GPS…" : workspace.kitchen.hasLocation ? "Refresh kitchen pin" : "Use this device location"}</button>
+      <button className="button button-small" type="button" onClick={pinKitchen} disabled={busyId === "location"}><UiText text={busyId === "location" ? "Waiting for GPS…" : workspace.kitchen.hasLocation ? "Refresh kitchen pin" : "Use this device location"}/></button>
     </section>
 
 

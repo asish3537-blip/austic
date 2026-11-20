@@ -1,4 +1,6 @@
 "use client";
+import {UiText,useUiLanguage} from "@/components/ui-language";
+
 import { useEffect, useState } from "react";
 import { incomeMoney } from "@/lib/earnings-estimates";
 
@@ -37,11 +39,12 @@ export function useCheckoutQuote(selection: CheckoutSelection | null) {
 }
 
 export function CheckoutReview({ review }: { review: ReturnType<typeof useCheckoutQuote> }) {
+  const {t}=useUiLanguage();
   const q = review.quote;
   return <section className="checkout-review" aria-label="Review your payment">
-    <div className="coupon-entry"><label>Coupon or voucher<input aria-label="Coupon or voucher" value={review.code} maxLength={40} onChange={e => review.setCode(e.target.value)} placeholder="Enter code" autoCapitalize="characters" /></label><button className="button button-quiet" type="button" onClick={review.apply}>Apply</button>{review.code && <button type="button" className="plain-button" onClick={review.clear}>Remove</button>}</div>
-    {review.error && <p role="alert">{review.error} <button type="button" className="plain-button" onClick={review.apply}>Retry</button></p>}
-    {!q && !review.error && <p role="status">Calculating your delivery and total…</p>}
-    {q && <><dl><div><dt>Food subtotal</dt><dd>{incomeMoney(q.subtotal)}</dd></div><div><dt>{q.feeRule?.firstDeliveryFree ? "Delivery · first delivery free" : `Delivery · ${q.distanceKm.toFixed(1)} km estimate`}</dt><dd>{incomeMoney(q.deliveryFee)}</dd></div>{q.discount > 0 && <div className="checkout-saving"><dt>Coupon {q.couponCode}</dt><dd>−{incomeMoney(q.discount)}</dd></div>}<div><dt>Order total</dt><dd>{incomeMoney(q.total)}</dd></div><div><dt>Wallet credit</dt><dd>−{incomeMoney(q.walletApplied)}</dd></div><div className="checkout-payable"><dt>Remaining payable</dt><dd>{incomeMoney(q.amountDue)}</dd></div></dl><small>Quote valid for 15 minutes. Delivery uses the distance between saved pins. Wallet credit is checked again when you confirm.</small></>}
+    <div className="coupon-entry"><label><UiText text={"Coupon or voucher"}/><input aria-label={t("Coupon or voucher")} value={review.code} maxLength={40} onChange={e => review.setCode(e.target.value)} placeholder={t("Enter code")} autoCapitalize="characters" /></label><button className="button button-quiet" type="button" onClick={review.apply}><UiText text={"Apply"}/></button>{review.code && <button type="button" className="plain-button" onClick={review.clear}><UiText text={"Remove"}/></button>}</div>
+    {review.error && <p role="alert"><UiText text={review.error}/> <button type="button" className="plain-button" onClick={review.apply}><UiText text={"Retry"}/></button></p>}
+    {!q && !review.error && <p role="status"><UiText text={"Calculating your delivery and total…"}/></p>}
+    {q && <><dl><div><dt><UiText text={"Food subtotal"}/></dt><dd>{incomeMoney(q.subtotal)}</dd></div><div><dt>{q.feeRule?.firstDeliveryFree ? <UiText text="Delivery · first delivery free"/> : <UiText text="Delivery · {distance} km estimate" values={{distance:q.distanceKm.toFixed(1)}}/>}</dt><dd>{incomeMoney(q.deliveryFee)}</dd></div>{q.discount > 0 && <div className="checkout-saving"><dt><UiText text={"Coupon"}/>{" "}{q.couponCode}</dt><dd>−{incomeMoney(q.discount)}</dd></div>}<div><dt><UiText text={"Order total"}/></dt><dd>{incomeMoney(q.total)}</dd></div><div><dt><UiText text={"Wallet credit"}/></dt><dd>−{incomeMoney(q.walletApplied)}</dd></div><div className="checkout-payable"><dt><UiText text={"Remaining payable"}/></dt><dd>{incomeMoney(q.amountDue)}</dd></div></dl><small><UiText text={"Quote valid for 15 minutes. Delivery uses the distance between saved pins. Wallet credit is checked again when you confirm."}/></small></>}
   </section>;
 }
