@@ -3217,6 +3217,31 @@ Object.assign(uiTranslations,{
   "ଡେଲିଭରି ଉପଲବ୍ଧ ଥିଲେ ୨୫ କିମି ଭିତର ଗ୍ରାହକ ଅର୍ଡର୍ କରିପାରିବେ। ପିକଅପ୍ ପାଇଁ ନିଜ କୋଡ୍ ଦିଅନ୍ତୁ; GPS ଇଚ୍ଛାଧୀନ।"
  ]
 });
+Object.assign(uiTranslations,{
+ "First serving date": [
+  "पहली डिलीवरी की तारीख",
+  "ପ୍ରଥମ ଡେଲିଭରି ତାରିଖ"
+ ],
+ "Servings per day": [
+  "प्रतिदिन की मात्रा",
+  "ପ୍ରତିଦିନର ଭୋଜନ ପରିମାଣ"
+ ],
+ "Schedule saved dish": [
+  "सहेजा पकवान निर्धारित करें",
+  "ସଞ୍ଚିତ ଖାଦ୍ୟ ଧାର୍ଯ୍ୟ କରନ୍ତୁ"
+ ],
+ "Scheduling…": [
+  "निर्धारित हो रहा है…",
+  "ଧାର୍ଯ୍ୟ ହେଉଛି…"
+ ],
+ "Check FSSAI & inspection status": [
+  "FSSAI और निरीक्षण की स्थिति देखें",
+  "FSSAI ଓ ଯାଞ୍ଚ ଅବସ୍ଥା ଦେଖନ୍ତୁ"
+ ]
+});
+Object.assign(uiTranslations,{
+ "Wallet credit is applied at checkout. Review any remaining balance before confirming.":["चेकआउट पर वॉलेट क्रेडिट लागू होता है। पुष्टि से पहले बची रकम जाँचें।","ଚେକଆଉଟ୍‌ରେ ୱାଲେଟ୍ କ୍ରେଡିଟ୍ ଲାଗୁ ହୁଏ। ପୁଷ୍ଟି ପୂର୍ବରୁ ବାକି ରାଶି ଯାଞ୍ଚ କରନ୍ତୁ।"]
+});
 const lower = Object.fromEntries(Object.entries(uiTranslations).map(([k,v]) => [k.toLowerCase(),v]));
 const templateTranslations=Object.entries(uiTranslations).filter(([key])=>/\{\w+\}/.test(key)).map(([key,value])=>{
  const names:string[]=[];

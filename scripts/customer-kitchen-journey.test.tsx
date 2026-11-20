@@ -48,10 +48,10 @@ test("totals multiply servings and charge delivery once per selected day", () =>
 test("discovery starts with kitchens and keeps sample content separate", () => {
   const html = renderToStaticMarkup(<KitchenDiscovery kitchens={[]} sampleKitchens={[]} hasDeliveryPin={false} deliveryArea="Patia, Bhubaneswar" available />);
   assert.match(html, /Explore mother-led kitchens/);
-  assert.match(html, /aria-label="Kitchen view"/);
-  assert.match(html, /Search kitchens or meals/);
-  assert.match(html, /No available menus in this area yet/);
-  assert.match(html, /aria-expanded="false"/);
+  assert.doesNotMatch(html, /aria-label="Kitchen view"|Search kitchens or meals/);
+  assert.match(html, /No published meals in this area yet/);
+  assert.match(html, /<details class="discovery-samples"><summary>Browse sample menus<\/summary>/);
+  assert.match(html, /No orders are created/);
   assert.doesNotMatch(html, /Reserve .*meal days/);
 });
 
