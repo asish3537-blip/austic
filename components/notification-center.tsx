@@ -4,7 +4,7 @@ import { useEffect, useState, useSyncExternalStore } from "react";
 const subscribeSupport = () => () => {};
 const pushSupported = () => window.isSecureContext && "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
 type Item = { id: string; title: string; body: string; createdAt: string; readAt: string | null };
-export function NotificationCenter({ full = false }: { full?: boolean }) {
+export function NotificationCenter({ full = false, settings = false }: { full?: boolean; settings?: boolean }) {
   const [items, setItems] = useState<Item[]>([]), [unread, setUnread] = useState(0), [open, setOpen] = useState(full);
   const [configured, setConfigured] = useState(false), [publicKey, setPublicKey] = useState("");
   const supported = useSyncExternalStore(subscribeSupport, pushSupported, () => false);
@@ -33,7 +33,7 @@ export function NotificationCenter({ full = false }: { full?: boolean }) {
       if (!supported) throw new Error("Push is unavailable in this browser. On iPhone/iPad, install Paustik from Safari and open it from the Home Screen. Your inbox still works.");
       if (action === "enable") {
         if (!configured || !publicKey) throw new Error("Push activation is pending. Your inbox still works.");
-        const permission = await Notification.requestPermission();
+        const permission = Notification.permission === "granted" ? "granted" : await Notification.requestPermission();
         if (permission !== "granted") throw new Error("Notifications were not allowed. You can change this in your browser’s site settings.");
       }
       const registration = await navigator.serviceWorker.register("/sw.js", { scope: "/", updateViaCache: "none" });
@@ -61,7 +61,7 @@ export function NotificationCenter({ full = false }: { full?: boolean }) {
   return <div className={"notification-center " + (full ? "notification-full" : "")}>
     {!full && <button type="button" className="notification-bell" aria-expanded={open} onClick={() => setOpen(!open)}><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="M6 9a6 6 0 0 1 12 0v5l2 3H4l2-3V9Z"/><path d="M9 20h6"/></svg> Notifications{unread > 0 && <b>{unread > 99 ? "99+" : unread}</b>}</button>}
     {open && <section className="notification-panel" aria-label="Notifications"><div className="notification-panel-head"><strong>Your updates{unread > 0 ? ` · ${unread} unread` : ""}</strong>{!full && <button type="button" aria-label="Close notifications" onClick={() => setOpen(false)}>×</button>}</div>
-      <div className="notification-settings"><strong>{enabled ? "Device push is on" : "Stay updated"}</strong><p>Order, kitchen, payment and delivery updates. Lock-screen messages hide account details.</p><button type="button" disabled={busy || (!enabled && !configured)} onClick={() => void manage(enabled ? "disable" : "enable")}>{busy ? "Updating…" : enabled ? "Turn off device push" : "Enable device push"}</button>{enabled && <button type="button" disabled={busy} onClick={() => void manage("test")}>Send test notification</button>}{!configured && <small>Push activation is pending. In-app updates are available now.</small>}{!supported && <small>Use a browser with Web Push support. On iPhone/iPad, open the installed Home Screen app.</small>}</div>
+      {settings&&<div className="notification-settings"><strong>{enabled ? "Device push is on" : "Stay updated"}</strong><p>Order, kitchen, payment and delivery updates. Lock-screen messages hide account details.</p><button type="button" disabled={busy || (!enabled && !configured)} onClick={() => void manage(enabled ? "disable" : "enable")}>{busy ? "Updating…" : enabled ? "Turn off device push" : "Enable device push"}</button>{enabled && <button type="button" disabled={busy} onClick={() => void manage("test")}>Send test notification</button>}{!configured && <small>Push activation is pending. In-app updates are available now.</small>}{!supported && <small>Use a browser with Web Push support. On iPhone/iPad, open the installed Home Screen app.</small>}</div>}
       {message && <p className="notification-message" role="status">{message}</p>}
       {unread > 0 && <button type="button" className="plain-button" onClick={() => void markRead()}>Mark all as read</button>}
       <ul>{items.slice(0,full ? 30 : 5).map(item => <li key={item.id} className={item.readAt ? "is-read" : "is-unread"}><strong>{item.title}</strong><p>{item.body}</p>{/scoofoo/i.test(item.title)&&<Link href="/school-tiffins">Open ScooFoo →</Link>}<small>{new Date(item.createdAt).toLocaleString("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short" })} IST</small>{!item.readAt && <button type="button" onClick={() => void markRead(item.id)}>Mark as read</button>}</li>)}</ul>{!items.length && <p className="notification-empty">{loading ? "Loading your updates…" : "Your account updates will appear here."}</p>}{!full && <Link href="/notifications">Open notification inbox →</Link>}

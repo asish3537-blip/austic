@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { incomeMoney } from "@/lib/earnings-estimates";
 
 export type CheckoutSelection = { menuIds?: string[]; quantity: number; productRequestId?: string };
-export type CheckoutQuote = { quoteId: string; expiresAt: string; subtotal: number; deliveryFee: number; discount: number; total: number; walletApplied: number; amountDue: number; couponCode: string; distanceKm: number; selectionKey: string };
+export type CheckoutQuote = { quoteId: string; expiresAt: string; subtotal: number; deliveryFee: number; discount: number; total: number; walletApplied: number; amountDue: number; couponCode: string; distanceKm: number; feeRule?: {firstDeliveryFree?: boolean}; selectionKey: string };
 
 export function useCheckoutQuote(selection: CheckoutSelection | null) {
   const [code, setCode] = useState("");
@@ -42,6 +42,6 @@ export function CheckoutReview({ review }: { review: ReturnType<typeof useChecko
     <div className="coupon-entry"><label>Coupon or voucher<input aria-label="Coupon or voucher" value={review.code} maxLength={40} onChange={e => review.setCode(e.target.value)} placeholder="Enter code" autoCapitalize="characters" /></label><button className="button button-quiet" type="button" onClick={review.apply}>Apply</button>{review.code && <button type="button" className="plain-button" onClick={review.clear}>Remove</button>}</div>
     {review.error && <p role="alert">{review.error} <button type="button" className="plain-button" onClick={review.apply}>Retry</button></p>}
     {!q && !review.error && <p role="status">Calculating your delivery and total…</p>}
-    {q && <><dl><div><dt>Food subtotal</dt><dd>{incomeMoney(q.subtotal)}</dd></div><div><dt>Delivery · {q.distanceKm.toFixed(1)} km estimate</dt><dd>{incomeMoney(q.deliveryFee)}</dd></div>{q.discount > 0 && <div className="checkout-saving"><dt>Coupon {q.couponCode}</dt><dd>−{incomeMoney(q.discount)}</dd></div>}<div><dt>Order total</dt><dd>{incomeMoney(q.total)}</dd></div><div><dt>Wallet credit</dt><dd>−{incomeMoney(q.walletApplied)}</dd></div><div className="checkout-payable"><dt>Remaining payable</dt><dd>{incomeMoney(q.amountDue)}</dd></div></dl><small>Quote valid for 15 minutes. Delivery uses the distance between saved pins. Wallet credit is checked again when you confirm.</small></>}
+    {q && <><dl><div><dt>Food subtotal</dt><dd>{incomeMoney(q.subtotal)}</dd></div><div><dt>{q.feeRule?.firstDeliveryFree ? "Delivery · first delivery free" : `Delivery · ${q.distanceKm.toFixed(1)} km estimate`}</dt><dd>{incomeMoney(q.deliveryFee)}</dd></div>{q.discount > 0 && <div className="checkout-saving"><dt>Coupon {q.couponCode}</dt><dd>−{incomeMoney(q.discount)}</dd></div>}<div><dt>Order total</dt><dd>{incomeMoney(q.total)}</dd></div><div><dt>Wallet credit</dt><dd>−{incomeMoney(q.walletApplied)}</dd></div><div className="checkout-payable"><dt>Remaining payable</dt><dd>{incomeMoney(q.amountDue)}</dd></div></dl><small>Quote valid for 15 minutes. Delivery uses the distance between saved pins. Wallet credit is checked again when you confirm.</small></>}
   </section>;
 }

@@ -11,13 +11,14 @@ import {prisma} from "@/lib/prisma";
 import {rejectCrossOrigin,serviceUnavailable} from "@/lib/http";
 import {productInclude,productTerms,productRequests,availableProduct,assertProductSlot,assertProductArea,MarketError} from "@/lib/food-marketplace";
 import {lockWallet,walletBalance,CANCELLATION_CUTOFF_HOURS,CANCELLATION_OPERATION_FEE_INR} from "@/lib/marketplace-rules";
+import {nextProductDelivery} from "@/lib/service-windows";
 import {DELIVERY_WINDOW_POLICY} from "@/lib/service-windows";
 import {ensurePilotWallet} from "@/lib/pilot-wallet";
 import {scheduleEntityPush} from "@/lib/web-push";
 import {scheduleCourierOffers} from "@/lib/courier-offers";
 import type {Prisma} from "@/app/generated/prisma/client";
 const schema=z.discriminatedUnion("action",[
- z.object({action:z.literal("create"),productId:z.string().uuid(),quantity:z.number().int().min(1).max(100),scheduledFor:z.iso.datetime()}),
+ z.object({action:z.literal("create"),productId:z.string().uuid(),quantity:z.number().int().min(1).max(100),scheduledFor:z.iso.datetime().optional()}),
  z.object({action:z.enum(["offer","counter"]),requestId:z.string().uuid(),version:z.number().int().min(0),scheduledFor:z.iso.datetime()}),
  z.object({quoteId:z.string().uuid().optional(),couponCode:z.string().max(40).optional(),action:z.enum(["accept","confirm","cancel","decline"]),requestId:z.string().uuid(),version:z.number().int().min(0)})
 ]);
@@ -26,7 +27,7 @@ export async function POST(req:Request){const origin=rejectCrossOrigin(req);if(o
  if(x.action==="create"){
   if(u.role!=="CUSTOMER")throw new MarketError("Only customers can request products.",403);
   const p=await prisma.foodProduct.findUnique({where:{id:x.productId},include:productInclude});if(!p||!availableProduct(p))throw new MarketError("This product is unavailable.");if(x.quantity<p.minimumQuantity||x.quantity>p.stockCount)throw new MarketError("Choose a quantity between the minimum and remaining units.");
-  const a=await prisma.address.findFirst({where:{userId:u.id},orderBy:[{isDefault:"desc"},{createdAt:"asc"}]});if(!a)throw new MarketError("Add your delivery address first.");assertProductArea(p,a);const at=new Date(x.scheduledFor);assertProductSlot(p,at);if(!await hasOnlineCourier(p.meal.kitchen))throw new MarketError(NO_COURIER_MESSAGE);
+  const a=await prisma.address.findFirst({where:{userId:u.id},orderBy:[{isDefault:"desc"},{createdAt:"asc"}]});if(!a)throw new MarketError("Add your delivery address first.");assertProductArea(p,a);const at=x.scheduledFor?new Date(x.scheduledFor):nextProductDelivery(p.preparationMode==="READY"?0:p.preparationMinutes,p.preparationMode==="READY"?p.readyUntil:null);if(!at)throw new MarketError("No delivery slot is available before this batch expires. Choose another product.");assertProductSlot(p,at);if(!await hasOnlineCourier(p.meal.kitchen))throw new MarketError(NO_COURIER_MESSAGE);
   const deliveryFee = deliveryQuote(orderDistance(p.meal.kitchen,a)!,await loadDispatchPolicy());
   const r=await prisma.$transaction(async tx=>{await lockWallet(tx,u.id);if(await tx.productRequest.count({where:{customerId:u.id,status:{in:["KITCHEN_REVIEW","CUSTOMER_CONFIRM"]},expiresAt:{gt:new Date()}}})>=20)throw new MarketError("Finish or cancel earlier requests before adding more.");const result=await tx.productRequest.create({data:{customerId:u.id,productId:p.id,addressId:a.id,quantity:x.quantity,scheduledFor:at,expiresAt:new Date(Date.now()+48*3600000),unitPrice:p.meal.price,deliveryFee,snapshot:{terms:productTerms(p),name:p.meal.name,unit:p.unitLabel,mode:p.preparationMode,ingredients:p.meal.ingredients,allergens:p.meal.allergens,storage:p.storageInstructions,shelfLifeHours:p.shelfLifeHours,readyUntil:p.readyUntil?.toISOString()??null},history:[{role:"CUSTOMER",action:"REQUEST",at:new Date().toISOString(),deliveryAt:at.toISOString()}]}});await tx.notification.create({data:{userId:p.meal.kitchen.mother.userId,title:"Product delivery time requested",body:p.meal.name+" · "+x.quantity+" unit(s). Review it in Mother Marketplace.",kind:"ORDER",entityId:result.id}});return result;});scheduleEntityPush([r.id]);return NextResponse.json({id:r.id,message:"Request sent. The mother must confirm readiness/time. Nothing is reserved or charged yet."},{status:201});
  }

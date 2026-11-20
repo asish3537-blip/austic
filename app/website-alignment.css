@@ -125,3 +125,11 @@ body:has(.editorial-home) .editorial-home .eh-hero{margin-top:0;padding-top:150p
  body:has(.editorial-home) .site-header .mobile-nav>summary{padding-inline:10px}
 }
 @media(max-width:360px){body:has(.editorial-home) .site-header .brand-wordmark{width:106px}body:has(.editorial-home) .site-header .header-controls{gap:5px}}
+
+/* Clear language disclosure and one consistent red menu trigger. */
+.site-header .language-selector,.app-header-tools .language-selector{position:relative}
+.site-header .language-selector::after,.app-header-tools .language-selector::after{content:"";position:absolute;right:12px;top:50%;width:6px;height:6px;border-right:2px solid #9b2430;border-bottom:2px solid #9b2430;transform:translateY(-70%) rotate(45deg);pointer-events:none}
+.site-header .language-selector select,.app-header-tools .language-selector select,body:has(.editorial-home) .site-header .language-selector select{appearance:none;-webkit-appearance:none;background:#fff0ed;color:#70252c;border:0;border-radius:8px;padding-right:30px;box-shadow:none}
+.site-header .language-selector select:focus-visible,.app-header-tools .language-selector select:focus-visible{outline:2px solid #b52c2e;outline-offset:2px}
+.site-header .mobile-nav>summary,body:has(.editorial-home) .site-header .mobile-nav>summary{background:#b52c2e;border:0;color:#fffaf4;border-radius:8px}
+.site-header .mobile-nav>summary:hover{background:#98232a}

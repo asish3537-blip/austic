@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 type PinState = "loading" | "ready" | "missing" | "saving" | "error";
 export { WeeklyPlanPicker } from "@/components/weekly-plan-picker";
 
-export function CustomerDeliveryPin({ initialPinned = false }: { initialPinned?: boolean }) {
+export function CustomerDeliveryPin({ initialPinned = false, manage = false }: { initialPinned?: boolean; manage?: boolean }) {
   const [state, setState] = useState<PinState>(initialPinned ? "ready" : "loading");
   const [message, setMessage] = useState("");
   const router = useRouter();
@@ -53,9 +53,10 @@ export function CustomerDeliveryPin({ initialPinned = false }: { initialPinned?:
     }, (error) => {
       setState("error");
       setMessage(error.code === error.PERMISSION_DENIED ? "Location permission was declined. Enable it in your browser settings to set a delivery pin." : "Could not read your location. Try again when GPS is available.");
-    }, { enableHighAccuracy: true, maximumAge: 0, timeout: 15000 });
+    }, { enableHighAccuracy: true, maximumAge: 300000, timeout: 15000 });
   }
 
+  if(state === "ready" && !manage) return null;
   return <aside className={"customer-pin-card " + (state === "ready" ? "is-ready" : "")}>
     <div><strong>{state === "ready" ? "Delivery location ready" : "Set your delivery pin"}</strong><span>{message || (state === "ready" ? "Your drop-off pin is shared only with the courier assigned to your order." : "A precise drop-off pin lets the courier verify delivery at the right address." )}</span></div>
     <button type="button" className="button button-small" onClick={savePin} disabled={state === "loading" || state === "saving"}>{state === "saving" ? "Waiting for GPS…" : state === "ready" ? "Update location" : "Use my location"}</button>
@@ -71,7 +72,8 @@ export function PlaceOrderButton({ menuId, servings }: { menuId: string; serving
   const [message, setMessage] = useState("");
   const [error, setError] = useState(false);
 
-  const review = useCheckoutQuote({ menuIds: [menuId], quantity });
+  const [checkoutOpen,setCheckoutOpen]=useState(false);
+  const review = useCheckoutQuote(checkoutOpen?{ menuIds: [menuId], quantity }:null);
 
   async function placeOrder() {
     if (!review.quote || busy) return;
@@ -98,12 +100,12 @@ export function PlaceOrderButton({ menuId, servings }: { menuId: string; serving
   }
 
   return <div className="customer-order-action">
-    <CheckoutReview review={review}/>
+    {checkoutOpen&&<CheckoutReview review={review}/>}
     <div className="customer-order-controls">
       <label><UiText text="Servings"/><select aria-label="Servings" value={quantity} onChange={(event) => setQuantity(Number(event.target.value))}>
         {Array.from({ length: Math.min(8, servings) }, (_, index) => <option key={index + 1} value={index + 1}>{index + 1}</option>)}
       </select></label>
-      <button type="button" className="button button-small" onClick={placeOrder} disabled={busy || servings < 1 || !delivery?.available || !review.quote}>{busy ? "Saving…" : <UiText text="Order meal"/>}</button>
+      <button type="button" className="button button-small" onClick={()=>checkoutOpen?void placeOrder():setCheckoutOpen(true)} disabled={busy || servings < 1 || (checkoutOpen&&(!delivery?.available || !review.quote))}>{busy ? "Saving…" : <UiText text={checkoutOpen?"Place order":"Order one meal"}/>}</button>
     </div>
     {<p className="customer-order-message" role="status">{delivery?.message??"Checking delivery partners…"}</p>}
     {message && <p className={"customer-order-message " + (error ? "is-error" : "")}>{message}</p>}

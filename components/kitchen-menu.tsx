@@ -22,7 +22,7 @@ export function KitchenMenu({ meals, sample, canOrder }: { meals: KitchenMeal[];
       <div className="kitchen-dish-heading"><span className={"kitchen-diet-badge " + (meal.category === "NON_VEGETARIAN" ? "is-nonveg" : "")}>{mealCategoryLabel(meal.category)}</span><strong>{kitchenMoney(meal.price)}</strong></div>
       <h3>{meal.name}</h3>{meal.oneTimeOnly&&<span className="special-badge">One-time special</span>}<ul className="kitchen-dish-items">{meal.components.map((item, index) => <li key={`${index}-${item}`}>{item}</li>)}</ul>
       <p className="kitchen-dish-slot">{meal.mealPeriod??"LUNCH"} · Delivery at {meal.deliveryTime} IST · {sample ? "Sample availability" : `${meal.servings} servings left`}</p>
-      {!sample && meal.menuId && canOrder && <><PlaceOrderButton menuId={meal.menuId} servings={meal.servings}/><BulkMealRequest menuId={meal.menuId} stock={meal.servings}/></>}{!meal.oneTimeOnly&&<a href="#kitchen-subscription" className="button button-small"><UiText text="Choose subscription"/><span aria-hidden="true">→</span></a>}
+      {!sample && meal.menuId && canOrder && <><PlaceOrderButton menuId={meal.menuId} servings={meal.servings}/><BulkMealRequest menuId={meal.menuId} stock={meal.servings}/></>}{!sample&&!canOrder&&<a className="text-link" href="/account/settings#delivery-address">Check delivery address to order →</a>}{!meal.oneTimeOnly&&<a href="#kitchen-subscription" className="button button-small"><UiText text="Choose subscription"/><span aria-hidden="true">→</span></a>}
       
     </article>)}</div> : <div className="kitchen-empty"><h3>No meals match that preference on this day</h3><p>Choose another day or select “All meals”.</p></div>}
   </section>;

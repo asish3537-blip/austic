@@ -10,7 +10,7 @@ export type CheckoutPricing = {
   food: number[]; delivery: number[]; discounts: number[]; totals: number[];
   subtotal: number; deliveryFee: number; discount: number; total: number;
   couponId: string | null; couponCode: string; distanceKm: number;
-  feeRule: { baseFee: number; includedKm: number; perKm: number; maximumFee: number; method: string };
+  feeRule: { baseFee: number; includedKm: number; perKm: number; maximumFee: number; method: string; firstDeliveryFree?: boolean };
 };
 const round = (value: number) => Math.round(value * 100) / 100;
 export const inputHash = (value: unknown) => createHash("sha256").update(JSON.stringify(value)).digest("hex");
@@ -38,20 +38,22 @@ export async function priceCheckout(tx: Tx, customerId: string, input: PricingIn
     const quote = await tx.checkoutQuote.findUnique({ where: { id: quoteId } });
     if (!quote || quote.customerId !== customerId || quote.inputHash !== inputHash(normalized) || quote.expiresAt <= new Date()) throw new CheckoutError("Your checkout quote changed or expired. Review the total again.");
     const saved = quote.payload as unknown as CheckoutPricing;
+    if(saved.feeRule.firstDeliveryFree && await tx.order.count({where:{customerId,status:{notIn:["CANCELLED","FAILED"]}}})>0) throw new CheckoutError("Your first-order delivery offer changed. Review a fresh checkout total.");
     const eligible = await validateCoupon(tx, customerId, code, saved.subtotal, saved.deliveryFee);
     if ((eligible?.discount ?? 0) !== saved.discount) throw new CheckoutError("Coupon terms changed. Review a fresh checkout quote.");
     return saved;
   }
   const policy = await loadDispatchPolicy();
   const food = input.food.map(round);
-  const delivery = food.map(() => deliveryQuote(input.distanceKm, policy));
+  const firstDeliveryFree=await tx.order.count({where:{customerId,status:{notIn:["CANCELLED","FAILED"]}}})===0;
+  const delivery = food.map((_,index) => firstDeliveryFree && index===0 ? 0 : deliveryQuote(input.distanceKm, policy));
   const subtotal = round(food.reduce((a, b) => a + b, 0));
   const deliveryFee = round(delivery.reduce((a, b) => a + b, 0));
   const eligible = await validateCoupon(tx, customerId, code, subtotal, deliveryFee);
   const discount = eligible?.discount ?? 0;
   const discounts = allocateDiscount(discount, eligible?.coupon.kind === "DELIVERY" ? delivery : food);
   const totals = food.map((amount, index) => round(amount + delivery[index] - discounts[index]));
-  return { food, delivery, discounts, totals, subtotal, deliveryFee, discount, total: round(subtotal + deliveryFee - discount), couponId: eligible?.coupon.id ?? null, couponCode: code, distanceKm: input.distanceKm, feeRule: { baseFee: policy.baseFee, includedKm: policy.includedKm, perKm: policy.perKm, maximumFee: policy.maximumFee, method: "STRAIGHT_LINE_DISTANCE" } };
+  return { food, delivery, discounts, totals, subtotal, deliveryFee, discount, total: round(subtotal + deliveryFee - discount), couponId: eligible?.coupon.id ?? null, couponCode: code, distanceKm: input.distanceKm, feeRule: { baseFee: policy.baseFee, includedKm: policy.includedKm, perKm: policy.perKm, maximumFee: policy.maximumFee, method: "STRAIGHT_LINE_DISTANCE", firstDeliveryFree } };
 }
 
 export async function redeemCoupon(tx: Tx, customerId: string, pricing: CheckoutPricing, orderIds: string[]) {

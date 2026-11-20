@@ -31,7 +31,12 @@ export async function POST(request: Request) {
   const session = await prisma.authSession.findUnique({ where: { tokenHash: createHash("sha256").update(token).digest("hex") } });
   if (!session || session.userId !== user.id || session.revokedAt || session.expiresAt <= new Date()) return NextResponse.json({ error: "Sign in again to manage device notifications." }, { status: 403 });
   const own = { endpointHash, userId: user.id, sessionId: session.id };
-  if (input.action === "status") return NextResponse.json({ enabled: Boolean(await prisma.webPushDevice.findFirst({ where: own })) });
+  if (input.action === "status") {
+    const device=await prisma.webPushDevice.findUnique({where:{endpointHash}});
+    const enabled=device?.userId===user.id;
+    if(enabled&&device.sessionId!==session.id)await prisma.webPushDevice.updateMany({where:{endpointHash,userId:user.id},data:{sessionId:session.id}});
+    return NextResponse.json({enabled});
+  }
   if (input.action === "unsubscribe") { await prisma.webPushDevice.deleteMany({ where: own }); return NextResponse.json({ enabled: false }); }
   if (!webPushConfig()) return NextResponse.json({ error: "Push activation is pending. Your in-app inbox still works." }, { status: 503 });
   if (input.action === "test") {

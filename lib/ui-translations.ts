@@ -1629,3 +1629,14 @@ const lower = Object.fromEntries(Object.entries(uiTranslations).map(([k,v]) => [
 export function translated(text: string, language: UiLanguage) { return language === "en" ? text : (uiTranslations[text] ?? lower[text.trim().replace(/\s+/g," ").replaceAll("_"," ").toLowerCase()])?.[language === "hi" ? 0 : 1] ?? text; }
 
 Object.assign(uiTranslations,{"Download app":["ऐप डाउनलोड करें","ଆପ୍ ଡାଉନଲୋଡ୍ କରନ୍ତୁ"]});
+
+Object.assign(uiTranslations,{
+ "Purchases & tracking":["खरीद और ट्रैकिंग","କିଣାକିଣି ଓ ଟ୍ରାକିଂ"],
+ "Requests & orders":["अनुरोध और ऑर्डर","ଅନୁରୋଧ ଓ ଅର୍ଡର୍"],
+ "Preferred delivery time (optional)":["पसंदीदा डिलीवरी समय (वैकल्पिक)","ପସନ୍ଦର ଡେଲିଭରି ସମୟ (ଇଚ୍ଛାଧୀନ)"],
+ "Request product":["उत्पाद का अनुरोध करें","ଉତ୍ପାଦ ଅନୁରୋଧ କରନ୍ତୁ"],
+ "Review & checkout":["समीक्षा और चेकआउट","ସମୀକ୍ଷା ଓ ଚେକଆଉଟ୍"],
+ "Order one meal":["एक भोजन ऑर्डर करें","ଗୋଟିଏ ଭୋଜନ ଅର୍ଡର୍ କରନ୍ତୁ"],
+ "Place order":["ऑर्डर करें","ଅର୍ଡର୍ କରନ୍ତୁ"],
+ "No delivery partners online. Please try later.":["कोई डिलीवरी साथी ऑनलाइन नहीं है। बाद में प्रयास करें।","କୌଣସି ଡେଲିଭରି ସାଥୀ ଅନଲାଇନ୍ ନାହାନ୍ତି। ପରେ ଚେଷ୍ଟା କରନ୍ତୁ।"]
+});
