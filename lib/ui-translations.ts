@@ -2901,6 +2901,10 @@ Object.assign(uiTranslations,{
   "ପୂର୍ବରୁ ପଞ୍ଜୀକୃତ କି?"
  ]
 });
+Object.assign(uiTranslations, {
+ "Your neighbourhood": ["आपका पड़ोस", "ଆପଣଙ୍କ ପଡ଼ୋଶ"],
+ "Your cooking. Their school lunch.": ["आपका बनाया खाना। उनका स्कूल का भोजन।", "ଆପଣଙ୍କ ରନ୍ଧା। ତାଙ୍କ ସ୍କୁଲ୍ ମଧ୍ୟାହ୍ନ ଭୋଜନ।"]
+});
 const lower = Object.fromEntries(Object.entries(uiTranslations).map(([k,v]) => [k.toLowerCase(),v]));
 const templateTranslations=Object.entries(uiTranslations).filter(([key])=>/\{\w+\}/.test(key)).map(([key,value])=>{
  const names:string[]=[];
