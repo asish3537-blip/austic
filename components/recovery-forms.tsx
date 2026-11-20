@@ -40,8 +40,8 @@ export function PasswordSignInForm({ kitchen }: { kitchen?: string }) {
   }
 
   return <>
-    <span className="eyebrow">Email sign in</span><h2><UiText text="Sign in"/></h2>
-    {kitchen && <p className="form-note">After customer sign-in, your selected kitchen will reopen.</p>}
+    <span className="eyebrow"><UiText text="Email sign in"/></span><h2><UiText text="Sign in"/></h2>
+    {kitchen && <p className="form-note"><UiText text="After customer sign-in, your selected kitchen will reopen."/></p>}
 
     {error && <Message>{error}</Message>}
     <form method="post" onSubmit={submit}>
@@ -50,10 +50,10 @@ export function PasswordSignInForm({ kitchen }: { kitchen?: string }) {
         <div className="field full"><label htmlFor="password-login-password"><UiText text="Password"/></label><input id="password-login-password" name="password" type="password" autoComplete="current-password" required minLength={8} maxLength={72} /></div>
       </div>
       <div className="auth-links"><Link className="text-link" href="/forgot-password"><UiText text="Forgot password?"/></Link></div>
-      <button className="button form-submit" type="submit" disabled={busy}>{busy ? "Signing in…" : <UiText text="Sign in"/>}<span aria-hidden="true">→</span></button>
+      <button className="button form-submit" type="submit" disabled={busy}><UiText text={busy ? "Signing in…" : "Sign in"}/><span aria-hidden="true">→</span></button>
     </form>
-    <p className="form-footer"><Link href="/sign-up"><UiText text="Create account"/></Link> · <Link href="/admin-sign-in">Admin sign-in</Link></p>
-    <details><summary>Resend confirmation email</summary><ResendVerificationForm /></details>
+    <p className="form-footer"><Link href="/sign-up"><UiText text="Create account"/></Link> · <Link href="/admin-sign-in"><UiText text="Admin sign in"/></Link></p>
+    <details><summary><UiText text="Resend confirmation email"/></summary><ResendVerificationForm /></details>
 
   </>;
 }

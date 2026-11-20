@@ -2905,6 +2905,14 @@ Object.assign(uiTranslations, {
  "Your neighbourhood": ["आपका पड़ोस", "ଆପଣଙ୍କ ପଡ଼ୋଶ"],
  "Your cooking. Their school lunch.": ["आपका बनाया खाना। उनका स्कूल का भोजन।", "ଆପଣଙ୍କ ରନ୍ଧା। ତାଙ୍କ ସ୍କୁଲ୍ ମଧ୍ୟାହ୍ନ ଭୋଜନ।"]
 });
+Object.assign(uiTranslations,{
+ "Your neighbourhood":["आपका पड़ोस","ଆପଣଙ୍କ ପଡ଼ୋଶ"],
+ "Welcome back to Paustik.":["Paustik में फिर से स्वागत है।","ପୌଷ୍ଟିକକୁ ପୁଣି ସ୍ୱାଗତ।"],
+ "Email sign in":["ईमेल से साइन इन","ଇମେଲ୍‌ରେ ସାଇନ୍ ଇନ୍"],
+ "Need help?":["मदद चाहिए?","ସାହାଯ୍ୟ ଦରକାର କି?"],
+ "Resend confirmation email":["पुष्टि ईमेल दोबारा भेजें","ପୁଷ୍ଟି ଇମେଲ୍ ପୁଣି ପଠାନ୍ତୁ"],
+ "After customer sign-in, your selected kitchen will reopen.":["साइन इन के बाद आपकी चुनी हुई रसोई फिर खुलेगी।","ସାଇନ୍ ଇନ୍ ପରେ ଆପଣ ବାଛିଥିବା ରୋଷେଇଘର ପୁଣି ଖୋଲିବ।"]
+});
 const lower = Object.fromEntries(Object.entries(uiTranslations).map(([k,v]) => [k.toLowerCase(),v]));
 const templateTranslations=Object.entries(uiTranslations).filter(([key])=>/\{\w+\}/.test(key)).map(([key,value])=>{
  const names:string[]=[];
