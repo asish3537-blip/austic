@@ -1596,7 +1596,70 @@ Object.assign(uiTranslations,{
     "© 2026 ପୌଷ୍ଟିକ। ସମସ୍ତ ଅଧିକାର ସଂରକ୍ଷିତ।"
   ],
   "Watch the Paustik story": [
-    "P…2876 tokens truncated…r
+    "Paustik की कहानी देखें",
+    "ପୌଷ୍ଟିକର କାହାଣୀ ଦେଖନ୍ତୁ"
+  ],
+  "Paustik’s illustrated introduction. App scenes include sample data.": [
+    "Paustik का परिचय। ऐप के दृश्यों में उदाहरण डेटा है।",
+    "ପୌଷ୍ଟିକର ପରିଚୟ। ଆପ୍ ଦୃଶ୍ୟରେ ଉଦାହରଣ ତଥ୍ୟ ଅଛି।"
+  ],
+  "No active orders": [
+    "अभी कोई चालू ऑर्डर नहीं है",
+    "ଏବେ କୌଣସି ଚାଲୁ ଅର୍ଡର୍ ନାହିଁ"
+  ],
+  "Your new orders will appear here. Previous orders are in history below.": [
+    "नए ऑर्डर यहां दिखेंगे। पुराने ऑर्डर नीचे इतिहास में हैं।",
+    "ନୂଆ ଅର୍ଡର୍ ଏଠାରେ ଦେଖାଯିବ। ପୁରୁଣା ଅର୍ଡର୍ ତଳେ ଇତିହାସରେ ଅଛି।"
+  ],
+  "Completed and cancelled orders": [
+    "पूरे और रद्द किए गए ऑर्डर",
+    "ସମ୍ପୂର୍ଣ୍ଣ ଓ ବାତିଲ୍ ଅର୍ଡର୍"
+  ]
+});
+Object.assign(uiTranslations,{"Search a kitchen, cuisine or dish":["रसोई, व्यंजन या पकवान खोजें","ରୋଷେଇଘର, ଖାଦ୍ୟ ପ୍ରକାର ବା ପଦ ଖୋଜନ୍ତୁ"],"Hi! Ask me how to find meals, reserve days, track orders or use your Paustik workspace. Type, or use voice input on a supported browser.":["नमस्ते! भोजन ढूँढने, दिन बुक करने, ऑर्डर देखने या अपना Paustik खाता इस्तेमाल करने के बारे में पूछें। नीचे लिखें या समर्थित ब्राउज़र में बोलें।","ନମସ୍କାର! ଭୋଜନ ଖୋଜିବା, ଦିନ ବୁକ୍ କରିବା, ଅର୍ଡର୍ ଦେଖିବା ବା ପୌଷ୍ଟିକ ବ୍ୟବହାର ବିଷୟରେ ପଚାରନ୍ତୁ। ତଳେ ଲେଖନ୍ତୁ ବା ସମର୍ଥିତ ବ୍ରାଉଜରରେ କହନ୍ତୁ।"],"Guided help · voice & text":["निर्देशित सहायता · आवाज़ और टेक्स्ट","ମାର୍ଗଦର୍ଶନ · ସ୍ୱର ଓ ଲେଖା"],"Live AI · voice & text":["लाइव AI · आवाज़ और टेक्स्ट","ଲାଇଭ୍ AI · ସ୍ୱର ଓ ଲେଖା"],"Your workspace links":["आपके काम के लिंक","ଆପଣଙ୍କ କାର୍ଯ୍ୟ ଲିଙ୍କ୍"],"Ask a Paustik question…":["Paustik से सवाल पूछें…","ପୌଷ୍ଟିକକୁ ପ୍ରଶ୍ନ ପଚାରନ୍ତୁ…"],"🎙 Talk to Paustik":["🎙 Paustik से बोलें","🎙 ପୌଷ୍ଟିକ ସହ କଥା ହୁଅନ୍ତୁ"],"■ Stop listening":["■ सुनना बंद करें","■ ଶୁଣିବା ବନ୍ଦ କରନ୍ତୁ"],"Read reply aloud":["जवाब सुनें","ଉତ୍ତର ଶୁଣନ୍ତୁ"],"Stop reading":["पढ़ना बंद करें","ପଢ଼ିବା ବନ୍ଦ କରନ୍ତୁ"],"Clear":["साफ करें","ସଫା କରନ୍ତୁ"],"Finding guidance…":["मदद खोज रहे हैं…","ସହାୟତା ଖୋଜୁଛି…"],"Listening… tap Stop listening to finish.":["सुन रहे हैं… समाप्त करने के लिए सुनना बंद करें दबाएं।","ଶୁଣୁଛି… ସାରିବା ପାଇଁ ଶୁଣିବା ବନ୍ଦ କରନ୍ତୁ ଦବାନ୍ତୁ।"],"This device has no voice for the selected language. You can read the reply or change language.":["इस डिवाइस पर चुनी भाषा की आवाज़ उपलब्ध नहीं है। जवाब पढ़ें या भाषा बदलें।","ଏହି ଉପକରଣରେ ବଛା ଭାଷାର ସ୍ୱର ନାହିଁ। ଉତ୍ତର ପଢ଼ନ୍ତୁ ବା ଭାଷା ବଦଳାନ୍ତୁ।"],"How do weekly meal plans work?":["साप्ताहिक भोजन योजना कैसे काम करती है?","ସାପ୍ତାହିକ ଭୋଜନ ଯୋଜନା କିପରି କାମ କରେ?"],"Where are my product purchases?":["मेरे खरीदे उत्पाद कहाँ हैं?","ମୋ କିଣା ଉତ୍ପାଦ କେଉଁଠି ଅଛି?"],"How do I track an order?":["ऑर्डर कैसे ट्रैक करूँ?","ଅର୍ଡର୍ କିପରି ଦେଖିବି?"]});
+Object.assign(uiTranslations, {"Paustik help":["Paustik सहायता","ପୌଷ୍ଟିକ ସହାୟତା"],"Our social channels are being set up.":["हमारे सोशल चैनल तैयार हो रहे हैं।","ଆମ ସୋସିଆଲ୍ ଚ୍ୟାନେଲ୍ ପ୍ରସ୍ତୁତ ହେଉଛି।"]});
+Object.assign(uiTranslations,{"Get the app":["ऐप पाएं","ଆପ୍ ପାଆନ୍ତୁ"],"Explore meals":["भोजन देखें","ଭୋଜନ ଦେଖନ୍ତୁ"],"Android download · iPhone & web app":["Android डाउनलोड · iPhone और वेब ऐप","Android ଡାଉନଲୋଡ୍ · iPhone ଓ ୱେବ୍ ଆପ୍"],"Pause background":["वीडियो रोकें","ଭିଡିଓ ରୋକନ୍ତୁ"],"Play background":["वीडियो चलाएं","ଭିଡିଓ ଚଲାନ୍ତୁ"]});
+Object.assign(uiTranslations,{"Our story":["हमारी कहानी","ଆମ କାହାଣୀ"]});
+Object.assign(uiTranslations,{"Paustik Pay":["पौष्टिक पे","ପୌଷ୍ଟିକ ପେ"],"Food shop":["खाद्य दुकान","ଖାଦ୍ୟ ଦୋକାନ"],"Bulk meal bookings":["समूह के लिए भोजन","ଦଳ ପାଇଁ ଭୋଜନ"],"Bulk bookings":["बड़े ऑर्डर","ବଡ଼ ଅର୍ଡର୍"],"Quality & evidence":["गुणवत्ता और प्रमाण","ଗୁଣବତ୍ତା ଓ ପ୍ରମାଣ"]});
+Object.assign(uiTranslations, {"Home":["होम","ହୋମ୍"]});
+Object.assign(uiTranslations,{"Explore ScooFoo":["ScooFoo देखें","ScooFoo ଦେଖନ୍ତୁ"]});
+Object.assign(uiTranslations,{"School tiffins":["स्कूल टिफिन","ସ୍କୁଲ୍ ଟିଫିନ୍"],"School reception":["स्कूल रिसेप्शन","ସ୍କୁଲ୍ ରିସେପସନ୍"],"Paustik meals":["पौष्टिक भोजन","ପୌଷ୍ଟିକ ଭୋଜନ"],"Open ScooFoo":["ScooFoo खोलें","ScooFoo ଖୋଲନ୍ତୁ"],"© 2026 Paustik. All rights reserved. ScooFoo is a service by Paustik.":["© 2026 Paustik. सर्वाधिकार सुरक्षित। ScooFoo, Paustik की एक सेवा है।","© ୨୦୨୬ ପୌଷ୍ଟିକ। ସମସ୍ତ ଅଧିକାର ସଂରକ୍ଷିତ। ScooFoo ପୌଷ୍ଟିକର ଏକ ସେବା।"],"Availability and delivery slots depend on service-area coverage. School tiffins require confirmed school reception.":["उपलब्धता और डिलीवरी स्लॉट सेवा क्षेत्र पर निर्भर हैं। स्कूल टिफिन के लिए स्कूल रिसेप्शन की पुष्टि ज़रूरी है।","ଉପଲବ୍ଧତା ଓ ଡେଲିଭରି ସମୟ ସେବା ଅଞ୍ଚଳ ଉପରେ ନିର୍ଭର କରେ। ସ୍କୁଲ୍ ଟିଫିନ୍ ପାଇଁ ସ୍କୁଲ୍ ରିସେପସନ୍‌ର ପୁଷ୍ଟି ଦରକାର।"]});
+Object.assign(uiTranslations, schoolTranslations);
+export function translated(text:string,language:UiLanguage){
+ if(language==="en")return text;
+ const normalized=text.trim().replace(/\s+/g," "),index=language==="hi"?0:1;
+ const direct=uiTranslations[text]??lower[normalized.replaceAll("_"," ").toLowerCase()];
+ if(direct)return direct[index];
+ if(normalized.length<2000)for(const item of templateTranslations){
+  const match=item.pattern.exec(normalized);if(!match)continue;
+  const values=Object.fromEntries(item.names.map((name,i)=>[name,match[i+1]]));
+  return item.value[index].replace(/\{(\w+)\}/g,(token,name:string)=>values[name]??token);
+ }
+ return text;
+}
+
+Object.assign(uiTranslations,{"Download app":["ऐप डाउनलोड करें","ଆପ୍ ଡାଉନଲୋଡ୍ କରନ୍ତୁ"]});
+
+Object.assign(uiTranslations,{
+ "Purchases & tracking":["खरीद और ट्रैकिंग","କିଣାକିଣି ଓ ଟ୍ରାକିଂ"],
+ "Requests & orders":["अनुरोध और ऑर्डर","ଅନୁରୋଧ ଓ ଅର୍ଡର୍"],
+ "Preferred delivery time (optional)":["पसंदीदा डिलीवरी समय (वैकल्पिक)","ପସନ୍ଦର ଡେଲିଭରି ସମୟ (ଇଚ୍ଛାଧୀନ)"],
+ "Request product":["उत्पाद का अनुरोध करें","ଉତ୍ପାଦ ଅନୁରୋଧ କରନ୍ତୁ"],
+ "Review & checkout":["समीक्षा और चेकआउट","ସମୀକ୍ଷା ଓ ଚେକଆଉଟ୍"],
+ "Order one meal":["एक भोजन ऑर्डर करें","ଗୋଟିଏ ଭୋଜନ ଅର୍ଡର୍ କରନ୍ତୁ"],
+ "Place order":["ऑर्डर करें","ଅର୍ଡର୍ କରନ୍ତୁ"],
+ "No delivery partners online. Please try later.":["कोई डिलीवरी साथी ऑनलाइन नहीं है। बाद में प्रयास करें।","କୌଣସି ଡେଲିଭରି ସାଥୀ ଅନଲାଇନ୍ ନାହାନ୍ତି। ପରେ ଚେଷ୍ଟା କରନ୍ତୁ।"]
+});
+
+Object.assign(uiTranslations,{"Choose a meal plan, a one-time meal or homemade favourites.":["भोजन योजना, एक बार का भोजन या घर के बने पसंदीदा उत्पाद चुनें।","ଭୋଜନ ଯୋଜନା, ଗୋଟିଏ ଥରର ଭୋଜନ ବା ଘରୋଇ ପସନ୍ଦର ଉତ୍ପାଦ ବାଛନ୍ତୁ।"]});
+
+Object.assign(uiTranslations,{
+ "Respond before": [
+  "इससे पहले जवाब दें",
+  "ଏହା ପୂର୍ବରୁ ଉତ୍ତର ଦିଅନ୍ତୁ"
+ ],
+ ". No stock held yet.": [
+  "। अभी स्टॉक आरक्षित नहीं है।",
   "। ଏଯାଏଁ ଷ୍ଟକ୍ ସଂରକ୍ଷିତ ହୋଇନାହିଁ।"
  ],
  "· Shelf life": [
