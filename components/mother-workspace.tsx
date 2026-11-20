@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { KitchenPickupCode } from "@/components/kitchen-pickup-code";
+import {PartnerIncomePanel} from "@/components/partner-income-panel";
 import {SavedMealScheduler} from "@/components/saved-meal-scheduler";
 
 import { UiText } from "@/components/ui-language";
@@ -193,7 +194,7 @@ export function MotherWorkspace() {
           </div>
         </article>)}</div> : <div className="customer-empty-state"><strong><UiText text="No open orders yet"/></strong><span><UiText text="New customer orders will appear here for you to accept and prepare."/></span></div>}
       </article>
-    <nav className="mother-shortcuts" aria-label="Kitchen tools"><a href="#weekly-menu"><UiText text="Add / update meals ↓"/></a><Link href="/mother/marketplace#product-requests"><UiText text="Product requests →"/></Link><Link href="/mother/marketplace"><UiText text="Sell homemade products →"/></Link><Link href="/mother/bulk"><UiText text="Bulk bookings →"/></Link><Link href="/mother/quality"><UiText text="Photos, FSSAI & inspections →"/></Link><Link href="/mother-guide"><UiText text="Start your Mother Kitchen"/> →</Link></nav>
+    <PartnerIncomePanel role="MOTHER" compact/><nav className="mother-shortcuts" aria-label="Kitchen tools"><a href="#weekly-menu"><UiText text="Add / update meals ↓"/></a><Link href="/mother/marketplace#product-requests"><UiText text="Product requests →"/></Link><Link href="/mother/marketplace"><UiText text="Sell homemade products →"/></Link><Link href="/mother/bulk"><UiText text="Bulk bookings →"/></Link><Link href="/mother/quality"><UiText text="Photos, FSSAI & inspections →"/></Link><Link href="/mother-guide"><UiText text="Start your Mother Kitchen"/> →</Link></nav>
     <section className="mother-summary-grid" id="kitchen-summary" aria-label="Kitchen status">
       <article><span><UiText text="Kitchen"/></span><strong>{workspace.kitchen.name}</strong><small><UiText text={workspace.kitchen.approved ? "Kitchen account approved" : "Waiting for Paustik approval"}/></small><Link href="/mother/quality"><UiText text="Check FSSAI & inspection status"/> →</Link></article>
       <article><span><UiText text="Menu items"/></span><strong>{workspace.menus.filter((item) => item.isPublished && item.isAvailable).length}</strong><small><UiText text="Live and available to customers"/></small></article>

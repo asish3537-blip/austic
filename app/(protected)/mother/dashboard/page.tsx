@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { PartnerIncomePanel } from "@/components/partner-income-panel";
+
 import { KitchenBrandingEditor } from "@/components/kitchen-branding-editor";
 import { UiText } from "@/components/ui-language";
 import { requireRole } from "@/lib/auth";
@@ -12,7 +12,7 @@ export default async function MotherDashboardPage() {
 
     <MotherWorkspace />
     <Link className="market-entry" href="/mother/marketplace"><strong><UiText text="Your homemade product shop →"/></strong><span><UiText text="Sattu, sweets, pickles · product availability and delivery agreements"/></span></Link>
-    <details className="dashboard-card"><summary><UiText text="Earnings & planning"/></summary><PartnerIncomePanel role="MOTHER"/></details>
+    
     <details className="dashboard-card"><summary><UiText text="Kitchen profile & logo"/></summary><KitchenBrandingEditor /></details>
   </main>;
 }

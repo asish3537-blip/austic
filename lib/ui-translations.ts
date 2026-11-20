@@ -1596,70 +1596,7 @@ Object.assign(uiTranslations,{
     "© 2026 ପୌଷ୍ଟିକ। ସମସ୍ତ ଅଧିକାର ସଂରକ୍ଷିତ।"
   ],
   "Watch the Paustik story": [
-    "Paustik की कहानी देखें",
-    "ପୌଷ୍ଟିକର କାହାଣୀ ଦେଖନ୍ତୁ"
-  ],
-  "Paustik’s illustrated introduction. App scenes include sample data.": [
-    "Paustik का परिचय। ऐप के दृश्यों में उदाहरण डेटा है।",
-    "ପୌଷ୍ଟିକର ପରିଚୟ। ଆପ୍ ଦୃଶ୍ୟରେ ଉଦାହରଣ ତଥ୍ୟ ଅଛି।"
-  ],
-  "No active orders": [
-    "अभी कोई चालू ऑर्डर नहीं है",
-    "ଏବେ କୌଣସି ଚାଲୁ ଅର୍ଡର୍ ନାହିଁ"
-  ],
-  "Your new orders will appear here. Previous orders are in history below.": [
-    "नए ऑर्डर यहां दिखेंगे। पुराने ऑर्डर नीचे इतिहास में हैं।",
-    "ନୂଆ ଅର୍ଡର୍ ଏଠାରେ ଦେଖାଯିବ। ପୁରୁଣା ଅର୍ଡର୍ ତଳେ ଇତିହାସରେ ଅଛି।"
-  ],
-  "Completed and cancelled orders": [
-    "पूरे और रद्द किए गए ऑर्डर",
-    "ସମ୍ପୂର୍ଣ୍ଣ ଓ ବାତିଲ୍ ଅର୍ଡର୍"
-  ]
-});
-Object.assign(uiTranslations,{"Search a kitchen, cuisine or dish":["रसोई, व्यंजन या पकवान खोजें","ରୋଷେଇଘର, ଖାଦ୍ୟ ପ୍ରକାର ବା ପଦ ଖୋଜନ୍ତୁ"],"Hi! Ask me how to find meals, reserve days, track orders or use your Paustik workspace. Type, or use voice input on a supported browser.":["नमस्ते! भोजन ढूँढने, दिन बुक करने, ऑर्डर देखने या अपना Paustik खाता इस्तेमाल करने के बारे में पूछें। नीचे लिखें या समर्थित ब्राउज़र में बोलें।","ନମସ୍କାର! ଭୋଜନ ଖୋଜିବା, ଦିନ ବୁକ୍ କରିବା, ଅର୍ଡର୍ ଦେଖିବା ବା ପୌଷ୍ଟିକ ବ୍ୟବହାର ବିଷୟରେ ପଚାରନ୍ତୁ। ତଳେ ଲେଖନ୍ତୁ ବା ସମର୍ଥିତ ବ୍ରାଉଜରରେ କହନ୍ତୁ।"],"Guided help · voice & text":["निर्देशित सहायता · आवाज़ और टेक्स्ट","ମାର୍ଗଦର୍ଶନ · ସ୍ୱର ଓ ଲେଖା"],"Live AI · voice & text":["लाइव AI · आवाज़ और टेक्स्ट","ଲାଇଭ୍ AI · ସ୍ୱର ଓ ଲେଖା"],"Your workspace links":["आपके काम के लिंक","ଆପଣଙ୍କ କାର୍ଯ୍ୟ ଲିଙ୍କ୍"],"Ask a Paustik question…":["Paustik से सवाल पूछें…","ପୌଷ୍ଟିକକୁ ପ୍ରଶ୍ନ ପଚାରନ୍ତୁ…"],"🎙 Talk to Paustik":["🎙 Paustik से बोलें","🎙 ପୌଷ୍ଟିକ ସହ କଥା ହୁଅନ୍ତୁ"],"■ Stop listening":["■ सुनना बंद करें","■ ଶୁଣିବା ବନ୍ଦ କରନ୍ତୁ"],"Read reply aloud":["जवाब सुनें","ଉତ୍ତର ଶୁଣନ୍ତୁ"],"Stop reading":["पढ़ना बंद करें","ପଢ଼ିବା ବନ୍ଦ କରନ୍ତୁ"],"Clear":["साफ करें","ସଫା କରନ୍ତୁ"],"Finding guidance…":["मदद खोज रहे हैं…","ସହାୟତା ଖୋଜୁଛି…"],"Listening… tap Stop listening to finish.":["सुन रहे हैं… समाप्त करने के लिए सुनना बंद करें दबाएं।","ଶୁଣୁଛି… ସାରିବା ପାଇଁ ଶୁଣିବା ବନ୍ଦ କରନ୍ତୁ ଦବାନ୍ତୁ।"],"This device has no voice for the selected language. You can read the reply or change language.":["इस डिवाइस पर चुनी भाषा की आवाज़ उपलब्ध नहीं है। जवाब पढ़ें या भाषा बदलें।","ଏହି ଉପକରଣରେ ବଛା ଭାଷାର ସ୍ୱର ନାହିଁ। ଉତ୍ତର ପଢ଼ନ୍ତୁ ବା ଭାଷା ବଦଳାନ୍ତୁ।"],"How do weekly meal plans work?":["साप्ताहिक भोजन योजना कैसे काम करती है?","ସାପ୍ତାହିକ ଭୋଜନ ଯୋଜନା କିପରି କାମ କରେ?"],"Where are my product purchases?":["मेरे खरीदे उत्पाद कहाँ हैं?","ମୋ କିଣା ଉତ୍ପାଦ କେଉଁଠି ଅଛି?"],"How do I track an order?":["ऑर्डर कैसे ट्रैक करूँ?","ଅର୍ଡର୍ କିପରି ଦେଖିବି?"]});
-Object.assign(uiTranslations, {"Paustik help":["Paustik सहायता","ପୌଷ୍ଟିକ ସହାୟତା"],"Our social channels are being set up.":["हमारे सोशल चैनल तैयार हो रहे हैं।","ଆମ ସୋସିଆଲ୍ ଚ୍ୟାନେଲ୍ ପ୍ରସ୍ତୁତ ହେଉଛି।"]});
-Object.assign(uiTranslations,{"Get the app":["ऐप पाएं","ଆପ୍ ପାଆନ୍ତୁ"],"Explore meals":["भोजन देखें","ଭୋଜନ ଦେଖନ୍ତୁ"],"Android download · iPhone & web app":["Android डाउनलोड · iPhone और वेब ऐप","Android ଡାଉନଲୋଡ୍ · iPhone ଓ ୱେବ୍ ଆପ୍"],"Pause background":["वीडियो रोकें","ଭିଡିଓ ରୋକନ୍ତୁ"],"Play background":["वीडियो चलाएं","ଭିଡିଓ ଚଲାନ୍ତୁ"]});
-Object.assign(uiTranslations,{"Our story":["हमारी कहानी","ଆମ କାହାଣୀ"]});
-Object.assign(uiTranslations,{"Paustik Pay":["पौष्टिक पे","ପୌଷ୍ଟିକ ପେ"],"Food shop":["खाद्य दुकान","ଖାଦ୍ୟ ଦୋକାନ"],"Bulk meal bookings":["समूह के लिए भोजन","ଦଳ ପାଇଁ ଭୋଜନ"],"Bulk bookings":["बड़े ऑर्डर","ବଡ଼ ଅର୍ଡର୍"],"Quality & evidence":["गुणवत्ता और प्रमाण","ଗୁଣବତ୍ତା ଓ ପ୍ରମାଣ"]});
-Object.assign(uiTranslations, {"Home":["होम","ହୋମ୍"]});
-Object.assign(uiTranslations,{"Explore ScooFoo":["ScooFoo देखें","ScooFoo ଦେଖନ୍ତୁ"]});
-Object.assign(uiTranslations,{"School tiffins":["स्कूल टिफिन","ସ୍କୁଲ୍ ଟିଫିନ୍"],"School reception":["स्कूल रिसेप्शन","ସ୍କୁଲ୍ ରିସେପସନ୍"],"Paustik meals":["पौष्टिक भोजन","ପୌଷ୍ଟିକ ଭୋଜନ"],"Open ScooFoo":["ScooFoo खोलें","ScooFoo ଖୋଲନ୍ତୁ"],"© 2026 Paustik. All rights reserved. ScooFoo is a service by Paustik.":["© 2026 Paustik. सर्वाधिकार सुरक्षित। ScooFoo, Paustik की एक सेवा है।","© ୨୦୨୬ ପୌଷ୍ଟିକ। ସମସ୍ତ ଅଧିକାର ସଂରକ୍ଷିତ। ScooFoo ପୌଷ୍ଟିକର ଏକ ସେବା।"],"Availability and delivery slots depend on service-area coverage. School tiffins require confirmed school reception.":["उपलब्धता और डिलीवरी स्लॉट सेवा क्षेत्र पर निर्भर हैं। स्कूल टिफिन के लिए स्कूल रिसेप्शन की पुष्टि ज़रूरी है।","ଉପଲବ୍ଧତା ଓ ଡେଲିଭରି ସମୟ ସେବା ଅଞ୍ଚଳ ଉପରେ ନିର୍ଭର କରେ। ସ୍କୁଲ୍ ଟିଫିନ୍ ପାଇଁ ସ୍କୁଲ୍ ରିସେପସନ୍‌ର ପୁଷ୍ଟି ଦରକାର।"]});
-Object.assign(uiTranslations, schoolTranslations);
-export function translated(text:string,language:UiLanguage){
- if(language==="en")return text;
- const normalized=text.trim().replace(/\s+/g," "),index=language==="hi"?0:1;
- const direct=uiTranslations[text]??lower[normalized.replaceAll("_"," ").toLowerCase()];
- if(direct)return direct[index];
- if(normalized.length<2000)for(const item of templateTranslations){
-  const match=item.pattern.exec(normalized);if(!match)continue;
-  const values=Object.fromEntries(item.names.map((name,i)=>[name,match[i+1]]));
-  return item.value[index].replace(/\{(\w+)\}/g,(token,name:string)=>values[name]??token);
- }
- return text;
-}
-
-Object.assign(uiTranslations,{"Download app":["ऐप डाउनलोड करें","ଆପ୍ ଡାଉନଲୋଡ୍ କରନ୍ତୁ"]});
-
-Object.assign(uiTranslations,{
- "Purchases & tracking":["खरीद और ट्रैकिंग","କିଣାକିଣି ଓ ଟ୍ରାକିଂ"],
- "Requests & orders":["अनुरोध और ऑर्डर","ଅନୁରୋଧ ଓ ଅର୍ଡର୍"],
- "Preferred delivery time (optional)":["पसंदीदा डिलीवरी समय (वैकल्पिक)","ପସନ୍ଦର ଡେଲିଭରି ସମୟ (ଇଚ୍ଛାଧୀନ)"],
- "Request product":["उत्पाद का अनुरोध करें","ଉତ୍ପାଦ ଅନୁରୋଧ କରନ୍ତୁ"],
- "Review & checkout":["समीक्षा और चेकआउट","ସମୀକ୍ଷା ଓ ଚେକଆଉଟ୍"],
- "Order one meal":["एक भोजन ऑर्डर करें","ଗୋଟିଏ ଭୋଜନ ଅର୍ଡର୍ କରନ୍ତୁ"],
- "Place order":["ऑर्डर करें","ଅର୍ଡର୍ କରନ୍ତୁ"],
- "No delivery partners online. Please try later.":["कोई डिलीवरी साथी ऑनलाइन नहीं है। बाद में प्रयास करें।","କୌଣସି ଡେଲିଭରି ସାଥୀ ଅନଲାଇନ୍ ନାହାନ୍ତି। ପରେ ଚେଷ୍ଟା କରନ୍ତୁ।"]
-});
-
-Object.assign(uiTranslations,{"Choose a meal plan, a one-time meal or homemade favourites.":["भोजन योजना, एक बार का भोजन या घर के बने पसंदीदा उत्पाद चुनें।","ଭୋଜନ ଯୋଜନା, ଗୋଟିଏ ଥରର ଭୋଜନ ବା ଘରୋଇ ପସନ୍ଦର ଉତ୍ପାଦ ବାଛନ୍ତୁ।"]});
-
-Object.assign(uiTranslations,{
- "Respond before": [
-  "इससे पहले जवाब दें",
-  "ଏହା ପୂର୍ବରୁ ଉତ୍ତର ଦିଅନ୍ତୁ"
- ],
- ". No stock held yet.": [
-  "। अभी स्टॉक आरक्षित नहीं है।",
+    "P…2876 tokens truncated…r
   "। ଏଯାଏଁ ଷ୍ଟକ୍ ସଂରକ୍ଷିତ ହୋଇନାହିଁ।"
  ],
  "· Shelf life": [
@@ -3241,6 +3178,215 @@ Object.assign(uiTranslations,{
 });
 Object.assign(uiTranslations,{
  "Wallet credit is applied at checkout. Review any remaining balance before confirming.":["चेकआउट पर वॉलेट क्रेडिट लागू होता है। पुष्टि से पहले बची रकम जाँचें।","ଚେକଆଉଟ୍‌ରେ ୱାଲେଟ୍ କ୍ରେଡିଟ୍ ଲାଗୁ ହୁଏ। ପୁଷ୍ଟି ପୂର୍ବରୁ ବାକି ରାଶି ଯାଞ୍ଚ କରନ୍ତୁ।"]
+});
+Object.assign(uiTranslations,{
+ "Your work, clearly valued": [
+  "आपके काम का स्पष्ट मूल्य",
+  "ଆପଣଙ୍କ କାମର ସ୍ପଷ୍ଟ ମୂଲ୍ୟ"
+ ],
+ "Kitchen income": [
+  "रसोई की कमाई",
+  "ରୋଷେଇଘର ରୋଜଗାର"
+ ],
+ "Delivery income": [
+  "डिलीवरी की कमाई",
+  "ଡେଲିଭରି ରୋଜଗାର"
+ ],
+ "Period": [
+  "अवधि",
+  "ଅବଧି"
+ ],
+ "Last": [
+  "पिछले",
+  "ଗତ"
+ ],
+ "Loading income…": [
+  "कमाई लोड हो रही है…",
+  "ରୋଜଗାର ଲୋଡ୍ ହେଉଛି…"
+ ],
+ "This month · recorded earnings": [
+  "इस महीने · दर्ज कमाई",
+  "ଏହି ମାସ · ରେକର୍ଡ ରୋଜଗାର"
+ ],
+ "Calendar month in India time": [
+  "भारतीय समय के अनुसार महीना",
+  "ଭାରତୀୟ ସମୟ ଅନୁସାରେ ମାସ"
+ ],
+ "This month · booked estimate": [
+  "इस महीने · बुकिंग का अनुमान",
+  "ଏହି ମାସ · ବୁକିଂ ଅନୁମାନ"
+ ],
+ "Completed and open booked work, before operating costs": [
+  "पूरे और खुले बुक किए काम, संचालन खर्च से पहले",
+  "ସମ୍ପୂର୍ଣ୍ଣ ଓ ଚାଲୁ ବୁକ୍ କାମ, ପରିଚାଳନା ଖର୍ଚ୍ଚ ପୂର୍ବରୁ"
+ ],
+ "Recorded earnings": [
+  "दर्ज कमाई",
+  "ରେକର୍ଡ ରୋଜଗାର"
+ ],
+ "Non-reversed ledger entries in this period": [
+  "इस अवधि की बिना वापस की गई लेखा प्रविष्टियाँ",
+  "ଏହି ଅବଧିର ଅପ୍ରତ୍ୟାହୃତ ଲେଖା ଏଣ୍ଟ୍ରି"
+ ],
+ "Available for payout": [
+  "भुगतान के लिए उपलब्ध",
+  "ପେଆଉଟ୍ ପାଇଁ ଉପଲବ୍ଧ"
+ ],
+ "All-time approved available ledger entries": [
+  "अब तक की स्वीकृत उपलब्ध लेखा राशि",
+  "ଏପର୍ଯ୍ୟନ୍ତ ଅନୁମୋଦିତ ଉପଲବ୍ଧ ଲେଖା ରାଶି"
+ ],
+ "Payouts recorded paid": [
+  "भुगतान के रूप में दर्ज राशि",
+  "ପରିଶୋଧ ଭାବେ ରେକର୍ଡ ରାଶି"
+ ],
+ "From payout records, not a bank balance": [
+  "भुगतान रिकॉर्ड से, बैंक बैलेंस नहीं",
+  "ପେଆଉଟ୍ ରେକର୍ଡରୁ, ବ୍ୟାଙ୍କ ବାଲାନ୍ସ ନୁହେଁ"
+ ],
+ "Expected from open work": [
+  "खुले काम से अनुमानित",
+  "ଚାଲୁ କାମରୁ ଅନୁମାନିତ"
+ ],
+ "Booked open meals": [
+  "बुक किए खुले भोजन",
+  "ବୁକ୍ ହୋଇଥିବା ଚାଲୁ ଭୋଜନ"
+ ],
+ "Your accepted open jobs": [
+  "आपके स्वीकार किए खुले काम",
+  "ଆପଣ ଗ୍ରହଣ କରିଥିବା ଚାଲୁ କାମ"
+ ],
+ "· estimate only": [
+  "· केवल अनुमान",
+  "· କେବଳ ଅନୁମାନ"
+ ],
+ "Estimated shares for delivered work in this period:": [
+  "इस अवधि के पूरे काम का अनुमानित हिस्सा:",
+  "ଏହି ଅବଧିର ସମ୍ପୂର୍ଣ୍ଣ କାମର ଅନୁମାନିତ ଅଂଶ:"
+ ],
+ ". Estimates are not paid balances.": [
+  "। अनुमान भुगतान किया गया बैलेंस नहीं है।",
+  "। ଅନୁମାନ ପରିଶୋଧିତ ବାଲାନ୍ସ ନୁହେଁ।"
+ ],
+ "Plan your potential earnings": [
+  "संभावित कमाई की योजना बनाएँ",
+  "ସମ୍ଭାବ୍ୟ ରୋଜଗାର ଯୋଜନା କରନ୍ତୁ"
+ ],
+ "Deliveries": [
+  "डिलीवरी",
+  "ଡେଲିଭରି"
+ ],
+ "Food price per meal · ₹": [
+  "प्रति भोजन कीमत · ₹",
+  "ପ୍ରତି ଭୋଜନ ମୂଲ୍ୟ · ₹"
+ ],
+ "Average straight-line km": [
+  "औसत सीधी दूरी · किमी",
+  "ହାରାହାରି ସିଧା ଦୂରତା · କିମି"
+ ],
+ "What-if calculation only. Jobs, demand, costs and final settlement are not guaranteed.": [
+  "केवल संभावित गणना। काम, माँग, लागत और अंतिम भुगतान की गारंटी नहीं है।",
+  "କେବଳ ସମ୍ଭାବ୍ୟ ଗଣନା। କାମ, ଚାହିଦା, ଖର୍ଚ୍ଚ ଓ ଶେଷ ପରିଶୋଧର ଗ୍ୟାରେଣ୍ଟି ନାହିଁ।"
+ ],
+ "Order estimates, ledger and payout history": [
+  "ऑर्डर अनुमान, लेखा और भुगतान इतिहास",
+  "ଅର୍ଡର୍ ଅନୁମାନ, ଲେଖା ଓ ପେଆଉଟ୍ ଇତିହାସ"
+ ],
+ "Latest order estimates": [
+  "नए ऑर्डर का अनुमान",
+  "ନୂଆ ଅର୍ଡର୍ ଅନୁମାନ"
+ ],
+ "Recorded earnings ledger": [
+  "दर्ज कमाई का लेखा",
+  "ରେକର୍ଡ ରୋଜଗାର ଲେଖା"
+ ],
+ "No earnings have been posted to your ledger yet.": [
+  "अभी आपके लेखे में कमाई दर्ज नहीं है।",
+  "ଆପଣଙ୍କ ଲେଖାରେ ଏବେ ରୋଜଗାର ରେକର୍ଡ ହୋଇନାହିଁ।"
+ ],
+ "Payout records": [
+  "भुगतान रिकॉर्ड",
+  "ପେଆଉଟ୍ ରେକର୍ଡ"
+ ],
+ "No payout records yet. This screen does not send bank transfers.": [
+  "अभी भुगतान रिकॉर्ड नहीं है। यह स्क्रीन बैंक में पैसे नहीं भेजती।",
+  "ଏବେ ପେଆଉଟ୍ ରେକର୍ଡ ନାହିଁ। ଏହି ସ୍କ୍ରିନ୍ ବ୍ୟାଙ୍କକୁ ଟଙ୍କା ପଠାଏ ନାହିଁ।"
+ ],
+ "This month": [
+  "इस महीने",
+  "ଏହି ମାସ"
+ ],
+ "Estimate only": [
+  "केवल अनुमान",
+  "କେବଳ ଅନୁମାନ"
+ ],
+ "Recorded ledger": [
+  "दर्ज लेखा",
+  "ରେକର୍ଡ ଲେଖା"
+ ],
+ "View earnings & planning": [
+  "कमाई और योजना देखें",
+  "ରୋଜଗାର ଓ ଯୋଜନା ଦେଖନ୍ତୁ"
+ ],
+ "Pilot test credit · not cash": [
+  "पायलट टेस्ट क्रेडिट · नकद नहीं",
+  "ପାଇଲଟ୍ ଟେଷ୍ଟ କ୍ରେଡିଟ୍ · ନଗଦ ନୁହେଁ"
+ ],
+ "New updates": [
+  "नए अपडेट",
+  "ନୂଆ ଅପଡେଟ୍"
+ ],
+ "Earlier updates": [
+  "पुराने अपडेट",
+  "ପୁରୁଣା ଅପଡେଟ୍"
+ ],
+ "Explore orders": [
+  "ऑर्डर देखें",
+  "ଅର୍ଡର୍ ଦେଖନ୍ତୁ"
+ ],
+ "Unread updates from the last 24 hours. View active orders for the full status.": [
+  "पिछले 24 घंटे के अपठित अपडेट। पूरी स्थिति के लिए सक्रिय ऑर्डर देखें।",
+  "ଗତ ୨୪ ଘଣ୍ଟାର ଅପଠିତ ଅପଡେଟ୍। ସମ୍ପୂର୍ଣ୍ଣ ଅବସ୍ଥା ପାଇଁ ଚାଲୁ ଅର୍ଡର୍ ଦେଖନ୍ତୁ।"
+ ],
+ "Older and read updates stay here. No records have been removed.": [
+  "पुराने और पढ़े अपडेट यहाँ हैं। कोई रिकॉर्ड हटाया नहीं गया है।",
+  "ପୁରୁଣା ଓ ପଢ଼ା ଅପଡେଟ୍ ଏଠାରେ ଅଛି। କୌଣସି ରେକର୍ଡ ହଟାଯାଇନାହିଁ।"
+ ],
+ "Mark all updates as read": [
+  "सभी अपडेट पढ़े हुए चिह्नित करें",
+  "ସମସ୍ତ ଅପଡେଟ୍ ପଢ଼ା ଭାବେ ଚିହ୍ନିତ କରନ୍ତୁ"
+ ],
+ "You’re all caught up. New order updates will appear here.": [
+  "सब अपडेट देख लिए। नए ऑर्डर अपडेट यहाँ दिखेंगे।",
+  "ସବୁ ଅପଡେଟ୍ ଦେଖିସାରିଛନ୍ତି। ନୂଆ ଅର୍ଡର୍ ଅପଡେଟ୍ ଏଠାରେ ଦେଖାଯିବ।"
+ ],
+ "No earlier updates yet.": [
+  "अभी पुराने अपडेट नहीं हैं।",
+  "ଏବେ ପୁରୁଣା ଅପଡେଟ୍ ନାହିଁ।"
+ ],
+ "Scheduled & preparing deliveries": [
+  "निर्धारित और तैयार हो रही डिलीवरी",
+  "ଧାର୍ଯ୍ୟ ଓ ପ୍ରସ୍ତୁତି ଚାଲିଥିବା ଡେଲିଭରି"
+ ],
+ "Booked orders appear here before the kitchen marks them ready. Accept delivery becomes available when ready.": [
+  "रसोई के तैयार चिह्नित करने से पहले बुक ऑर्डर यहाँ दिखते हैं। तैयार होने पर डिलीवरी स्वीकार कर सकते हैं।",
+  "ରୋଷେଇଘର ପ୍ରସ୍ତୁତ ଚିହ୍ନିତ କରିବା ପୂର୍ବରୁ ବୁକ୍ ଅର୍ଡର୍ ଏଠାରେ ଦେଖାଯାଏ। ପ୍ରସ୍ତୁତ ହେଲେ ଡେଲିଭରି ଗ୍ରହଣ କରିପାରିବେ।"
+ ],
+ "No scheduled deliveries yet. Published menus become jobs only after a customer books.": [
+  "अभी निर्धारित डिलीवरी नहीं है। ग्राहक के बुक करने पर ही मेन्यू डिलीवरी काम बनता है।",
+  "ଏବେ ଧାର୍ଯ୍ୟ ଡେଲିଭରି ନାହିଁ। ଗ୍ରାହକ ବୁକ୍ କଲେ ହିଁ ମେନୁ ଡେଲିଭରି କାମ ହୁଏ।"
+ ]
+});
+Object.assign(uiTranslations,{
+ "Live summary":["ताज़ा सारांश","ସଦ୍ୟ ସାରାଂଶ"],
+ "New meal order":["नया भोजन ऑर्डर","ନୂଆ ଭୋଜନ ଅର୍ଡର୍"],
+ "Meal order placed":["भोजन ऑर्डर किया गया","ଭୋଜନ ଅର୍ଡର୍ ହେଲା"],
+ "{reference} · {count} serving(s) of {meal}":["{reference} · {meal} की {count} मात्रा","{reference} · {meal}ର {count} ଜଣଙ୍କ ଭୋଜନ"],
+ "Your order {reference} is saved. Follow it in Your orders & tracking.":["आपका ऑर्डर {reference} सहेजा गया। अपने ऑर्डर और ट्रैकिंग में देखें।","ଆପଣଙ୍କ ଅର୍ଡର୍ {reference} ସଞ୍ଚିତ ହେଲା। ନିଜ ଅର୍ଡର୍ ଓ ଟ୍ରାକିଂରେ ଦେଖନ୍ତୁ।"],
+ "Product delivery request updated":["उत्पाद डिलीवरी अनुरोध बदला","ଉତ୍ପାଦ ଡେଲିଭରି ଅନୁରୋଧ ବଦଳିଲା"],
+ "Product delivery time requested":["उत्पाद डिलीवरी समय का अनुरोध","ଉତ୍ପାଦ ଡେଲିଭରି ସମୟ ଅନୁରୋଧ"],
+ "A product request needs your review in Marketplace.":["Marketplace में उत्पाद अनुरोध की समीक्षा करें।","ଖାଦ୍ୟ ଦୋକାନରେ ଉତ୍ପାଦ ଅନୁରୋଧ ସମୀକ୍ଷା କରନ୍ତୁ।"],
+ "{product} · {count} unit(s). Review it in Mother Marketplace.":["{product} · {count} पैक। Mother Marketplace में समीक्षा करें।","{product} · {count} ପ୍ୟାକ୍। ମା’ଙ୍କ ଖାଦ୍ୟ ଦୋକାନରେ ସମୀକ୍ଷା କରନ୍ତୁ।"]
 });
 const lower = Object.fromEntries(Object.entries(uiTranslations).map(([k,v]) => [k.toLowerCase(),v]));
 const templateTranslations=Object.entries(uiTranslations).filter(([key])=>/\{\w+\}/.test(key)).map(([key,value])=>{
