@@ -133,3 +133,10 @@ body:has(.editorial-home) .editorial-home .eh-hero{margin-top:0;padding-top:150p
 .site-header .language-selector select:focus-visible,.app-header-tools .language-selector select:focus-visible{outline:2px solid #b52c2e;outline-offset:2px}
 .site-header .mobile-nav>summary,body:has(.editorial-home) .site-header .mobile-nav>summary{background:#b52c2e;border:0;color:#fffaf4;border-radius:8px}
 .site-header .mobile-nav>summary:hover{background:#98232a}
+
+.customer-home-hero .customer-hero-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;max-width:520px;margin-top:16px}
+.customer-home-hero .customer-hero-actions>a{display:flex;align-items:center;justify-content:center;text-align:center;min-height:44px;padding:10px 12px;border:1px solid #fff5ed;border-radius:8px;background:#fff8f0;color:#8f2630;text-decoration:none;font-size:13px;font-weight:750;line-height:1.4;box-shadow:0 2px 7px #26071120}
+.customer-home-hero .customer-hero-actions>a:hover{background:#ffe5df;border-color:#ffe5df}
+.customer-home-hero .customer-hero-actions>a[aria-current=page]{background:#b52c2e;color:#fff;border-color:#fff3e8}
+.customer-home-hero .customer-hero-actions>a:focus-visible{outline:3px solid #a9dfbd;outline-offset:3px}
+@media(max-width:700px){section.customer-highlights.customer-home-hero{min-height:240px;padding:24px 18px 52px;border-radius:14px}.customer-home-hero .highlight-content h2{font-size:27px}.customer-home-hero .highlight-content p{font-size:14px;line-height:1.5;margin-bottom:14px}.customer-home-hero .customer-hero-actions{gap:7px}.customer-home-hero .customer-hero-actions>a{padding:9px 7px;font-size:12px;min-height:48px}}

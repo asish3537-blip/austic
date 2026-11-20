@@ -1640,3 +1640,5 @@ Object.assign(uiTranslations,{
  "Place order":["ऑर्डर करें","ଅର୍ଡର୍ କରନ୍ତୁ"],
  "No delivery partners online. Please try later.":["कोई डिलीवरी साथी ऑनलाइन नहीं है। बाद में प्रयास करें।","କୌଣସି ଡେଲିଭରି ସାଥୀ ଅନଲାଇନ୍ ନାହାନ୍ତି। ପରେ ଚେଷ୍ଟା କରନ୍ତୁ।"]
 });
+
+Object.assign(uiTranslations,{"Choose a meal plan, a one-time meal or homemade favourites.":["भोजन योजना, एक बार का भोजन या घर के बने पसंदीदा उत्पाद चुनें।","ଭୋଜନ ଯୋଜନା, ଗୋଟିଏ ଥରର ଭୋଜନ ବା ଘରୋଇ ପସନ୍ଦର ଉତ୍ପାଦ ବାଛନ୍ତୁ।"]});
