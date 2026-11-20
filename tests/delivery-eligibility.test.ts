@@ -1,0 +1,4 @@
+import {test} from "node:test";import assert from "node:assert/strict";import {canAcceptReadyDelivery} from "../lib/delivery-eligibility";
+const job={agentId:null,status:"ASSIGNED",orderStatus:"READY_FOR_PICKUP",bulk:false,orderNumber:"PS-123",inArea:true};
+test("a courier can accept a ready unassigned delivery or their own assigned delivery",()=>{assert.equal(canAcceptReadyDelivery(job,"courier-a"),true);assert.equal(canAcceptReadyDelivery({...job,agentId:"courier-a"},"courier-a"),true);});
+test("another courier, early pickup, bulk jobs and simulated jobs cannot use normal acceptance",()=>{for(const change of [{agentId:"courier-b"},{status:"ACCEPTED"},{orderStatus:"CONFIRMED"},{orderStatus:"PREPARING"},{orderStatus:"CANCELLED"},{bulk:true},{orderNumber:"TEST-LIFE-1"},{inArea:false}])assert.equal(canAcceptReadyDelivery({...job,...change},"courier-a"),false);});
