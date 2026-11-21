@@ -54,6 +54,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en" data-scroll-behavior="smooth">
       <body>
         <LanguageProvider>
+        {process.env.PAUSTIK_LOCAL_PILOT==="true"&&<aside className="local-pilot-banner">LOCAL TEST ENVIRONMENT · Sample accounts and test wallet only · No real payments or physical deliveries</aside>}
         <header className="site-header">
           <div className="header-inner">
             <HeaderBrand/>
