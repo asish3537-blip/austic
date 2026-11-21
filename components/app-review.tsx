@@ -17,6 +17,7 @@ export function AppReview({ initialRole = "customer" }: { initialRole?: Role }) 
   const { language } = useUiLanguage();
   const c = (copy: Copy) => copy[language === "hi" ? 1 : language === "or" ? 2 : 0];
   const [role, setRole] = useState<Role>(initialRole);
+  const [declined,setDeclined]=useState(false);
   const [mode, setMode] = useState("meal");
   const [days, setDays] = useState(3);
   const [online, setOnline] = useState(true);
@@ -32,7 +33,7 @@ export function AppReview({ initialRole = "customer" }: { initialRole?: Role }) 
   const food = (mode === "product" ? 80 : 99) * count;
   const total = food + 9 * count - (discount ? 10 : 0);
   const money = (n: number) => new Intl.NumberFormat(language === "or" ? "or-IN" : language === "hi" ? "hi-IN" : "en-IN", { style: "currency", currency: "INR" }).format(n);
-  function reset() { setStage(-1); setRequest(false); setAgreed(false); setPickup(""); setDrop(""); setError(""); setBatchFull(false); }
+  function reset() { setDeclined(false);setStage(-1); setRequest(false); setAgreed(false); setPickup(""); setDrop(""); setError(""); setBatchFull(false); }
   function verify(value: string, expected: string, next: number) {
     if (value !== expected) { setError(c(["Incorrect sample code. Try again.", "नमूना कोड गलत है। दोबारा डालें।", "ନମୁନା କୋଡ୍ ଭୁଲ୍। ପୁଣି ଚେଷ୍ଟା କରନ୍ତୁ।"])); return; }
     setError(""); setStage(next);
@@ -65,7 +66,8 @@ export function AppReview({ initialRole = "customer" }: { initialRole?: Role }) 
       {role === "courier" && <>
         <p>{c(["Scheduled jobs remain visible. Acceptance opens only after food is ready. Real pickup hours are 06:00–20:30 IST; this sandbox can run anytime.", "निर्धारित काम दिखते रहते हैं। भोजन तैयार होने पर ही स्वीकार कर सकते हैं। असली पिकअप समय 06:00–20:30 है; यह नमूना कभी भी चलता है।", "ନିର୍ଦ୍ଧାରିତ କାମ ଦେଖାଯାଏ। ଭୋଜନ ପ୍ରସ୍ତୁତ ହେଲେ ଗ୍ରହଣ କରିପାରିବେ। ପ୍ରକୃତ ପିକ୍‌ଅପ୍ ସମୟ ୦୬:୦୦–୨୦:୩୦; ନମୁନା ଯେକୌଣସି ସମୟରେ ଚାଲେ।"])}</p>
         {stage < 3 && <p>{c(["Waiting for a ready order", "तैयार ऑर्डर का इंतज़ार", "ପ୍ରସ୍ତୁତ ଅର୍ଡରକୁ ଅପେକ୍ଷା"])}</p>}
-        {stage === 3 && <button type="button" className="button" onClick={() => setStage(4)}>{c(["Accept delivery", "डिलीवरी स्वीकार करें", "ଡେଲିଭରି ଗ୍ରହଣ କରନ୍ତୁ"])}</button>}
+        {stage === 3 && !declined && <button type="button" className="button" onClick={() => setStage(4)}>{c(["Accept delivery", "डिलीवरी स्वीकार करें", "ଡେଲିଭରି ଗ୍ରହଣ କରନ୍ତୁ"])}</button>}
+        {stage>=0&&stage<=3&&!declined&&<button type="button" className="button button-quiet offer-decline" onClick={()=>setDeclined(true)}>{c(["Decline","अस्वीकार करें","ଅସ୍ୱୀକାର କରନ୍ତୁ"])}</button>}{declined&&<p role="status">{c(["You declined this sample offer. The customer order stays open for another courier.","आपने नमूना प्रस्ताव अस्वीकार किया। ग्राहक का ऑर्डर दूसरे साथी के लिए खुला है।","ଆପଣ ନମୁନା ପ୍ରସ୍ତାବ ଅସ୍ୱୀକାର କଲେ। ଗ୍ରାହକଙ୍କ ଅର୍ଡର ଅନ୍ୟ ସାଥୀଙ୍କ ପାଇଁ ଖୋଲା ରହିବ।"])}</p>}
         {stage === 4 && <form onSubmit={e => { e.preventDefault(); verify(pickup, "123456", 5); }}><label>{c(["Pickup code from Mother", "माँ से पिकअप कोड", "ମା’ଙ୍କଠାରୁ ପିକ୍‌ଅପ୍ କୋଡ୍"])}<input inputMode="numeric" autoComplete="off" maxLength={6} value={pickup} onChange={e => setPickup(e.target.value)}/></label><button className="button" type="submit">{c(["Verify pickup", "पिकअप सत्यापित करें", "ପିକ୍‌ଅପ୍ ଯାଞ୍ଚ କରନ୍ତୁ"])}</button></form>}
         {stage === 5 && <button type="button" className="button" onClick={() => setStage(6)}>{c(["Start delivery", "डिलीवरी शुरू करें", "ଡେଲିଭରି ଆରମ୍ଭ କରନ୍ତୁ"])}</button>}
         {stage === 6 && <form onSubmit={e => { e.preventDefault(); verify(drop, "654321", 7); }}><label>{c(["Handover code from customer", "ग्राहक से हैंडओवर कोड", "ଗ୍ରାହକଙ୍କଠାରୁ ହସ୍ତାନ୍ତର କୋଡ୍"])}<input inputMode="numeric" autoComplete="off" maxLength={6} value={drop} onChange={e => setDrop(e.target.value)}/></label><button className="button" type="submit">{c(["Verify delivery", "डिलीवरी सत्यापित करें", "ଡେଲିଭରି ଯାଞ୍ଚ କରନ୍ତୁ"])}</button></form>}

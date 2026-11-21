@@ -1,9 +1,11 @@
 "use client";
 
+import Link from "next/link";
+import {AppIcon} from "@/components/app-icon";
 import { PartnerIncomePanel } from "@/components/partner-income-panel";
 import { incomeMoney, type EstimatePolicy } from "@/lib/earnings-estimates";
-import { UiText } from "@/components/ui-language";
-import { useCallback, useEffect, useEffectEvent, useRef, useState } from "react";
+import { UiText,useUiLanguage } from "@/components/ui-language";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 type DeliveryJob = {
   estimatedPay:number;routeDistanceKm:number|null;alertAt:string;isUpcoming?:boolean;
@@ -21,6 +23,8 @@ const nextAction: Record<string, { status: string; label: string }> = {
 };
 
 export function DeliveryWorkspace() {
+  const {language}=useUiLanguage();
+  const copy=(en:string,hi:string,or:string)=>language==="hi"?hi:language==="or"?or:en;
   const [jobs, setJobs] = useState<Jobs>({ available: [], assigned: [], upcoming:[] });
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
@@ -28,14 +32,13 @@ export function DeliveryWorkspace() {
   const [watchingId, setWatchingId] = useState("");
   const [gpsState, setGpsState] = useState("");
   const [offer,setOffer]=useState<DeliveryJob|null>(null);
+  const [offerError,setOfferError]=useState("");
+  const requestedOfferHandled=useRef(false);
   const assignedJobs = useRef<DeliveryJob[]>([]);
   const [batchPreview,setBatchPreview]=useState<{deliveryIds:string[];meals:number;estimate:number;route:{kind:string;orderNumber:string;area:string}[]}|null>(null);
   const [selectedJobs,setSelectedJobs]=useState<string[]>([]);
-  const [zoneId,setZoneId]=useState("");
-  const [mealCapacity,setMealCapacity]=useState(6);
+  const mealCapacity=jobs.capacity?.mealCapacity??6;
   const [handoverCodes,setHandoverCodes]=useState<Record<string,string>>({});
-  const [radius,setRadius]=useState(25);
-  const autoLocationStarted=useRef(false);
   const [areaMessage,setAreaMessage]=useState("");const [areaBusy,setAreaBusy]=useState(false);
   const modal=useRef<HTMLDialogElement|null>(null);const seen=useRef(new Set<string>());const initialOffers=useRef(true);
   const watchId = useRef<number | null>(null);
@@ -48,12 +51,14 @@ export function DeliveryWorkspace() {
       if (!response.ok) throw new Error(data.error || "Could not load delivery jobs.");
       setJobs({...data,upcoming:data.upcoming||[]});
       assignedJobs.current=data.assigned||[];
-      const offers=[...(data.available||[]),...(data.upcoming||[])];
-      const fresh=offers.find((job:DeliveryJob)=>{const key=data.userScope+":"+job.deliveryId+":"+job.deliveryStatus;let stored=false;try{stored=sessionStorage.getItem("paustik-offer:"+key)==="seen";}catch{}return !seen.current.has(key)&&!stored&&(!initialOffers.current||Date.now()-new Date(job.alertAt).getTime()<600000);});
-      for(const job of offers){const key=data.userScope+":"+job.deliveryId+":"+job.deliveryStatus;seen.current.add(key);try{sessionStorage.setItem("paustik-offer:"+key,"seen");}catch{}}
-      if(initialOffers.current)setMealCapacity(data.capacity?.mealCapacity||6);
+      const offers=[...(data.available||[]),...(data.assigned||[]).filter((job:DeliveryJob)=>job.deliveryStatus==="ASSIGNED"),...(data.upcoming||[])];
+      const requestedId=!requestedOfferHandled.current?new URLSearchParams(window.location.search).get("offer"):null;
+      const requested=requestedId?offers.find((job:DeliveryJob)=>job.orderId===requestedId):null;
+      requestedOfferHandled.current=true;
+      const fresh=offers.find((job:DeliveryJob)=>{const key=data.userScope+":"+job.deliveryId+":"+job.deliveryStatus+":"+(job.orderStatus==="READY_FOR_PICKUP"?"ready":"scheduled");let stored=false;try{stored=sessionStorage.getItem("paustik-offer:"+key)==="seen";}catch{}return !seen.current.has(key)&&!stored&&(!initialOffers.current||Date.now()-new Date(job.alertAt).getTime()<600000);});
+      for(const job of offers){const key=data.userScope+":"+job.deliveryId+":"+job.deliveryStatus+":"+(job.orderStatus==="READY_FOR_PICKUP"?"ready":"scheduled");seen.current.add(key);try{sessionStorage.setItem("paustik-offer:"+key,"seen");}catch{}}
       initialOffers.current=false;
-      setOffer(current=>current?(offers.find((j:DeliveryJob)=>j.orderId===current.orderId)||fresh||null):(fresh||null));
+      setOffer(current=>requested||(current?(offers.find((j:DeliveryJob)=>j.orderId===current.orderId)||fresh||null):(fresh||null)));
       setMessage("");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not load delivery jobs.");
@@ -73,29 +78,13 @@ export function DeliveryWorkspace() {
   }, [refresh]);
 
   useEffect(()=>{const dialog=modal.current;if(offer&&!dialog?.open)dialog?.showModal();if(!offer&&dialog?.open)dialog.close();},[offer]);
-  async function availability(online:boolean,selectedZone?:string,useSavedPin=false){
+  async function availability(online:boolean){
     setAreaBusy(true);setAreaMessage("");
-    try {
-      let payload:object={isAvailable:false};
-      if(online&&useSavedPin){payload={isAvailable:true,useSavedPin:true,radiusKm:radius,mealCapacity,consent:true};}
-      else if(online&&selectedZone){payload={isAvailable:true,zoneId:selectedZone,radiusKm:radius,mealCapacity,consent:true};}
-      else if(online){
-        const position=await new Promise<GeolocationPosition>((resolve,reject)=>navigator.geolocation?navigator.geolocation.getCurrentPosition(resolve,reject,{enableHighAccuracy:true,timeout:15000,maximumAge:0}):reject(new Error("GPS is unavailable. Choose a pickup area below.")));
-        if(!Number.isFinite(position.coords.accuracy)||position.coords.accuracy>1000)throw new Error("Your location is too approximate. Enable precise location or choose a pickup area below.");
-        payload={isAvailable:true,latitude:position.coords.latitude,longitude:position.coords.longitude,radiusKm:radius,consent:true,mealCapacity};
-      }
-      const r=await fetch("/api/delivery/availability",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
-      const d=await r.json();if(!r.ok)throw new Error(d.error||"Availability could not save.");
-      await refresh();setAreaMessage(d.message);
-    }catch(e){setAreaMessage(typeof e === "object" && e !== null && "code" in e ? "Location could not be read. Enable location access and tap Use current GPS, or choose a pickup area below." : e instanceof Error?e.message:"Location permission is needed to go online.");}
-    finally{setAreaBusy(false);}
+    try{
+      const r=await fetch("/api/delivery/availability",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(online?{isAvailable:true,useSavedPin:true,radiusKm:jobs.area?.radiusKm||25,mealCapacity,consent:true}:{isAvailable:false})});
+      const d=await r.json();if(!r.ok)throw new Error(d.error||"Availability could not save.");await refresh();
+    }catch(e){setAreaMessage(e instanceof Error?e.message:"Availability could not save.");}finally{setAreaBusy(false);}
   }
-  const startWithCurrentLocation=useEffectEvent(()=>{void availability(true);});
-  useEffect(()=>{
-    if(!jobs.userScope||autoLocationStarted.current)return;
-    autoLocationStarted.current=true;
-    startWithCurrentLocation();
-  },[jobs.userScope]);
   async function reviewBatch() {
     setMessage("");
     try {
@@ -108,6 +97,7 @@ export function DeliveryWorkspace() {
   async function claim(job: DeliveryJob, ids?: string[]) {
     setBusyId(job.deliveryId);
     setMessage("");
+    setOfferError("");
     try {
       const response = await fetch("/api/delivery/jobs", {
         method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(ids ? { deliveryIds: ids } : { deliveryId: job.deliveryId }),
@@ -119,9 +109,23 @@ export function DeliveryWorkspace() {
       await refresh();
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not accept this delivery.");
+      setOfferError(error instanceof Error ? error.message : "Could not accept this delivery.");
     } finally {
       setBusyId("");
     }
+  }
+
+  async function decline(job:DeliveryJob){
+    setBusyId(job.deliveryId);setOfferError("");
+    try{
+      const r=await fetch("/api/delivery/offers/decline",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({orderId:job.orderId})});
+      const data=await r.json();if(!r.ok)throw new Error(data.error||"Could not decline this offer.");
+      setOffer(null);setSelectedJobs(current=>current.filter(id=>id!==job.deliveryId));setBatchPreview(null);
+      await refresh();
+      setMessage(copy("Delivery offer declined. The order remains available to other couriers.","डिलीवरी प्रस्ताव अस्वीकार किया। ऑर्डर दूसरे डिलीवरी साथियों के लिए उपलब्ध है।","ଡେଲିଭରି ପ୍ରସ୍ତାବ ଅସ୍ୱୀକାର କରାଗଲା। ଅର୍ଡର ଅନ୍ୟ ଡେଲିଭରି ସାଥୀଙ୍କ ପାଇଁ ଉପଲବ୍ଧ ରହିବ।"));
+      window.dispatchEvent(new Event("paustik-notifications-changed"));
+    }catch(error){const text=error instanceof Error?error.message:"Could not decline this offer.";setOfferError(text);setMessage(text);}
+    finally{setBusyId("");}
   }
 
   async function advance(job: DeliveryJob, method: "OTP"|"GPS" = "GPS") {
@@ -204,6 +208,7 @@ export function DeliveryWorkspace() {
 
   if (loading) return <div className="dashboard-banner"><UiText text="Loading delivery board…"/></div>;
   return <div className="delivery-workspace">{message && <p className="workspace-message" role="status"><UiText text={message}/></p>}
+    <section className="courier-status-bar"><div><span className="courier-online-dot" data-online={jobs.area?.online?"true":"false"}/><strong><UiText text={areaBusy?"Updating…":jobs.area?.online?"Online for nearby offers":"Offline for new offers"}/></strong><small>{jobs.area?.pin?<>{jobs.area.city} · {jobs.area.radiusKm} <UiText text="km radius."/></>:copy("Save a pickup area in Settings.","सेटिंग्स में पिकअप क्षेत्र सहेजें।","ସେଟିଂସ୍‌ରେ ପିକ୍‌ଅପ୍ ଅଞ୍ଚଳ ସେଭ୍ କରନ୍ତୁ।")}</small></div><div className="courier-status-actions">{jobs.area?.online?<button type="button" className="button button-small" disabled={areaBusy} onClick={()=>void availability(false)}><UiText text="Go offline"/></button>:jobs.area?.pin?<button type="button" className="button button-small" disabled={areaBusy} onClick={()=>void availability(true)}>{copy("Go online","ऑनलाइन जाएँ","ଅନ୍‌ଲାଇନ୍ ହୁଅନ୍ତୁ")}</button>:null}<Link href="/account/settings#delivery-preferences"><UiText text="Settings"/> →</Link></div>{areaMessage&&<p role="status"><UiText text={areaMessage}/></p>}</section>
     <PartnerIncomePanel role="DELIVERY_AGENT" compact/><section className="delivery-jobs-grid" id="delivery-jobs">
       <article className="dashboard-card">
         <div className="workspace-section-heading"><div><span className="eyebrow"><UiText text="Your route"/></span><h2 id="delivery-route"><UiText text="Assigned deliveries"/></h2></div><span className="customer-count">{jobs.assigned.length}</span></div>
@@ -214,7 +219,7 @@ export function DeliveryWorkspace() {
             <p>{job.items.join(", ")}</p><strong className="courier-job-pay">{incomeMoney(job.estimatedPay)} <UiText text="accepted estimate"/></strong><small><UiText text="Pickup:"/>{job.pickup} <UiText text="· Drop-off:"/>{job.dropoff}</small>
             <div className="delivery-pin-status"><span><UiText text={job.pickupPinned ? "Pickup geofence ready" : "Pickup pin missing"}/></span><span><UiText text={job.dropoffPinned ? "Drop-off geofence ready" : "Drop-off pin missing"}/></span></div>
             <div className="delivery-location-actions">
-              {job.deliveryStatus==="ASSIGNED"&&(job.orderStatus==="READY_FOR_PICKUP"?<button type="button" className="button" disabled={Boolean(busyId)||jobs.area?.pickupsOpen===false||!jobs.area?.online} onClick={()=>void claim(job)}><UiText text="Accept delivery"/></button>:<p><UiText text="The kitchen is confirming or preparing this order. You can accept once it is ready."/></p>)}{job.deliveryStatus === "ACCEPTED" && <button type="button" className="button button-quiet" onClick={() => advance(job)} disabled={busyId === job.deliveryId}><UiText text={busyId === job.deliveryId ? "Saving…" : "Head to pickup"}/></button>}
+              {job.deliveryStatus==="ASSIGNED"&&(job.orderStatus==="READY_FOR_PICKUP"?<button type="button" className="button" disabled={Boolean(busyId)||jobs.area?.pickupsOpen===false||!jobs.area?.online} onClick={()=>void claim(job)}><UiText text="Accept delivery"/></button>:<p><UiText text="The kitchen is confirming or preparing this order. You can accept once it is ready."/></p>)}{job.deliveryStatus==="ASSIGNED"&&<button type="button" className="button button-quiet offer-decline" disabled={Boolean(busyId)} onClick={()=>void decline(job)}><UiText text="Decline"/></button>}{job.deliveryStatus === "ACCEPTED" && <button type="button" className="button button-quiet" onClick={() => advance(job)} disabled={busyId === job.deliveryId}><UiText text={busyId === job.deliveryId ? "Saving…" : "Head to pickup"}/></button>}
             {next && ["GOING_TO_PICKUP","OUT_FOR_DELIVERY"].includes(job.deliveryStatus) ? <div className="courier-handover"><label><UiText text={job.deliveryStatus==="GOING_TO_PICKUP"?"Kitchen pickup code":"Customer delivery code"}/><input aria-label={job.orderNumber+" handover code"} inputMode="numeric" maxLength={6} value={handoverCodes[job.deliveryId]||""} onChange={e=>setHandoverCodes(current=>({...current,[job.deliveryId]:e.target.value.replace(/\D/g,"")}))}/></label><button type="button" className="button" disabled={busyId===job.deliveryId||!/^\d{6}$/.test(handoverCodes[job.deliveryId]||"")} onClick={()=>void advance(job,"OTP")}><UiText text="Verify code &"/> <UiText text={job.deliveryStatus==="GOING_TO_PICKUP"?"collect":"complete"}/></button>{(job.deliveryStatus==="GOING_TO_PICKUP"||jobs.dispatch?.allowGpsHandover)&&<button type="button" className="button button-quiet" disabled={busyId===job.deliveryId} onClick={()=>void advance(job,"GPS")}><UiText text="Confirm using nearby GPS"/></button>}</div> : next && job.deliveryStatus !== "ACCEPTED" && <button type="button" className="button button-small" onClick={() => advance(job)} disabled={busyId === job.deliveryId}><UiText text={busyId === job.deliveryId ? "Saving…" : next.label}/></button>}
             {job.pickupNavigation && <a className="button button-quiet" href={`https://www.google.com/maps/dir/?${new URLSearchParams({ api: "1", destination: job.pickupNavigation, dir_action: "navigate" })}`} target="_blank" rel="noopener noreferrer"><UiText text="Google Maps · Kitchen ↗"/></a>}
               {job.dropoffNavigation && <a className="button button-quiet" href={`https://www.google.com/maps/dir/?${new URLSearchParams({ api: "1", destination: job.dropoffNavigation, dir_action: "navigate" })}`} target="_blank" rel="noopener noreferrer"><UiText text="Google Maps · Customer ↗"/></a>}
@@ -234,26 +239,27 @@ export function DeliveryWorkspace() {
         {selectedJobs.length>0&&<button className="button" type="button" disabled={Boolean(busyId)} onClick={()=>void reviewBatch()}><UiText text="Review collection batch ·"/>{selectedJobs.length} <UiText text="orders"/></button>}{batchPreview&&JSON.stringify(batchPreview.deliveryIds)===JSON.stringify(selectedJobs)&&<div className="courier-batch-summary"><h3><UiText text="Review your route before accepting"/></h3><p>{batchPreview.meals} <UiText text="meal units · Additional estimated earnings"/>{incomeMoney(batchPreview.estimate)}</p><ol>{batchPreview.route.map((stop,index)=><li key={index}>{stop.kind} · {stop.orderNumber} · {stop.area}</li>)}</ol><button className="button" type="button" disabled={Boolean(busyId)} onClick={()=>{const job=jobs.available.find(j=>j.deliveryId===selectedJobs[0]);if(job)void claim(job,selectedJobs);}}><UiText text="Accept reviewed batch"/></button></div>}{jobs.available.length ? <div className="workspace-record-list">{jobs.available.map((job) => <article key={job.deliveryId}>
           <label className="batch-select"><input type="checkbox" checked={selectedJobs.includes(job.deliveryId)} disabled={Boolean(busyId)||(!selectedJobs.includes(job.deliveryId)&&selectedJobs.length>=3)} onChange={e=>setSelectedJobs(current=>e.target.checked?[...current,job.deliveryId]:current.filter(id=>id!==job.deliveryId))}/> <UiText text="Add to collection batch"/></label><div className="workspace-record-head"><strong>{job.orderNumber}</strong><span className="customer-status customer-status-active"><UiText text="Ready for pickup"/></span></div>
           <p>{job.items.join(", ")}</p><strong className="courier-job-pay">{incomeMoney(job.estimatedPay)} <UiText text="estimated pay"/></strong><small><UiText text="Pickup:"/>{job.pickup} <UiText text="· Drop-off:"/>{job.dropoff}</small>
-          <button className="button button-small" type="button" onClick={() => claim(job)} disabled={busyId === job.deliveryId}><UiText text={busyId === job.deliveryId ? "Accepting…" : "Accept delivery"}/></button>
+          <button className="button button-small" type="button" onClick={() => claim(job)} disabled={busyId === job.deliveryId}><UiText text={busyId === job.deliveryId ? "Accepting…" : "Accept delivery"}/></button><button className="button button-quiet offer-decline" type="button" disabled={Boolean(busyId)} onClick={()=>void decline(job)}><UiText text="Decline"/></button>
         </article>)}</div> : <div className="customer-empty-state"><strong><UiText text="No ready jobs nearby"/></strong><span><UiText text={!jobs.area?.online?"Go online with your location to receive offers.":jobs.area?.pickupsOpen===false?"New pickups are available from 06:00 to 20:30 IST. Your assigned deliveries remain below.":"No unassigned orders are ready within your saved area. Preparing orders appear under Upcoming; kitchen readiness is required before accepting."}/></span></div>}
       </article>
     </section>
 
-    <section className="dashboard-card"><div className="workspace-section-heading"><h2><UiText text="Scheduled & preparing deliveries"/></h2><span className="customer-count">{jobs.upcoming.length}</span></div><p><UiText text="Booked orders appear here before the kitchen marks them ready. Accept delivery becomes available when ready."/></p>{!jobs.upcoming.length&&<p className="courier-scheduled-empty"><UiText text="No scheduled deliveries yet. Published menus become jobs only after a customer books."/></p>}<div className="workspace-record-list">{jobs.upcoming.map(job=><article key={job.orderId}><div className="workspace-record-head"><strong>{job.pickup}</strong><b className="courier-job-pay">{incomeMoney(job.estimatedPay)} <UiText text="estimate"/></b></div><small>{new Date(job.scheduledFor).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} <UiText text="IST ·"/>{job.orderStatus.toLowerCase().replaceAll("_"," ")}</small><button className="plain-button" onClick={()=>setOffer(job)}><UiText text="View upcoming offer"/></button></article>)}</div></section>
-    <section className="courier-availability">
-      <div><span className="eyebrow"><UiText text="Your delivery area"/></span><h2><UiText text={areaBusy?"Finding your nearby pickups…":jobs.area?.online?"Online for nearby offers":"Offline for new offers"}/></h2>
-      <p><UiText text="We use your current location when you open this workspace and look for pickups within 25 km. Allow location access when asked. You can go offline at any time."/></p>
-      <p role="status">{jobs.area?.pin ? <><UiText text="Saved pickup area:"/>{jobs.area.pin.latitude.toFixed(4)}, {jobs.area.pin.longitude.toFixed(4)} · {jobs.area.radiusKm} <UiText text="km radius."/></> : "No pickup-area pin saved yet. Use current GPS or choose an area below."}</p></div>
-      <label><UiText text="Pickup search radius"/><select value={radius} onChange={e=>setRadius(Number(e.target.value))}>{Array.from({length:21},(_,i)=>i+5).map(n=><option key={n} value={n}>{n} <UiText text="km"/></option>)}</select></label>
-      <label><UiText text="Carrying capacity · meal units"/><input type="number" min={1} max={30} value={mealCapacity} onChange={e=>setMealCapacity(Number(e.target.value))}/></label>
-      <button className="button" type="button" disabled={areaBusy} onClick={()=>void availability(true)}><UiText text={areaBusy?"Updating location…":"Use current GPS"}/></button>
-      {jobs.area?.online&&<button className="plain-button" onClick={()=>void availability(false)} disabled={areaBusy}><UiText text="Go offline"/></button>}
-      <details><summary><UiText text="GPS not accurate? Choose a pickup area"/></summary>{jobs.area?.pin&&<button type="button" className="button button-quiet" disabled={areaBusy} onClick={()=>void availability(true,undefined,true)}><UiText text="Apply radius to saved area"/></button>}<label><UiText text="Pickup area"/><select value={zoneId} onChange={e=>setZoneId(e.target.value)}><option value=""><UiText text="Choose a nearby kitchen area"/></option>{jobs.zones?.map(zone=><option key={zone.id} value={zone.id}>{zone.locality}, {zone.city} · {zone.name}</option>)}</select></label><button type="button" className="button" disabled={areaBusy||!zoneId} onClick={()=>void availability(true,zoneId)}><UiText text="Use this pickup area"/></button><p><UiText text="This changes your offer-search centre only. It does not confirm a pickup or delivery."/></p></details>
-      {areaMessage&&<p className="workspace-message" role="status"><UiText text={areaMessage}/></p>}
-      <a href="/school-tiffins"><UiText text="ScooFoo school pickups →"/></a>
-    </section>
-    <section className="courier-batch-summary"><h2><UiText text="Your collection batch"/></h2>{jobs.capacity?.arrangedBulk ? <p><UiText text="Arranged bulk delivery ·"/>{jobs.capacity.activeMeals} <UiText text="meal units · use the vehicle agreed with operations."/></p> : <><p>{jobs.capacity?.activeOrders??0} <UiText text="/ 3 orders ·"/>{jobs.capacity?.activeMeals??0} / {jobs.capacity?.mealCapacity??mealCapacity} <UiText text="meal units"/></p><p><UiText text="Collect all orders first. Nearby pickups and drop-offs must fit a 2 km cluster and a 30-minute delivery window."/></p></>}<ol>{jobs.route?.map((stop,index)=><li key={stop.kind+stop.id}>{index+1}. <UiText text={stop.kind==="PICKUP"?"Collect":"Deliver"}/> · {jobs.assigned.find(job=>job.deliveryId===stop.id)?.orderNumber}</li>)}</ol></section>
-    <dialog ref={modal} className="delivery-offer-dialog" onCancel={()=>setOffer(null)} aria-labelledby="delivery-offer-title">{offer&&<><button className="offer-close" type="button" aria-label="Close delivery offer" onClick={()=>setOffer(null)}>×</button><span className="eyebrow"><UiText text={offer.isUpcoming?"New nearby order":"Ready for pickup"}/></span><h2 id="delivery-offer-title"><UiText text={offer.isUpcoming?"An upcoming delivery nearby":"New delivery request"}/></h2><strong className="offer-pay">{incomeMoney(offer.estimatedPay)}<small><UiText text="estimated courier pay"/></small></strong><p>{offer.pickup}</p><small><UiText text="Drop-off area:"/>{offer.dropoff}</small><p>{new Date(offer.scheduledFor).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} <UiText text="IST"/></p><small>{offer.routeDistanceKm===null?"Distance not available":offer.routeDistanceKm.toFixed(1)+" km straight-line estimate"}<UiText text=". Final route and settlement can differ."/></small>{offer.isUpcoming?<p><UiText text="The kitchen is confirming or preparing this order. You can accept once it is ready."/></p>:<button className="button" type="button" disabled={busyId===offer.deliveryId} onClick={()=>void claim(offer)}><UiText text={busyId===offer.deliveryId?"Accepting…":"Accept delivery"}/></button>}<button className="plain-button" type="button" onClick={()=>setOffer(null)}><UiText text="Not now"/></button></>}</dialog>
+    <section className="dashboard-card courier-scheduled-panel"><div className="workspace-section-heading"><h2><UiText text="Scheduled & preparing deliveries"/></h2><span className="customer-count">{jobs.upcoming.length}</span></div>{jobs.upcoming.length>0&&<p><UiText text="Booked orders appear here before the kitchen marks them ready. Accept delivery becomes available when ready."/></p>}{!jobs.upcoming.length&&<p className="courier-scheduled-empty"><UiText text="No scheduled deliveries yet. Published menus become jobs only after a customer books."/></p>}<div className="workspace-record-list">{jobs.upcoming.map(job=><article key={job.orderId}><div className="workspace-record-head"><strong>{job.pickup}</strong><b className="courier-job-pay">{incomeMoney(job.estimatedPay)} <UiText text="estimate"/></b></div><small>{new Date(job.scheduledFor).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} <UiText text="IST ·"/>{job.orderStatus.toLowerCase().replaceAll("_"," ")}</small><button className="plain-button" onClick={()=>{setOfferError("");setOffer(job);}}><UiText text="View upcoming offer"/></button></article>)}</div></section>
+    <section className="courier-school-card"><span className="courier-school-icon" aria-hidden="true"><AppIcon name="school"/></span><div><strong>ScooFoo</strong><p>{copy("Dedicated home-to-school tiffin pickups.","घर से स्कूल टिफिन के लिए अलग पिकअप।","ଘରୁ ସ୍କୁଲ୍ ଟିଫିନ୍ ପାଇଁ ଅଲଗା ପିକ୍‌ଅପ୍।")}</p></div><Link className="button button-quiet" href="/school-tiffins">{copy("School pickups →","स्कूल पिकअप →","ସ୍କୁଲ୍ ପିକ୍‌ଅପ୍ →")}</Link></section>
+    {Boolean(jobs.capacity?.activeOrders)&&<section className="courier-batch-summary"><h2><UiText text="Your collection batch"/></h2>{jobs.capacity?.arrangedBulk ? <p><UiText text="Arranged bulk delivery ·"/>{jobs.capacity.activeMeals} <UiText text="meal units · use the vehicle agreed with operations."/></p> : <><p>{jobs.capacity?.activeOrders??0} <UiText text="/ 3 orders ·"/>{jobs.capacity?.activeMeals??0} / {jobs.capacity?.mealCapacity??mealCapacity} <UiText text="meal units"/></p><p><UiText text="Collect all orders first. Nearby pickups and drop-offs must fit a 2 km cluster and a 30-minute delivery window."/></p></>}<ol>{jobs.route?.map((stop,index)=><li key={stop.kind+stop.id}>{index+1}. <UiText text={stop.kind==="PICKUP"?"Collect":"Deliver"}/> · {jobs.assigned.find(job=>job.deliveryId===stop.id)?.orderNumber}</li>)}</ol></section>}
+    <dialog ref={modal} className="delivery-offer-dialog" onCancel={e=>{if(busyId)e.preventDefault();else setOffer(null);}} aria-labelledby="delivery-offer-title">{offer&&<>
+      <button className="offer-close" type="button" aria-label="Close delivery offer" disabled={Boolean(busyId)} onClick={()=>setOffer(null)}>×</button>
+      <span className="eyebrow"><UiText text={offer.isUpcoming?"New nearby order":"Ready for pickup"}/></span>
+      <h2 id="delivery-offer-title"><UiText text={offer.isUpcoming?"An upcoming delivery nearby":"New delivery request"}/></h2>
+      <strong className="offer-pay">{incomeMoney(offer.estimatedPay)}<small><UiText text="estimated courier pay"/></small></strong>
+      <p>{offer.pickup}</p><small><UiText text="Drop-off area:"/>{offer.dropoff}</small>
+      <p>{new Date(offer.scheduledFor).toLocaleString(language==="or"?"or-IN":language==="hi"?"hi-IN":"en-IN",{timeZone:"Asia/Kolkata"})} <UiText text="IST"/></p>
+      <small>{offer.routeDistanceKm===null?copy("Distance not available","दूरी उपलब्ध नहीं","ଦୂରତା ଉପଲବ୍ଧ ନାହିଁ"):offer.routeDistanceKm.toFixed(1)+copy(" km straight-line estimate"," किमी सीधी दूरी का अनुमान"," କିମି ସିଧା ଦୂରତା ଆକଳନ")}<UiText text=". Final route and settlement can differ."/></small>
+      {offer.isUpcoming&&<p><UiText text="The kitchen is confirming or preparing this order. You can accept once it is ready."/></p>}
+      {offerError&&<p role="alert" className="offer-response-error">{offerError}</p>}
+      <div className="delivery-offer-actions"><button className="button" type="button" disabled={Boolean(busyId)||Boolean(offer.isUpcoming)||jobs.area?.pickupsOpen===false||!jobs.area?.online} onClick={()=>void claim(offer)}><UiText text={busyId===offer.deliveryId?"Saving…":"Accept delivery"}/></button><button className="button button-quiet offer-decline" type="button" disabled={Boolean(busyId)} onClick={()=>void decline(offer)}><UiText text="Decline"/></button></div>
+      <small>{copy("Decline skips this order for you. It does not cancel the customer's order.","अस्वीकार करने पर यह ऑर्डर आपको नहीं दिखेगा। ग्राहक का ऑर्डर रद्द नहीं होगा।","ଅସ୍ୱୀକାର କଲେ ଏହି ଅର୍ଡର ଆପଣଙ୍କୁ ଆଉ ଦେଖାଯିବ ନାହିଁ। ଗ୍ରାହକଙ୍କ ଅର୍ଡର ବାତିଲ ହେବ ନାହିଁ।")}</small>
+    </>}</dialog>
     <section className="delivery-privacy-note"><strong><UiText text="GPS is opt-in."/></strong> <UiText text="Your location is shared with the customer only while the order is picked up or out for delivery. Paustik stores one latest point and clears it at handover or when you stop sharing."/></section>
     
 

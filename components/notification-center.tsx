@@ -1,14 +1,15 @@
 "use client";
-import {UiText,UiDate} from "@/components/ui-language";
+import {UiText,UiDate,useUiLanguage} from "@/components/ui-language";
 
 import Link from "next/link";
 import {isNewNotification} from "@/lib/notification-feed";
 import {AppIcon} from "@/components/app-icon";
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
 const subscribeSupport = () => () => {};
 const pushSupported = () => window.isSecureContext && "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
-type Item = { id: string; title: string; body: string; createdAt: string; readAt: string | null };
-export function NotificationCenter({ full = false, settings = false }: { full?: boolean; settings?: boolean }) {
+type Item = { id: string; title: string; body: string; createdAt: string; readAt: string | null;entityId?:string|null;kind?:string };
+export function NotificationCenter({ full = false, settings = false, iconOnly = false }: { full?: boolean; settings?: boolean; iconOnly?:boolean }) {
+  const {t,language}=useUiLanguage();const panelId=useId();const root=useRef<HTMLDivElement>(null);const trigger=useRef<HTMLButtonElement>(null);
   const [view,setView]=useState<"new"|"earlier">("new");
   const [ordersHref,setOrdersHref]=useState("/app");
   const [items, setItems] = useState<Item[]>([]), [unread, setUnread] = useState(0), [open, setOpen] = useState(full);
@@ -16,6 +17,13 @@ export function NotificationCenter({ full = false, settings = false }: { full?: 
   const supported = useSyncExternalStore(subscribeSupport, pushSupported, () => false);
   const [loading, setLoading] = useState(true);
   const [enabled, setEnabled] = useState(false), [busy, setBusy] = useState(false), [message, setMessage] = useState("");
+  useEffect(()=>{
+    if(full||!open)return;
+    const outside=(e:Event)=>{if(e.target instanceof Node&&!root.current?.contains(e.target))setOpen(false);};
+    const escape=(e:KeyboardEvent)=>{if(e.key==="Escape"){setOpen(false);trigger.current?.focus();}};
+    document.addEventListener("pointerdown",outside);document.addEventListener("focusin",outside);document.addEventListener("keydown",escape);
+    return()=>{document.removeEventListener("pointerdown",outside);document.removeEventListener("focusin",outside);document.removeEventListener("keydown",escape);};
+  },[full,open]);
   useEffect(() => {
     let active = true;
     const load = async () => {
@@ -30,8 +38,8 @@ export function NotificationCenter({ full = false, settings = false }: { full?: 
         if (sub) { const r = await fetch("/api/push", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "status", endpoint: sub.endpoint }) }); const status = await r.json(); if (active) setEnabled(status.enabled === true); }
       }
     }).catch(() => {});
-    const timer = setInterval(load, 30000); window.addEventListener("focus", load);
-    return () => { active = false; clearInterval(timer); window.removeEventListener("focus", load); };
+    const timer = setInterval(load, 30000); window.addEventListener("focus", load);window.addEventListener("paustik-notifications-changed",load);
+    return () => { active = false; clearInterval(timer); window.removeEventListener("focus", load);window.removeEventListener("paustik-notifications-changed",load); };
   }, []);
   async function manage(action: "enable" | "disable" | "test") {
     setBusy(true); setMessage("");
@@ -66,13 +74,13 @@ export function NotificationCenter({ full = false, settings = false }: { full?: 
   }
   const newItems=items.filter(item=>isNewNotification(item));
   const shown=(view==="new"?newItems:items.filter(item=>!isNewNotification(item)));
-  return <div className={"notification-center " + (full ? "notification-full" : "")}>
-    {!full && <button type="button" className="notification-bell" aria-expanded={open} onClick={() => setOpen(!open)}><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="M6 9a6 6 0 0 1 12 0v5l2 3H4l2-3V9Z"/><path d="M9 20h6"/></svg>{" "}<UiText text={"Notifications"}/>{unread > 0 && <b>{unread > 99 ? "99+" : unread}</b>}</button>}
-    {open && <section className="notification-panel" aria-label="Notifications"><div className="notification-panel-head"><strong><UiText text={"Your updates"}/><UiText text={unread > 0 ? ` · ${unread} unread` : ""}/></strong>{!full && <button type="button" aria-label="Close notifications" onClick={() => setOpen(false)}>×</button>}</div>
+  return <div ref={root} className={"notification-center " + (full ? "notification-full" : iconOnly?"notification-header":"")}>
+    {!full && <button ref={trigger} type="button" className={iconOnly?"app-notification-link":"notification-bell"} aria-label={t("Notifications")+(unread?` · ${unread}`:"")} aria-controls={panelId} aria-expanded={open} onClick={() => setOpen(current=>!current)}><AppIcon name="bell"/>{!iconOnly&&<UiText text="Notifications"/>}{unread > 0 && <b className={iconOnly?"app-notification-badge":undefined}>{unread > 99 ? "99+" : unread}</b>}</button>}
+    {open && <section id={panelId} className="notification-panel" aria-label={t("Notifications")} onClick={e=>{if(!full&&e.target instanceof Element&&e.target.closest("a"))setOpen(false);}}><div className="notification-panel-head"><strong><UiText text={"Your updates"}/><UiText text={unread > 0 ? ` · ${unread} unread` : ""}/></strong>{!full && <button type="button" aria-label={t("Close notifications")} onClick={() => {setOpen(false);trigger.current?.focus();}}>×</button>}</div>
       {settings&&<div className="notification-settings"><strong><UiText text={enabled ? "Device push is on" : "Stay updated"}/></strong><p><UiText text={"Order, kitchen, payment and delivery updates. Lock-screen messages hide account details."}/></p><button type="button" disabled={busy || (!enabled && !configured)} onClick={() => void manage(enabled ? "disable" : "enable")}><UiText text={busy ? "Updating…" : enabled ? "Turn off device push" : "Enable device push"}/></button>{enabled && <button type="button" disabled={busy} onClick={() => void manage("test")}><UiText text={"Send test notification"}/></button>}{!configured && <small><UiText text={"Push activation is pending. In-app updates are available now."}/></small>}{!supported && <small><UiText text={"Use a browser with Web Push support. On iPhone/iPad, open the installed Home Screen app."}/></small>}</div>}
       {message && <p className="notification-message" role="status"><UiText text={message}/></p>}
       <nav className="notification-feed-tabs" aria-label="Notification view"><button type="button" aria-pressed={view==="new"} onClick={()=>setView("new")}><UiText text="New updates"/> <b>{newItems.length}</b></button><button type="button" aria-pressed={view==="earlier"} onClick={()=>setView("earlier")}><UiText text="Earlier updates"/></button><Link href={ordersHref}><UiText text="Explore orders"/> ↗</Link></nav><p className="notification-feed-note"><UiText text={view==="new"?"Unread updates from the last 24 hours. View active orders for the full status.":"Older and read updates stay here. No records have been removed."}/></p>{view==="earlier"&&items.some(item=>!item.readAt)&&<button type="button" className="plain-button" onClick={()=>void markRead()}><UiText text="Mark all updates as read"/></button>}
-      <ul>{shown.slice(0,full ? 30 : 5).map(item => <li key={item.id} className={item.readAt ? "is-read" : "is-unread"}><span className="notification-row-icon" aria-hidden="true"><AppIcon name="bell"/></span><strong><UiText text={item.title}/></strong><p><UiText text={item.body}/></p>{/scoofoo/i.test(item.title)&&<Link href="/school-tiffins"><UiText text={"Open ScooFoo →"}/></Link>}<small><UiDate value={item.createdAt}/>{" "}<UiText text={"IST"}/></small>{!item.readAt && <button type="button" onClick={() => void markRead(item.id)}><UiText text={"Mark as read"}/></button>}</li>)}</ul>{!shown.length && <p className="notification-empty"><AppIcon name="bell"/><UiText text={loading ? "Loading your updates…" : view==="new"?"You’re all caught up. New order updates will appear here.":"No earlier updates yet."}/></p>}{!full && <Link href="/notifications"><UiText text={"Open notification inbox →"}/></Link>}
+      <ul>{shown.slice(0,full ? 30 : 5).map(item => <li key={item.id} className={item.readAt ? "is-read" : "is-unread"}><span className="notification-row-icon" aria-hidden="true"><AppIcon name="bell"/></span><strong><UiText text={item.title}/></strong><p><UiText text={item.body}/></p>{/scoofoo/i.test(item.title)&&<Link href="/school-tiffins"><UiText text={"Open ScooFoo →"}/></Link>}{ordersHref.startsWith("/delivery/")&&item.kind==="DELIVERY"&&item.entityId&&<Link className="notification-delivery-action" href={"/delivery/dashboard?offer="+item.entityId+"#delivery-jobs"}>{language==="hi"?"डिलीवरी प्रस्ताव देखें →":language==="or"?"ଡେଲିଭରି ପ୍ରସ୍ତାବ ଦେଖନ୍ତୁ →":"View delivery offer →"}</Link>}<small><UiDate value={item.createdAt}/>{" "}<UiText text={"IST"}/></small>{!item.readAt && <button type="button" onClick={() => void markRead(item.id)}><UiText text={"Mark as read"}/></button>}</li>)}</ul>{!shown.length && <p className="notification-empty"><AppIcon name="bell"/><UiText text={loading ? "Loading your updates…" : view==="new"?"You’re all caught up. New order updates will appear here.":"No earlier updates yet."}/></p>}{!full && <Link href="/notifications"><UiText text={"Open notification inbox →"}/></Link>}
     </section>}
   </div>;
 }

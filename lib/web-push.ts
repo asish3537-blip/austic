@@ -19,6 +19,7 @@ export async function sendPendingPush(userIds: string[], sender: typeof webpush.
       JOIN paustik_marketplace.web_push_devices d ON d.id = ${device.id}::uuid
       WHERE n.user_id = d.user_id AND n.created_at > d.last_event_at
       AND n.created_at >= ${new Date(now.getTime() - 86400000)}
+      AND n.read_at IS NULL
       AND n.kind IN ('ORDER','DELIVERY','PAYMENT','ACCOUNT','SYSTEM')
       ORDER BY n.created_at ASC LIMIT 20`;
     if (!(await pending()).length) return;

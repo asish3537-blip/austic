@@ -364,6 +364,7 @@ model DeliveryAgentProfile {
   updatedAt           DateTime           @updatedAt @map("updated_at") @db.Timestamptz(6)
   user                User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   deliveries          Delivery[]
+  offerDeclines       CourierOfferDecline[]
   earnings            Earning[]
 
   @@index([verificationStatus])
@@ -595,6 +596,7 @@ model Order {
   items                OrderItem[]
   payments             Payment[]
   delivery             Delivery?
+  courierDeclines      CourierOfferDecline[]
   earnings             Earning[]
   ratings              Rating[]
   complaints           Complaint[]
@@ -721,6 +723,19 @@ model Delivery {
   @@index([agentId, status, assignedAt])
   @@index([status, assignedAt])
   @@map("deliveries")
+  @@schema("paustik_marketplace")
+}
+
+model CourierOfferDecline {
+  agentId String @map("agent_id") @db.Uuid
+  orderId String @map("order_id") @db.Uuid
+  declinedAt DateTime @default(now()) @map("declined_at") @db.Timestamptz(6)
+  agent DeliveryAgentProfile @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@id([agentId, orderId])
+  @@index([orderId])
+  @@map("courier_offer_declines")
   @@schema("paustik_marketplace")
 }
 

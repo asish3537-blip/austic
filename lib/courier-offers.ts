@@ -1,3 +1,4 @@
+import {lockCourier} from "@/lib/delivery-batches";
 import { after } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { courierCovers } from "@/lib/courier-area";
@@ -13,6 +14,8 @@ export function scheduleCourierOffers(orderIds: string[]) {
         const title=order.status === "READY_FOR_PICKUP" ? "Nearby delivery ready for pickup" : "New upcoming delivery nearby";
         await prisma.$transaction(async tx=>{
           await tx.$queryRaw`SELECT 1 FROM pg_advisory_xact_lock(hashtextextended(${"courier-offer:"+order.id+":"+agent.userId},0))`;
+          await lockCourier(tx,agent.id);
+          if(await tx.courierOfferDecline.findUnique({where:{agentId_orderId:{agentId:agent.id,orderId:order.id}}}))return;
           const exists=await tx.notification.findFirst({where:{userId:agent.userId,entityId:order.id,title,kind:"DELIVERY"}});
           if(!exists)await tx.notification.create({data:{userId:agent.userId,entityId:order.id,title,kind:"DELIVERY",body:order.kitchen.name+" · "+order.kitchen.locality+". Open Your deliveries for the estimated pay and pickup time. Assignment is not guaranteed."}});
         });

@@ -36,7 +36,7 @@ export async function GET() {
     const bounds = courierKitchenBounds(agent);
     const [available, assigned, upcoming] = await Promise.all([
       !bounds ? Promise.resolve([]) : prisma.delivery.findMany({
-        where: { agentId: null, status: "ASSIGNED", order: { status: "READY_FOR_PICKUP", orderNumber: { not: { startsWith: "TEST-LIFE-" } }, bulkDeliveryRequest: null, kitchen: bounds! } },
+        where: { agentId: null, status: "ASSIGNED", order: { courierDeclines: { none: { agentId: agent.id } }, status: "READY_FOR_PICKUP", orderNumber: { not: { startsWith: "TEST-LIFE-" } }, bulkDeliveryRequest: null, kitchen: bounds! } },
         orderBy: { createdAt: "asc" }, take: 100,
         include: { order: { include: { kitchen: true, address: true, items: { select: { mealName: true, quantity: true } } } } },
       }),
@@ -45,13 +45,13 @@ export async function GET() {
         orderBy: { updatedAt: "desc" }, take: 20,
         include: { order: { include: { kitchen: true, address: true, items: { select: { mealName: true, quantity: true } }, bulkDeliveryRequest: {select:{id:true}} } } },
       }),
-      !bounds ? Promise.resolve([]) : prisma.order.findMany({ where: { bulkDeliveryRequest: null, status: { in: ["ORDER_PLACED","CONFIRMED","PREPARING"] }, orderNumber: { not: { startsWith: "TEST-LIFE-" } }, kitchen: bounds!, scheduledFor: { gte: new Date(Date.now()-7200000), lte: new Date(Date.now()+7*86400000) } }, include: { kitchen: true, address: true, items: { select: { mealName:true,quantity:true } } }, orderBy: { orderedAt:"desc" },take:100 }),
+      !bounds ? Promise.resolve([]) : prisma.order.findMany({ where: { courierDeclines: { none: { agentId: agent.id } }, bulkDeliveryRequest: null, status: { in: ["ORDER_PLACED","CONFIRMED","PREPARING"] }, orderNumber: { not: { startsWith: "TEST-LIFE-" } }, kitchen: bounds!, scheduledFor: { gte: new Date(Date.now()-7200000), lte: new Date(Date.now()+7*86400000) } }, include: { kitchen: true, address: true, items: { select: { mealName:true,quantity:true } } }, orderBy: { orderedAt:"desc" },take:100 }),
     ]);
     const route = batchRoute(assigned.map(d => deliveryStop(d.id, d.order)));
     const zones = await prisma.kitchen.findMany({ where: { verificationStatus: "APPROVED", isAcceptingOrders: true, latitude: { not: null }, longitude: { not: null }, mother: { user: { status: "ACTIVE" } } }, select: { id: true, name: true, locality: true, city: true }, take: 100, orderBy: { name: "asc" } });
     const mapJob = (delivery: typeof available[number], isAssigned: boolean) => ({
       estimatedPay: estimateShares(Number(delivery.order.subtotal), Number(delivery.order.deliveryFee), orderDistance(delivery.order.kitchen, delivery.order.address), policy, delivery.estimatedPayout == null ? null : Number(delivery.estimatedPayout)).courier,
-      routeDistanceKm: orderDistance(delivery.order.kitchen, delivery.order.address), alertAt: delivery.updatedAt.toISOString(), isUpcoming: false,
+      routeDistanceKm: orderDistance(delivery.order.kitchen, delivery.order.address), alertAt: delivery.updatedAt.toISOString(), isUpcoming: delivery.status==="ASSIGNED"&&delivery.order.status!=="READY_FOR_PICKUP",
       batchId: delivery.batchId, mealCount: delivery.order.items.reduce((sum, item) => sum + item.quantity, 0),
       deliveryId: delivery.id, orderId: delivery.order.id, orderNumber: delivery.order.orderNumber,
       deliveryStatus: delivery.status, orderStatus: delivery.order.status, trackingReference: delivery.trackingReference,
@@ -99,6 +99,7 @@ export async function POST(request: Request) {
       const candidates = await tx.delivery.findMany({ where: { id: { in: ids } }, include: { order: { include: { kitchen: true, address: true, items: true, bulkDeliveryRequest: true } } } });
       if (candidates.length !== ids.length) throw new DispatchError("One of these delivery requests is unavailable.");
       if (candidates.every(d => d.agentId === agent.id && ["ACCEPTED", "GOING_TO_PICKUP"].includes(d.status))) return candidates.map(d => d.orderId);
+      if(await tx.courierOfferDecline.count({where:{agentId:agent.id,orderId:{in:candidates.map(d=>d.orderId)}}}))throw new DispatchError("You declined this offer. It remains available to other couriers.");
       if (candidates.some(d => !canAcceptReadyDelivery({agentId:d.agentId,status:d.status,orderStatus:d.order.status,bulk:Boolean(d.order.bulkDeliveryRequest),orderNumber:d.order.orderNumber,inArea:courierCovers(agent,d.order.kitchen)},agent.id))) throw new DispatchError("One job changed or needs a separately arranged bulk delivery. Refresh your offers.");
       const active = await assertBatchCapacity(tx, agent.id, candidates, agent.mealCapacity, dispatch);
       const batchId = active[0]?.batchId ?? randomUUID();
