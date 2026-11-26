@@ -7,6 +7,8 @@ for(const key of ["One-time meals","One-time meal","Order a Meal","Explore one-t
 for(const key of ["Homemade products","Homemade Foods"])
  labels[key]=["Homemade Foods","घर के बने खाद्य पदार्थ","ଘର ତିଆରି ଖାଦ୍ୟ"];
 Object.assign(labels,{
+ "Download Android app":["Download Android app","Android ऐप डाउनलोड करें","Android ଆପ୍ ଡାଉନଲୋଡ୍ କରନ୍ତୁ"],
+ "Download Android app · v1.3":["Download Android app · v1.3","Android ऐप डाउनलोड करें · v1.3","Android ଆପ୍ ଡାଉନଲୋଡ୍ କରନ୍ତୁ · v1.3"],
  "Common questions":["Common questions","आम सवाल","ସାଧାରଣ ପ୍ରଶ୍ନ"],
  "Support local mothers. Enjoy home-style meals nearby.":["Support local mothers. Enjoy home-style meals nearby.","स्थानीय माताओं का साथ दें। पास में घर जैसा खाना पाएँ।","ସ୍ଥାନୀୟ ମା’ମାନଙ୍କୁ ସହଯୋଗ କରନ୍ତୁ। ପାଖରେ ଘରୋଇ ଭୋଜନ ପାଆନ୍ତୁ।"],
  "Android v1.3 · Android 7 or newer.":["Android v1.3 · Android 7 or newer.","Android v1.3 · Android 7 या नया संस्करण।","Android v1.3 · Android 7 କିମ୍ବା ନୂଆ ସଂସ୍କରଣ।"],
