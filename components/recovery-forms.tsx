@@ -1,6 +1,6 @@
 "use client";
 
-import { UiText } from "@/components/ui-language";
+import { UiText, useUiLanguage } from "@/components/ui-language";
 import { useState, type FormEvent } from "react";
 import { afterSignIn } from "@/lib/kitchen-handoff";
 import { ResendVerificationForm } from "@/components/auth-forms";
@@ -17,6 +17,8 @@ async function readResponse(response: Response) {
 }
 
 export function PasswordSignInForm({ kitchen }: { kitchen?: string }) {
+  const {t}=useUiLanguage();
+  const [showPassword,setShowPassword]=useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
@@ -39,15 +41,15 @@ export function PasswordSignInForm({ kitchen }: { kitchen?: string }) {
     }
   }
 
-  return <>
-    <span className="eyebrow"><UiText text="Email sign in"/></span><h2><UiText text="Sign in"/></h2>
+  return <div className="auth-signin-content">
+    <span className="eyebrow"><UiText text="Email sign in"/></span><h2><UiText text="Welcome back"/></h2><p className="auth-signin-intro"><UiText text="Sign in to continue with your Paustik account."/></p>
     {kitchen && <p className="form-note"><UiText text="After customer sign-in, your selected kitchen will reopen."/></p>}
 
     {error && <Message>{error}</Message>}
     <form method="post" onSubmit={submit}>
       <div className="form-grid">
-        <div className="field full"><label htmlFor="password-login-email"><UiText text="Email address"/></label><input id="password-login-email" name="email" type="email" autoComplete="email" required maxLength={254} /></div>
-        <div className="field full"><label htmlFor="password-login-password"><UiText text="Password"/></label><input id="password-login-password" name="password" type="password" autoComplete="current-password" required minLength={8} maxLength={72} /></div>
+        <div className="field full"><label htmlFor="password-login-email"><UiText text="Email address"/></label><div className="auth-input-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m3 7 9 6 9-6"/></svg><input id="password-login-email" name="email" type="email" autoComplete="email" placeholder="you@example.com" required maxLength={254} /></div></div>
+        <div className="field full"><label htmlFor="password-login-password"><UiText text="Password"/></label><div className="auth-input-wrap has-password-toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><input id="password-login-password" name="password" type={showPassword?"text":"password"} autoComplete="current-password" placeholder={t("Enter your password")} aria-describedby="password-login-hint" required minLength={8} maxLength={72} /><button type="button" className="auth-password-toggle" aria-controls="password-login-password" aria-pressed={showPassword} onClick={()=>setShowPassword(value=>!value)}><UiText text={showPassword?"Hide":"Show"}/></button></div><small id="password-login-hint"><UiText text="8+ characters with uppercase, lowercase and a number."/></small></div>
       </div>
       <div className="auth-links"><Link className="text-link" href="/forgot-password"><UiText text="Forgot password?"/></Link></div>
       <button className="button form-submit" type="submit" disabled={busy}><UiText text={busy ? "Signing in…" : "Sign in"}/><span aria-hidden="true">→</span></button>
@@ -55,7 +57,7 @@ export function PasswordSignInForm({ kitchen }: { kitchen?: string }) {
     <p className="form-footer"><Link href="/sign-up"><UiText text="Create account"/></Link> · <Link href="/admin-sign-in"><UiText text="Admin sign in"/></Link></p>
     <details><summary><UiText text="Resend confirmation email"/></summary><ResendVerificationForm /></details>
 
-  </>;
+  </div>;
 }
 
 export function ForgotPasswordForm() {

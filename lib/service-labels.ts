@@ -7,6 +7,11 @@ for(const key of ["One-time meals","One-time meal","Order a Meal","Explore one-t
 for(const key of ["Homemade products","Homemade Foods"])
  labels[key]=["Homemade Foods","घर के बने खाद्य पदार्थ","ଘର ତିଆରି ଖାଦ୍ୟ"];
 Object.assign(labels,{
+ "Coming soon · Android download available now":["Coming soon · Android download available now","जल्द आ रहा है · Android डाउनलोड अभी उपलब्ध है","ଶୀଘ୍ର ଆସୁଛି · Android ଡାଉନଲୋଡ୍ ଏବେ ଉପଲବ୍ଧ"],
+ "Sign in to continue with your Paustik account.":["Sign in to continue with your Paustik account.","अपने Paustik खाते के साथ आगे बढ़ने के लिए साइन इन करें।","ନିଜ Paustik ଆକାଉଣ୍ଟ ସହ ଆଗକୁ ବଢ଼ିବାକୁ ସାଇନ୍ ଇନ୍ କରନ୍ତୁ।"],
+ "Enter your password":["Enter your password","अपना पासवर्ड डालें","ନିଜ ପାସୱାର୍ଡ ଦିଅନ୍ତୁ"],
+ "Show":["Show","दिखाएँ","ଦେଖାନ୍ତୁ"],
+ "Hide":["Hide","छिपाएँ","ଲୁଚାନ୍ତୁ"],
  "This account has pilot test credit or test payments. Contact support for wallet review before live checkout.":["This account has pilot test credit or test payments. Contact support for wallet review before live checkout.","इस खाते में पायलट टेस्ट क्रेडिट या टेस्ट भुगतान हैं। लाइव चेकआउट से पहले वॉलेट समीक्षा के लिए सहायता से संपर्क करें।","ଏହି ଆକାଉଣ୍ଟରେ ପାଇଲଟ୍ ଟେଷ୍ଟ କ୍ରେଡିଟ୍ କିମ୍ବା ଟେଷ୍ଟ ଦେୟ ଅଛି। ଲାଇଭ୍ ଚେକ୍‌ଆଉଟ୍ ପୂର୍ବରୁ ୱାଲେଟ୍ ସମୀକ୍ଷା ପାଇଁ ସହାୟତା ସହ ଯୋଗାଯୋଗ କରନ୍ତୁ।"],
  "Payment is still pending. Start preparation after payment confirmation.":["Payment is still pending. Start preparation after payment confirmation.","भुगतान अभी बाकी है। पुष्टि होने के बाद तैयारी शुरू करें।","ଦେୟ ଏବେ ବକେୟା ଅଛି। ଦେୟ ନିଶ୍ଚିତ ହେବା ପରେ ପ୍ରସ୍ତୁତି ଆରମ୍ଭ କରନ୍ତୁ।"],
  "This checkout belongs to the previous payment setup. Contact support before starting a new payment.":["This checkout belongs to the previous payment setup. Contact support before starting a new payment.","यह चेकआउट पुराने भुगतान सेटअप का है। नया भुगतान शुरू करने से पहले सहायता से संपर्क करें।","ଏହି ଚେକ୍‌ଆଉଟ୍ ପୂର୍ବ ଦେୟ ସେଟଅପ୍‌ର। ନୂଆ ଦେୟ ଆରମ୍ଭ ପୂର୍ବରୁ ସହାୟତା ସହ ଯୋଗାଯୋଗ କରନ୍ତୁ।"],
