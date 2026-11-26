@@ -7,6 +7,8 @@ for(const key of ["One-time meals","One-time meal","Order a Meal","Explore one-t
 for(const key of ["Homemade products","Homemade Foods"])
  labels[key]=["Homemade Foods","घर के बने खाद्य पदार्थ","ଘର ତିଆରି ଖାଦ୍ୟ"];
 Object.assign(labels,{
+ "Start a food business from home.":["Start a food business from home.","घर से अपना भोजन व्यवसाय शुरू करें।","ଘରୁ ନିଜ ଖାଦ୍ୟ ବ୍ୟବସାୟ ଆରମ୍ଭ କରନ୍ତୁ।"],
+ "Cook from home, set your availability and reach nearby customers. Turn your cooking skills into an income opportunity with Paustik.":["Cook from home, set your availability and reach nearby customers. Turn your cooking skills into an income opportunity with Paustik.","घर से खाना बनाएँ, अपनी उपलब्धता तय करें और आसपास के ग्राहकों तक पहुँचें। Paustik के साथ अपने हुनर को कमाई के अवसर में बदलें।","ଘରେ ରୋଷେଇ କରନ୍ତୁ, ନିଜ ସମୟ ଧାର୍ଯ୍ୟ କରନ୍ତୁ ଏବଂ ନିକଟସ୍ଥ ଗ୍ରାହକଙ୍କ ପାଖରେ ପହଞ୍ଚନ୍ତୁ। Paustik ସହ ନିଜ ରୋଷେଇ ଦକ୍ଷତାକୁ ଆୟର ସୁଯୋଗରେ ପରିଣତ କରନ୍ତୁ।"],
  "Coming soon · Android download available now":["Coming soon · Android download available now","जल्द आ रहा है · Android डाउनलोड अभी उपलब्ध है","ଶୀଘ୍ର ଆସୁଛି · Android ଡାଉନଲୋଡ୍ ଏବେ ଉପଲବ୍ଧ"],
  "Sign in to continue with your Paustik account.":["Sign in to continue with your Paustik account.","अपने Paustik खाते के साथ आगे बढ़ने के लिए साइन इन करें।","ନିଜ Paustik ଆକାଉଣ୍ଟ ସହ ଆଗକୁ ବଢ଼ିବାକୁ ସାଇନ୍ ଇନ୍ କରନ୍ତୁ।"],
  "Enter your password":["Enter your password","अपना पासवर्ड डालें","ନିଜ ପାସୱାର୍ଡ ଦିଅନ୍ତୁ"],
