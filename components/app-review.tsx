@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import {serviceLabel} from "@/lib/service-labels";
 import { useState } from "react";
 import { useUiLanguage } from "@/components/ui-language";
 
@@ -15,7 +16,7 @@ const stages: Copy[] = [
 /** Isolated teaching sandbox. Never creates accounts, orders, payments or messages. */
 export function AppReview({ initialRole = "customer" }: { initialRole?: Role }) {
   const { language } = useUiLanguage();
-  const c = (copy: Copy) => copy[language === "hi" ? 1 : language === "or" ? 2 : 0];
+  const c = (copy: Copy) => serviceLabel(copy[0],language) ?? copy[language === "hi" ? 1 : language === "or" ? 2 : 0];
   const [role, setRole] = useState<Role>(initialRole);
   const [declined,setDeclined]=useState(false);
   const [mode, setMode] = useState("meal");

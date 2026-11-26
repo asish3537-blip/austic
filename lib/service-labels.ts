@@ -7,6 +7,8 @@ for(const key of ["One-time meals","One-time meal","Order a Meal","Explore one-t
 for(const key of ["Homemade products","Homemade Foods"])
  labels[key]=["Homemade Foods","घर के बने खाद्य पदार्थ","ଘର ତିଆରି ଖାଦ୍ୟ"];
 Object.assign(labels,{
+ "Join Paustik":["Join Paustik","Paustik से जुड़ें","Paustik ରେ ଯୋଗ ଦିଅନ୍ତୁ"],
+ "Disclaimers & information":["Disclaimers & information","अस्वीकरण और जानकारी","ଅସ୍ୱୀକରଣ ଓ ସୂଚନା"],
  "Welcome to Paustik":["Welcome to Paustik","Paustik में आपका स्वागत है","Paustik କୁ ସ୍ୱାଗତ"],
  "Continue browsing":["Continue browsing","अभी वेबसाइट देखें","ଏବେ ୱେବସାଇଟ୍ ଦେଖନ୍ତୁ"],
  "Partner accounts require Paustik approval.":["Partner accounts require Paustik approval.","पार्टनर खातों के लिए Paustik की मंजूरी चाहिए।","ପାର୍ଟନର ଆକାଉଣ୍ଟ ପାଇଁ Paustik ଅନୁମୋଦନ ଆବଶ୍ୟକ।"],
