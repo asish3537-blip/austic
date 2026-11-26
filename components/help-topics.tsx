@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import {MealFaq} from "@/components/meal-faq";
 import {useEffect} from "react";
 import {useUiLanguage,UiText} from "@/components/ui-language";
 import {WHATSAPP_SUPPORT_URL} from "@/lib/whatsapp-support";
@@ -30,7 +31,7 @@ const topics:{id:string;title:Copy;steps:Copy[];href:string}[]=[
  ["Pack food at home. Choose your approved school, dates and pickup address. School reception and route must be confirmed before dispatch.","घर पर भोजन पैक करें। स्वीकृत स्कूल, तारीख और पता चुनें। रवाना होने से पहले स्कूल रिसेप्शन और मार्ग की पुष्टि ज़रूरी है।","ଘରେ ଭୋଜନ ପ୍ୟାକ୍ କରନ୍ତୁ। ଅନୁମୋଦିତ ସ୍କୁଲ୍, ତାରିଖ ଓ ଠିକଣା ବାଛନ୍ତୁ। ପଠାଇବା ପୂର୍ବରୁ ସ୍କୁଲ୍ ରିସେପ୍ସନ୍ ଓ ରୁଟ୍ ନିଶ୍ଚିତ ହେବା ଆବଶ୍ୟକ।"],
  ["Share the home pickup code at collection. An authorised school adult confirms reception; this does not confirm the child has eaten.","पिकअप पर घर का कोड दें। अधिकृत स्कूल वयस्क प्राप्ति की पुष्टि करता है; इसका अर्थ बच्चे ने खाना खाया नहीं है।","ପିକଅପ୍ ସମୟରେ ଘରର କୋଡ୍ ଦିଅନ୍ତୁ। ଅନୁମୋଦିତ ସ୍କୁଲ୍ ବୟସ୍କ ବ୍ୟକ୍ତି ପ୍ରାପ୍ତି ନିଶ୍ଚିତ କରନ୍ତି; ଏହା ଶିଶୁ ଖାଇସାରିଛି ବୋଲି ନୁହେଁ।"]]},
  {id:"install-app",title:["Install the app","ऐप इंस्टॉल करें","ଆପ୍ ଇନ୍‌ଷ୍ଟଲ୍ କରନ୍ତୁ"],href:"/install",steps:[
- ["Android: download the APK or use Chrome’s Install app. iPhone/iPad: Safari → Share → Add to Home Screen. You can also browse without installing.","Android: APK डाउनलोड करें या Chrome से ऐप इंस्टॉल करें। iPhone/iPad: Safari → शेयर → होम स्क्रीन पर जोड़ें। बिना इंस्टॉल किए वेबसाइट भी चला सकते हैं।","Android: APK ଡାଉନଲୋଡ୍ କିମ୍ବା Chrome ରୁ ଆପ୍ ଇନ୍‌ଷ୍ଟଲ୍ କରନ୍ତୁ। iPhone/iPad: Safari → Share → Add to Home Screen। ଇନ୍‌ଷ୍ଟଲ୍ ନକରି ମଧ୍ୟ ୱେବସାଇଟ୍ ବ୍ୟବହାର କରିପାରିବେ।"]]}
+ ["Download the Android app and open the installer on your phone. You can also use Paustik directly on this website.","Android ऐप डाउनलोड करके फोन पर इंस्टॉलर खोलें। आप इसी वेबसाइट पर भी Paustik इस्तेमाल कर सकते हैं।","Android ଆପ୍ ଡାଉନଲୋଡ୍ କରି ଫୋନ୍‌ରେ ଇନ୍‌ଷ୍ଟଲର୍ ଖୋଲନ୍ତୁ। ଏହି ୱେବସାଇଟ୍‌ରେ ମଧ୍ୟ Paustik ବ୍ୟବହାର କରିପାରିବେ।"]]}
 ];
 export function HelpTopics(){
  useEffect(()=>{
@@ -45,6 +46,6 @@ export function HelpTopics(){
  },[]);
  const {language}=useUiLanguage(); const i=language==="hi"?1:language==="or"?2:0; const copy=(v:Copy)=>v[i];
  return <main className="help-simple"><header><h1>{copy(["How can we help?","हम कैसे मदद करें?","ଆମେ କିପରି ସାହାଯ୍ୟ କରିବୁ?"])}</h1><p>{copy(["Choose a topic for quick steps.","छोटे निर्देशों के लिए विषय चुनें।","ସଂକ୍ଷିପ୍ତ ପଦକ୍ଷେପ ପାଇଁ ବିଷୟ ବାଛନ୍ତୁ।"])}</p><div className="help-quick-actions"><Link className="button" href="/sign-in"><UiText text="Sign in"/></Link><Link className="button button-light" href="/sign-up"><UiText text="Create your account"/></Link><a href={WHATSAPP_SUPPORT_URL} target="_blank" rel="noopener noreferrer"><UiText text="Chat on WhatsApp"/> ↗</a></div></header>
- <section aria-label={copy(["Help topics","सहायता विषय","ସହାୟତା ବିଷୟ"])}>{topics.map(topic=><details key={topic.id} id={topic.id}><summary>{copy(topic.title)}</summary><ol>{topic.steps.map((step,n)=><li key={n}>{copy(step)}</li>)}</ol><Link href={topic.href}>{copy(["Open →","खोलें →","ଖୋଲନ୍ତୁ →"])}</Link></details>)}</section>
+ <section aria-label={copy(["Help topics","सहायता विषय","ସହାୟତା ବିଷୟ"])}><MealFaq/>{topics.map(topic=><details key={topic.id} id={topic.id}><summary>{copy(topic.title)}</summary><ol>{topic.steps.map((step,n)=><li key={n}>{copy(step)}</li>)}</ol><Link href={topic.href}>{copy(["Open →","खोलें →","ଖୋଲନ୍ତୁ →"])}</Link></details>)}</section>
  <footer><Link href="/app-demo"><UiText text="App preview"/></Link><Link href="/mother-guide"><UiText text="Start your Mother Kitchen"/></Link><Link href="/admin-sign-in"><UiText text="Admin sign in"/></Link></footer></main>;
 }
