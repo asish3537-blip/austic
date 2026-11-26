@@ -28,6 +28,7 @@ import "./pilot-refresh.css";
 import "./action-first.css";
 import "./website-alignment.css";
 import "./customer-entry.css";
+import "./public-info.css";
 import {HeaderAccountLink} from "@/components/header-account-link";
 
 export const metadata: Metadata = {

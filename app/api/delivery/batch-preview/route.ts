@@ -24,7 +24,7 @@ export async function POST(request: Request) {
     const result = await prisma.$transaction(async tx => {
       await lockCourier(tx, agent.id);
       const candidates = await tx.delivery.findMany({ where: { id: { in: parsed.data.deliveryIds } }, include: { order: { include: { kitchen: true, address: true, items: true, bulkDeliveryRequest: true } } } });
-      if (candidates.length !== new Set(parsed.data.deliveryIds).size || candidates.some(delivery => delivery.agentId || delivery.status !== "ASSIGNED" || delivery.order.status !== "READY_FOR_PICKUP" || delivery.order.bulkDeliveryRequest || !courierCovers(agent, delivery.order.kitchen))) throw new DispatchError("One job is unavailable or needs an arranged bulk vehicle.");
+      if (candidates.length !== new Set(parsed.data.deliveryIds).size || candidates.some(delivery => delivery.agentId || delivery.status !== "ASSIGNED" || delivery.order.status !== "READY_FOR_PICKUP" || delivery.order.paymentStatus !== "CAPTURED" || delivery.order.bulkDeliveryRequest || !courierCovers(agent, delivery.order.kitchen))) throw new DispatchError("One job is unavailable or needs an arranged bulk vehicle.");
       if(await tx.courierOfferDecline.count({where:{agentId:agent.id,orderId:{in:candidates.map(d=>d.orderId)}}}))throw new DispatchError("You declined one of these offers. Refresh your jobs.");
       const active = await assertBatchCapacity(tx, agent.id, candidates, agent.mealCapacity, policy);
       const all = [...active, ...candidates];

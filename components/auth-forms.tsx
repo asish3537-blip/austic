@@ -171,6 +171,7 @@ export function SignUpForm({ initialRole = "CUSTOMER" }: { initialRole?: Role })
         <div className="field"><label htmlFor="signup-pin"><UiText text={"PIN code"}/></label><input id="signup-pin" name="pinCode" autoComplete="postal-code" required minLength={4} maxLength={12} /></div>
       </div>
       {role !== "CUSTOMER" && <p className="form-note"><UiText text={"Your application will be reviewed after email confirmation."}/></p>}
+      <p className="form-note"><Link href="/privacy" target="_blank" rel="noopener noreferrer"><UiText text="Privacy notice"/> ↗</Link></p>
       <button className="button form-submit" type="submit" disabled={busy}>{busy ? "Creating account…" : <UiText text="Create account"/>}<span aria-hidden="true">→</span></button>
     </form>}
     <p className="form-footer"><UiText text={"Already registered?"}/>{" "}<Link className="text-link" href="/sign-in"><UiText text="Sign in"/></Link></p>

@@ -1,3 +1,4 @@
+import {razorpayMode,razorpayOrderReference} from "@/lib/razorpay-order-reference";
 import { scheduleEntityPush } from "@/lib/web-push";
 export { validRazorpaySignature } from "@/lib/razorpay-signature";
 import { prisma } from "@/lib/prisma";
@@ -19,7 +20,11 @@ export async function razorpayRequest(path: string, data?: unknown) {
   return response.json();
 }
 export async function recordRazorpayReceipt(providerOrderId: string, paymentId: string) {
-  const row = await prisma.payment.findUnique({ where: { idempotencyKey: "razorpay:" + providerOrderId }, include: { order: true } });
+  const config=razorpayConfig();if(!config)throw new Error("Razorpay is not configured.");
+  const mode=razorpayMode(config.id);
+  let matched = await prisma.payment.findUnique({ where: { idempotencyKey: razorpayOrderReference(mode,providerOrderId) }, include: { order: true } });
+  if(!matched&&mode==="test")matched=await prisma.payment.findUnique({where:{idempotencyKey:"razorpay:"+providerOrderId},include:{order:true}});
+  const row=matched;
   if (!row) throw new Error("Unknown payment order.");
   const remote = await razorpayRequest("payments/" + encodeURIComponent(paymentId));
   if (remote.id !== paymentId || remote.order_id !== providerOrderId || remote.currency !== "INR" || remote.amount !== Number(row.amount.mul(100).toFixed(0))) throw new Error("Payment details do not match this order.");
@@ -32,7 +37,7 @@ export async function recordRazorpayReceipt(providerOrderId: string, paymentId: 
     await tx.payment.update({ where: { id: row.id }, data: { provider: "razorpay", providerPaymentId: paymentId, status: "CAPTURED", capturedAt: new Date() } });
     const closed = ["CANCELLED", "FAILED"].includes(current.order.status);
     await tx.order.update({ where: { id: row.orderId }, data: { paymentStatus: "CAPTURED" } });
-    await tx.paymentLedgerEntry.create({ data: { paymentId: row.id, orderId: row.orderId, category: "CUSTOMER_CHARGE", amount: row.amount, currency: "INR", reference: "razorpay:" + paymentId, metadata: { providerOrderId, refundReviewRequired: closed } } });
+    await tx.paymentLedgerEntry.create({ data: { paymentId: row.id, orderId: row.orderId, category: "CUSTOMER_CHARGE", amount: row.amount, currency: "INR", reference: "razorpay:" + paymentId, metadata: { providerOrderId, paymentMode:mode, refundReviewRequired: closed } } });
     await tx.orderEvent.create({ data: { orderId: row.orderId, status: current.order.status, detail: closed ? "Razorpay receipt confirmed after order closure. Operations must review a refund." : "Razorpay confirmed the captured payment." } });
     await tx.notification.create({ data: { userId: current.order.customerId, kind: "PAYMENT", entityId: row.orderId, title: closed ? "Payment needs review" : "Payment received", body: closed ? "Payment arrived after this order closed. Contact Paustik for a refund review." : "Payment received for " + current.order.orderNumber + "." } });
     return { paid: true, refundReviewRequired: closed };

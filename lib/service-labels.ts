@@ -7,6 +7,10 @@ for(const key of ["One-time meals","One-time meal","Order a Meal","Explore one-t
 for(const key of ["Homemade products","Homemade Foods"])
  labels[key]=["Homemade Foods","घर के बने खाद्य पदार्थ","ଘର ତିଆରି ଖାଦ୍ୟ"];
 Object.assign(labels,{
+ "Payment is still pending. Start preparation after payment confirmation.":["Payment is still pending. Start preparation after payment confirmation.","भुगतान अभी बाकी है। पुष्टि होने के बाद तैयारी शुरू करें।","ଦେୟ ଏବେ ବକେୟା ଅଛି। ଦେୟ ନିଶ୍ଚିତ ହେବା ପରେ ପ୍ରସ୍ତୁତି ଆରମ୍ଭ କରନ୍ତୁ।"],
+ "This checkout belongs to the previous payment setup. Contact support before starting a new payment.":["This checkout belongs to the previous payment setup. Contact support before starting a new payment.","यह चेकआउट पुराने भुगतान सेटअप का है। नया भुगतान शुरू करने से पहले सहायता से संपर्क करें।","ଏହି ଚେକ୍‌ଆଉଟ୍ ପୂର୍ବ ଦେୟ ସେଟଅପ୍‌ର। ନୂଆ ଦେୟ ଆରମ୍ଭ ପୂର୍ବରୁ ସହାୟତା ସହ ଯୋଗାଯୋଗ କରନ୍ତୁ।"],
+ "Privacy notice":["Privacy notice","गोपनीयता सूचना","ଗୋପନୀୟତା ସୂଚନା"],
+ "Community partners":["Community partners","सामुदायिक पार्टनर","ସମୁଦାୟ ପାର୍ଟନର"],
  "Download Android app":["Download Android app","Android ऐप डाउनलोड करें","Android ଆପ୍ ଡାଉନଲୋଡ୍ କରନ୍ତୁ"],
  "Download Android app · v1.3":["Download Android app · v1.3","Android ऐप डाउनलोड करें · v1.3","Android ଆପ୍ ଡାଉନଲୋଡ୍ କରନ୍ତୁ · v1.3"],
  "Common questions":["Common questions","आम सवाल","ସାଧାରଣ ପ୍ରଶ୍ନ"],

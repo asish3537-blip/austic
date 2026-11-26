@@ -1,3 +1,4 @@
+import {paymentBlocksPreparation} from "@/lib/order-preparation";
 import {restoreUnpreparedCapacity} from "@/lib/restore-capacity";
 import { scheduleCourierOffers } from "@/lib/courier-offers";
 import { scheduleEntityPush } from "@/lib/web-push";
@@ -27,6 +28,7 @@ export async function PATCH(request: Request, context: { params: Promise<{ order
     if (!mother) return NextResponse.json({ error: "Mother profile not found." }, { status: 404 });
     const order = await prisma.order.findFirst({ where: { id: orderId, motherId: mother.id }, include: { customer: { select: { id: true } }, items: true } });
     if (!order) return NextResponse.json({ error: "Order not found." }, { status: 404 });
+    if(paymentBlocksPreparation(parsed.data.status,order.paymentStatus))return NextResponse.json({error:"Payment is still pending. Start preparation after payment confirmation."},{status:409});
     const transitions: Record<string, string[]> = {
       ORDER_PLACED: ["CONFIRMED", "CANCELLED"],
       CONFIRMED: ["PREPARING", "CANCELLED"],
@@ -39,6 +41,7 @@ export async function PATCH(request: Request, context: { params: Promise<{ order
       await lockWallet(tx, order.customerId);
       const live = await tx.order.findUniqueOrThrow({ where: { id: order.id }, include: { payments: true } });
       if (!transitions[live.status]?.includes(parsed.data.status)) throw new Error("ORDER_CHANGED");
+      if(paymentBlocksPreparation(parsed.data.status,live.paymentStatus))throw new Error("ORDER_CHANGED");
       if (parsed.data.status === "CANCELLED" && live.payments.some(payment => payment.status === "CAPTURED" || payment.provider === "razorpay")) throw new Error("PAYMENT_REVIEW_REQUIRED");
       let kitchenWalletRefund=0;
       if (parsed.data.status === "CANCELLED") {

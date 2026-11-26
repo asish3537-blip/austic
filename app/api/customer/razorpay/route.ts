@@ -1,3 +1,4 @@
+import {razorpayMode,razorpayOrderReference,readRazorpayOrderReference} from "@/lib/razorpay-order-reference";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getCurrentUser } from "@/lib/auth";
@@ -19,12 +20,13 @@ export async function POST(request: Request) {
   const input = schema.safeParse(await request.json().catch(() => null));
   if (!input.success) return NextResponse.json({ error: "Check the payment request." }, { status: 400, headers });
   const config = razorpayConfig();
-  if (!config) return NextResponse.json({ error: "Online checkout is temporarily unavailable." }, { status: 503, headers });
+  if (!config || !process.env.RAZORPAY_WEBHOOK_SECRET?.trim()) return NextResponse.json({ error: "Online checkout is temporarily unavailable." }, { status: 503, headers });
+  const mode=razorpayMode(config.id);
   try {
     if (input.data.action === "confirm" || input.data.action === "reconcile") {
 
       const local = await prisma.payment.findFirst({ where: { orderId: input.data.orderId, provider: "razorpay", order: { customerId: user.id } } });
-      const providerOrderId = local?.idempotencyKey?.replace(/^razorpay:/, "");
+      const providerOrderId = readRazorpayOrderReference(local?.idempotencyKey,mode);
       if (!providerOrderId) return NextResponse.json({ paid: false }, { headers });
       if (input.data.action === "reconcile") {
         const list = await razorpayRequest("orders/" + encodeURIComponent(providerOrderId) + "/payments");
@@ -43,19 +45,20 @@ export async function POST(request: Request) {
       if (pending.length !== 1 || pending[0].amount.lte(0) || pending[0].amount.gt(order.totalAmount)) throw new Error("Contact support to reconcile this order.");
       const payment = pending[0];
       const amount = Number(payment.amount.mul(100).toFixed(0));
-      let providerOrderId = payment.provider === "razorpay" ? payment.idempotencyKey?.replace(/^razorpay:/, "") : null;
+      let providerOrderId = payment.provider === "razorpay" ? readRazorpayOrderReference(payment.idempotencyKey,mode) : null;
+      if(payment.provider==="razorpay"&&payment.idempotencyKey&&!providerOrderId)throw new Error("PAYMENT_MODE_CHANGED");
       if (!providerOrderId) {
         const remote = await razorpayRequest("orders", { amount, currency: "INR", receipt: payment.id, partial_payment: false });
         if (!/^order_[A-Za-z0-9]+$/.test(remote.id) || remote.amount !== amount || remote.currency !== "INR") throw new Error("Checkout response did not match the order.");
         providerOrderId = remote.id as string;
-        await tx.payment.update({ where: { id: payment.id }, data: { provider: "razorpay", idempotencyKey: "razorpay:" + providerOrderId } });
+        await tx.payment.update({ where: { id: payment.id }, data: { provider: "razorpay", idempotencyKey: razorpayOrderReference(mode,providerOrderId) } });
       }
       return { key: config.id, providerOrderId, amount, currency: "INR", description: order.orderNumber };
     }, { timeout: 20000 });
     return NextResponse.json(result, { headers });
   } catch (error) {
     console.error("Razorpay checkout failed.", error instanceof Error ? error.name : "unknown");
-    return NextResponse.json({ error: "Could not complete this payment step. Refresh your orders or contact support." }, { status: 409, headers });
+    return NextResponse.json({ error: error instanceof Error&&error.message==="PAYMENT_MODE_CHANGED"?"This checkout belongs to the previous payment setup. Contact support before starting a new payment.":"Could not complete this payment step. Refresh your orders or contact support." }, { status: 409, headers });
   }
 }
 

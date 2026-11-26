@@ -36,7 +36,7 @@ export async function GET() {
     const bounds = courierKitchenBounds(agent);
     const [available, assigned, upcoming] = await Promise.all([
       !bounds ? Promise.resolve([]) : prisma.delivery.findMany({
-        where: { agentId: null, status: "ASSIGNED", order: { courierDeclines: { none: { agentId: agent.id } }, status: "READY_FOR_PICKUP", orderNumber: { not: { startsWith: "TEST-LIFE-" } }, bulkDeliveryRequest: null, kitchen: bounds! } },
+        where: { agentId: null, status: "ASSIGNED", order: { courierDeclines: { none: { agentId: agent.id } }, status: "READY_FOR_PICKUP", paymentStatus:"CAPTURED", orderNumber: { not: { startsWith: "TEST-LIFE-" } }, bulkDeliveryRequest: null, kitchen: bounds! } },
         orderBy: { createdAt: "asc" }, take: 100,
         include: { order: { include: { kitchen: true, address: true, items: { select: { mealName: true, quantity: true } } } } },
       }),
@@ -51,7 +51,7 @@ export async function GET() {
     const zones = await prisma.kitchen.findMany({ where: { verificationStatus: "APPROVED", isAcceptingOrders: true, latitude: { not: null }, longitude: { not: null }, mother: { user: { status: "ACTIVE" } } }, select: { id: true, name: true, locality: true, city: true }, take: 100, orderBy: { name: "asc" } });
     const mapJob = (delivery: typeof available[number], isAssigned: boolean) => ({
       estimatedPay: estimateShares(Number(delivery.order.subtotal), Number(delivery.order.deliveryFee), orderDistance(delivery.order.kitchen, delivery.order.address), policy, delivery.estimatedPayout == null ? null : Number(delivery.estimatedPayout)).courier,
-      routeDistanceKm: orderDistance(delivery.order.kitchen, delivery.order.address), alertAt: delivery.updatedAt.toISOString(), isUpcoming: delivery.status==="ASSIGNED"&&delivery.order.status!=="READY_FOR_PICKUP",
+      routeDistanceKm: orderDistance(delivery.order.kitchen, delivery.order.address), alertAt: delivery.updatedAt.toISOString(), isUpcoming: delivery.status==="ASSIGNED"&&(delivery.order.status!=="READY_FOR_PICKUP"||delivery.order.paymentStatus!=="CAPTURED"),
       batchId: delivery.batchId, mealCount: delivery.order.items.reduce((sum, item) => sum + item.quantity, 0),
       deliveryId: delivery.id, orderId: delivery.order.id, orderNumber: delivery.order.orderNumber,
       deliveryStatus: delivery.status, orderStatus: delivery.order.status, trackingReference: delivery.trackingReference,
@@ -100,14 +100,14 @@ export async function POST(request: Request) {
       if (candidates.length !== ids.length) throw new DispatchError("One of these delivery requests is unavailable.");
       if (candidates.every(d => d.agentId === agent.id && ["ACCEPTED", "GOING_TO_PICKUP"].includes(d.status))) return candidates.map(d => d.orderId);
       if(await tx.courierOfferDecline.count({where:{agentId:agent.id,orderId:{in:candidates.map(d=>d.orderId)}}}))throw new DispatchError("You declined this offer. It remains available to other couriers.");
-      if (candidates.some(d => !canAcceptReadyDelivery({agentId:d.agentId,status:d.status,orderStatus:d.order.status,bulk:Boolean(d.order.bulkDeliveryRequest),orderNumber:d.order.orderNumber,inArea:courierCovers(agent,d.order.kitchen)},agent.id))) throw new DispatchError("One job changed or needs a separately arranged bulk delivery. Refresh your offers.");
+      if (candidates.some(d => d.order.paymentStatus!=="CAPTURED" || !canAcceptReadyDelivery({agentId:d.agentId,status:d.status,orderStatus:d.order.status,bulk:Boolean(d.order.bulkDeliveryRequest),orderNumber:d.order.orderNumber,inArea:courierCovers(agent,d.order.kitchen)},agent.id))) throw new DispatchError("One job changed or needs a separately arranged bulk delivery. Refresh your offers.");
       const active = await assertBatchCapacity(tx, agent.id, candidates, agent.mealCapacity, dispatch);
       const batchId = active[0]?.batchId ?? randomUUID();
       await tx.delivery.updateMany({ where: { id: { in: active.map(d => d.id) } }, data: { batchId } });
       for (const candidate of candidates) {
         const km = orderDistance(candidate.order.kitchen, candidate.order.address);
         const pay = estimateShares(Number(candidate.order.subtotal), Number(candidate.order.deliveryFee), km, policy,candidate.estimatedPayout==null?null:Number(candidate.estimatedPayout)).courier;
-        const claimed = await tx.delivery.updateMany({ where: { id: candidate.id, OR:[{agentId:null},{agentId:agent.id}], status: "ASSIGNED", order: { status: "READY_FOR_PICKUP" } }, data: { batchId, handoverNonce: newHandoverNonce(), estimatedPayout: pay, estimatedDistanceKm: km, estimationRule: { ...policy, method: "STRAIGHT_LINE_ESTIMATE" }, agentId: agent.id, status: "ACCEPTED", acceptedAt: new Date(), assignedAt: new Date() } });
+        const claimed = await tx.delivery.updateMany({ where: { id: candidate.id, OR:[{agentId:null},{agentId:agent.id}], status: "ASSIGNED", order: { status: "READY_FOR_PICKUP", paymentStatus:"CAPTURED" } }, data: { batchId, handoverNonce: newHandoverNonce(), estimatedPayout: pay, estimatedDistanceKm: km, estimationRule: { ...policy, method: "STRAIGHT_LINE_ESTIMATE" }, agentId: agent.id, status: "ACCEPTED", acceptedAt: new Date(), assignedAt: new Date() } });
         if (claimed.count !== 1) throw new DispatchError("Another courier accepted one of these orders. No part of this batch was assigned.");
         await tx.order.update({ where: { id: candidate.orderId }, data: { status: "DELIVERY_ASSIGNED" } });
         await tx.orderEvent.create({ data: { orderId: candidate.orderId, actorUserId: user.id, status: "DELIVERY_ASSIGNED", detail: "Courier accepted this order in a local collection batch." } });
