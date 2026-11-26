@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 const features = [
   { icon: "menu", title: "Meal subscriptions", href: "/customer/dashboard?mode=subscription" },
-  { icon: "meal", title: "One-time specials", href: "/customer/dashboard?mode=once" },
+  { icon: "meal", title: "One-time meals", href: "/customer/dashboard?mode=once" },
   { icon: "people", title: "Mother Kitchens", href: "/app" },
   { icon: "shop", title: "Homemade products", href: "/customer/marketplace" },
   { icon: "pay", title: "Offers & wallet", href: "/customer/wallet" },

@@ -55,7 +55,7 @@ export function DeliveryWorkspace() {
       const requestedId=!requestedOfferHandled.current?new URLSearchParams(window.location.search).get("offer"):null;
       const requested=requestedId?offers.find((job:DeliveryJob)=>job.orderId===requestedId):null;
       requestedOfferHandled.current=true;
-      const fresh=offers.find((job:DeliveryJob)=>{const key=data.userScope+":"+job.deliveryId+":"+job.deliveryStatus+":"+(job.orderStatus==="READY_FOR_PICKUP"?"ready":"scheduled");let stored=false;try{stored=sessionStorage.getItem("paustik-offer:"+key)==="seen";}catch{}return !seen.current.has(key)&&!stored&&(!initialOffers.current||Date.now()-new Date(job.alertAt).getTime()<600000);});
+      const fresh=offers.find((job:DeliveryJob)=>{const key=data.userScope+":"+job.deliveryId+":"+job.deliveryStatus+":"+(job.orderStatus==="READY_FOR_PICKUP"?"ready":"scheduled");let stored=false;try{stored=sessionStorage.getItem("paustik-offer:"+key)==="seen";}catch{}return !seen.current.has(key)&&!stored&&(!initialOffers.current||(data.asOf?new Date(data.asOf).getTime():Date.now())-new Date(job.alertAt).getTime()<600000);});
       for(const job of offers){const key=data.userScope+":"+job.deliveryId+":"+job.deliveryStatus+":"+(job.orderStatus==="READY_FOR_PICKUP"?"ready":"scheduled");seen.current.add(key);try{sessionStorage.setItem("paustik-offer:"+key,"seen");}catch{}}
       initialOffers.current=false;
       setOffer(current=>requested||(current?(offers.find((j:DeliveryJob)=>j.orderId===current.orderId)||fresh||null):(fresh||null)));
@@ -78,6 +78,10 @@ export function DeliveryWorkspace() {
   }, [refresh]);
 
   useEffect(()=>{const dialog=modal.current;if(offer&&!dialog?.open)dialog?.showModal();if(!offer&&dialog?.open)dialog.close();},[offer]);
+  useEffect(()=>{
+    const openOffer=(event:Event)=>{const id=(event as CustomEvent<string>).detail;const job=[...jobs.available,...jobs.upcoming,...jobs.assigned.filter(item=>item.deliveryStatus==="ASSIGNED")].find(item=>item.orderId===id);if(job){setOfferError("");setOffer(job);}else setMessage("The delivery changed. Refresh your offers.");};
+    window.addEventListener("paustik-open-delivery-offer",openOffer);return()=>window.removeEventListener("paustik-open-delivery-offer",openOffer);
+  },[jobs]);
   async function availability(online:boolean){
     setAreaBusy(true);setAreaMessage("");
     try{

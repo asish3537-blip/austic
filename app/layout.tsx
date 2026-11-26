@@ -27,6 +27,8 @@ import "./editorial-home.css";
 import "./pilot-refresh.css";
 import "./action-first.css";
 import "./website-alignment.css";
+import "./customer-entry.css";
+import {HeaderAccountLink} from "@/components/header-account-link";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://paustik.in"),
@@ -61,6 +63,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             <SiteNavigation/>
             <div className="header-controls">
               <LanguageSelector />
+              <HeaderAccountLink/>
               <MobileNavigation>
                 <summary aria-label="Navigation menu"><span className="menu-icon" aria-hidden="true"><i></i><i></i><i></i></span><span><UiText text="Menu"/></span></summary>
                 <SiteNavigation mobile/>

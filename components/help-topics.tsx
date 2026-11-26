@@ -1,0 +1,50 @@
+"use client";
+import Link from "next/link";
+import {useEffect} from "react";
+import {useUiLanguage,UiText} from "@/components/ui-language";
+import {WHATSAPP_SUPPORT_URL} from "@/lib/whatsapp-support";
+type Copy=[string,string,string];
+const topics:{id:string;title:Copy;steps:Copy[];href:string}[]=[
+ {id:"account-setup",title:["Account & sign-in","खाता और साइन इन","ଆକାଉଣ୍ଟ ଓ ସାଇନ୍ ଇନ୍"],href:"/sign-in",steps:[
+ ["Create a customer account, confirm your email, then sign in with your password.","ग्राहक खाता बनाएँ, ईमेल सत्यापित करें और पासवर्ड से साइन इन करें।","ଗ୍ରାହକ ଆକାଉଣ୍ଟ ଖୋଲନ୍ତୁ, ଇମେଲ୍ ଯାଞ୍ଚ କରନ୍ତୁ ଓ ପାସୱାର୍ଡ ଦେଇ ସାଇନ୍ ଇନ୍ କରନ୍ତୁ।"],
+ ["Use Forgot password for recovery. Mother Kitchen and delivery applications have separate join pages.","पासवर्ड भूलने पर उसे रीसेट करें। किचन और डिलीवरी के लिए अलग पंजीकरण पेज हैं।","ପାସୱାର୍ଡ ଭୁଲିଗଲେ ରିସେଟ୍ କରନ୍ତୁ। ରୋଷେଇଘର ଓ ଡେଲିଭରି ପାଇଁ ଅଲଗା ପଞ୍ଜୀକରଣ ପୃଷ୍ଠା ଅଛି।"]]},
+ {id:"customer-workspace",title:["Meals & subscriptions","भोजन और सदस्यता","ଭୋଜନ ଓ ସବ୍‌ସ୍କ୍ରିପ୍ସନ୍"],href:"/customer/dashboard",steps:[
+ ["Save your delivery address. Choose a published one-time meal or 3–7-day subscription.","डिलीवरी पता सेव करें। उपलब्ध एक बार का भोजन या 3–7 दिन की सदस्यता चुनें।","ଡେଲିଭରି ଠିକଣା ସେଭ୍ କରନ୍ତୁ। ଉପଲବ୍ଧ ଗୋଟିଏ ଥରର ଭୋଜନ କିମ୍ବା ୩–୭ ଦିନର ସବ୍‌ସ୍କ୍ରିପ୍ସନ୍ ବାଛନ୍ତୁ।"],
+ ["Review food, delivery, discounts and payment at checkout. New bookings require an eligible online courier.","चेकआउट पर भोजन, डिलीवरी, छूट और भुगतान देखें। नई बुकिंग के लिए उपलब्ध डिलीवरी पार्टनर चाहिए।","ଚେକ୍‌ଆଉଟ୍‌ରେ ଭୋଜନ, ଡେଲିଭରି, ରିହାତି ଓ ଦେୟ ଦେଖନ୍ତୁ। ନୂଆ ବୁକିଂ ପାଇଁ ଉପଯୁକ୍ତ ଅନଲାଇନ୍ କୁରିଅର ଆବଶ୍ୟକ।"]]},
+ {id:"marketplace-roadmap",title:["Homemade products","घर के बने उत्पाद","ଘରୋଇ ଉତ୍ପାଦ"],href:"/customer/marketplace",steps:[
+ ["Choose quantity and read ingredients, allergens and storage details.","मात्रा चुनें और सामग्री, एलर्जी तथा भंडारण की जानकारी पढ़ें।","ପରିମାଣ ବାଛନ୍ତୁ ଓ ସାମଗ୍ରୀ, ଆଲର୍ଜି ତଥା ସଂରକ୍ଷଣ ବିବରଣୀ ପଢ଼ନ୍ତୁ।"],
+ ["Agree a delivery time with the kitchen before checkout. Track requests and purchases in Orders.","चेकआउट से पहले किचन से डिलीवरी समय तय करें। अनुरोध और खरीद ऑर्डर में देखें।","ଚେକ୍‌ଆଉଟ୍ ପୂର୍ବରୁ ରୋଷେଇଘର ସହ ଡେଲିଭରି ସମୟ ନିଶ୍ଚିତ କରନ୍ତୁ। ଅର୍ଡରରେ ଅନୁରୋଧ ଓ କ୍ରୟ ଦେଖନ୍ତୁ।"]]},
+ {id:"delivery-tracking",title:["Tracking & handover codes","ट्रैकिंग और हैंडओवर कोड","ଟ୍ରାକିଂ ଓ ହସ୍ତାନ୍ତର କୋଡ୍"],href:"/app",steps:[
+ ["Open Orders for tracking and cancellation eligibility. Review the displayed refund before cancelling.","ट्रैकिंग और रद्द करने की पात्रता ऑर्डर में देखें। रद्द करने से पहले दिखाया गया रिफंड जाँचें।","ଟ୍ରାକିଂ ଓ ବାତିଲ୍ ଯୋଗ୍ୟତା ଅର୍ଡରରେ ଦେଖନ୍ତୁ। ବାତିଲ୍ ପୂର୍ବରୁ ଦେଖାଯାଉଥିବା ଫେରସ୍ତ ରାଶି ଯାଞ୍ଚ କରନ୍ତୁ।"],
+ ["The mother shares the pickup code; the customer shares a separate code on delivery. Customer GPS is optional for code-based handover.","किचन पिकअप कोड देता है; ग्राहक डिलीवरी पर अलग कोड देता है। कोड से हैंडओवर के लिए ग्राहक का GPS ज़रूरी नहीं है।","ମା’ ପିକଅପ୍ କୋଡ୍ ଦିଅନ୍ତି; ଗ୍ରାହକ ଡେଲିଭରିରେ ଅଲଗା କୋଡ୍ ଦିଅନ୍ତି। କୋଡ୍‌ରେ ହସ୍ତାନ୍ତର ପାଇଁ ଗ୍ରାହକଙ୍କ GPS ଆବଶ୍ୟକ ନୁହେଁ।"]]},
+ {id:"account-profile",title:["Profile & notifications","प्रोफ़ाइल और सूचनाएँ","ପ୍ରୋଫାଇଲ୍ ଓ ସୂଚନା"],href:"/app",steps:[
+ ["Update your name or photo from your profile. Choose language in the header.","प्रोफ़ाइल से नाम या फोटो बदलें। ऊपर से भाषा चुनें।","ପ୍ରୋଫାଇଲ୍‌ରୁ ନାମ କିମ୍ବା ଫଟୋ ବଦଳାନ୍ତୁ। ଉପରେ ଭାଷା ବାଛନ୍ତୁ।"],
+ ["Tap the bell to open notifications; tap again to close. Device push is optional in Settings and depends on browser support.","सूचनाएँ खोलने के लिए घंटी दबाएँ; बंद करने के लिए फिर दबाएँ। सेटिंग में डिवाइस पुश वैकल्पिक है और ब्राउज़र पर निर्भर है।","ସୂଚନା ଖୋଲିବାକୁ ଘଣ୍ଟି ଦବାନ୍ତୁ; ବନ୍ଦ କରିବାକୁ ପୁଣି ଦବାନ୍ତୁ। ସେଟିଂସ୍‌ରେ ଡିଭାଇସ୍ ପୁଶ୍ ଇଚ୍ଛାଧୀନ ଓ ବ୍ରାଉଜର ଉପରେ ନିର୍ଭରଶୀଳ।"]]},
+ {id:"mother-onboarding",title:["Mother Kitchen","मदर किचन","ମା’ଙ୍କ ରୋଷେଇଘର"],href:"/join/mother",steps:[
+ ["Apply on the Mother Kitchen page. After approval, add kitchen details, food-safety documents and dated menus or products.","मदर किचन पेज पर आवेदन करें। मंजूरी के बाद किचन विवरण, खाद्य सुरक्षा दस्तावेज़ और भोजन या उत्पाद जोड़ें।","ମା’ଙ୍କ ରୋଷେଇଘର ପୃଷ୍ଠାରେ ଆବେଦନ କରନ୍ତୁ। ଅନୁମୋଦନ ପରେ ରୋଷେଇଘର ବିବରଣୀ, ଖାଦ୍ୟ ସୁରକ୍ଷା କାଗଜପତ୍ର ଓ ଭୋଜନ କିମ୍ବା ଉତ୍ପାଦ ଯୋଡ଼ନ୍ତୁ।"],
+ ["Manage new orders, mark packed food ready, then share the pickup code with the assigned courier. Earnings estimates are separate from paid balances.","नए ऑर्डर संभालें, पैक भोजन तैयार चिह्नित करें और निर्धारित पार्टनर को पिकअप कोड दें। अनुमानित कमाई भुगतान की गई राशि से अलग है।","ନୂଆ ଅର୍ଡର ପରିଚାଳନା କରନ୍ତୁ, ପ୍ୟାକ୍ ଭୋଜନ ପ୍ରସ୍ତୁତ ବୋଲି ଚିହ୍ନଟ କରନ୍ତୁ ଓ ନିଯୁକ୍ତ କୁରିଅରକୁ ପିକଅପ୍ କୋଡ୍ ଦିଅନ୍ତୁ। ଆନୁମାନିକ ଆୟ ଦେୟ ବାଲାନ୍ସଠାରୁ ଅଲଗା।"]]},
+ {id:"courier-onboarding",title:["Delivery partner","डिलीवरी पार्टनर","ଡେଲିଭରି ପାର୍ଟନର"],href:"/join/delivery",steps:[
+ ["Apply and wait for approval. Set your pickup area in Settings and go online. Scheduled jobs can be accepted only when food is ready.","आवेदन करके मंजूरी की प्रतीक्षा करें। सेटिंग में पिकअप क्षेत्र चुनें और ऑनलाइन जाएँ। भोजन तैयार होने पर ही तय काम स्वीकार करें।","ଆବେଦନ କରି ଅନୁମୋଦନକୁ ଅପେକ୍ଷା କରନ୍ତୁ। ସେଟିଂସ୍‌ରେ ପିକଅପ୍ ଅଞ୍ଚଳ ବାଛି ଅନଲାଇନ୍ ହୁଅନ୍ତୁ। ଖାଦ୍ୟ ପ୍ରସ୍ତୁତ ହେଲେ ନିର୍ଦ୍ଧାରିତ କାମ ଗ୍ରହଣ କରିପାରିବେ।"],
+ ["Accept or decline offers. Use separate pickup and delivery codes. Compatible batches allow up to three orders within carrying capacity; bulk delivery needs a separate arrangement.","ऑफर स्वीकार या अस्वीकार करें। अलग पिकअप और डिलीवरी कोड इस्तेमाल करें। क्षमता के भीतर अधिकतम तीन संगत ऑर्डर; बड़े ऑर्डर के लिए अलग व्यवस्था चाहिए।","ଅଫର୍ ଗ୍ରହଣ କିମ୍ବା ପ୍ରତ୍ୟାଖ୍ୟାନ କରନ୍ତୁ। ଅଲଗା ପିକଅପ୍ ଓ ଡେଲିଭରି କୋଡ୍ ବ୍ୟବହାର କରନ୍ତୁ। କ୍ଷମତା ଅନୁସାରେ ସର୍ବାଧିକ ତିନିଟି ଉପଯୁକ୍ତ ଅର୍ଡର; ବଡ଼ ଅର୍ଡର ପାଇଁ ଅଲଗା ବ୍ୟବସ୍ଥା ଆବଶ୍ୟକ।"]]},
+ {id:"scoofoo",title:["ScooFoo school tiffins","ScooFoo स्कूल टिफिन","ScooFoo ସ୍କୁଲ୍ ଟିଫିନ୍"],href:"/scoofoo",steps:[
+ ["Pack food at home. Choose your approved school, dates and pickup address. School reception and route must be confirmed before dispatch.","घर पर भोजन पैक करें। स्वीकृत स्कूल, तारीख और पता चुनें। रवाना होने से पहले स्कूल रिसेप्शन और मार्ग की पुष्टि ज़रूरी है।","ଘରେ ଭୋଜନ ପ୍ୟାକ୍ କରନ୍ତୁ। ଅନୁମୋଦିତ ସ୍କୁଲ୍, ତାରିଖ ଓ ଠିକଣା ବାଛନ୍ତୁ। ପଠାଇବା ପୂର୍ବରୁ ସ୍କୁଲ୍ ରିସେପ୍ସନ୍ ଓ ରୁଟ୍ ନିଶ୍ଚିତ ହେବା ଆବଶ୍ୟକ।"],
+ ["Share the home pickup code at collection. An authorised school adult confirms reception; this does not confirm the child has eaten.","पिकअप पर घर का कोड दें। अधिकृत स्कूल वयस्क प्राप्ति की पुष्टि करता है; इसका अर्थ बच्चे ने खाना खाया नहीं है।","ପିକଅପ୍ ସମୟରେ ଘରର କୋଡ୍ ଦିଅନ୍ତୁ। ଅନୁମୋଦିତ ସ୍କୁଲ୍ ବୟସ୍କ ବ୍ୟକ୍ତି ପ୍ରାପ୍ତି ନିଶ୍ଚିତ କରନ୍ତି; ଏହା ଶିଶୁ ଖାଇସାରିଛି ବୋଲି ନୁହେଁ।"]]},
+ {id:"install-app",title:["Install the app","ऐप इंस्टॉल करें","ଆପ୍ ଇନ୍‌ଷ୍ଟଲ୍ କରନ୍ତୁ"],href:"/install",steps:[
+ ["Android: download the APK or use Chrome’s Install app. iPhone/iPad: Safari → Share → Add to Home Screen. You can also browse without installing.","Android: APK डाउनलोड करें या Chrome से ऐप इंस्टॉल करें। iPhone/iPad: Safari → शेयर → होम स्क्रीन पर जोड़ें। बिना इंस्टॉल किए वेबसाइट भी चला सकते हैं।","Android: APK ଡାଉନଲୋଡ୍ କିମ୍ବା Chrome ରୁ ଆପ୍ ଇନ୍‌ଷ୍ଟଲ୍ କରନ୍ତୁ। iPhone/iPad: Safari → Share → Add to Home Screen। ଇନ୍‌ଷ୍ଟଲ୍ ନକରି ମଧ୍ୟ ୱେବସାଇଟ୍ ବ୍ୟବହାର କରିପାରିବେ।"]]}
+];
+export function HelpTopics(){
+ useEffect(()=>{
+   const openTopic=()=>{
+     const aliases:Record<string,string>={"ordering-policies":"delivery-tracking","notifications-and-maps":"account-profile"};
+     const hash=window.location.hash.slice(1);
+     const target=document.getElementById(aliases[hash]||hash);
+     if(target instanceof HTMLDetailsElement){target.open=true;target.scrollIntoView({block:"start"});}
+   };
+   openTopic();window.addEventListener("hashchange",openTopic);
+   return()=>window.removeEventListener("hashchange",openTopic);
+ },[]);
+ const {language}=useUiLanguage(); const i=language==="hi"?1:language==="or"?2:0; const copy=(v:Copy)=>v[i];
+ return <main className="help-simple"><header><h1>{copy(["How can we help?","हम कैसे मदद करें?","ଆମେ କିପରି ସାହାଯ୍ୟ କରିବୁ?"])}</h1><p>{copy(["Choose a topic for quick steps.","छोटे निर्देशों के लिए विषय चुनें।","ସଂକ୍ଷିପ୍ତ ପଦକ୍ଷେପ ପାଇଁ ବିଷୟ ବାଛନ୍ତୁ।"])}</p><div className="help-quick-actions"><Link className="button" href="/sign-in"><UiText text="Sign in"/></Link><Link className="button button-light" href="/sign-up"><UiText text="Create your account"/></Link><a href={WHATSAPP_SUPPORT_URL} target="_blank" rel="noopener noreferrer"><UiText text="Chat on WhatsApp"/> ↗</a></div></header>
+ <section aria-label={copy(["Help topics","सहायता विषय","ସହାୟତା ବିଷୟ"])}>{topics.map(topic=><details key={topic.id} id={topic.id}><summary>{copy(topic.title)}</summary><ol>{topic.steps.map((step,n)=><li key={n}>{copy(step)}</li>)}</ol><Link href={topic.href}>{copy(["Open →","खोलें →","ଖୋଲନ୍ତୁ →"])}</Link></details>)}</section>
+ <footer><Link href="/app-demo"><UiText text="App preview"/></Link><Link href="/mother-guide"><UiText text="Start your Mother Kitchen"/></Link><Link href="/admin-sign-in"><UiText text="Admin sign in"/></Link></footer></main>;
+}

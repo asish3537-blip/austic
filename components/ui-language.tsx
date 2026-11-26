@@ -1,6 +1,7 @@
 "use client";
 import { createContext, useContext, useEffect, useId, useSyncExternalStore } from "react";
 import { translated, type UiLanguage } from "@/lib/ui-translations";
+import {serviceLabel} from "@/lib/service-labels";
 const key = "paustik-ui-language";
 const LanguageContext = createContext<UiLanguage>("en");
 function snapshot(): UiLanguage { try { const v = localStorage.getItem(key); return v === "hi" || v === "or" ? v : "en"; } catch { return "en"; } }
@@ -11,7 +12,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => { document.documentElement.lang = language; }, [language]);
   return <LanguageContext.Provider value={language}>{children}</LanguageContext.Provider>;
 }
-export function useUiLanguage() { const language = useContext(LanguageContext); return { language, locale: language === "or" ? "or-IN" : language === "hi" ? "hi-IN" : "en-IN", t: (text: string, values?:Record<string,string|number>) => translated(text, language).replace(/\{(\w+)\}/g,(match,key:string)=>values?.[key]===undefined?match:String(values[key])) }; }
+export function useUiLanguage() { const language = useContext(LanguageContext); return { language, locale: language === "or" ? "or-IN" : language === "hi" ? "hi-IN" : "en-IN", t: (text: string, values?:Record<string,string|number>) => (serviceLabel(text,language) ?? translated(text, language)).replace(/\{(\w+)\}/g,(match,key:string)=>values?.[key]===undefined?match:String(values[key])) }; }
 export function UiText({ text, values }: { text: string; values?:Record<string,string|number> }) { const { t } = useUiLanguage(); return <>{t(text,values)}</>; }
 export function LanguageSelector() {
   const { language } = useUiLanguage(); const id = useId();

@@ -125,14 +125,8 @@ export function ResendVerificationForm({ initialEmail = "" }: { initialEmail?: s
   </form>;
 }
 
-const roles: { id: Role; name: string; note: string }[] = [
-  { id: "CUSTOMER", name: "Customer", note: "Find meals nearby" },
-  { id: "MOTHER", name: "Mother entrepreneur", note: "List your kitchen" },
-  { id: "DELIVERY_AGENT", name: "Delivery agent", note: "Deliver locally" },
-];
-
 export function SignUpForm({ initialRole = "CUSTOMER" }: { initialRole?: Role }) {
-  const [role, setRole] = useState<Role>(initialRole);
+  const role = initialRole;
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState<{ message: string; email: string; emailSent: boolean; verificationUrl?: string } | null>(null);
@@ -154,26 +148,23 @@ export function SignUpForm({ initialRole = "CUSTOMER" }: { initialRole?: Role })
         emailSent: Boolean(result.emailSent),
         verificationUrl: result.verificationUrl,
       });
-      form.reset(); setRole("CUSTOMER");
+      form.reset();
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Could not create your account. Please try again.");
     } finally { setBusy(false); }
   }
   return <>
-    <span className="eyebrow"><UiText text={"Join the neighbourhood table"}/></span><h2><UiText text={"Create your account"}/></h2>
+    <span className="eyebrow"><UiText text={"Join the neighbourhood table"}/></span><h2><UiText text={role==="MOTHER"?"Create a Mother account":role==="DELIVERY_AGENT"?"Become a Delivery Partner":"Create your account"}/></h2>
     {error && <Alert>{error}</Alert>}
     {success && <><Alert success>{success.message}{success.verificationUrl && <><br /><Link href={success.verificationUrl}><UiText text={"Verify this development email"}/></Link></>}</Alert>{!success.verificationUrl && <><p className="form-note"><UiText text={"Check your inbox and spam folder at"}/>{" "}<strong>{success.email}</strong><UiText text={". If no email arrives, request another link below."}/></p><ResendVerificationForm initialEmail={success.email} /></>}<p className="form-footer"><UiText text={"After confirming your email,"}/>{" "}<Link className="text-link" href="/sign-in"><UiText text={"sign in with your password"}/></Link></p></>}
     {!success && <form method="post" onSubmit={submit}>
-      <div className="role-grid" role="radiogroup" aria-label="Account type">
-        {roles.map((item) => <label className="role-option" key={item.id}><input type="radio" name="role-choice" value={item.id} checked={role === item.id} onChange={() => setRole(item.id)} /><span><b>{item.name}</b><small>{item.note}</small></span></label>)}
-      </div>
       <div className="form-grid" style={{ marginTop: 16 }}>
         <div className="field"><label htmlFor="signup-name"><UiText text="Full name"/></label><input id="signup-name" name="name" autoComplete="name" required minLength={2} maxLength={100} /></div>
         <div className="field"><label htmlFor="signup-phone"><UiText text={"Delivery contact number"}/></label><input id="signup-phone" name="phone" type="tel" autoComplete="tel" required maxLength={24} /></div>
         <div className="field"><label htmlFor="signup-email"><UiText text={"Email"}/></label><input id="signup-email" name="email" type="email" autoComplete="email" required maxLength={254} /></div>
         <div className="field"><label htmlFor="signup-password"><UiText text="Password"/></label><input id="signup-password" name="password" type="password" autoComplete="new-password" required minLength={8} maxLength={72} aria-describedby="signup-password-help" /><small id="signup-password-help"><UiText text={"8+ characters with uppercase, lowercase and a number."}/></small></div>
         {role === "MOTHER" && <><div className="field"><label htmlFor="signup-kitchen"><UiText text={"Kitchen name"}/></label><input id="signup-kitchen" name="kitchenName" required minLength={2} maxLength={120} /></div><div className="field"><label htmlFor="signup-cuisine"><UiText text={"Cooking specialties"}/></label><input id="signup-cuisine" name="cuisine" placeholder="e.g. Odia home cooking, vegetarian thalis" required minLength={2} maxLength={80} /></div><div className="field"><label htmlFor="signup-capacity"><UiText text={"Meals you can prepare per day"}/></label><input id="signup-capacity" name="capacityPerDay" type="number" min={1} max={300} required /></div><div className="field"><label htmlFor="signup-days"><UiText text={"Available lunch days"}/></label><input id="signup-days" name="availableDays" placeholder="Monday, Tuesday, Wednesday" required minLength={2} maxLength={120} /><small><UiText text={"Separate days with commas."}/></small></div><div className="field full"><label htmlFor="signup-lunch-window"><UiText text={"Lunch service window"}/></label><input id="signup-lunch-window" name="lunchWindow" placeholder="11:30 AM to 2:00 PM" required minLength={3} maxLength={80} /></div></>}
-        {role === "DELIVERY_AGENT" && <div className="field full"><label htmlFor="signup-vehicle"><UiText text={"Vehicle type"}/></label><select id="signup-vehicle" name="vehicleType" required defaultValue=""><option value="" disabled><UiText text={"Select vehicle"}/></option><option><UiText text={"Bicycle"}/></option><option><UiText text={"Scooter"}/></option><option><UiText text={"Motorcycle"}/></option><option><UiText text={"Car"}/></option><option><UiText text={"Other"}/></option></select></div>}
+        {role === "DELIVERY_AGENT" && <div className="field full"><label htmlFor="signup-vehicle"><UiText text={"Vehicle type"}/></label><select id="signup-vehicle" name="vehicleType" required defaultValue=""><option value="" disabled><UiText text={"Select vehicle"}/></option><option value="Bicycle"><UiText text={"Bicycle"}/></option><option value="Scooter"><UiText text={"Scooter"}/></option><option value="Motorcycle"><UiText text={"Motorcycle"}/></option><option value="Car"><UiText text={"Car"}/></option><option value="Other"><UiText text={"Other"}/></option></select></div>}
         <div className="field full"><label htmlFor="signup-address"><UiText text={"Street address"}/></label><input id="signup-address" name="addressLine1" autoComplete="street-address" required minLength={3} maxLength={160} /></div>
         <div className="field"><label htmlFor="signup-locality"><UiText text={"Locality / neighbourhood"}/></label><input id="signup-locality" name="locality" required minLength={2} maxLength={100} /></div>
         <div className="field"><label htmlFor="signup-city"><UiText text={"City"}/></label><input id="signup-city" name="city" autoComplete="address-level2" required minLength={2} maxLength={100} /></div>
