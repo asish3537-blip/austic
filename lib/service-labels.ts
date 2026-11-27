@@ -122,4 +122,8 @@ Object.assign(labels,{
  "ORDER_PREPARED":["Prepared meal","तैयार भोजन","ପ୍ରସ୍ତୁତ ଭୋଜନ"],
  "ORDER_HANDOVER":["Courier handover","डिलीवरी साथी को हैंडओवर","ଡେଲିଭରି ସାଥୀଙ୍କୁ ହସ୍ତାନ୍ତର"]
 });
+Object.assign(labels,{
+ "Made by mothers. Shared with care. Supporting local kitchens, one meal at a time.":["Made by mothers. Shared with care. Supporting local kitchens, one meal at a time.","माताओं का बना खाना, प्यार के साथ। हर भोजन से स्थानीय किचन का साथ।","ମା’ଙ୍କ ହାତର ରୋଷେଇ, ଯତ୍ନରେ ପରିବେଷିତ। ପ୍ରତି ଭୋଜନରେ ସ୍ଥାନୀୟ ରୋଷେଇଘରକୁ ସହଯୋଗ।"],
+ "Support":["Support","सहायता","ସହାୟତା"]
+});
 export function serviceLabel(text:string,language:UiLanguage){return labels[text]?.[language==="hi"?1:language==="or"?2:0];}
