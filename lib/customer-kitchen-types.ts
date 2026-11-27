@@ -4,6 +4,7 @@ export type KitchenMeal = {
   menuId?: string;
   mealPeriod?:string;
   name: string;
+  description?: string | null;
   category: string;
   tier: string;
   components: string[];

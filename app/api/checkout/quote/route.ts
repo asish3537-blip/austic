@@ -24,7 +24,7 @@ export async function POST(request: Request) {
     const kitchen = product?.product.meal.kitchen ?? menus[0]?.kitchen;
     if (!destination || !kitchen || destination.latitude === null || destination.longitude === null || kitchen.latitude === null || kitchen.longitude === null) throw new CheckoutError("Save a delivery pin and choose an available kitchen first.");
     if (x.menuIds && (menus.length !== x.menuIds.length || menus.some(menu => menu.kitchenId !== kitchen.id))) throw new CheckoutError("Choose available menus from one kitchen.");
-    if (x.productRequestId && (!product || product.status !== "CUSTOMER_CONFIRM" || product.expiresAt <= new Date())) throw new CheckoutError("The kitchen must agree to your product request before checkout.");
+    if (x.productRequestId && (!product || product.status !== "CUSTOMER_CONFIRM" || product.expiresAt <= new Date())) throw new CheckoutError("This product checkout has expired or is not ready. Choose the product again.");
     const distanceKm = distanceMeters({ latitude: Number(destination.latitude), longitude: Number(destination.longitude) }, { latitude: Number(kitchen.latitude), longitude: Number(kitchen.longitude) }) / 1000;
     const input = { target: product ? `product:${product.id}:${product.version}` : `menus:${menus.map(menu => menu.id).sort().join(",")}:${x.quantity}`, food: product ? [Number(product.unitPrice) * product.quantity] : menus.map(menu => Number(menu.meal.price) * x.quantity), distanceKm, couponCode: (x.couponCode || "").trim().toUpperCase() };
     const result = await prisma.$transaction(async tx => {

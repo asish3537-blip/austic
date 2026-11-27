@@ -56,7 +56,7 @@ export async function POST(request: Request) {
     for (const menu of sorted) {
       if (menu.meal.oneTimeOnly) return NextResponse.json({ error: "This special is available for one-time orders only. Choose regular menus for a subscription." }, { status: 409 });
       const scheduledFor = mealDeliveryInstant(menu.serviceDate, menu.deliveryTime);
-      if (!componentsAllowed(menu.mealPeriod,menu.meal.components) || !mealPriceAllowed(menu.meal.tier, Number(menu.meal.price))) return NextResponse.json({ error: "A selected menu needs a mother update before it can be reserved. Choose a three-part meal with a current tier price." }, { status: 409 });
+      if (!componentsAllowed(menu.mealPeriod,menu.meal.components) || !mealPriceAllowed(menu.meal.tier, Number(menu.meal.price))) return NextResponse.json({ error: "A selected menu needs a mother update before it can be reserved. Choose a meal with a valid starting price." }, { status: 409 });
       if (!menu.isAvailable || !menu.meal.isAvailable || menu.stockCount < parsed.data.quantity || menu.cycle.status !== "PUBLISHED" || !slotAllowed(menu.mealPeriod,menu.deliveryTime) || scheduledFor.getTime()<now.getTime()+30*60000 || scheduledFor > weekEnd) {
         return NextResponse.json({ error: "Weekly plans need available menus for upcoming delivery days. Refresh the kitchen menu." }, { status: 409 });
       }

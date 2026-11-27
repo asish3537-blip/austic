@@ -1,3 +1,4 @@
+import {PilotCatalogSection} from "@/components/pilot-catalog-section";
 import { expireOverdueOrders } from "@/lib/overdue-orders";
 import Link from "next/link";
 import {requireRole} from "@/lib/auth";
@@ -27,7 +28,7 @@ export default async function CustomerDashboard({searchParams}:{searchParams:Pro
 
 
   {!discovery.hasDeliveryPin&&<CustomerDeliveryPin/>}
-  <CustomerPaySummary/><KitchenDiscovery initialQuery={(params.q||"").slice(0,100)} key={mode} initialMode={mode} kitchens={discovery.kitchens} sampleKitchens={sampleCustomerKitchens()} hasDeliveryPin={discovery.hasDeliveryPin} deliveryArea={discovery.deliveryArea} available={discovery.available}/>
+  <PilotCatalogSection/><CustomerPaySummary/><KitchenDiscovery initialQuery={(params.q||"").slice(0,100)} key={mode} initialMode={mode} kitchens={discovery.kitchens} sampleKitchens={sampleCustomerKitchens()} hasDeliveryPin={discovery.hasDeliveryPin} deliveryArea={discovery.deliveryArea} available={discovery.available}/>
 
  </main>;
 }

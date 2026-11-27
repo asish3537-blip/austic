@@ -1,4 +1,4 @@
-import {indiaDate,slotAllowed,componentsAllowed} from "@/lib/service-windows";
+import {indiaDate,slotAllowed} from "@/lib/service-windows";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getCurrentUser } from "@/lib/auth";
@@ -10,12 +10,12 @@ export const runtime = "nodejs";
 
 const mealSchema = z.object({
   name: z.string().trim().min(3).max(90),
-  description: z.string().trim().max(400).optional().default(""),
+  description: z.string().trim().max(800).optional().default(""),
   oneTimeOnly: z.boolean().default(false),
-  tier: z.enum(["BASE", "EGG", "CHEESE", "CHICKEN"]),
+  tier: z.enum(["BASE", "EGG", "CHEESE", "CHICKEN", "DESI_CHICKEN", "MUTTON", "MUSHROOM"]),
   mealPeriod:z.enum(["BREAKFAST","LUNCH","DINNER"]).default("LUNCH"),
-  components: z.array(z.string().trim().min(1).max(70)).min(1).max(3),
-  price: z.number().finite().min(1).max(10000),
+  components: z.array(z.string().trim().min(1).max(70)).max(3).default([]),
+  price: z.number().finite().min(1).max(1000000),
   servings: z.number().int().min(1).max(200),
   serviceDate: z.iso.date(),
   deliveryTime: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/),
@@ -23,9 +23,8 @@ const mealSchema = z.object({
   allergens: z.string().max(300).optional().default(""),
 }).superRefine((meal, context) => {
   if(!slotAllowed(meal.mealPeriod,meal.deliveryTime))context.addIssue({code:"custom",message:"Use breakfast 06:00–10:59, lunch 11:00–16:59 or dinner 17:00–21:00 IST."});
-  if(!meal.oneTimeOnly && !componentsAllowed(meal.mealPeriod,meal.components))context.addIssue({code:"custom",message:"Lunch needs three components; breakfast and light dinner need one to three."});
   const rule = MEAL_PRICE_TIERS[meal.tier];
-  if (!meal.oneTimeOnly && (meal.price < rule.startingPrice || meal.price > rule.maxPrice)) context.addIssue({ code: "custom", message: rule.label + " must be priced between ₹" + rule.startingPrice + " and ₹" + rule.maxPrice + "." });
+  if (!meal.oneTimeOnly && meal.price < rule.startingPrice) context.addIssue({ code: "custom", message: rule.label + " starts at ₹" + rule.startingPrice + "." });
 });
 
 function mondayFor(date: Date) {
@@ -65,7 +64,7 @@ export async function GET() {
       kitchen: { name: mother.kitchen.name, approved: mother.kitchen.verificationStatus === "APPROVED", acceptingOrders: mother.kitchen.isAcceptingOrders, hasLocation: mother.kitchen.latitude !== null && mother.kitchen.longitude !== null, marketplaceRadiusKm: 25 },
       menus: menus.map((menu) => ({
         id: menu.id, mealId: menu.mealId, name: menu.meal.name, description: menu.meal.description,
-        category: menu.meal.category, price: Number(menu.meal.price), serviceDate: menu.serviceDate.toISOString().slice(0, 10),
+        ingredients:menu.meal.ingredients,allergens:menu.meal.allergens,category: menu.meal.category, price: Number(menu.meal.price), serviceDate: menu.serviceDate.toISOString().slice(0, 10),
         oneTimeOnly:menu.meal.oneTimeOnly, mealPeriod:menu.mealPeriod, tier: menu.meal.tier, components: menu.meal.components, deliveryTime: menu.deliveryTime,
         servings: menu.stockCount, isAvailable: menu.isAvailable, isPublished: menu.cycle.status === "PUBLISHED",
       })),
@@ -122,7 +121,7 @@ export async function POST(request: Request) {
         kitchenId: mother.kitchen.id,
         name: parsed.data.name,
         description: parsed.data.description || null,
-        category: parsed.data.tier === "EGG" || parsed.data.tier === "CHICKEN" ? "NON_VEGETARIAN" : "VEGETARIAN",
+        category: ["EGG","CHICKEN","DESI_CHICKEN","MUTTON"].includes(parsed.data.tier) ? "NON_VEGETARIAN" : "VEGETARIAN",
         tier: parsed.data.tier,
         oneTimeOnly: parsed.data.oneTimeOnly,
         components: parsed.data.components,

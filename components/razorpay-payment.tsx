@@ -6,7 +6,7 @@ type Result = { razorpay_payment_id: string; razorpay_signature: string };
 type Checkout = { open(): void; on(name: string, callback: () => void): void };
 declare global { interface Window { Razorpay?: new (options: Record<string, unknown>) => Checkout } }
 let loading: Promise<void> | null = null;
-function loadCheckout() {
+export function loadCheckout() {
   if (window.Razorpay) return Promise.resolve();
   if (!loading) loading = new Promise<void>((resolve, reject) => {
     const script = document.createElement("script");

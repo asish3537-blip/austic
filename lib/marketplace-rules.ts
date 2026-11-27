@@ -1,8 +1,11 @@
 export const MEAL_PRICE_TIERS = {
-  BASE: { label: "Base meal", startingPrice: 69, maxPrice: 500 },
-  EGG: { label: "Egg meal", startingPrice: 79, maxPrice: 500 },
-  CHEESE: { label: "Cheese meal", startingPrice: 89, maxPrice: 500 },
-  CHICKEN: { label: "Chicken meal", startingPrice: 99, maxPrice: 100 },
+  BASE: { label: "Base meal", startingPrice: 69 },
+  EGG: { label: "Egg meal", startingPrice: 79 },
+  CHEESE: { label: "Paneer meal", startingPrice: 89 },
+  CHICKEN: { label: "Chicken meal", startingPrice: 99 },
+  DESI_CHICKEN: { label: "Desi chicken meal", startingPrice: 120 },
+  MUTTON: { label: "Mutton meal", startingPrice: 150 },
+  MUSHROOM: { label: "Mushroom meal", startingPrice: 69 },
 } as const;
 
 export const DELIVERY_FEE_INR = 30;
@@ -17,7 +20,7 @@ export type MealTierName = keyof typeof MEAL_PRICE_TIERS;
 export function mealPriceAllowed(tier: string, price: number) {
   if (!(tier in MEAL_PRICE_TIERS)) return false;
   const rule = MEAL_PRICE_TIERS[tier as MealTierName];
-  return price >= rule.startingPrice && price <= rule.maxPrice;
+  return Number.isFinite(price) && price >= rule.startingPrice;
 }
 
 export function mealDeliveryInstant(serviceDate: Date, deliveryTime: string) {

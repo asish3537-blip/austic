@@ -136,6 +136,10 @@ enum MealTier {
   CHEESE
   CHICKEN
 
+  DESI_CHICKEN
+  MUTTON
+  MUSHROOM
+
   @@schema("paustik_marketplace")
 }
 
@@ -280,6 +284,7 @@ model User {
   lastLoginAt          DateTime?                @map("last_login_at") @db.Timestamptz(6)
   createdAt            DateTime                 @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt            DateTime                 @updatedAt @map("updated_at") @db.Timestamptz(6)
+  pilotWorkspace       PilotWorkspace?
   customerProfile      CustomerProfile?
   motherProfile        MotherProfile?
   deliveryAgentProfile DeliveryAgentProfile?
@@ -1250,5 +1255,43 @@ model ProductRequest {
   @@index([customerId,status,createdAt])
   @@index([productId,status])
   @@map("product_requests")
+  @@schema("paustik_marketplace")
+}
+
+// Isolated practice records: never enter real orders, wallet, dispatch or payouts.
+model PilotWorkspace {
+  id String @id @default(uuid()) @db.Uuid
+  ownerId String @unique @map("owner_id") @db.Uuid
+  menus Json @default("{}")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  owner User @relation(fields:[ownerId],references:[id],onDelete:Cascade)
+  orders PilotOrder[]
+  @@map("pilot_workspaces")
+  @@schema("paustik_marketplace")
+}
+model PilotOrder {
+  id String @id @default(uuid()) @db.Uuid
+  workspaceId String @map("workspace_id") @db.Uuid
+  requestKey String @map("request_key") @db.Uuid
+  snapshot Json
+  quantity Int
+  amountPaise Int @map("amount_paise")
+  currency String @default("INR")
+  status String @default("PAYMENT_PENDING")
+  paymentStatus String @default("PENDING") @map("payment_status")
+  providerOrderId String? @unique @map("provider_order_id")
+  providerPaymentId String? @unique @map("provider_payment_id")
+  pickupCode String @map("pickup_code")
+  deliveryCode String @map("delivery_code")
+  failedAttempts Int @default(0) @map("failed_attempts")
+  lockedUntil DateTime? @map("locked_until") @db.Timestamptz(6)
+  events Json @default("[]")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  workspace PilotWorkspace @relation(fields:[workspaceId],references:[id],onDelete:Cascade)
+  @@unique([workspaceId,requestKey])
+  @@index([workspaceId,createdAt])
+  @@map("pilot_orders")
   @@schema("paustik_marketplace")
 }

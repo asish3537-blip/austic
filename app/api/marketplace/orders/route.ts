@@ -41,7 +41,7 @@ export async function POST(request: Request) {
     if (!menu || !menu.isAvailable || !menu.meal.isAvailable || menu.stockCount < parsed.data.quantity || menu.cycle.status !== "PUBLISHED") {
       return NextResponse.json({ error: "That meal is no longer available. Refresh the menu and choose another serving." }, { status: 409 });
     }
-    if (!menu.meal.oneTimeOnly && (!componentsAllowed(menu.mealPeriod,menu.meal.components) || !mealPriceAllowed(menu.meal.tier, Number(menu.meal.price)))) return NextResponse.json({ error: "This older menu needs a mother update before orders can be accepted. Choose a three-part meal with a current tier price." }, { status: 409 });
+    if (!menu.meal.oneTimeOnly && (!componentsAllowed(menu.mealPeriod,menu.meal.components) || !mealPriceAllowed(menu.meal.tier, Number(menu.meal.price)))) return NextResponse.json({ error: "This older menu needs a mother update before orders can be accepted. Choose a meal with a valid starting price." }, { status: 409 });
     if (menu.kitchen.verificationStatus !== "APPROVED" || !menu.kitchen.isAcceptingOrders || menu.kitchen.mother.user.status !== "ACTIVE") {
       return NextResponse.json({ error: "This kitchen is not accepting orders right now." }, { status: 409 });
     }
