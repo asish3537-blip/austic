@@ -1,0 +1,19 @@
+/* Keep customer hero copy, actions and manual controls on one shared axis. */
+.customer-feature-carousel .highlight-content{width:100%;max-width:620px}.customer-feature-carousel .feature-slide-copy{min-height:0;margin-bottom:20px}.customer-feature-carousel .highlight-content h2{margin:10px 0 12px;max-width:620px}.customer-feature-carousel .highlight-content p{max-width:530px;margin-bottom:0}.customer-feature-carousel .customer-hero-actions{max-width:none}.customer-feature-carousel .feature-carousel-controls{max-width:none;margin-top:14px;justify-content:flex-start;gap:14px}.customer-feature-carousel .feature-carousel-controls>div{justify-content:center;flex:1}.customer-feature-carousel .feature-carousel-controls>button{min-height:44px;min-width:44px}.customer-discovery-home .pilot-catalog-section>header{margin-bottom:16px;max-width:760px}.customer-discovery-home .pilot-catalog-section h2{font-size:clamp(24px,2.5vw,30px);line-height:1.3;margin:8px 0 10px}.customer-discovery-home .pilot-catalog-section>header>p{font-size:13px;line-height:1.7;margin:0}.customer-discovery-home .pilot-kitchen-photo{aspect-ratio:1.7}.customer-discovery-home .pilot-kitchen-grid h3{font-size:15px!important}
+@media(min-width:1024px){
+ .role-app-shell .customer-app-header{height:82px;min-height:82px;box-sizing:border-box}
+ .role-app-shell>.app-bottom-nav.app-navigation-refresh{position:sticky;top:82px;bottom:auto;left:auto;right:auto;transform:none;width:min(1180px,calc(100% - 48px));margin:12px auto 0;z-index:85;border-radius:10px;padding:6px;gap:8px;box-shadow:0 2px 9px #62262b0b}
+ .role-app-shell>.app-bottom-nav.app-navigation-refresh a{flex-direction:row;align-items:center;justify-content:center;gap:9px;min-height:44px;padding:6px 10px;border-radius:7px}
+ .role-app-shell>.app-bottom-nav.app-navigation-refresh .app-nav-icon{width:32px;height:32px;border-radius:7px}
+ .role-app-shell>.app-bottom-nav.app-navigation-refresh .app-nav-icon svg{width:22px;height:22px}
+ .role-app-shell>.app-bottom-nav.app-navigation-refresh .app-nav-label{font-size:13px}
+ .role-app-shell .dashboard-shell{box-sizing:border-box;width:100%;max-width:1228px;margin-inline:auto;padding:22px 24px 40px}
+ .role-app-shell .customer-discovery-home{padding-top:22px!important}
+ .customer-discovery-home>section.customer-feature-carousel.customer-home-hero{min-height:300px;padding:28px 32px 22px;border-radius:14px;margin-bottom:22px}
+ .customer-feature-carousel .highlight-content h2{font-size:32px;line-height:1.3}
+ .customer-discovery-home .pilot-catalog-section{padding-block:18px}
+ .customer-discovery-home .pilot-kitchen-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+ body:has(.role-app-shell>.app-bottom-nav) .paustik-footer{padding-bottom:32px}
+ .role-app-shell [id]{scroll-margin-top:170px}
+}
+@media(max-width:700px){.customer-feature-carousel .feature-slide-copy{min-height:0;margin-bottom:18px}.customer-feature-carousel .feature-carousel-controls{gap:8px}.customer-feature-carousel .customer-hero-actions{margin-top:0}.customer-discovery-home .pilot-catalog-section h2{font-size:24px}}

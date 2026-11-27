@@ -7,5 +7,5 @@ import {AppNotificationLink} from "@/components/app-notification-link";
 export default async function ProtectedLayout({children}:Readonly<{children:React.ReactNode}>){
  const user=await requireAuthenticatedUser();
  if(user.role==="ADMIN")return <>{children}<AppBottomNavigation role="ADMIN"/></>;
- return <div className={"customer-app-shell role-app-shell role-"+user.role.toLowerCase()}><header className="customer-app-header"><HeaderBrand homeHref={roleHome(user)} compact/><div className="app-header-tools"><LanguageSelector/><AppNotificationLink/><AccountMenu name={user.name} role={user.role}/></div></header>{children}<AppBottomNavigation role={user.role}/></div>;
+ return <div className={"customer-app-shell role-app-shell role-"+user.role.toLowerCase()}><header className="customer-app-header"><HeaderBrand homeHref={roleHome(user)} compact/><div className="app-header-tools"><LanguageSelector/><AppNotificationLink/><AccountMenu name={user.name} role={user.role}/></div></header><AppBottomNavigation role={user.role}/>{children}</div>;
 }

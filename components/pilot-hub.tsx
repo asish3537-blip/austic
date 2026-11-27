@@ -7,6 +7,7 @@ import {UiText,useUiLanguage} from "@/components/ui-language";
 import {PILOT_KITCHENS,type PilotKitchen,type PilotMeal} from "@/lib/pilot-catalog";
 import {indiaDate} from "@/lib/service-windows";
 import {loadCheckout} from "@/components/razorpay-payment";
+import {OrderPhotos} from "@/components/order-photos";
 type Role="customer"|"mother"|"courier";
 type PracticeOrder={id:string;status:string;paymentStatus:string;quantity:number;amountPaise:number;snapshot:{kitchenId:string;kitchenName:string;area:string;mealName:string;days:number;dates:string[]};pickupCode?:string;deliveryCode?:string;createdAt:string;events:{status:string;detail:string;at:string}[]};
 type Workspace={kitchens:PilotKitchen[];checkoutReady:boolean;orders:PracticeOrder[]};
@@ -58,7 +59,7 @@ export function PilotHub({authenticated,initialKitchen}:{authenticated:boolean;i
   {message&&<p className="pilot-message" role="status"><UiText text={message}/></p>}
   <label className="pilot-kitchen-choice">{c("Choose practice kitchen","अभ्यास किचन चुनें","ଅଭ୍ୟାସ ରୋଷେଇଘର ବାଛନ୍ତୁ")}<select value={kitchen.id} onChange={e=>chooseKitchen(e.target.value)}>{kitchens.map(k=><option key={k.id} value={k.id}>{k.area} · {c("Sample","नमूना","ନମୁନା")}</option>)}</select></label>
   {authenticated&&<section className="pilot-panel pilot-orders"><div className="pilot-section-heading"><h2>{c("Practice orders","अभ्यास ऑर्डर","ଅଭ୍ୟାସ ଅର୍ଡର")} · {orders.length}</h2><button type="button" onClick={()=>void refresh().catch(e=>setMessage(e.message))}><UiText text="Refresh"/></button></div>
-   {orders.length?orders.map(o=><article className="pilot-order" key={o.id} data-order-id={o.id}><div><strong>{o.snapshot.mealName}</strong><small>{o.snapshot.area} · {o.quantity} × {o.snapshot.days} {c("day(s)","दिन","ଦିନ")} · ₹{(o.amountPaise/100).toFixed(2)}</small><span className="pilot-status"><UiText text={o.status.toLowerCase().replaceAll("_"," ")}/></span><small>TEST-{o.id.slice(0,8).toUpperCase()}</small></div>
+   {orders.length?orders.map(o=><article className="pilot-order" key={o.id} data-order-id={o.id}><div><strong>{o.snapshot.mealName}</strong><small>{o.snapshot.area} · {o.quantity} × {o.snapshot.days} {c("day(s)","दिन","ଦିନ")} · ₹{(o.amountPaise/100).toFixed(2)}</small><span className="pilot-status"><UiText text={o.status.toLowerCase().replaceAll("_"," ")}/></span><small>TEST-{o.id.slice(0,8).toUpperCase()}</small></div><OrderPhotos key={o.id+o.status+role} orderId={o.id} pilot writable={role==="mother"} initiallyOpen={role==="mother"&&o.status==="PREPARING"}/>
     {role==="customer"&&o.paymentStatus!=="CAPTURED"&&<button disabled={busy||!data?.checkoutReady} onClick={()=>void reconcile(o.id)}>{c("Check Test payment","टेस्ट भुगतान जाँचें","ଟେଷ୍ଟ ଦେୟ ଯାଞ୍ଚ")}</button>}
     {role==="customer"&&o.paymentStatus==="CAPTURED"&&o.status!=="CANCELLED"&&<p className="pilot-code">{c("Customer handover code","ग्राहक हैंडओवर कोड","ଗ୍ରାହକ ହସ୍ତାନ୍ତର କୋଡ୍")}: <strong>{o.deliveryCode}</strong></p>}
     {role==="mother"&&o.paymentStatus==="CAPTURED"&&["READY_FOR_PICKUP","DELIVERY_ASSIGNED"].includes(o.status)&&<p className="pilot-code">{c("Kitchen pickup code","किचन पिकअप कोड","ରୋଷେଇଘର ପିକ୍‌ଅପ୍ କୋଡ୍")}: <strong>{o.pickupCode}</strong></p>}

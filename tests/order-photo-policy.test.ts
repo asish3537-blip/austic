@@ -1,0 +1,5 @@
+import {test} from "node:test";
+import assert from "node:assert/strict";
+import {canUploadOrderPhoto,publicPilotSnapshot,orderPhotoCaption} from "../lib/order-photo-policy";
+test("photo stages follow paid preparation and handover, and close after pickup",()=>{assert(canUploadOrderPhoto("PREPARED","PREPARING",true));assert(!canUploadOrderPhoto("PREPARED","PREPARING",false));assert(!canUploadOrderPhoto("HANDOVER","PREPARING",true));assert(canUploadOrderPhoto("HANDOVER","DELIVERY_ASSIGNED",true));for(const status of ["ORDER_PLACED","PICKED_UP","CANCELLED","DELIVERED"]){assert(!canUploadOrderPhoto("PREPARED",status,true));assert(!canUploadOrderPhoto("HANDOVER",status,true));}});
+test("practice order summaries omit private photo payloads without changing meal snapshots",()=>{const data={mealName:"Dalma",photoEvidence:{PREPARED:{image:"private-pixels"}}};assert.deepEqual(publicPilotSnapshot(data),{mealName:"Dalma"});assert(data.photoEvidence);assert.notEqual(orderPhotoCaption("PS-1","PREPARED"),orderPhotoCaption("PS-1","HANDOVER"));});

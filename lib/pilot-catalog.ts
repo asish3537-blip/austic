@@ -17,10 +17,11 @@ const regular = [
  {tier:"MUTTON" as const,name:"Mutton lunch",price:150,components:["Rice","Mutton curry","Dal"],ingredients:"Rice, mutton, lentils",allergens:""},
  {tier:"MUSHROOM" as const,name:"Mushroom lunch",price:69,components:["Rice","Mushroom curry","Dal"],ingredients:"Rice, mushroom, lentils",allergens:""},
 ];
+const mealPhotos:Record<MealTierName,string>={BASE:"/assets/home-thali.avif",EGG:"/assets/pilot-egg-curry.jpg",CHEESE:"/assets/pilot-paneer-curry.jpg",CHICKEN:"/assets/pilot-chicken-curry.jpg",DESI_CHICKEN:"/assets/pilot-desi-chicken-curry.jpg",MUTTON:"/assets/pilot-mutton-curry.jpg",MUSHROOM:"/assets/pilot-mushroom-curry.jpg"};
 /** Fictional catalogue. Its IDs are never real kitchen or meal IDs. */
 export const PILOT_KITCHENS:PilotKitchen[] = areas.map(([id,area,latitude,longitude],index)=>({
  id:"pilot-"+id,name:area+" Practice Kitchen",area,city:"Bhubaneswar",latitude,longitude,
- image:index%2?"/assets/home-regional.avif":"/assets/home-thali.avif",
+ image:mealPhotos[regular[index%regular.length].tier],
  meals:[{...regular[index%regular.length],description:regular[index%regular.length].components.join(", ")+". Ingredients: "+regular[index%regular.length].ingredients+(regular[index%regular.length].allergens?". Allergens: "+regular[index%regular.length].allergens:""),id:"regular",servings:20,oneTimeOnly:false},
  {id:"special",tier:index%2?"BASE":"CHICKEN",description:"Biryani with raita. Ingredients include rice and milk; contains dairy.",name:index%2?"Vegetable biryani special":"Chicken biryani special",price:index%2?120:150,
  components:[index%2?"Vegetable biryani":"Chicken biryani","Raita"],ingredients:index%2?"Rice, vegetables, milk":"Rice, chicken, milk",allergens:"Milk",servings:10,oneTimeOnly:true}],

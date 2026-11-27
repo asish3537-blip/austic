@@ -5,13 +5,15 @@ import {PartnerIncomePanel} from "@/components/partner-income-panel";
 import {MEAL_PRICE_TIERS,type MealTierName} from "@/lib/marketplace-rules";
 import {indiaDate} from "@/lib/service-windows";
 import {SavedMealScheduler} from "@/components/saved-meal-scheduler";
+import {MotherDashboardWelcome,MotherLicenceReminder} from "@/components/mother-dashboard-welcome";
+import {OrderPhotos} from "@/components/order-photos";
 
 import { UiText } from "@/components/ui-language";
 import { useCallback, useEffect, useState } from "react";
 import type { FormEvent } from "react";
 
 type MenuItem = { ingredients?:string[]; allergens?:string[]; oneTimeOnly?:boolean; mealPeriod?:string; id: string; mealId: string; name: string; description: string | null; category: string; tier: string; components: string[]; deliveryTime: string; price: number; serviceDate: string; servings: number; isAvailable: boolean; isPublished: boolean };
-type KitchenInfo = { name: string; approved: boolean; acceptingOrders: boolean; hasLocation: boolean; marketplaceRadiusKm: number };
+type KitchenInfo = { id:string; name: string; approved: boolean; acceptingOrders: boolean; hasLocation: boolean; marketplaceRadiusKm: number; hasFssai:boolean; fssaiReview:string|null };
 type MotherOrder = { id: string; orderNumber: string; status: string; customer: string; items: string[]; total: number; scheduledFor: string; deliveryStatus: string | null };
 type Workspace = { kitchen: KitchenInfo; menus: MenuItem[]; orders: MotherOrder[]; earningsRecorded: number; currency: string };
 
@@ -29,6 +31,8 @@ export function MotherWorkspace() {
   const [problem, setProblem] = useState("");
   const [message, setMessage] = useState("");
   const [editing, setEditing] = useState<MenuItem | null>(null);
+  const [newSpecial,setNewSpecial]=useState(false);
+  const [newMealVersion,setNewMealVersion]=useState(0);
   const [busyId, setBusyId] = useState("");
   const [menuDate,setMenuDate]=useState(()=>indiaDate(new Date()));
   const [allDates,setAllDates]=useState(false);
@@ -177,17 +181,23 @@ export function MotherWorkspace() {
   const localToday = indiaDate(new Date());
   const visibleMenus=workspace?.menus.filter(item=>allDates||item.serviceDate===menuDate)??[];
   function editMeal(item:MenuItem){setEditing(item);window.setTimeout(()=>{document.getElementById("weekly-menu")?.scrollIntoView({block:"start"});document.querySelector<HTMLInputElement>(".mother-menu-editor input[name=name]")?.focus({preventScroll:true});},0);}
+  function addMeal(special:boolean){setEditing(null);setNewSpecial(special);setNewMealVersion(v=>v+1);window.setTimeout(()=>{document.getElementById("weekly-menu")?.scrollIntoView({block:"start"});document.querySelector<HTMLInputElement>(".mother-menu-editor input[name=name]")?.focus({preventScroll:true});},0);}
   if (loading) return <div className="dashboard-banner"><UiText text="Loading your kitchen workspace…"/></div>;
   if (!workspace) return <div className="dashboard-banner admin-warning">{problem || "Your kitchen workspace could not load."}</div>;
 
   return <div className="mother-workspace">    {message && <p className="workspace-message" role="status"><UiText text={message}/></p>}
     {problem && <p className="workspace-message is-error" role="alert"><UiText text={problem}/></p>}
+    {!workspace.kitchen.approved&&<aside className="mother-approval-banner"><strong><UiText text="Waiting for Paustik approval"/></strong><span><UiText text="You can add meals and products as drafts while we review your kitchen."/></span><Link href="/mother/quality"><UiText text="View application status"/> →</Link></aside>}
+    <MotherLicenceReminder kitchenId={workspace.kitchen.id} hasFssai={workspace.kitchen.hasFssai} fssaiReview={workspace.kitchen.fssaiReview}/>
+    <MotherDashboardWelcome kitchenName={workspace.kitchen.name} onAddMeal={addMeal}/>
+    <PartnerIncomePanel role="MOTHER" compact/>
       <article className="dashboard-card mother-orders-panel">
         <div className="workspace-section-heading"><div><span className="eyebrow"><UiText text="Kitchen queue"/></span><h2 id="incoming-orders"><UiText text="Incoming orders"/></h2></div><span className="customer-count">{workspace.orders.length}</span></div>
         {workspace.orders.length ? <div className="workspace-record-list">{[...workspace.orders].sort((a,b)=>({ORDER_PLACED:0,CONFIRMED:1,PREPARING:2,DELIVERY_ASSIGNED:3,READY_FOR_PICKUP:4}[a.status]??5)-({ORDER_PLACED:0,CONFIRMED:1,PREPARING:2,DELIVERY_ASSIGNED:3,READY_FOR_PICKUP:4}[b.status]??5)).map((order) => <article key={order.id}>
           <div className="workspace-record-head"><strong>{order.orderNumber}</strong><span className={"customer-status customer-status-" + order.status.toLowerCase()}><UiText text={order.status.toLowerCase().replaceAll("_", " ")}/></span></div>
           <p>{order.customer} · {order.items.join(", ")}</p><small><UiText text="For"/>{new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeZone: "Asia/Kolkata" }).format(new Date(order.scheduledFor))} · {money(order.total, "INR")}</small>
           {order.status === "DELIVERY_ASSIGNED" && <KitchenPickupCode orderId={order.id} />}
+          <OrderPhotos key={order.id+order.status} orderId={order.id} writable initiallyOpen={order.status==="PREPARING"||order.status==="DELIVERY_ASSIGNED"}/>
           <div className="workspace-record-actions">
             {order.status === "ORDER_PLACED" && <><button type="button" onClick={() => updateOrder(order, "CONFIRMED")} disabled={busyId === order.id}><UiText text="Accept order"/></button><button type="button" onClick={() => updateOrder(order, "CANCELLED")} disabled={busyId === order.id}><UiText text="Decline"/></button></>}
             {order.status === "CONFIRMED" && <><button type="button" onClick={() => updateOrder(order, "PREPARING")} disabled={busyId === order.id}><UiText text="Start cooking"/></button><button type="button" onClick={() => updateOrder(order, "CANCELLED")} disabled={busyId === order.id}><UiText text="Cancel"/></button></>}
@@ -199,7 +209,6 @@ export function MotherWorkspace() {
           </div>
         </article>)}</div> : <div className="customer-empty-state"><strong><UiText text="No open orders yet"/></strong><span><UiText text="New customer orders will appear here for you to accept and prepare."/></span></div>}
       </article>
-    <PartnerIncomePanel role="MOTHER" compact/><nav className="mother-menu-actions"><a className="button" href="#weekly-menu"><UiText text="Add a meal"/> +</a><a href="#scheduled-menu"><UiText text="Scheduled meals"/> →</a><Link href="/help"><UiText text="Help & support"/> →</Link></nav>
     <section className="mother-work-grid" id="mother-orders">
       <article className="dashboard-card mother-menu-editor">
         <div className="workspace-section-heading"><div><span className="eyebrow"><UiText text="Weekly menu"/></span><h2 id="weekly-menu"><UiText text={editing ? "Update meal" : "Add a meal"}/></h2></div>{workspace.menus.some(item=>!item.isPublished)&&<button className="button button-quiet" type="button" onClick={publishDrafts} disabled={busyId === "publish" || !workspace.kitchen.approved || !workspace.kitchen.hasLocation}><UiText text={busyId === "publish" ? "Publishing…" : "Publish saved drafts"}/></button>}</div>
@@ -208,12 +217,12 @@ export function MotherWorkspace() {
         <p className="mother-menu-publish-note"><UiText text="Save and publish is one step when your kitchen is approved and its pickup pin is saved."/></p>
         <p className="mother-menu-steps"><UiText text="1. Meal and price"/> <span>→</span> <UiText text="2. Date and servings"/> <span>→</span> <UiText text="3. Save your menu"/></p>
         {editing&&<p className="mother-gate-note"><UiText text="Dish details apply to its scheduled dates. Servings and time apply to this date."/></p>}
-        <form className="workspace-form mother-simple-menu-form" key={editing?.id || "new-meal"} onSubmit={saveMenu}>
+        <form className="workspace-form mother-simple-menu-form" key={editing?.id || "new-meal-"+newMealVersion} onSubmit={saveMenu}>
           <label><UiText text="Meal name"/><input name="name" required minLength={3} maxLength={90} defaultValue={editing?.name??""} placeholder="e.g. Dalma lunch"/></label>
           <label><UiText text="Meal description"/><textarea name="description" required minLength={3} maxLength={800} rows={4} defaultValue={editing?.description||[editing?.components.join(", "),editing?.ingredients?.length?"Ingredients: "+editing.ingredients.join(", "):"",editing?.allergens?.length?"Allergens: "+editing.allergens.join(", "):""].filter(Boolean).join(". ")}/><small><UiText text="Describe the food. Include ingredients or allergy information here if needed."/></small></label>
           <div className="workspace-form-row"><label><UiText text="Meal type"/><select name="tier" defaultValue={editing?.tier??"BASE"} onChange={e=>{const price=e.currentTarget.form?.elements.namedItem("price") as HTMLInputElement|null;const rule=MEAL_PRICE_TIERS[e.target.value as MealTierName];const special=(e.currentTarget.form?.elements.namedItem("oneTimeOnly") as HTMLInputElement|null)?.checked;if(price&&!special&&Number(price.value)<rule.startingPrice)price.value=String(rule.startingPrice);}}>{Object.entries(MEAL_PRICE_TIERS).map(([value,rule])=><option value={value} key={value}><UiText text={rule.label}/> · ₹{rule.startingPrice}+</option>)}</select></label>
           <label><UiText text="Price (₹)"/><input name="price" type="number" min={1} step="1" required defaultValue={editing?.price??69}/><small><UiText text="Set your price from the selected starting price. No pilot business price cap."/></small></label></div>
-          <label className="special-meal-choice"><input name="oneTimeOnly" type="checkbox" defaultChecked={editing?.oneTimeOnly}/><UiText text="One-day special · not part of a meal plan"/></label>
+          <label className="special-meal-choice"><input name="oneTimeOnly" type="checkbox" defaultChecked={editing?.oneTimeOnly??newSpecial}/><UiText text="One-day special · not part of a meal plan"/></label>
           <div className="workspace-form-row"><label><UiText text="Servings available"/><input name="servings" type="number" min={1} max={200} required defaultValue={editing?.servings??10}/></label><label><UiText text="Serving date"/><input name="serviceDate" type="date" min={localToday} required defaultValue={editing?.serviceDate??localToday} disabled={Boolean(editing)}/></label><label><UiText text="Delivery time (India)"/><input name="deliveryTime" type="time" min="06:00" max="21:00" required defaultValue={editing?.deliveryTime??"12:30"}/></label></div>
           <div className="workspace-form-actions"><button className="button button-warm" type="submit" disabled={busyId==="menu"}><UiText text={busyId==="menu"?"Saving…":editing?"Save changes":workspace.kitchen.approved&&workspace.kitchen.hasLocation&&workspace.kitchen.acceptingOrders?"Save and publish meal":"Save draft"}/></button>{editing&&<button className="button button-quiet" type="button" onClick={()=>setEditing(null)}><UiText text="Cancel edit"/></button>}</div>
           <p className="mother-menu-support"><UiText text="Timing or delivery problem?"/> <Link href="/help"><UiText text="Help & support"/> →</Link></p>

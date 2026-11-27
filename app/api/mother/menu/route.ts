@@ -46,7 +46,7 @@ export async function GET() {
     const start = new Date(indiaDate(today)+"T00:00:00.000Z");
     const end = new Date(start);
     end.setUTCDate(end.getUTCDate() + 14);
-    const [menus, orders, earnings] = await Promise.all([
+    const [menus, orders, earnings, fssaiEvidence] = await Promise.all([
       prisma.menu.findMany({
         where: { kitchenId: mother.kitchen.id, serviceDate: { gte: start, lt: end } },
         orderBy: [{ serviceDate: "asc" }, { meal: { name: "asc" } }],
@@ -59,9 +59,10 @@ export async function GET() {
         include: { customer: { select: { name: true } }, items: { select: { mealName: true, quantity: true } }, delivery: { select: { status: true, trackingReference: true } } },
       }),
       prisma.earning.aggregate({ where: { motherId: mother.id, beneficiaryRole: "MOTHER" }, _sum: { netAmount: true } }),
+      prisma.kitchenEvidence.findFirst({where:{kitchenId:mother.kitchen.id,kind:"FSSAI"},orderBy:{createdAt:"desc"},select:{reviewStatus:true}}),
     ]);
     return NextResponse.json({
-      kitchen: { name: mother.kitchen.name, approved: mother.kitchen.verificationStatus === "APPROVED", acceptingOrders: mother.kitchen.isAcceptingOrders, hasLocation: mother.kitchen.latitude !== null && mother.kitchen.longitude !== null, marketplaceRadiusKm: 25 },
+      kitchen: { id:mother.kitchen.id, name: mother.kitchen.name, approved: mother.kitchen.verificationStatus === "APPROVED", acceptingOrders: mother.kitchen.isAcceptingOrders, hasLocation: mother.kitchen.latitude !== null && mother.kitchen.longitude !== null, marketplaceRadiusKm: 25, hasFssai:Boolean(mother.fssaiNumber), fssaiReview:fssaiEvidence?.reviewStatus??null },
       menus: menus.map((menu) => ({
         id: menu.id, mealId: menu.mealId, name: menu.meal.name, description: menu.meal.description,
         ingredients:menu.meal.ingredients,allergens:menu.meal.allergens,category: menu.meal.category, price: Number(menu.meal.price), serviceDate: menu.serviceDate.toISOString().slice(0, 10),

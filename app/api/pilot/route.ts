@@ -10,6 +10,7 @@ import {pilotMenus,publicPilotEnabled,type PilotOverrides} from "@/lib/pilot-cat
 import {pilotTransition} from "@/lib/pilot-payment-policy";
 import {capturePilotReceipt,pilotGateway,pilotRazorpayConfig,validRazorpaySignature} from "@/lib/pilot-payments";
 import type {Prisma} from "@/app/generated/prisma/client";
+import {publicPilotSnapshot} from "@/lib/order-photo-policy";
 export const runtime="nodejs";
 const headers={"Cache-Control":"private, no-store"};
 const meal=z.object({tier:z.enum(["BASE","EGG","CHEESE","CHICKEN","DESI_CHICKEN","MUTTON","MUSHROOM"]).default("BASE"),description:z.string().trim().min(3).max(800),id:z.string().min(1).max(80).optional(),name:z.string().trim().min(3).max(90),price:z.number().int().min(1).max(1000000),components:z.array(z.string().trim().min(1).max(70)).max(3).default([]),ingredients:z.string().max(500).default(""),allergens:z.string().max(300).default(""),servings:z.number().int().min(0).max(200),oneTimeOnly:z.boolean()}).refine(m=>m.oneTimeOnly||m.price>=MEAL_PRICE_TIERS[m.tier].startingPrice,{message:"Set a price from the selected meal starting price."});
@@ -26,7 +27,7 @@ export async function GET(request:Request){
  const user=await getCurrentUser();if(!user||user.status!=="ACTIVE")return NextResponse.json({error:"Sign in to use your private practice workspace."},{status:403,headers});
  try{const w=await workspace(user.id),role=new URL(request.url).searchParams.get("role")||"customer";
   const orders=await prisma.pilotOrder.findMany({where:{workspaceId:w.id},orderBy:{createdAt:"desc"},take:60});
-  return NextResponse.json({kitchens:pilotMenus(w.menus),checkoutReady:Boolean(pilotRazorpayConfig()),mode:"test",workspace:"Personal practice workspace; roles here do not change your real account.",orders:orders.map(o=>({id:o.id,status:o.status,paymentStatus:o.paymentStatus,quantity:o.quantity,amountPaise:o.amountPaise,snapshot:o.snapshot,events:o.events,createdAt:o.createdAt,...(role==="mother"?{pickupCode:o.pickupCode}:{}),...(role==="customer"?{deliveryCode:o.deliveryCode}:{})}))},{headers});
+  return NextResponse.json({kitchens:pilotMenus(w.menus),checkoutReady:Boolean(pilotRazorpayConfig()),mode:"test",workspace:"Personal practice workspace; roles here do not change your real account.",orders:orders.map(o=>({id:o.id,status:o.status,paymentStatus:o.paymentStatus,quantity:o.quantity,amountPaise:o.amountPaise,snapshot:publicPilotSnapshot(o.snapshot),events:o.events,createdAt:o.createdAt,...(role==="mother"?{pickupCode:o.pickupCode}:{}),...(role==="customer"?{deliveryCode:o.deliveryCode}:{})}))},{headers});
  }catch{return NextResponse.json({error:"Your practice workspace could not load."},{status:503,headers});}
 }
 export async function POST(request:Request){

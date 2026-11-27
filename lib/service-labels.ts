@@ -74,4 +74,52 @@ Object.assign(labels,{
  "Partner accounts require Paustik approval.":["Partner accounts require Paustik approval.","पार्टनर खातों के लिए Paustik की मंजूरी चाहिए।","ପାର୍ଟନର ଆକାଉଣ୍ଟ ପାଇଁ Paustik ଅନୁମୋଦନ ଆବଶ୍ୟକ।"],
  "Create a Customer account":["Create a Customer account","ग्राहक खाता बनाएँ","ଗ୍ରାହକ ଆକାଉଣ୍ଟ ଖୋଲନ୍ତୁ"]
 });
+Object.assign(labels,{
+ "Your Mother Kitchen":["Your Mother Kitchen","आपका मदर किचन","ଆପଣଙ୍କ ମା’ ରୋଷେଇଘର"],
+ "Your cooking. Your own little business.":["Your cooking. Your own little business.","आपका खाना। आपका अपना कारोबार।","ଆପଣଙ୍କ ରୋଷେଇ। ଆପଣଙ୍କ ନିଜ ବ୍ୟବସାୟ।"],
+ "Share the food you love making with customers nearby.":["Share the food you love making with customers nearby.","अपनी पसंद का खाना बनाकर आसपास के ग्राहकों तक पहुँचाएँ।","ନିଜ ପସନ୍ଦର ଖାଦ୍ୟ ତିଆରି କରି ପାଖରେ ଥିବା ଗ୍ରାହକଙ୍କୁ ଦିଅନ୍ତୁ।"],
+ "Something special, whenever you can.":["Something special, whenever you can.","जब समय मिले, कुछ खास बनाएँ।","ସମୟ ମିଳିଲେ କିଛି ବିଶେଷ ରାନ୍ଧନ୍ତୁ।"],
+ "List a one-day special on the days you choose to cook.":["List a one-day special on the days you choose to cook.","जिस दिन खाना बनाना चाहें, उस दिन का विशेष भोजन जोड़ें।","ଯେଉଁ ଦିନ ରାନ୍ଧିବାକୁ ଚାହାନ୍ତି, ସେହି ଦିନ ପାଇଁ ବିଶେଷ ଭୋଜନ ଯୋଡ଼ନ୍ତୁ।"],
+ "Turn your sattu, sweets and pickles into a homemade food shop.":["Turn your sattu, sweets and pickles into a homemade food shop.","सत्तू, मिठाई और अचार के लिए अपनी घर की दुकान खोलें।","ଛତୁଆ, ମିଠା ଓ ଆଚାରର ନିଜ ଘରୋଇ ଦୋକାନ ଖୋଲନ୍ତୁ।"],
+ "One-day special":["One-day special","एक दिन का विशेष भोजन","ଗୋଟିଏ ଦିନର ବିଶେଷ ଭୋଜନ"],
+ "Everyday cooking":["Everyday cooking","रोज़ का खाना","ନିତିଦିନର ରୋଷେଇ"],
+ "Cook when it suits you":["Cook when it suits you","अपने समय पर खाना बनाएँ","ନିଜ ସୁବିଧାରେ ରାନ୍ଧନ୍ତୁ"],
+ "Sattu, sweets & pickles":["Sattu, sweets & pickles","सत्तू, मिठाई और अचार","ଛତୁଆ, ମିଠା ଓ ଆଚାର"],
+ "Add food to your kitchen":["Add food to your kitchen","अपने किचन में खाना जोड़ें","ନିଜ ରୋଷେଇଘରରେ ଖାଦ୍ୟ ଯୋଡ଼ନ୍ତୁ"],
+ "Previous kitchen story":["Previous kitchen story","पिछली जानकारी","ପୂର୍ବ ସୂଚନା"],
+ "Next kitchen story":["Next kitchen story","अगली जानकारी","ପରବର୍ତ୍ତୀ ସୂଚନା"],
+ "Kitchen tools":["Kitchen tools","किचन विकल्प","ରୋଷେଇଘର ବିକଳ୍ପ"],
+ "FSSAI document under review":["FSSAI document under review","FSSAI दस्तावेज़ की समीक्षा जारी है","FSSAI ଦସ୍ତାବିଜର ସମୀକ୍ଷା ଚାଲିଛି"],
+ "Your certificate is uploaded. Check its review status or contact support.":["Your certificate is uploaded. Check its review status or contact support.","आपका प्रमाणपत्र अपलोड हो चुका है। समीक्षा की स्थिति देखें या सहायता लें।","ଆପଣଙ୍କ ପ୍ରମାଣପତ୍ର ଅପଲୋଡ୍ ହୋଇଛି। ସମୀକ୍ଷା ସ୍ଥିତି ଦେଖନ୍ତୁ ବା ସହାୟତା ନିଅନ୍ତୁ।"],
+ "Start with your FSSAI registration":["Start with your FSSAI registration","FSSAI पंजीकरण से शुरुआत करें","FSSAI ପଞ୍ଜୀକରଣରୁ ଆରମ୍ଭ କରନ୍ତୁ"],
+ "Need a food licence? Follow the Mother Kitchen guide, apply on FoSCoS and upload your certificate.":["Need a food licence? Follow the Mother Kitchen guide, apply on FoSCoS and upload your certificate.","फूड लाइसेंस चाहिए? मदर किचन गाइड देखें, FoSCoS पर आवेदन करें और प्रमाणपत्र अपलोड करें।","ଖାଦ୍ୟ ଲାଇସେନ୍ସ ଦରକାର? ମା’ ରୋଷେଇଘର ଗାଇଡ୍ ଦେଖନ୍ତୁ, FoSCoS ରେ ଆବେଦନ କରି ପ୍ରମାଣପତ୍ର ଅପଲୋଡ୍ କରନ୍ତୁ।"],
+ "Upload your certificate":["Upload your certificate","प्रमाणपत्र अपलोड करें","ପ୍ରମାଣପତ୍ର ଅପଲୋଡ୍ କରନ୍ତୁ"],
+ "Dismiss reminder":["Dismiss reminder","रिमाइंडर बंद करें","ସ୍ମରଣ ସୂଚନା ବନ୍ଦ କରନ୍ତୁ"],
+ "You can add meals and products as drafts while we review your kitchen.":["You can add meals and products as drafts while we review your kitchen.","किचन की समीक्षा के दौरान भोजन और उत्पाद ड्राफ्ट में जोड़ सकते हैं।","ରୋଷେଇଘରର ସମୀକ୍ଷା ଚାଲିଥିବା ବେଳେ ଭୋଜନ ଓ ଉତ୍ପାଦ ଡ୍ରାଫ୍ଟ ଭାବେ ଯୋଡ଼ିପାରିବେ।"],
+ "View application status":["View application status","आवेदन की स्थिति देखें","ଆବେଦନର ସ୍ଥିତି ଦେଖନ୍ତୁ"],
+ "Download Android app":["Download Android app","Android ऐप डाउनलोड करें","Android ଆପ୍ ଡାଉନଲୋଡ୍ କରନ୍ତୁ"]
+});
+Object.assign(labels,{
+ "Meal & handover photos":["Meal & handover photos","भोजन और हैंडओवर की तस्वीरें","ଭୋଜନ ଓ ହସ୍ତାନ୍ତର ଫଟୋ"],
+ "Photo credits":["Photo credits","तस्वीरों का श्रेय","ଫଟୋ ଶ୍ରେୟ"],
+ "1. Prepared meal":["1. Prepared meal","1. तैयार भोजन","୧. ପ୍ରସ୍ତୁତ ଭୋଜନ"],
+ "2. Courier handover":["2. Courier handover","2. डिलीवरी साथी को हैंडओवर","୨. ଡେଲିଭରି ସାଥୀଙ୍କୁ ହସ୍ତାନ୍ତର"],
+ "Add one photo after cooking and one when handing the packed meal to the courier. Show the food and packaging, without faces or address labels.":["Add one photo after cooking and one when handing the packed meal to the courier. Show the food and packaging, without faces or address labels.","खाना बनने के बाद एक फोटो और पैक किया खाना डिलीवरी साथी को देते समय दूसरी फोटो जोड़ें। केवल भोजन और पैकिंग दिखाएँ, चेहरे या पते नहीं।","ରାନ୍ଧିବା ପରେ ଗୋଟିଏ ଫଟୋ ଓ ପ୍ୟାକ୍ ଭୋଜନ ଡେଲିଭରି ସାଥୀଙ୍କୁ ଦେବା ବେଳେ ଆଉ ଗୋଟିଏ ଫଟୋ ଯୋଡ଼ନ୍ତୁ। ଖାଦ୍ୟ ଓ ପ୍ୟାକିଂ ଦେଖାନ୍ତୁ, ମୁହଁ ବା ଠିକଣା ନୁହେଁ।"],
+ "Photos uploaded by your Mother Kitchen after cooking and at courier handover.":["Photos uploaded by your Mother Kitchen after cooking and at courier handover.","खाना बनने और डिलीवरी साथी को देने के समय आपके मदर किचन की तस्वीरें।","ରାନ୍ଧିବା ପରେ ଓ ଡେଲିଭରି ସାଥୀଙ୍କୁ ଦେବା ବେଳର ଆପଣଙ୍କ ମା’ ରୋଷେଇଘରର ଫଟୋ।"],
+ "Take or upload photo":["Take or upload photo","फोटो लें या अपलोड करें","ଫଟୋ ଉଠାନ୍ତୁ ବା ଅପଲୋଡ୍ କରନ୍ତୁ"],
+ "Replace photo":["Replace photo","फोटो बदलें","ଫଟୋ ବଦଳାନ୍ତୁ"],
+ "Saving photo…":["Saving photo…","फोटो सेव हो रही है…","ଫଟୋ ସେଭ୍ ହେଉଛି…"],
+ "Photo added":["Photo added","फोटो जुड़ गई","ଫଟୋ ଯୋଡ଼ାଗଲା"],
+ "Photo not added yet.":["Photo not added yet.","अभी फोटो नहीं जोड़ी गई है।","ଏଯାଏ ଫଟୋ ଯୋଡ଼ାହୋଇନାହିଁ।"],
+ "Loading photos…":["Loading photos…","तस्वीरें लोड हो रही हैं…","ଫଟୋ ଲୋଡ୍ ହେଉଛି…"],
+ "Available after cooking starts.":["Available after cooking starts.","खाना बनाना शुरू करने के बाद उपलब्ध।","ରାନ୍ଧିବା ଆରମ୍ଭ ହେବା ପରେ ଉପଲବ୍ଧ।"],
+ "Available when the meal is ready for pickup.":["Available when the meal is ready for pickup.","भोजन पिकअप के लिए तैयार होने पर उपलब्ध।","ଭୋଜନ ପିକ୍‌ଅପ୍ ପାଇଁ ପ୍ରସ୍ତୁତ ହେଲେ ଉପଲବ୍ଧ।"],
+ "Order photo saved.":["Order photo saved.","ऑर्डर की फोटो सेव हो गई।","ଅର୍ଡର ଫଟୋ ସେଭ୍ ହୋଇଗଲା।"],
+ "Choose a JPG, PNG or WebP under 5 MB.":["Choose a JPG, PNG or WebP under 5 MB.","5 MB से छोटी JPG, PNG या WebP चुनें।","5 MB ରୁ କମ୍ JPG, PNG ବା WebP ବାଛନ୍ତୁ।"],
+ "Choose a smaller photo.":["Choose a smaller photo.","छोटी फोटो चुनें।","ଛୋଟ ଫଟୋ ବାଛନ୍ତୁ।"],
+ "Photo upload is unavailable on this device.":["Photo upload is unavailable on this device.","इस डिवाइस पर फोटो अपलोड उपलब्ध नहीं है।","ଏହି ଡିଭାଇସ୍‌ରେ ଫଟୋ ଅପଲୋଡ୍ ଉପଲବ୍ଧ ନାହିଁ।"],
+ "Add this photo at the preparation or courier-handover step.":["Add this photo at the preparation or courier-handover step.","भोजन तैयार करने या डिलीवरी साथी को देने के चरण में यह फोटो जोड़ें।","ଭୋଜନ ପ୍ରସ୍ତୁତି ବା ଡେଲିଭରି ସାଥୀଙ୍କୁ ଦେବା ପର୍ଯ୍ୟାୟରେ ଏହି ଫଟୋ ଯୋଡ଼ନ୍ତୁ।"],
+ "ORDER_PREPARED":["Prepared meal","तैयार भोजन","ପ୍ରସ୍ତୁତ ଭୋଜନ"],
+ "ORDER_HANDOVER":["Courier handover","डिलीवरी साथी को हैंडओवर","ଡେଲିଭରି ସାଥୀଙ୍କୁ ହସ୍ତାନ୍ତର"]
+});
 export function serviceLabel(text:string,language:UiLanguage){return labels[text]?.[language==="hi"?1:language==="or"?2:0];}

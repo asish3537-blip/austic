@@ -9,6 +9,6 @@ export function PilotCatalogSection(){
   <div className="pilot-kitchen-grid">{PILOT_KITCHENS.map(k=><article key={k.id}>
    <Link className="pilot-kitchen-photo" href={"/pilot?kitchen="+k.id}><Image src={k.image} alt="Illustrative meal photograph" fill sizes="(max-width:700px) 45vw,240px"/><span><UiText text="Sample · Test checkout"/></span></Link>
    <div><h3>{k.area} · <UiText text="Practice kitchen"/></h3><p>Bhubaneswar · <UiText text="Illustrative menu"/></p><small>{k.meals[0].name} · ₹{k.meals[0].price}</small><Link className="pilot-card-action" href={"/pilot?kitchen="+k.id}><UiText text="Try sample menu"/> →</Link></div>
-  </article>)}</div><p className="pilot-catalog-note"><UiText text="These are examples, not verified businesses, reviews or food offers. Actual kitchens are listed separately."/></p>
+  </article>)}</div><p className="pilot-catalog-note"><UiText text="These are examples, not verified businesses, reviews or food offers. Actual kitchens are listed separately."/> <a href="/assets/pilot-photo-credits.json" target="_blank" rel="noopener noreferrer"><UiText text="Photo credits"/></a></p>
  </section>;
 }

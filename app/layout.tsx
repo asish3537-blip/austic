@@ -30,6 +30,8 @@ import "./website-alignment.css";
 import "./customer-entry.css";
 import "./public-info.css";
 import "./public-pilot.css";
+import "./mother-welcome.css";
+import "./dashboard-refinements.css";
 import {HeaderAccountLink} from "@/components/header-account-link";
 
 export const metadata: Metadata = {
