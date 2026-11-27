@@ -81,8 +81,8 @@ async function publishedKitchens(city: string | null | undefined, customerPin?: 
 }
 export async function loadKitchenDirectory(city: string) {
   const rows = await publishedKitchens(city);
-  return rows.map(({ id, name, locality, cuisine, meals }) => ({
-    id, name, locality, cuisine,
-    meals: meals.map(({ name, description, components, price, serviceDate, deliveryTime }) => ({ name, description, components:components.length?components:description?[description]:[], price, serviceDate, deliveryTime })),
+  return rows.map(({ id, name, locality, city, cuisine, meals }) => ({
+    id, name, locality, city, cuisine,
+    meals: meals.map(({ name, menuId, oneTimeOnly, description, category, tier, servings, components, price, serviceDate, deliveryTime }) => ({ name, menuId, oneTimeOnly, description, category, tier, servings, components:components.length?components:description?[description]:[], price, serviceDate, deliveryTime })),
   }));
 }

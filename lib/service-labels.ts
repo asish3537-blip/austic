@@ -7,6 +7,8 @@ for(const key of ["One-time meals","One-time meal","Order a Meal","Explore one-t
 for(const key of ["Homemade products","Homemade Foods"])
  labels[key]=["Homemade Foods","घर के बने खाद्य पदार्थ","ଘର ତିଆରି ଖାଦ୍ୟ"];
 Object.assign(labels,{
+ "Explore practice kitchens":["Explore practice kitchens","अभ्यास किचन देखें","ଅଭ୍ୟାସ ରୋଷେଇଘର ଦେଖନ୍ତୁ"],
+ "See all practice kitchens":["See all practice kitchens","सभी अभ्यास किचन देखें","ସବୁ ଅଭ୍ୟାସ ରୋଷେଇଘର ଦେଖନ୍ତୁ"],
  "Meal description":["Meal description", "भोजन का विवरण", "ଭୋଜନ ବିବରଣୀ"],
  "Describe the food. Include ingredients or allergy information here if needed.":["Describe the food. Include ingredients or allergy information here if needed.", "भोजन का विवरण लिखें। ज़रूरत हो तो सामग्री या एलर्जी की जानकारी यहीं दें।", "ଭୋଜନ ବିବରଣୀ ଲେଖନ୍ତୁ। ଆବଶ୍ୟକ ହେଲେ ସାମଗ୍ରୀ ବା ଆଲର୍ଜି ସୂଚନା ଏଠି ଦିଅନ୍ତୁ।"],
  "Meal type":["Meal type", "भोजन का प्रकार", "ଭୋଜନ ପ୍ରକାର"],
