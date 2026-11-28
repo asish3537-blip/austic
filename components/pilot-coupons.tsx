@@ -1,0 +1,11 @@
+"use client";
+import {useState} from "react";
+import {UiText,useUiLanguage} from "@/components/ui-language";
+import {pilotCheckoutPrice} from "@/lib/pilot-checkout-price";
+import {incomeMoney} from "@/lib/earnings-estimates";
+export function PilotCoupons({code,onChange,price,quantity,days,disabled}:{code:string;onChange:(code:string)=>void;price:number;quantity:number;days:number;disabled:boolean}){
+ const [draft,setDraft]=useState(code),[error,setError]=useState("");const {t}=useUiLanguage();
+ const p=pilotCheckoutPrice(price,quantity,days,code);
+ function apply(value:string){try{const next=pilotCheckoutPrice(price,quantity,days,value);onChange(next.couponCode);setDraft(next.couponCode);setError("");}catch{setError("This practice code is unavailable. Use TEST10 or TESTDELIVERY.");}}
+ return <section className="checkout-offers" aria-label={t("Practice coupons & payment offers")}><h4><UiText text="Practice coupons & payment offers"/></h4><p><UiText text="Test-only offers. They do not apply to real orders."/></p><div className="coupon-entry"><label><UiText text="Coupon or voucher"/><input value={draft} maxLength={40} disabled={disabled} onChange={e=>setDraft(e.target.value)} placeholder={t("Enter code")}/></label><button type="button" disabled={disabled} onClick={()=>apply(draft)}><UiText text="Apply"/></button>{code&&<button type="button" disabled={disabled} onClick={()=>apply("")}><UiText text="Remove"/></button>}</div>{error&&<p role="alert"><UiText text={error}/></p>}<ul><li><div><strong>TEST10</strong><p><UiText text="Practice 10% off food · up to ₹100"/></p></div><button type="button" disabled={disabled||code==="TEST10"} onClick={()=>apply("TEST10")}><UiText text={code==="TEST10"?"Applied":"Use coupon"}/></button></li><li><div><strong>TESTDELIVERY</strong><p><UiText text="Practice free delivery for selected days"/></p></div><button type="button" disabled={disabled||code==="TESTDELIVERY"} onClick={()=>apply("TESTDELIVERY")}><UiText text={code==="TESTDELIVERY"?"Applied":"Use coupon"}/></button></li></ul>{p.discountPaise>0&&<p className="checkout-offer-benefit">{code} · <UiText text="Save {amount} on this checkout" values={{amount:incomeMoney(p.discountPaise/100)}}/></p>}<p><UiText text="Razorpay Test payment only. Choose a supported Test method in checkout. No real cashback is awarded."/></p></section>;
+}

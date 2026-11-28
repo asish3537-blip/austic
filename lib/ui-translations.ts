@@ -1,9 +1,11 @@
 import {pilotStartCopy} from "@/lib/pilot-start-copy";
+import {checkoutOfferCopy} from "@/lib/checkout-offer-copy";
 import {schoolTranslations} from "@/lib/school-translations";
 import {orderExperienceCopy} from "@/lib/order-experience-copy";
 import {usabilityTranslations} from "@/lib/usability-translations";
 export type UiLanguage = "en" | "hi" | "or";
 export const uiTranslations: Record<string, [string, string]> = {
+...checkoutOfferCopy,
 "Product photo":["उत्पाद की तस्वीर","ଉତ୍ପାଦର ଫଟୋ"],
 "Product photo not added yet":["उत्पाद की तस्वीर अभी नहीं जोड़ी गई","ଉତ୍ପାଦର ଫଟୋ ଏପର୍ଯ୍ୟନ୍ତ ଯୋଡ଼ାଯାଇନାହିଁ"],
 "Product photo could not load":["उत्पाद की तस्वीर लोड नहीं हुई","ଉତ୍ପାଦର ଫଟୋ ଲୋଡ୍ ହୋଇପାରିଲା ନାହିଁ"],

@@ -11,12 +11,13 @@ import {pilotTransition} from "@/lib/pilot-payment-policy";
 import {capturePilotReceipt,pilotGateway,pilotRazorpayConfig,refundPilotOrder,validRazorpaySignature} from "@/lib/pilot-payments";
 import type {Prisma} from "@/app/generated/prisma/client";
 import {publicPilotSnapshot} from "@/lib/order-photo-policy";
+import {pilotCheckoutPrice} from "@/lib/pilot-checkout-price";
 export const runtime="nodejs";
 const headers={"Cache-Control":"private, no-store"};
 const meal=z.object({tier:z.enum(["BASE","EGG","CHEESE","CHICKEN","DESI_CHICKEN","MUTTON","MUSHROOM"]).default("BASE"),description:z.string().trim().min(3).max(800),id:z.string().min(1).max(80).optional(),name:z.string().trim().min(3).max(90),price:z.number().int().min(1).max(1000000),components:z.array(z.string().trim().min(1).max(70)).max(3).default([]),ingredients:z.string().max(500).default(""),allergens:z.string().max(300).default(""),servings:z.number().int().min(0).max(200),oneTimeOnly:z.boolean()}).refine(m=>m.oneTimeOnly||m.price>=MEAL_PRICE_TIERS[m.tier].startingPrice,{message:"Set a price from the selected meal starting price."});
 const input=z.discriminatedUnion("action",[
  z.object({action:z.literal("saveMeal"),kitchenId:z.string().max(60),meal}),
- z.object({action:z.literal("checkout"),requestKey:z.string().uuid(),kitchenId:z.string().max(60),mealId:z.string().max(80),quantity:z.number().int().min(1).max(3),days:z.union([z.literal(1),z.number().int().min(3).max(7)]),serviceDate:z.iso.date(),acknowledged:z.literal(true)}),
+ z.object({action:z.literal("checkout"),requestKey:z.string().uuid(),couponCode:z.string().max(40).optional(),kitchenId:z.string().max(60),mealId:z.string().max(80),quantity:z.number().int().min(1).max(3),days:z.union([z.literal(1),z.number().int().min(3).max(7)]),serviceDate:z.iso.date(),acknowledged:z.literal(true)}),
  z.object({action:z.literal("confirm"),orderId:z.string().uuid(),paymentId:z.string().regex(/^pay_[A-Za-z0-9]+$/),signature:z.string().regex(/^[a-f0-9]{64}$/i)}),
  z.object({action:z.literal("reconcile"),orderId:z.string().uuid()}),
  z.object({action:z.literal("refund"),orderId:z.string().uuid()}),
@@ -96,10 +97,12 @@ export async function POST(request:Request){
    if(data.serviceDate<first||data.serviceDate>last.toISOString().slice(0,10))throw Error("Choose a serving date within the next seven days.");
    const dates=Array.from({length:data.days},(_,i)=>{const d=new Date(data.serviceDate+"T00:00:00Z");d.setUTCDate(d.getUTCDate()+i);return d.toISOString().slice(0,10);});
    if(dates.at(-1)!>last.toISOString().slice(0,10))throw Error("Keep all plan dates within the next seven days.");
+   const pricing=pilotCheckoutPrice(dish.price,data.quantity,data.days,data.couponCode);
    let order=await tx.pilotOrder.findUnique({where:{workspaceId_requestKey:{workspaceId:w.id,requestKey:data.requestKey}}});
    if(!order){if(await tx.pilotOrder.count({where:{workspaceId:w.id,createdAt:{gte:new Date(Date.now()-86400000)}}})>=60)throw Error("Your practice workspace has reached its daily order limit.");
-    order=await tx.pilotOrder.create({data:{workspaceId:w.id,requestKey:data.requestKey,quantity:data.quantity,amountPaise:(dish.price*data.quantity+9)*data.days*100,snapshot:{kitchenId:kitchen.id,kitchenName:kitchen.name,area:kitchen.area,mealId:dish.id,mealName:dish.name,foodPrice:dish.price,days:data.days,dates,deliveryPerDay:9,pilot:true},pickupCode:String(randomInt(1000,10000)),deliveryCode:String(randomInt(1000,10000)),events:[{status:"PAYMENT_PENDING",detail:"Practice order created. Razorpay Test only; no real charge or food delivery.",at:new Date().toISOString()}]}});
+    order=await tx.pilotOrder.create({data:{workspaceId:w.id,requestKey:data.requestKey,quantity:data.quantity,amountPaise:pricing.totalPaise,snapshot:{...pricing,kitchenId:kitchen.id,kitchenName:kitchen.name,area:kitchen.area,mealId:dish.id,mealName:dish.name,foodPrice:dish.price,days:data.days,dates,deliveryPerDay:9,pilot:true},pickupCode:String(randomInt(1000,10000)),deliveryCode:String(randomInt(1000,10000)),events:[{status:"PAYMENT_PENDING",detail:"Practice order created. Razorpay Test only; no real charge or food delivery.",at:new Date().toISOString()}]}});
    }
+   if(String((order.snapshot as Record<string,unknown>).couponCode??"")!==pricing.couponCode)throw Error("This practice checkout used another coupon. Start a fresh checkout.");
    if(order.paymentStatus==="CAPTURED")return{paid:true,orderId:order.id};
    if(order.status!=="PAYMENT_PENDING")throw Error("This practice checkout is closed.");
    let providerOrderId=order.providerOrderId;

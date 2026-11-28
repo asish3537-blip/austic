@@ -17,7 +17,7 @@ const regular = [
  {tier:"MUTTON" as const,name:"Mutton lunch",price:150,components:["Rice","Mutton curry","Dal"],ingredients:"Rice, mutton, lentils",allergens:""},
  {tier:"MUSHROOM" as const,name:"Mushroom lunch",price:69,components:["Rice","Mushroom curry","Dal"],ingredients:"Rice, mushroom, lentils",allergens:""},
 ];
-const mealPhotos:Record<MealTierName,string>={BASE:"/assets/home-thali.avif",EGG:"/assets/pilot-egg-curry.jpg",CHEESE:"/assets/pilot-paneer-curry.jpg",CHICKEN:"/assets/pilot-chicken-curry.jpg",DESI_CHICKEN:"/assets/pilot-desi-chicken-curry.jpg",MUTTON:"/assets/pilot-mutton-curry.jpg",MUSHROOM:"/assets/pilot-mushroom-curry.jpg"};
+const mealPhotos:Record<MealTierName,string>={BASE:"/assets/home-one-day-v2.webp",EGG:"/assets/pilot-egg-curry.jpg",CHEESE:"/assets/pilot-paneer-curry.jpg",CHICKEN:"/assets/pilot-chicken-curry.jpg",DESI_CHICKEN:"/assets/pilot-desi-chicken-curry.jpg",MUTTON:"/assets/pilot-mutton-curry.jpg",MUSHROOM:"/assets/pilot-mushroom-curry.jpg"};
 /** Fictional catalogue. Its IDs are never real kitchen or meal IDs. */
 export const PILOT_KITCHENS:PilotKitchen[] = areas.map(([id,area,latitude,longitude],index)=>({
  id:"pilot-"+id,name:area+" Practice Kitchen",area,city:"Bhubaneswar",latitude,longitude,

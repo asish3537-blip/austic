@@ -36,6 +36,7 @@ import "./usability-refresh.css";
 import "./paustik-type.css";
 import "./duo-preview.css";
 import "./product-photos.css";
+import "./checkout-offers.css";
 import {HeaderAccountLink} from "@/components/header-account-link";
 
 export const metadata: Metadata = {

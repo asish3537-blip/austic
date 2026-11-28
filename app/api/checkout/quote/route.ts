@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { rejectCrossOrigin, serviceUnavailable } from "@/lib/http";
 import { distanceMeters, lockWallet, walletBalance } from "@/lib/marketplace-rules";
 import { CheckoutError, inputHash, priceCheckout } from "@/lib/checkout-pricing";
+import {availableCheckoutOffers} from "@/lib/checkout-offers";
 
 const schema = z.object({ menuIds: z.array(z.string().uuid()).min(1).max(7).optional(), productRequestId: z.string().uuid().optional(), quantity: z.number().int().min(1).max(8).default(1), couponCode: z.string().max(40).optional() }).refine(value => Boolean(value.menuIds) !== Boolean(value.productRequestId));
 export async function POST(request: Request) {
@@ -33,7 +34,8 @@ export async function POST(request: Request) {
       const pricing = await priceCheckout(tx, user.id, input);
       const quote = await tx.checkoutQuote.create({ data: { customerId: user.id, inputHash: inputHash(input), payload: pricing, expiresAt: new Date(Date.now() + 15 * 60_000) } });
       const walletApplied = Math.min(await walletBalance(tx, user.id), pricing.total);
-      return { ...pricing, quoteId: quote.id, expiresAt: quote.expiresAt, walletApplied, amountDue: Math.round((pricing.total - walletApplied) * 100) / 100 };
+      const offers=await availableCheckoutOffers(tx,user.id,pricing.subtotal,pricing.deliveryFee);
+      return { ...pricing, offers, quoteId: quote.id, expiresAt: quote.expiresAt, walletApplied, amountDue: Math.round((pricing.total - walletApplied) * 100) / 100 };
     });
     return NextResponse.json(result, { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) {
