@@ -514,14 +514,28 @@ public final class KitchenActivity extends Activity implements PaymentResultWith
     }
   }
 
-  private void menu(JSONObject k) {
+  private void menu(JSONObject k) { menu(k, 0); }
+
+  private void menu(JSONObject k, int preference) {
     page("Menu");
     label(k.optString("name"), 26, true);
     label(k.optString("cuisine"), 15, false);
+    Spinner filter = choice("Meal preference", new String[] {t("All meals"), t("Vegetarian"), t("Non-vegetarian")});
+    filter.setSelection(preference);
+    filter.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+      public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
+        if (position != preference) menu(k, position);
+      }
+      public void onNothingSelected(android.widget.AdapterView<?> parent) {}
+    });
     JSONArray meals = k.optJSONArray("meals");
+    int visibleMeals = 0;
     for (int i = 0; meals != null && i < meals.length(); i++) {
       JSONObject m = meals.optJSONObject(i);
       if (m == null) continue;
+      boolean nonveg = m.optString("category").equals("NON_VEGETARIAN");
+      if ((preference == 1 && nonveg) || (preference == 2 && !nonveg)) continue;
+      visibleMeals++;
       divider();
       if (practiceMode) foodImage(m);
       label(m.optString("name"), 21, true);
@@ -542,7 +556,14 @@ public final class KitchenActivity extends Activity implements PaymentResultWith
               + t("servings"),
           13,
           false);
-      button("Choose this meal", () -> meal(k, m));
+      label(nonveg ? "Non-vegetarian" : "Vegetarian", 14, true);
+      if (m.optBoolean("oneTimeOnly")) label("One-time special", 14, false);
+      if (m.optInt("servings") > 0) button("Choose this meal", () -> meal(k, m));
+      else label("Sold out", 16, true);
+    }
+    if (visibleMeals == 0) {
+      label("No meals match this preference.", 16, false);
+      button("Clear filters", () -> menu(k));
     }
   }
 
@@ -556,7 +577,11 @@ public final class KitchenActivity extends Activity implements PaymentResultWith
       button("Sign in", () -> signIn());
       return;
     }
-    Spinner quantity = choice("Servings", new String[] {"1", "2", "3", "4", "5", "6", "7", "8"});
+    int available = Math.min(8, m.optInt("servings"));
+    if (available < 1) { label("Sold out", 16, true); return; }
+    String[] portions = new String[available];
+    for (int i = 0; i < available; i++) portions[i] = String.valueOf(i + 1);
+    Spinner quantity = choice("Servings", portions);
     Spinner days =
         choice(
             "Meal days",
@@ -2058,8 +2083,9 @@ public final class KitchenActivity extends Activity implements PaymentResultWith
             info("Email paustikdelivery@gmail.com for help.");
           }
         });
+    label("Real meal cancellation closes five hours before delivery and is available only before preparation. Eligible paid value less the ₹5 fee is credited to the Paustik wallet. Test refunds return through Razorpay Test Mode; no real money moves.", 15, false);
     TextView policy = label("Privacy Policy: https://paustik.in/privacy", 14, false);
     policy.setAutoLinkMask(android.text.util.Linkify.WEB_URLS);
-    label("Paustik 1.4.0 · Native Android customer, kitchen and delivery screens.", 13, false);
+    label("Paustik " + BuildConfig.VERSION_NAME, 13, false);
   }
 }

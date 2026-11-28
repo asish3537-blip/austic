@@ -28,7 +28,8 @@ export default async function CustomerDashboard({searchParams}:{searchParams:Pro
 
 
   {!discovery.hasDeliveryPin&&<CustomerDeliveryPin/>}
-  <PilotCatalogSection/><CustomerPaySummary/><KitchenDiscovery initialQuery={(params.q||"").slice(0,100)} key={mode} initialMode={mode} kitchens={discovery.kitchens} sampleKitchens={sampleCustomerKitchens()} hasDeliveryPin={discovery.hasDeliveryPin} deliveryArea={discovery.deliveryArea} available={discovery.available}/>
+  <CustomerPaySummary/><KitchenDiscovery initialQuery={(params.q||"").slice(0,100)} key={mode} initialMode={mode} kitchens={discovery.kitchens} sampleKitchens={sampleCustomerKitchens()} hasDeliveryPin={discovery.hasDeliveryPin} deliveryArea={discovery.deliveryArea} available={discovery.available}/>
+  <PilotCatalogSection compact/>
 
  </main>;
 }

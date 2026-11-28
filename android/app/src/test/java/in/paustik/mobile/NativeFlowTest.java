@@ -25,6 +25,26 @@ import java.util.*;
 @Config(sdk=34,shadows={NativeFlowTest.TestCheckoutShadow.class})
 @LooperMode(LooperMode.Mode.PAUSED)
 public class NativeFlowTest {
+    @Test public void soldOutMealsCannotBeSelected()throws Exception{
+        JSONObject meal=new JSONObject().put("name","Sold-out meal").put("servings",0).put("category","VEGETARIAN");
+        JSONObject kitchen=new JSONObject().put("name","Test kitchen").put("meals",new JSONArray().put(meal));
+        java.lang.reflect.Method method=KitchenActivity.class.getDeclaredMethod("menu",JSONObject.class);method.setAccessible(true);method.invoke(app,kitchen);
+        assertEquals(0,count(app.getWindow().getDecorView(),"action:Choose this meal"));
+    }
+    @Test public void servingsDoNotExceedPublishedStock()throws Exception{
+        JSONObject meal=new JSONObject().put("name","Limited meal").put("servings",2);
+        inject("practiceMode",true);
+        java.lang.reflect.Method method=KitchenActivity.class.getDeclaredMethod("meal",JSONObject.class,JSONObject.class);method.setAccessible(true);method.invoke(app,new JSONObject(),meal);
+        assertEquals(2,((Spinner)view("choice:Servings")).getCount());
+    }
+    @Test public void emptyDietFilterCanBeCleared()throws Exception{
+        JSONObject meal=new JSONObject().put("name","Vegetarian meal").put("servings",2).put("category","VEGETARIAN");
+        JSONObject kitchen=new JSONObject().put("name","Test kitchen").put("meals",new JSONArray().put(meal));
+        java.lang.reflect.Method method=KitchenActivity.class.getDeclaredMethod("menu",JSONObject.class,int.class);method.setAccessible(true);method.invoke(app,kitchen,2);
+        assertEquals(0,count(app.getWindow().getDecorView(),"action:Choose this meal"));
+        click("action:Clear filters");
+        assertEquals(1,count(app.getWindow().getDecorView(),"action:Choose this meal"));
+    }
     private ActivityController<KitchenActivity> controller;
     private KitchenActivity app;
     @Before public void setup(){TestCheckoutShadow.options=null;TestCheckoutShadow.key=null;controller=Robolectric.buildActivity(KitchenActivity.class).setup();app=controller.get();}

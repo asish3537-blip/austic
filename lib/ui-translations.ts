@@ -3,6 +3,8 @@ import {usabilityTranslations} from "@/lib/usability-translations";
 export type UiLanguage = "en" | "hi" | "or";
 export const uiTranslations: Record<string, [string, string]> = {
 ...usabilityTranslations,
+"Search meals": ["भोजन खोजें", "ଭୋଜନ ଖୋଜନ୍ତୁ"],
+"Menu delivery date": ["भोजन की डिलीवरी तिथि", "ଭୋଜନ ଡେଲିଭରି ତାରିଖ"],
 "Chat with Paustik Help":["Paustik सहायता से चैट करें","Paustik ସହାୟତା ସହ ଚାଟ୍ କରନ୍ତୁ"],
 "My account":["मेरा खाता","ମୋ ଖାତା"],
 "My profile":["मेरी प्रोफ़ाइल","ମୋ ପ୍ରୋଫାଇଲ୍"],
