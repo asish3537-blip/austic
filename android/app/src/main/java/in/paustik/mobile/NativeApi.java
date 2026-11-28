@@ -102,6 +102,33 @@ class NativeApi {
     return call("POST", path, data);
   }
 
+  byte[] orderPhoto(String orderId, String stage) throws Exception {
+    return orderPhoto(orderId, stage, false);
+  }
+
+  byte[] orderPhoto(String orderId, String stage, boolean pilot) throws Exception {
+    if (!orderId.matches("[0-9a-fA-F-]{36}") || !(stage.equals("PREPARED") || stage.equals("HANDOVER")))
+      throw new Failure(400, "Invalid order photo.");
+    URL url = new URL(origin + "/api/order-photos?orderId=" + orderId + (pilot ? "&pilot=1" : "") + "&image=" + stage);
+    if (!url.getProtocol().equals("https")) throw new Failure(400, "A secure connection is required.");
+    HttpURLConnection c = (HttpURLConnection) url.openConnection();
+    try {
+      c.setConnectTimeout(12000); c.setReadTimeout(15000); c.setInstanceFollowRedirects(false);
+      c.setUseCaches(false); c.setRequestProperty("Accept", "image/png");
+      if (signedIn()) c.setRequestProperty("Cookie", "paustik_session=" + session);
+      if (c.getResponseCode() != 200 || !"image/png".equals(c.getContentType()))
+        throw new Failure(404, "Order photo unavailable. Please refresh.");
+      try (InputStream input = c.getInputStream(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+        byte[] buffer = new byte[8192]; int n;
+        while ((n = input.read(buffer)) != -1) {
+          if (out.size() + n > 210000) throw new Failure(413, "Order photo is too large.");
+          out.write(buffer, 0, n);
+        }
+        return out.toByteArray();
+      }
+    } finally { c.disconnect(); }
+  }
+
   JSONObject call(String method, String path, JSONObject data) throws Exception {
     if (!path.startsWith("/api/") || path.contains("..") || path.contains("\\"))
       throw new Failure(400, "Invalid app request.");

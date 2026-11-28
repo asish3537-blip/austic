@@ -25,6 +25,39 @@ import java.util.*;
 @Config(sdk=34,shadows={NativeFlowTest.TestCheckoutShadow.class})
 @LooperMode(LooperMode.Mode.PAUSED)
 public class NativeFlowTest {
+    private void openPhotos(FixtureApi fixture)throws Exception{
+        inject("api",fixture);
+        java.lang.reflect.Method method=KitchenActivity.class.getDeclaredMethod("orderPhotos",JSONObject.class);method.setAccessible(true);
+        method.invoke(app,new JSONObject().put("id",FixtureApi.PILOT_ID).put("orderNumber","LOCAL-PHOTO"));
+        idleUntil("action:Refresh photos");
+    }
+    @Test public void customerSeesBothPrivateOrderPhotoStages()throws Exception{
+        openPhotos(new FixtureApi(app){
+            @Override JSONObject get(String path)throws Exception{
+                if(path.startsWith("/api/order-photos?"))return new JSONObject().put("photos",new JSONArray().put(new JSONObject().put("stage","PREPARED").put("createdAt","2026-11-28T10:00:00Z")).put(new JSONObject().put("stage","HANDOVER").put("createdAt","2026-11-28T10:10:00Z")));
+                return super.get(path);
+            }
+            @Override byte[] orderPhoto(String id,String stage)throws Exception{
+                assertEquals(PILOT_ID,id);
+                android.graphics.Bitmap image=android.graphics.Bitmap.createBitmap(2,2,android.graphics.Bitmap.Config.ARGB_8888);
+                java.io.ByteArrayOutputStream bytes=new java.io.ByteArrayOutputStream();image.compress(android.graphics.Bitmap.CompressFormat.PNG,100,bytes);return bytes.toByteArray();
+            }
+        });
+        assertNotNull(view("photo:PREPARED"));assertNotNull(view("photo:HANDOVER"));
+    }
+    @Test public void missingOrderPhotosDoNotShowInventedEvidence()throws Exception{
+        openPhotos(new FixtureApi(app){@Override JSONObject get(String path)throws Exception{return new JSONObject().put("photos",new JSONArray());}});
+        assertEquals(0,count(app.getWindow().getDecorView(),"photo:PREPARED"));assertEquals(0,count(app.getWindow().getDecorView(),"photo:HANDOVER"));
+        assertNotNull(view("action:Track order"));
+    }
+    @Test public void unavailablePhotoCanBeRetriedWithoutLosingTracking()throws Exception{
+        openPhotos(new FixtureApi(app){
+            @Override JSONObject get(String path)throws Exception{return new JSONObject().put("photos",new JSONArray().put(new JSONObject().put("stage","PREPARED")));}
+            @Override byte[] orderPhoto(String id,String stage)throws Exception{throw new NativeApi.Failure(404,"Unavailable");}
+        });
+        assertEquals(0,count(app.getWindow().getDecorView(),"photo:PREPARED"));
+        assertNotNull(view("action:Refresh photos"));assertNotNull(view("action:Track order"));
+    }
     @Test public void soldOutMealsCannotBeSelected()throws Exception{
         JSONObject meal=new JSONObject().put("name","Sold-out meal").put("servings",0).put("category","VEGETARIAN");
         JSONObject kitchen=new JSONObject().put("name","Test kitchen").put("meals",new JSONArray().put(meal));

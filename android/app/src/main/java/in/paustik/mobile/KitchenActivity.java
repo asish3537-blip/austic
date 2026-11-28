@@ -432,6 +432,7 @@ public final class KitchenActivity extends Activity implements PaymentResultWith
     }
     if (user != null) {
       button("Test payments & refunds", () -> pilotHome());
+      if (BuildConfig.TEST_PAYMENTS_ONLY) button("Real order photos (view only)", () -> photoOrders());
       request(
           () -> api.get("/api/mobile/workspace"),
           d -> {
@@ -1169,7 +1170,74 @@ public final class KitchenActivity extends Activity implements PaymentResultWith
             label(e.optString("status").replace('_', ' ') + " · " + e.optString("at"), 14, false);
           }
           button("Refresh tracking", () -> track(o));
+          button("Preparation & handover photos", () -> orderPhotos(o));
         });
+  }
+
+  private void orderPhotos(JSONObject order) {
+    orderPhotos(order, false);
+  }
+
+  private void photoOrders() {
+    page("Real order photos (view only)");
+    request(() -> api.get("/api/mobile/workspace"), result -> {
+      JSONArray rows = result.optJSONArray("orders");
+      if (rows == null || rows.length() == 0) label("No orders yet. Choose a meal to get started.", 15, false);
+      for (int i = 0; rows != null && i < rows.length(); i++) {
+        JSONObject order = rows.getJSONObject(i);
+        divider(); label(order.optString("orderNumber"), 18, true);
+        button("Preparation & handover photos", () -> orderPhotos(order));
+      }
+    });
+  }
+
+  private void orderPhotos(JSONObject order, boolean pilot) {
+    page("Preparation & handover photos");
+    label(order.optString("orderNumber"), 18, true);
+    label(pilot ? "Test order photos are practice evidence only. No real meal or courier handover." : "Photos uploaded by the kitchen. They show the meal and parcel at preparation and courier handover; they are not a food-safety certification.", 14, false);
+    request(() -> {
+      JSONObject result = api.get("/api/order-photos?orderId=" + Uri.encode(order.optString("id")) + (pilot ? "&pilot=1" : ""));
+      JSONArray photos = result.optJSONArray("photos");
+      for (int i = 0; photos != null && i < photos.length(); i++) {
+        JSONObject photo = photos.getJSONObject(i);
+        String stage = photo.optString("stage");
+        if (!stage.equals("PREPARED") && !stage.equals("HANDOVER")) continue;
+        try {
+          byte[] bytes = pilot ? api.orderPhoto(order.optString("id"), stage, true) : api.orderPhoto(order.optString("id"), stage);
+          photo.put("pixels", android.util.Base64.encodeToString(bytes, android.util.Base64.NO_WRAP));
+        } catch (Exception unavailable) { photo.put("unavailable", true); }
+      }
+      return result;
+    }, result -> {
+      JSONArray photos = result.optJSONArray("photos");
+      for (String stage : new String[] {"PREPARED", "HANDOVER"}) {
+        divider(); label(stage.equals("PREPARED") ? "Prepared meal photo" : "Courier handover photo", 19, true);
+        JSONObject photo = null;
+        for (int i = 0; photos != null && i < photos.length(); i++)
+          if (stage.equals(photos.getJSONObject(i).optString("stage"))) photo = photos.getJSONObject(i);
+        if (photo == null) { label("Not uploaded yet", 15, false); continue; }
+        label(photo.optString("createdAt"), 13, false);
+        if (!photo.has("pixels")) { label("Photo could not load. Refresh to retry.", 15, false); continue; }
+        byte[] bytes = android.util.Base64.decode(photo.getString("pixels"), android.util.Base64.NO_WRAP);
+        BitmapFactory.Options bounds = new BitmapFactory.Options(); bounds.inJustDecodeBounds = true;
+        BitmapFactory.decodeByteArray(bytes, 0, bytes.length, bounds);
+        if (bounds.outWidth < 1 || bounds.outHeight < 1 || bounds.outWidth > 640 || bounds.outHeight > 640) {
+          label("Photo could not load. Refresh to retry.", 15, false); continue;
+        }
+        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+        if (bitmap == null) { label("Photo could not load. Refresh to retry.", 15, false); continue; }
+        ImageView image = new ImageView(this); image.setTag("photo:" + stage);
+        image.setImageBitmap(bitmap); image.setAdjustViewBounds(true); image.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        image.setContentDescription(t(stage.equals("PREPARED") ? "Prepared meal photo" : "Courier handover photo"));
+        body.addView(image, new LinearLayout.LayoutParams(-1, -2));
+      }
+      button("Refresh photos", () -> orderPhotos(order, pilot));
+      button("Track order", () -> { if (pilot) pilotHome(); else track(order); });
+    }, () -> {
+      label("Order photos could not load. Please retry.", 15, false);
+      button("Refresh photos", () -> orderPhotos(order, pilot));
+      button("Track order", () -> { if (pilot) pilotHome(); else track(order); });
+    });
   }
 
   private void savePaymentContext() {
@@ -1196,6 +1264,7 @@ public final class KitchenActivity extends Activity implements PaymentResultWith
         label(String.format(Locale.ROOT,"TEST-%s",id.substring(0,Math.min(8,id.length())).toUpperCase(Locale.ROOT)), 17, true);
         label(snapshot==null?"":snapshot.optString("mealName"), 19, true);
         label(money(o.optInt("amountPaise")/100.0)+" · "+t(status.replace('_',' ')), 16, false);
+        button("Preparation & handover photos", () -> orderPhotos(o, true));
         if (payment.equals("PENDING")) button("Check Test payment", () -> pilotCheckPayment(id));
         if (status.equals("CANCELLED") && !payment.equals("PENDING")) {
           label(payment.equals("REFUNDED")?"Test refund completed":payment.equals("REFUND_PENDING")?"Test refund pending":"Test refund not confirmed", 16, true);
