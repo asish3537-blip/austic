@@ -1,4 +1,9 @@
 export const usabilityTranslations:Record<string,[string,string]>={
+ "Get started with Google":["Google से शुरुआत करें","Google ସହ ଆରମ୍ଭ କରନ୍ତୁ"],
+ "or create an account with email":["या ईमेल से खाता बनाएं","ବା ଇମେଲ୍‌ରେ ଖାତା ଖୋଲନ୍ତୁ"],
+ "App guidance only. Never share passwords, payment details or sign-in codes.":["केवल ऐप की सहायता। पासवर्ड, भुगतान की जानकारी या साइन-इन कोड कभी साझा न करें।","କେବଳ ଆପ୍ ସହାୟତା। ପାସୱାର୍ଡ, ପେମେଣ୍ଟ ତଥ୍ୟ ବା ସାଇନ୍‌-ଇନ୍ କୋଡ୍ କେବେ ସେୟାର୍ କରନ୍ତୁ ନାହିଁ।"],
+ "Voice and WhatsApp privacy":["वॉइस और WhatsApp की गोपनीयता","ଭଏସ୍ ଓ WhatsApp ଗୋପନୀୟତା"],
+ "Voice starts only when you tap Talk. Your browser may process speech online. Review the words before sending. WhatsApp opens a chat; no message is sent automatically.":["बोलें पर टैप करने के बाद ही वॉइस शुरू होती है। आपका ब्राउज़र आवाज़ को ऑनलाइन प्रोसेस कर सकता है। भेजने से पहले शब्द जाँचें। WhatsApp केवल चैट खोलता है; संदेश अपने आप नहीं भेजा जाता।","କଥା ହୁଅନ୍ତୁ ଟ୍ୟାପ୍ କଲେ ହିଁ ଭଏସ୍ ଆରମ୍ଭ ହୁଏ। ବ୍ରାଉଜର୍ ଅନ୍‌ଲାଇନ୍‌ରେ ସ୍ୱର ପ୍ରକ୍ରିୟା କରିପାରେ। ପଠାଇବା ପୂର୍ବରୁ ଶବ୍ଦ ଯାଞ୍ଚ କରନ୍ତୁ। WhatsApp କେବଳ ଚାଟ୍ ଖୋଲେ; ସନ୍ଦେଶ ଆପେ ପଠାଯାଏ ନାହିଁ।"],
  "Your neighbourhood table":["आपके पड़ोस का स्वाद","ଆପଣଙ୍କ ପଡ଼ୋଶୀ ରୋଷେଇ"],
  "Good food, close to home.":["घर के पास, घर जैसा खाना।","ଘର ପାଖରେ, ଘରୋଇ ଭୋଜନ।"],
  "Explore published menus first. Sign in when you are ready to order.":["पहले उपलब्ध मेन्यू देखें। ऑर्डर करने के लिए तैयार होने पर साइन इन करें।","ପ୍ରଥମେ ପ୍ରକାଶିତ ମେନୁ ଦେଖନ୍ତୁ। ଅର୍ଡର୍ ପାଇଁ ପ୍ରସ୍ତୁତ ହେଲେ ସାଇନ୍ ଇନ୍ କରନ୍ତୁ।"],

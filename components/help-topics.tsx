@@ -7,8 +7,11 @@ import {WHATSAPP_SUPPORT_URL} from "@/lib/whatsapp-support";
 type Copy=[string,string,string];
 const topics:{id:string;title:Copy;steps:Copy[];href:string}[]=[
  {id:"account-setup",title:["Account & sign-in","खाता और साइन इन","ଆକାଉଣ୍ଟ ଓ ସାଇନ୍ ଇନ୍"],href:"/sign-in",steps:[
- ["Create a customer account, confirm your email, then sign in with your password.","ग्राहक खाता बनाएँ, ईमेल सत्यापित करें और पासवर्ड से साइन इन करें।","ଗ୍ରାହକ ଆକାଉଣ୍ଟ ଖୋଲନ୍ତୁ, ଇମେଲ୍ ଯାଞ୍ଚ କରନ୍ତୁ ଓ ପାସୱାର୍ଡ ଦେଇ ସାଇନ୍ ଇନ୍ କରନ୍ତୁ।"],
+ ["Use Google to create or reopen your customer account. Existing accounts can also use an email sign-in code or email and password.","Google से ग्राहक खाता बनाएँ या खोलें। मौजूदा खाते ईमेल कोड या ईमेल और पासवर्ड से भी साइन इन कर सकते हैं।","Googleରେ ଗ୍ରାହକ ଖାତା ଖୋଲନ୍ତୁ। ପୂର୍ବରୁ ଥିବା ଖାତା ଇମେଲ୍ କୋଡ୍ ବା ଇମେଲ୍ ଓ ପାସୱାର୍ଡରେ ମଧ୍ୟ ସାଇନ୍ ଇନ୍ କରିପାରିବ।"],
  ["Use Forgot password for recovery. Mother Kitchen and delivery applications have separate join pages.","पासवर्ड भूलने पर उसे रीसेट करें। किचन और डिलीवरी के लिए अलग पंजीकरण पेज हैं।","ପାସୱାର୍ଡ ଭୁଲିଗଲେ ରିସେଟ୍ କରନ୍ତୁ। ରୋଷେଇଘର ଓ ଡେଲିଭରି ପାଇଁ ଅଲଗା ପଞ୍ଜୀକରଣ ପୃଷ୍ଠା ଅଛି।"]]},
+ {id:"ordering-policies",title:["Ordering, delivery & refunds","ऑर्डर, डिलीवरी और रिफंड","ଅର୍ଡର୍, ଡେଲିଭରି ଓ ଫେରସ୍ତ"],href:"/browse",steps:[
+ ["Check dates, portions, ingredients and allergens before ordering. Review food, delivery, discounts and the final total at checkout. Availability depends on the published menu, your address and courier coverage.","ऑर्डर से पहले तारीख, मात्रा, सामग्री और एलर्जी की जानकारी जाँचें। चेकआउट पर भोजन मूल्य, डिलीवरी शुल्क, छूट और कुल राशि देखें। उपलब्धता मेन्यू, पते और डिलीवरी क्षेत्र पर निर्भर है।","ଅର୍ଡର୍ ପୂର୍ବରୁ ତାରିଖ, ପରିମାଣ, ସାମଗ୍ରୀ ଓ ଆଲର୍ଜି ତଥ୍ୟ ଯାଞ୍ଚ କରନ୍ତୁ। ଚେକ୍‌ଆଉଟ୍‌ରେ ଭୋଜନ ଦାମ, ଡେଲିଭରି ଶୁଳ୍କ, ରିହାତି ଓ ମୋଟ ରାଶି ଦେଖନ୍ତୁ। ଉପଲବ୍ଧତା ମେନୁ, ଠିକଣା ଓ କୁରିଅର୍ ସେବା ଉପରେ ନିର୍ଭର କରେ।"],
+ ["Open Orders to check cancellation eligibility and the displayed refund before cancelling. Contact support for help. Practice kitchens are fictional: Test payments take no real money and no food is delivered. Real kitchen checkout is separate.","रद्द करने से पहले ऑर्डर में पात्रता और दिखाया गया रिफंड देखें। मदद के लिए सहायता से संपर्क करें। अभ्यास रसोइयाँ काल्पनिक हैं: Test भुगतान में असली पैसे नहीं लिए जाते और भोजन नहीं पहुँचाया जाता। वास्तविक चेकआउट अलग है।","ବାତିଲ୍ ପୂର୍ବରୁ ଅର୍ଡର୍‌ରେ ଯୋଗ୍ୟତା ଓ ଦେଖାଯାଉଥିବା ଫେରସ୍ତ ରାଶି ଦେଖନ୍ତୁ। ସହାୟତା ପାଇଁ ସପୋର୍ଟ ସହ ଯୋଗାଯୋଗ କରନ୍ତୁ। ଅଭ୍ୟାସ ରୋଷେଇଘର କାଳ୍ପନିକ: Test ପେମେଣ୍ଟରେ ପ୍ରକୃତ ଟଙ୍କା ନିଆଯାଏ ନାହିଁ ବା ଭୋଜନ ପହଞ୍ଚାଯାଏ ନାହିଁ। ପ୍ରକୃତ ଚେକ୍‌ଆଉଟ୍ ଅଲଗା।"]]},
  {id:"customer-workspace",title:["Meals & subscriptions","भोजन और सदस्यता","ଭୋଜନ ଓ ସବ୍‌ସ୍କ୍ରିପ୍ସନ୍"],href:"/customer/dashboard",steps:[
  ["Save your delivery address. Choose a published one-time meal or 3–7-day subscription.","डिलीवरी पता सेव करें। उपलब्ध एक बार का भोजन या 3–7 दिन की सदस्यता चुनें।","ଡେଲିଭରି ଠିକଣା ସେଭ୍ କରନ୍ତୁ। ଉପଲବ୍ଧ ଗୋଟିଏ ଥରର ଭୋଜନ କିମ୍ବା ୩–୭ ଦିନର ସବ୍‌ସ୍କ୍ରିପ୍ସନ୍ ବାଛନ୍ତୁ।"],
  ["Review food, delivery, discounts and payment at checkout. New bookings require an eligible online courier.","चेकआउट पर भोजन, डिलीवरी, छूट और भुगतान देखें। नई बुकिंग के लिए उपलब्ध डिलीवरी पार्टनर चाहिए।","ଚେକ୍‌ଆଉଟ୍‌ରେ ଭୋଜନ, ଡେଲିଭରି, ରିହାତି ଓ ଦେୟ ଦେଖନ୍ତୁ। ନୂଆ ବୁକିଂ ପାଇଁ ଉପଯୁକ୍ତ ଅନଲାଇନ୍ କୁରିଅର ଆବଶ୍ୟକ।"]]},
@@ -36,7 +39,7 @@ const topics:{id:string;title:Copy;steps:Copy[];href:string}[]=[
 export function HelpTopics(){
  useEffect(()=>{
    const openTopic=()=>{
-     const aliases:Record<string,string>={"ordering-policies":"delivery-tracking","notifications-and-maps":"account-profile"};
+     const aliases:Record<string,string>={"notifications-and-maps":"account-profile"};
      const hash=window.location.hash.slice(1);
      const target=document.getElementById(aliases[hash]||hash);
      if(target instanceof HTMLDetailsElement){target.open=true;target.scrollIntoView({block:"start"});}

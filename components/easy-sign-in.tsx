@@ -9,7 +9,7 @@ import {useUiLanguage} from "@/components/ui-language";
 type GoogleIdentity = { initialize(options: { client_id: string; nonce: string; callback: (result: { credential: string }) => void }): void; renderButton(node: HTMLElement, options: Record<string, unknown>): void };
 declare global { interface Window { google?: { accounts: { id: GoogleIdentity } } } }
 
-export function EasySignIn({ googleEnabled, emailEnabled, kitchen, initialError }: { googleEnabled: boolean; emailEnabled: boolean; kitchen?: string; initialError?: string }) {
+export function EasySignIn({ googleEnabled, emailEnabled, kitchen, initialError, registration = false }: { googleEnabled: boolean; emailEnabled: boolean; kitchen?: string; initialError?: string; registration?: boolean }) {
   const {t,language}=useUiLanguage();
   const googleButton = useRef<HTMLDivElement>(null);
   const codeInput=useRef<HTMLInputElement>(null);
@@ -73,7 +73,7 @@ export function EasySignIn({ googleEnabled, emailEnabled, kitchen, initialError 
     } catch (cause) { setError(cause instanceof Error ? cause.message : "Could not sign in. Try again."); setBusy(false); }
   }
   return <section className="easy-sign-in" aria-label={t("Quick sign-in")} aria-busy={busy}>
-    <h2>{t("Sign in with ease")}</h2><p>{t("Choose the sign-in method that suits you.")}</p>
+    <h2>{t(registration ? "Get started with Google" : "Sign in with ease")}</h2><p>{t("Choose the sign-in method that suits you.")}</p>
     {googleEnabled && <><Script src="https://accounts.google.com/gsi/client" strategy="afterInteractive" onReady={() => setReady(true)} onError={() => setError("Google could not load. Use email instead.")} /><div className="easy-google-button" ref={googleButton} aria-label={t("Continue with Google")} /><p className="sign-in-method-note">{t("Google can create your customer account or reopen your existing account.")}</p></>}
     {googleEnabled&&emailEnabled&&<div className="sign-in-separator">{t("or continue with email")}</div>}
     {error && <p className="form-alert" role="alert">{t(error)}</p>}
@@ -85,6 +85,6 @@ export function EasySignIn({ googleEnabled, emailEnabled, kitchen, initialError 
       <button className="button form-submit" disabled={busy}>{t(busy ? "Please wait…" : sent ? "Sign in with code" : "Email me a code")}</button>
       {sent && <button type="button" className="sign-in-resend" disabled={busy||remaining>0} onClick={() => { if (Date.now() < resendAt) return; void requestCode(); }}>{remaining>0?t("Send again in {seconds}s",{seconds:remaining}):t("Send a new code")}</button>}
     </form>}
-    <p className="form-footer">{t("New here?")} <Link href="/sign-up">{t("Create an account with email")}</Link></p>
+    {!registration && <p className="form-footer">{t("New here?")} <Link href="/sign-up">{t("Create an account with email")}</Link></p>}
   </section>;
 }
