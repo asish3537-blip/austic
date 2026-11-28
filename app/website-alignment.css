@@ -1,4 +1,3 @@
-@font-face{font-family:Paustik Sans;src:url('/fonts/manrope.ttf') format('truetype');font-weight:200 800;font-display:swap}
 @font-face{font-family:Paustik Odia;src:url('/fonts/notosansoriya.ttf') format('truetype');font-weight:100 900;font-display:swap}
 @font-face{font-family:Paustik Hindi;src:url('/fonts/notosansdevanagari.ttf') format('truetype');font-weight:100 900;font-display:swap}
 :root{--font-body:'Paustik Sans',Arial,sans-serif;--paustik-red:#bc2832;--paustik-green:#387c48}

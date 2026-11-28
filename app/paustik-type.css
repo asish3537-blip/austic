@@ -1,0 +1,7 @@
+@font-face{font-family:'Paustik Sans';src:url('/fonts/paustik/PaustikSans-Regular.woff2') format('woff2');font-style:normal;font-weight:400;font-display:swap}
+@font-face{font-family:'Paustik Sans';src:url('/fonts/paustik/PaustikSans-Semibold.woff2') format('woff2');font-style:normal;font-weight:600;font-display:swap}
+@font-face{font-family:'Paustik Sans';src:url('/fonts/paustik/PaustikSans-Bold.woff2') format('woff2');font-style:normal;font-weight:700;font-display:swap}
+:root{--font-body:'Paustik Sans','Paustik Hindi','Paustik Odia',Arial,sans-serif}
+body,body *{font-family:var(--font-body)!important}
+body code,body pre,body code *,body pre *{font-family:ui-monospace,Consolas,monospace!important}
+.type-specimen{max-width:1000px;margin:auto;padding:32px 20px 64px;overflow-wrap:anywhere}.type-specimen h1{font-weight:700;font-size:clamp(42px,8vw,84px);line-height:1.15}.type-specimen h2{font-weight:700;line-height:1.3}.type-specimen p{font-size:1rem;line-height:1.65}.type-specimen-sample{font-size:clamp(24px,4vw,44px)!important;line-height:1.6;padding:24px 0;border-block:1px solid var(--line)}.type-downloads{display:flex;flex-wrap:wrap;gap:12px;margin:24px 0}

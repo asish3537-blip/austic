@@ -1,0 +1,24 @@
+PAUSTIK BRAND USE LICENCE — VERSION 1.0 — 28 NOVEMBER 2026
+
+Paustik Sans was created for the Paustik brand from newly drawn geometric
+Latin outlines. It is not a renamed or modified copy of Manrope or Noto.
+
+To the extent the font software and designs are legally protectable, use is
+reserved to the Paustik brand owner and people it authorises for Paustik work.
+They may install, embed, reproduce and adapt these files for Paustik websites,
+apps, packaging, communications, print and other Paustik brand materials.
+
+Website and app visitors may receive the embedded fonts as necessary to view
+and interact with Paustik. Public download availability does not grant rights
+to use the font for unrelated brands or to sell, sublicense or distribute it
+as an independent font product. Obtain the Paustik owner's permission for any
+other use. Keep this notice with authorised copies.
+
+This is a brand-use restriction, not a representation that a typeface design
+is protected in every jurisdiction or that the Paustik name is registered.
+Copyright eligibility, ownership, enforceability and trademark clearance are
+not established by generating these files. Legal review is needed to confirm
+those matters. No registration or filing was performed.
+
+The separate Noto Hindi/Odia fallback fonts and their original SIL Open Font
+Licences are not covered by this restriction. Their rights remain unchanged.

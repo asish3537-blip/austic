@@ -2,7 +2,7 @@ export const ORDER_MILESTONES: readonly {status:string;label:string;photo?:"PREP
   {status:"ORDER_PLACED",label:"Order placed"},
   {status:"CONFIRMED",label:"Kitchen confirmed"},
   {status:"PREPARING",label:"Preparing your meal",photo:"PREPARED"},
-  {status:"READY_FOR_PICKUP",label:"Ready for courier",photo:"HANDOVER"},
+  {status:"READY_FOR_PICKUP",label:"Packed · ready for courier",photo:"HANDOVER"},
   {status:"PICKED_UP",label:"Picked up by courier"},
   {status:"OUT_FOR_DELIVERY",label:"On the way"},
   {status:"DELIVERED",label:"Delivered"},

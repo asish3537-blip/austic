@@ -7,6 +7,8 @@ const assets='android/app/src/main/assets';
 await fs.mkdir(assets+'/food',{recursive:true});
 await fs.mkdir(assets+'/fonts',{recursive:true});
 for(const name of ['manrope','notosansdevanagari','notosansoriya']){await fs.copyFile('public/fonts/'+name+'.ttf',assets+'/fonts/'+name+'.ttf');await fs.copyFile('public/fonts/'+name+'-LICENSE.txt',assets+'/fonts/'+name+'-LICENSE.txt');}
+for(const style of ['Regular','Bold'])await fs.copyFile('public/fonts/paustik/PaustikSans-'+style+'.otf',assets+'/fonts/PaustikSans-'+style+'.otf');
+await fs.copyFile('public/fonts/paustik/LICENSE.txt',assets+'/fonts/PaustikSans-LICENSE.txt');
 await fs.writeFile(assets+'/review-demo.json',JSON.stringify(PILOT_KITCHENS.map(k=>({...k,locality:k.area,cuisine:'Practice meals · no food delivery'}))));
 await fs.copyFile('public/assets/paustik-green-k-wordmark.png',assets+'/paustik-logo.png');
 for(const name of ['egg','paneer','chicken','desi-chicken','mutton','mushroom'])await fs.copyFile('public/assets/pilot-'+name+'-curry.jpg',assets+'/food/'+name+'.jpg');

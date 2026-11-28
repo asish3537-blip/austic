@@ -1,0 +1,23 @@
+{
+  "usage": "AI-generated illustrative food inspiration for Paustik category cards and customer feature slides. Not photographs of actual sellers, ordered meals or stocked products.",
+  "generated": "2026-11-28",
+  "method": "Built-in image generation; original PNGs retained, web copies resized to 1440 pixels and encoded as WebP.",
+  "assets": [
+    {
+      "file": "home-one-day-v2.webp",
+      "subject": "One complete Indian home-style vegetarian lunch with rice, dal, vegetables, chapati and pickle"
+    },
+    {
+      "file": "home-meal-plans-v2.webp",
+      "subject": "Three varied balanced Indian home-style lunches in reusable meal containers"
+    },
+    {
+      "file": "home-homemade-v2.webp",
+      "subject": "Sattu flour, mango pickle, laddoos and barfi as a varied homemade-food assortment"
+    },
+    {
+      "file": "home-find-meal-v2.webp",
+      "subject": "Paneer and rice lunch with chapati for Find your next meal app preview"
+    }
+  ]
+}

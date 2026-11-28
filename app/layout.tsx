@@ -33,6 +33,8 @@ import "./public-pilot.css";
 import "./mother-welcome.css";
 import "./dashboard-refinements.css";
 import "./usability-refresh.css";
+import "./paustik-type.css";
+import "./duo-preview.css";
 import {HeaderAccountLink} from "@/components/header-account-link";
 
 export const metadata: Metadata = {

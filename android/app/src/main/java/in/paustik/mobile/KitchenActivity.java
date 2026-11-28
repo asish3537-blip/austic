@@ -119,20 +119,21 @@ public final class KitchenActivity extends Activity implements PaymentResultWith
   }
 
   private Typeface font(boolean bold) {
-    Typeface face = fonts.get(language);
+    String fontKey = language + (bold ? "-bold" : "-regular");
+    Typeface face = fonts.get(fontKey);
     if (face == null) {
       String name =
           language.equals("or")
               ? "notosansoriya"
               : language.equals("hi") ? "notosansdevanagari" : "manrope";
       try {
-        face = Typeface.createFromAsset(getAssets(), "fonts/" + name + ".ttf");
+        face = Typeface.createFromAsset(getAssets(), language.equals("en") ? "fonts/PaustikSans-" + (bold ? "Bold" : "Regular") + ".otf" : "fonts/" + name + ".ttf");
       } catch (Exception e) {
         face = Typeface.DEFAULT;
       }
-      fonts.put(language, face);
+      fonts.put(fontKey, face);
     }
-    return Typeface.create(face, bold ? Typeface.BOLD : Typeface.NORMAL);
+    return language.equals("en") ? face : Typeface.create(face, bold ? Typeface.BOLD : Typeface.NORMAL);
   }
 
   private int dp(int n) {

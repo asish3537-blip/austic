@@ -11,9 +11,9 @@ import Image from "next/image";
 import Link from "next/link";
 
 const mealWays=[
- {image:"/assets/home-thali.avif",tag:"Just one day",name:"One-time meals",copy:"Choose an available meal when you need it. No subscription required.",cta:"Explore one-time meals",href:"/customer/dashboard?mode=once#customer-discover"},
- {image:"/assets/pilot-paneer-curry.jpg",tag:"Make it a routine",name:"Meal subscriptions",copy:"Find your favourite Mother Kitchen and plan 3–7 meal days at a time.",cta:"Explore meal subscriptions",href:"/customer/dashboard?mode=subscription#customer-discover"},
- {image:"/assets/home-fresh.avif",tag:"Find your flavour",name:"Homemade products",copy:"Homemade sattu, sweets, pickles and more, from Mother Kitchens near your saved delivery address.",cta:"Homemade products",href:"/customer/marketplace"},
+ {image:"/assets/home-one-day-v2.webp",tag:"Just one day",name:"One-time meals",copy:"Choose an available meal when you need it. No subscription required.",cta:"Explore one-time meals",href:"/customer/dashboard?mode=once#customer-discover"},
+ {image:"/assets/home-meal-plans-v2.webp",tag:"Make it a routine",name:"Meal subscriptions",copy:"Find your favourite Mother Kitchen and plan 3–7 meal days at a time.",cta:"Explore meal subscriptions",href:"/customer/dashboard?mode=subscription#customer-discover"},
+ {image:"/assets/home-homemade-v2.webp",tag:"Find your flavour",name:"Homemade products",copy:"Homemade sattu, sweets, pickles and more, from Mother Kitchens near your saved delivery address.",cta:"Homemade products",href:"/customer/marketplace"},
 ];
 export function EditorialHome(){return <main className="editorial-home">
  <section className="eh-hero eh-container" aria-labelledby="eh-title">
