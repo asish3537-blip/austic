@@ -6,6 +6,9 @@ import {usabilityTranslations} from "@/lib/usability-translations";
 export type UiLanguage = "en" | "hi" | "or";
 export const uiTranslations: Record<string, [string, string]> = {
 ...checkoutOfferCopy,
+"Your homemade kitchen":["आपकी घरेलू रसोई","ଆପଣଙ୍କ ଘରୋଇ ରୋଷେଇଘର"],
+"Your favourites, beautifully shared.":["आपके पसंदीदा स्वाद, प्यार से साझा।","ଆପଣଙ୍କ ପସନ୍ଦର ସ୍ୱାଦ, ସୁନ୍ଦର ଭାବେ ସମସ୍ତଙ୍କ ପାଇଁ।"],
+"Illustrative photo":["प्रतीकात्मक तस्वीर","ଉଦାହରଣ ଫଟୋ"],
 "Product photo":["उत्पाद की तस्वीर","ଉତ୍ପାଦର ଫଟୋ"],
 "Product photo not added yet":["उत्पाद की तस्वीर अभी नहीं जोड़ी गई","ଉତ୍ପାଦର ଫଟୋ ଏପର୍ଯ୍ୟନ୍ତ ଯୋଡ଼ାଯାଇନାହିଁ"],
 "Product photo could not load":["उत्पाद की तस्वीर लोड नहीं हुई","ଉତ୍ପାଦର ଫଟୋ ଲୋଡ୍ ହୋଇପାରିଲା ନାହିଁ"],

@@ -1,0 +1,8 @@
+{
+  "generator": "OpenAI built-in image generation",
+  "purpose": "Owner-requested illustrative imagery for Sonali home cuisine test presentation. Not photographs of this seller's actual products.",
+  "assets": [
+    {"file":"sonali-chhena-poda-illustration-v1.webp","prompt":"Photorealistic Odia chhena poda, caramelised cheese cake and cut wedge on ceramic plate, ivory linen, soft natural window light, no text or claims.","source":"exec-db3d3185-7f99-4329-9461-55f57c60a320.png"},
+    {"file":"sonali-sattu-illustration-v1.webp","prompt":"Photorealistic roasted chana sattu flour in ceramic bowl, wooden scoop, chana grains and softly blurred sattu drink, ivory linen, natural light, no health claims or labels.","source":"exec-1b5c0418-6b1d-47c0-b381-d976b61ee182.png"}
+  ]
+}

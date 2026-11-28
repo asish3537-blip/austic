@@ -1,13 +1,15 @@
 "use client";
 /* eslint-disable @next/next/no-img-element -- Product photos use an authenticated no-store endpoint. */
+import {kitchenPreviewPhoto} from "@/lib/kitchen-preview-media";
 import {useState} from "react";
 import {UiText} from "@/components/ui-language";
 import {AppIcon} from "@/components/app-icon";
 import {productPhotoUrl} from "@/lib/product-photo-url";
 
-export function ProductPhoto({product}:{product:{id:string;name:string;updatedAt:string;hasImage?:boolean}}){
+export function ProductPhoto({product}:{product:{id:string;name:string;updatedAt:string;hasImage?:boolean;kitchen?:string}}){
  const [failed,setFailed]=useState(false);
- return <div className="market-product-photo">{product.hasImage&&!failed?<img src={productPhotoUrl(product.id,product.updatedAt)} alt={product.name} width={640} height={420} loading="lazy" onError={()=>setFailed(true)}/>:<div className="market-photo-empty"><AppIcon name="shop"/><span><UiText text={failed?"Product photo could not load":"Product photo not added yet"}/></span>{failed&&<button type="button" className="plain-button" onClick={()=>setFailed(false)}><UiText text="Retry photo"/></button>}</div>}</div>;
+ const illustration=!product.hasImage?kitchenPreviewPhoto(product):null;
+ return <div className="market-product-photo">{(product.hasImage||illustration)&&!failed?<><img src={illustration||productPhotoUrl(product.id,product.updatedAt)} alt={product.name} width={640} height={420} loading="lazy" onError={()=>setFailed(true)}/>{illustration&&<span className="product-photo-label"><UiText text="Illustrative photo"/></span>}</>:<div className="market-photo-empty"><AppIcon name="shop"/><span><UiText text={failed?"Product photo could not load":"Product photo not added yet"}/></span>{failed&&<button type="button" className="plain-button" onClick={()=>setFailed(false)}><UiText text="Retry photo"/></button>}</div>}</div>;
 }
 
 async function resizeProductPhoto(file:File){
