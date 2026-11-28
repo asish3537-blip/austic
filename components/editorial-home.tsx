@@ -5,7 +5,7 @@ import { HeroFoodVideo } from "@/components/hero-food-video";
 import { ScoofooPromo } from "@/components/scoofoo-promo";
 
 import {AppFeatureShowcase} from "@/components/app-feature-showcase";
-import {CustomerWelcome} from "@/components/customer-welcome";
+
 import { FeaturedKitchens } from "@/components/featured-kitchens";
 import Image from "next/image";
 import Link from "next/link";
@@ -15,9 +15,9 @@ const mealWays=[
  {image:"/assets/pilot-paneer-curry.jpg",tag:"Make it a routine",name:"Meal subscriptions",copy:"Find your favourite Mother Kitchen and plan 3–7 meal days at a time.",cta:"Explore meal subscriptions",href:"/customer/dashboard?mode=subscription#customer-discover"},
  {image:"/assets/home-fresh.avif",tag:"Find your flavour",name:"Homemade products",copy:"Homemade sattu, sweets, pickles and more, from Mother Kitchens near your saved delivery address.",cta:"Homemade products",href:"/customer/marketplace"},
 ];
-export function EditorialHome(){return <main className="editorial-home"><CustomerWelcome/>
+export function EditorialHome(){return <main className="editorial-home">
  <section className="eh-hero eh-container" aria-labelledby="eh-title">
-  <HeroFoodVideo showControl={false} stopAfter={4.5}/><div className="eh-hero-copy"><span className="eh-eyebrow"><UiText text="From a Mother Kitchen to your table"/></span><h1 id="eh-title"><UiText text="A little home."/><br/><UiText text="In every"/>{" "}<em><UiText text="meal."/></em></h1><p><UiText text="Home-style food, lovingly cooked by mothers in your neighbourhood. Find your everyday comfort, one fresh meal at a time."/></p><div className="eh-actions"><Link className="button" href="/sign-up"><UiText text="Create your account"/> <span aria-hidden="true">→</span></Link><Link className="hero-secondary-link" href="/sign-in"><UiText text="Sign in"/> <span aria-hidden="true">→</span></Link></div><p className="hero-mission-note"><UiText text="Support local mothers. Enjoy home-style meals nearby."/></p></div>
+  <HeroFoodVideo showControl={false} stopAfter={4.5}/><div className="eh-hero-copy"><span className="eh-eyebrow"><UiText text="From a Mother Kitchen to your table"/></span><h1 id="eh-title"><UiText text="A little home."/><br/><UiText text="In every"/>{" "}<em><UiText text="meal."/></em></h1><p><UiText text="Home-style food, lovingly cooked by mothers in your neighbourhood. Find your everyday comfort, one fresh meal at a time."/></p><div className="eh-actions"><Link className="button" href="/browse"><UiText text="Browse kitchens"/> <span aria-hidden="true">→</span></Link><Link className="hero-secondary-link" href="/sign-in"><UiText text="Sign in"/> <span aria-hidden="true">→</span></Link></div><p className="hero-mission-note"><UiText text="Support local mothers. Enjoy home-style meals nearby."/></p></div>
 
  </section>
  <AppFeatureShowcase/>

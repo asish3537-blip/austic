@@ -1,6 +1,8 @@
 import {schoolTranslations} from "@/lib/school-translations";
+import {usabilityTranslations} from "@/lib/usability-translations";
 export type UiLanguage = "en" | "hi" | "or";
 export const uiTranslations: Record<string, [string, string]> = {
+...usabilityTranslations,
 "Chat with Paustik Help":["Paustik सहायता से चैट करें","Paustik ସହାୟତା ସହ ଚାଟ୍ କରନ୍ତୁ"],
 "My account":["मेरा खाता","ମୋ ଖାତା"],
 "My profile":["मेरी प्रोफ़ाइल","ମୋ ପ୍ରୋଫାଇଲ୍"],
