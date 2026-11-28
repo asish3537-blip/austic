@@ -1,0 +1,437 @@
+{
+  "Continue with Google":{"hi":"Google से जारी रखें","or":"Google ସହ ଆଗକୁ ବଢ଼ନ୍ତୁ"},
+  "Email me a sign-in code":{"hi":"ईमेल पर साइन-इन कोड भेजें","or":"ଇମେଲ୍‌ରେ ସାଇନ୍-ଇନ୍ କୋଡ୍ ପଠାନ୍ତୁ"},
+  "Email sign-in code":{"hi":"ईमेल साइन-इन कोड","or":"ଇମେଲ୍ ସାଇନ୍-ଇନ୍ କୋଡ୍"},
+  "Enter your existing Paustik account email. We will send a six-digit code, valid for ten minutes.":{"hi":"अपने मौजूदा Paustik खाते का ईमेल दर्ज करें। हम छह अंकों का कोड भेजेंगे, जो दस मिनट तक मान्य होगा।","or":"ଆପଣଙ୍କ ପାଉଷ୍ଟିକ୍ ଖାତାର ଇମେଲ୍ ଦିଅନ୍ତୁ। ଆମେ ଛଅ ଅଙ୍କର କୋଡ୍ ପଠାଇବୁ, ଯାହା ଦଶ ମିନିଟ୍ ପର୍ଯ୍ୟନ୍ତ ବୈଧ ରହିବ।"},
+  "Email me a code":{"hi":"ईमेल पर कोड भेजें","or":"ଇମେଲ୍‌ରେ କୋଡ୍ ପଠାନ୍ତୁ"},
+  "Six-digit email code":{"hi":"छह अंकों का ईमेल कोड","or":"ଛଅ ଅଙ୍କର ଇମେଲ୍ କୋଡ୍"},
+  "Sign in with code":{"hi":"कोड से साइन इन करें","or":"କୋଡ୍ ସହ ସାଇନ୍ ଇନ୍ କରନ୍ତୁ"},
+  "Change email or request a new code":{"hi":"ईमेल बदलें या नया कोड माँगें","or":"ଇମେଲ୍ ବଦଳାନ୍ତୁ କିମ୍ବା ନୂଆ କୋଡ୍ ମାଗନ୍ତୁ"},
+  "Use email and password":{"hi":"ईमेल और पासवर्ड इस्तेमाल करें","or":"ଇମେଲ୍ ଓ ପାସୱାର୍ଡ ବ୍ୟବହାର କରନ୍ତୁ"},
+  "Google sign-in could not be verified. Use email instead.":{"hi":"Google साइन-इन सत्यापित नहीं हुआ। ईमेल इस्तेमाल करें।","or":"Google ସାଇନ୍-ଇନ୍ ଯାଞ୍ଚ ହୋଇପାରିଲା ନାହିଁ। ଇମେଲ୍ ବ୍ୟବହାର କରନ୍ତୁ।"},
+  "Google sign-in could not be completed. Use email instead.":{"hi":"Google साइन-इन पूरा नहीं हुआ। ईमेल इस्तेमाल करें।","or":"Google ସାଇନ୍-ଇନ୍ ସମ୍ପୂର୍ଣ୍ଣ ହୋଇପାରିଲା ନାହିଁ। ଇମେଲ୍ ବ୍ୟବହାର କରନ୍ତୁ।"},
+  "Google sign-in was cancelled or unavailable. Try email instead.":{"hi":"Google साइन-इन रद्द हुआ या उपलब्ध नहीं है। ईमेल आज़माएँ।","or":"Google ସାଇନ୍-ଇନ୍ ବାତିଲ୍ ହୋଇଛି କିମ୍ବା ଉପଲବ୍ଧ ନାହିଁ। ଇମେଲ୍ ବ୍ୟବହାର କରନ୍ତୁ।"},
+  "Your plan has one order per meal day. Complete any payments from Orders.":{"hi":"प्लान के हर दिन का अलग ऑर्डर है। बाकी भुगतान ऑर्डर सेक्शन से करें।","or":"ପ୍ଲାନ୍‌ର ପ୍ରତି ଭୋଜନ ଦିନ ପାଇଁ ଅଲଗା ଅର୍ଡର ରହେ। ବାକି ଦେୟ ଅର୍ଡର ବିଭାଗରୁ ପୂରଣ କରନ୍ତୁ।"},
+  "DELIVERY ASSIGNED":{"hi":"डिलीवरी पार्टनर नियुक्त","or":"ଡେଲିଭରି ପାର୍ଟନର ନିଯୁକ୍ତ"},
+  "GOING TO PICKUP":{"hi":"पिकअप के लिए जा रहे हैं","or":"ପିକ୍‌ଅପ୍ ପାଇଁ ଯାଉଛନ୍ତି"},
+  "ACCEPTED":{"hi":"स्वीकृत","or":"ଗ୍ରହଣ କରାଯାଇଛି"},
+  "UPCOMING":{"hi":"आगामी","or":"ଆଗାମୀ"},
+  "FAILED":{"hi":"असफल","or":"ବିଫଳ"},
+  "Decline offer":{"hi":"प्रस्ताव अस्वीकार करें","or":"ପ୍ରସ୍ତାବ ଅସ୍ୱୀକାର କରନ୍ତୁ"},
+  "Scheduled for":{"hi":"निर्धारित समय","or":"ନିର୍ଦ୍ଧାରିତ ସମୟ"},
+  "Available to accept after the kitchen marks the food ready.":{"hi":"किचन के भोजन तैयार बताने पर स्वीकार कर सकते हैं।","or":"ରୋଷେଇଘର ଖାଦ୍ୟ ପ୍ରସ୍ତୁତ ବୋଲି ଜଣାଇଲେ ଗ୍ରହଣ କରିପାରିବେ।"},
+  "Go to pickup":{"hi":"पिकअप के लिए निकलें","or":"ପିକ୍‌ଅପ୍ ପାଇଁ ଯାଆନ୍ତୁ"},
+  "Confirm pickup":{"hi":"पिकअप की पुष्टि करें","or":"ପିକ୍‌ଅପ୍ ନିଶ୍ଚିତ କରନ୍ତୁ"},
+  "Start delivery":{"hi":"डिलीवरी शुरू करें","or":"ଡେଲିଭରି ଆରମ୍ଭ କରନ୍ତୁ"},
+  "Confirm delivery":{"hi":"डिलीवरी की पुष्टि करें","or":"ଡେଲିଭରି ନିଶ୍ଚିତ କରନ୍ତୁ"},
+  "See all practice kitchens":{"hi":"सभी अभ्यास किचन देखें","or":"ସବୁ ଅଭ୍ୟାସ ରୋଷେଇଘର ଦେଖନ୍ତୁ"},
+  "Practice kitchens":{"hi":"अभ्यास किचन","or":"ଅଭ୍ୟାସ ରୋଷେଇଘର"},
+  "6-digit handover code": {
+    "hi": "6 अंकों का हैंडओवर कोड",
+    "or": "୬ ଅଙ୍କର ହସ୍ତାନ୍ତର କୋଡ୍"
+  },
+  "A little home. In every meal.": {
+    "hi": "हर भोजन में घर का अपनापन।",
+    "or": "ପ୍ରତି ଭୋଜନରେ ଘରର ଆପଣାପଣ।"
+  },
+  "A one-day meal needs no subscription. Meal plans use the kitchen's available dates.": {
+    "hi": "एक दिन के भोजन के लिए प्लान ज़रूरी नहीं। भोजन प्लान में किचन की उपलब्ध तारीखें चुनी जाती हैं।",
+    "or": "ଗୋଟିଏ ଦିନର ଭୋଜନ ପାଇଁ ପ୍ଲାନ୍ ଦରକାର ନାହିଁ। ପ୍ଲାନ୍‌ରେ ରୋଷେଇଘରର ଉପଲବ୍ଧ ତାରିଖ ବାଛନ୍ତୁ।"
+  },
+  "Account": {
+    "hi": "खाता",
+    "or": "ଆକାଉଣ୍ଟ"
+  },
+  "Add homemade product": {
+    "hi": "घरेलू उत्पाद जोड़ें",
+    "or": "ଘରୋଇ ଉତ୍ପାଦ ଯୋଡ଼ନ୍ତୁ"
+  },
+  "Allergens": {
+    "hi": "एलर्जी की जानकारी",
+    "or": "ଆଲର୍ଜି ସୂଚନା"
+  },
+  "Cancel order": {
+    "hi": "ऑर्डर रद्द करें",
+    "or": "ଅର୍ଡର ବାତିଲ୍ କରନ୍ତୁ"
+  },
+  "Check order payment status": {
+    "hi": "ऑर्डर के भुगतान की स्थिति देखें",
+    "or": "ଅର୍ଡର ପେମେଣ୍ଟ ସ୍ଥିତି ଦେଖନ୍ତୁ"
+  },
+  "Check the meal details.": {
+    "hi": "भोजन की जानकारी जाँचें।",
+    "or": "ଭୋଜନର ବିବରଣୀ ଯାଞ୍ଚ କରନ୍ତୁ।"
+  },
+  "Check your email": {
+    "hi": "अपना ईमेल देखें",
+    "or": "ନିଜ ଇମେଲ୍ ଦେଖନ୍ତୁ"
+  },
+  "Check your order payment status before retrying.": {
+    "hi": "दोबारा कोशिश करने से पहले भुगतान की स्थिति देखें।",
+    "or": "ପୁଣି ଚେଷ୍ଟା ପୂର୍ବରୁ ପେମେଣ୍ଟ ସ୍ଥିତି ଦେଖନ୍ତୁ।"
+  },
+  "Choose this meal": {
+    "hi": "यह भोजन चुनें",
+    "or": "ଏହି ଭୋଜନ ବାଛନ୍ତୁ"
+  },
+  "Choose your meal": {
+    "hi": "अपना भोजन चुनें",
+    "or": "ନିଜ ଭୋଜନ ବାଛନ୍ତୁ"
+  },
+  "Courier handover photo": {
+    "hi": "डिलीवरी साथी को देने की फोटो",
+    "or": "ଡେଲିଭରି ସାଥୀଙ୍କୁ ଦେବା ବେଳର ଫଟୋ"
+  },
+  "Create customer account": {
+    "hi": "ग्राहक खाता बनाएँ",
+    "or": "ଗ୍ରାହକ ଆକାଉଣ୍ଟ ଖୋଲନ୍ତୁ"
+  },
+  "Delivery": {
+    "hi": "डिलीवरी",
+    "or": "ଡେଲିଭରି"
+  },
+  "Delivery address": {
+    "hi": "डिलीवरी का पता",
+    "or": "ଡେଲିଭରି ଠିକଣା"
+  },
+  "Delivery handover code": {
+    "hi": "डिलीवरी हैंडओवर कोड",
+    "or": "ଡେଲିଭରି ହସ୍ତାନ୍ତର କୋଡ୍"
+  },
+  "Delivery time": {
+    "hi": "डिलीवरी का समय",
+    "or": "ଡେଲିଭରି ସମୟ"
+  },
+  "Description, ingredients and allergens": {
+    "hi": "विवरण, सामग्री और एलर्जी की जानकारी",
+    "or": "ବିବରଣୀ, ସାମଗ୍ରୀ ଓ ଆଲର୍ଜି ସୂଚନା"
+  },
+  "Discount": {
+    "hi": "छूट",
+    "or": "ରିହାତି"
+  },
+  "Email paustikdelivery@gmail.com for help.": {
+    "hi": "सहायता के लिए paustikdelivery@gmail.com पर ईमेल करें।",
+    "or": "ସହାୟତା ପାଇଁ paustikdelivery@gmail.com କୁ ଇମେଲ୍ କରନ୍ତୁ।"
+  },
+  "Email support": {
+    "hi": "ईमेल पर सहायता लें",
+    "or": "ଇମେଲ୍‌ରେ ସହାୟତା ନିଅନ୍ତୁ"
+  },
+  "Enter valid delivery coordinates or leave both empty.": {
+    "hi": "सही डिलीवरी निर्देशांक भरें या दोनों खाली छोड़ें।",
+    "or": "ସଠିକ୍ ଡେଲିଭରି ସ୍ଥାନାଙ୍କ ଦିଅନ୍ତୁ ବା ଉଭୟ ଖାଲି ରଖନ୍ତୁ।"
+  },
+  "Enter your city": {
+    "hi": "अपना शहर लिखें",
+    "or": "ନିଜ ସହର ଲେଖନ୍ତୁ"
+  },
+  "Estimated earnings": {
+    "hi": "अनुमानित कमाई",
+    "or": "ଆନୁମାନିକ ରୋଜଗାର"
+  },
+  "Find Mother Kitchens, choose your meals and follow your order.": {
+    "hi": "मदर किचन खोजें, भोजन चुनें और ऑर्डर की स्थिति देखें।",
+    "or": "ମା’ ରୋଷେଇଘର ଖୋଜନ୍ତୁ, ଭୋଜନ ବାଛନ୍ତୁ ଓ ଅର୍ଡର ସ୍ଥିତି ଦେଖନ୍ତୁ।"
+  },
+  "Find kitchens": {
+    "hi": "किचन खोजें",
+    "or": "ରୋଷେଇଘର ଖୋଜନ୍ତୁ"
+  },
+  "Illustrative total": {
+    "hi": "उदाहरण का कुल मूल्य",
+    "or": "ଉଦାହରଣ ମୋଟ ମୂଲ୍ୟ"
+  },
+  "Ingredients": {
+    "hi": "सामग्री",
+    "or": "ସାମଗ୍ରୀ"
+  },
+  "Keep order": {
+    "hi": "ऑर्डर जारी रखें",
+    "or": "ଅର୍ଡର ଜାରି ରଖନ୍ତୁ"
+  },
+  "Latitude": {
+    "hi": "अक्षांश",
+    "or": "ଅକ୍ଷାଂଶ"
+  },
+  "Local test build. No physical delivery.": {
+    "hi": "स्थानीय टेस्ट ऐप। वास्तविक डिलीवरी नहीं।",
+    "or": "ଲୋକାଲ୍ ପରୀକ୍ଷଣ ଆପ୍। ପ୍ରକୃତ ଡେଲିଭରି ନାହିଁ।"
+  },
+  "Locality": {
+    "hi": "इलाका",
+    "or": "ଅଞ୍ଚଳ"
+  },
+  "Location added. Review and save your address.": {
+    "hi": "स्थान जुड़ गया। पता जाँचकर सेव करें।",
+    "or": "ସ୍ଥାନ ଯୋଡ଼ାଗଲା। ଠିକଣା ଦେଖି ସେଭ୍ କରନ୍ତୁ।"
+  },
+  "Location is optional for browsing. Save a delivery pin before ordering. Pickup and delivery use handover codes.": {
+    "hi": "देखने के लिए लोकेशन देना वैकल्पिक है। ऑर्डर से पहले डिलीवरी पिन सेव करें। पिकअप और डिलीवरी में हैंडओवर कोड काम आते हैं।",
+    "or": "ଦେଖିବା ପାଇଁ ସ୍ଥାନ ଦେବା ବାଧ୍ୟତାମୂଳକ ନୁହେଁ। ଅର୍ଡର ପୂର୍ବରୁ ଡେଲିଭରି ପିନ୍ ସେଭ୍ କରନ୍ତୁ। ପିକ୍‌ଅପ୍ ଓ ଡେଲିଭରିରେ ହସ୍ତାନ୍ତର କୋଡ୍ ବ୍ୟବହାର ହୁଏ।"
+  },
+  "Location is requested only when you choose to save a delivery pin. The app does not collect background location.": {
+    "hi": "डिलीवरी पिन सेव करने पर ही ऐप लोकेशन माँगता है। ऐप बैकग्राउंड लोकेशन नहीं लेता।",
+    "or": "ଡେଲିଭରି ପିନ୍ ସେଭ୍ କରିବାକୁ ବାଛିଲେ ମାତ୍ର ଆପ୍ ସ୍ଥାନ ମାଗେ। ପୃଷ୍ଠଭୂମିରେ ସ୍ଥାନ ସଂଗ୍ରହ ହୁଏ ନାହିଁ।"
+  },
+  "Location permission was declined. Browsing remains available.": {
+    "hi": "लोकेशन की अनुमति नहीं मिली। आप फिर भी देख सकते हैं।",
+    "or": "ସ୍ଥାନ ଅନୁମତି ମିଳିନାହିଁ। ଆପଣ ତଥାପି ଦେଖିପାରିବେ।"
+  },
+  "Location unavailable. You can enter a delivery pin manually.": {
+    "hi": "लोकेशन उपलब्ध नहीं। डिलीवरी निर्देशांक स्वयं भर सकते हैं।",
+    "or": "ସ୍ଥାନ ମିଳୁନାହିଁ। ଡେଲିଭରି ସ୍ଥାନାଙ୍କ ନିଜେ ଦେଇପାରିବେ।"
+  },
+  "Longitude": {
+    "hi": "देशांतर",
+    "or": "ଦ୍ରାଘିମା"
+  },
+  "Meal days": {
+    "hi": "भोजन के दिन",
+    "or": "ଭୋଜନ ଦିନ"
+  },
+  "No deliveries here yet.": {
+    "hi": "अभी यहाँ कोई डिलीवरी नहीं है।",
+    "or": "ଏଠି ଏଯାଏ କୌଣସି ଡେଲିଭରି ନାହିଁ।"
+  },
+  "No homemade products listed yet.": {
+    "hi": "अभी कोई घरेलू उत्पाद सूचीबद्ध नहीं है।",
+    "or": "ଏଯାଏ କୌଣସି ଘରୋଇ ଉତ୍ପାଦ ତାଲିକାଭୁକ୍ତ ନାହିଁ।"
+  },
+  "No orders yet. Choose a meal to get started.": {
+    "hi": "अभी कोई ऑर्डर नहीं। शुरू करने के लिए भोजन चुनें।",
+    "or": "ଏଯାଏ ଅର୍ଡର ନାହିଁ। ଆରମ୍ଭ କରିବା ପାଇଁ ଭୋଜନ ବାଛନ୍ତୁ।"
+  },
+  "No payment or food delivery. Saved on this device only.": {
+    "hi": "कोई भुगतान या भोजन की डिलीवरी नहीं। केवल इस डिवाइस पर सेव होगा।",
+    "or": "ପେମେଣ୍ଟ ବା ଭୋଜନ ଡେଲିଭରି ନାହିଁ। କେବଳ ଏହି ଡିଭାଇସ୍‌ରେ ସେଭ୍ ହେବ।"
+  },
+  "No published meals here yet. Try the practice order or check another city.": {
+    "hi": "अभी यहाँ प्रकाशित भोजन नहीं हैं। अभ्यास ऑर्डर करें या दूसरा शहर देखें।",
+    "or": "ଏଠି ଏଯାଏ ପ୍ରକାଶିତ ଭୋଜନ ନାହିଁ। ଅଭ୍ୟାସ ଅର୍ଡର କରନ୍ତୁ ବା ଅନ୍ୟ ସହର ଦେଖନ୍ତୁ।"
+  },
+  "OK": {
+    "hi": "ठीक है",
+    "or": "ଠିକ୍ ଅଛି"
+  },
+  "ON-DEVICE PRACTICE · No payment or food delivery": {
+    "hi": "डिवाइस पर अभ्यास · भुगतान या डिलीवरी नहीं",
+    "or": "ଡିଭାଇସ୍‌ରେ ଅଭ୍ୟାସ · ପେମେଣ୍ଟ ବା ଡେଲିଭରି ନାହିଁ"
+  },
+  "Offline": {
+    "hi": "ऑफलाइन",
+    "or": "ଅଫ୍‌ଲାଇନ୍"
+  },
+  "Online": {
+    "hi": "ऑनलाइन",
+    "or": "ଅନ୍‌ଲାଇନ୍"
+  },
+  "Pack or unit": {
+    "hi": "पैक या इकाई",
+    "or": "ପ୍ୟାକ୍ ବା ଏକକ"
+  },
+  "Payment did not complete. Check your bank or UPI app before retrying.": {
+    "hi": "भुगतान पूरा नहीं हुआ। फिर कोशिश करने से पहले बैंक या UPI ऐप जाँचें।",
+    "or": "ପେମେଣ୍ଟ ସମ୍ପୂର୍ଣ୍ଣ ହୋଇନାହିଁ। ପୁଣି ଚେଷ୍ଟା ପୂର୍ବରୁ ବ୍ୟାଙ୍କ ବା UPI ଆପ୍ ଯାଞ୍ଚ କରନ୍ତୁ।"
+  },
+  "Payment status": {
+    "hi": "भुगतान की स्थिति",
+    "or": "ପେମେଣ୍ଟ ସ୍ଥିତି"
+  },
+  "Pickup code": {
+    "hi": "पिकअप कोड",
+    "or": "ପିକ୍‌ଅପ୍ କୋଡ୍"
+  },
+  "Place practice order": {
+    "hi": "अभ्यास ऑर्डर करें",
+    "or": "ଅଭ୍ୟାସ ଅର୍ଡର କରନ୍ତୁ"
+  },
+  "Practice meals are available from Home. Real homemade products require sign-in.": {
+    "hi": "होम पर अभ्यास भोजन उपलब्ध है। वास्तविक घरेलू उत्पादों के लिए साइन इन करें।",
+    "or": "ହୋମ୍‌ରେ ଅଭ୍ୟାସ ଭୋଜନ ଉପଲବ୍ଧ। ପ୍ରକୃତ ଘରୋଇ ଉତ୍ପାଦ ପାଇଁ ସାଇନ୍ ଇନ୍ କରନ୍ତୁ।"
+  },
+  "Practice order": {
+    "hi": "अभ्यास ऑर्डर",
+    "or": "ଅଭ୍ୟାସ ଅର୍ଡର"
+  },
+  "Practice orders stay on this device. They never request cooking, a courier or a payment.": {
+    "hi": "अभ्यास ऑर्डर इसी डिवाइस पर रहते हैं। उनसे खाना, डिलीवरी या भुगतान का अनुरोध नहीं होता।",
+    "or": "ଅଭ୍ୟାସ ଅର୍ଡର ଏହି ଡିଭାଇସ୍‌ରେ ରହେ। ଏଥିରେ ରୋଷେଇ, ଡେଲିଭରି ବା ପେମେଣ୍ଟ ଅନୁରୋଧ ହୁଏ ନାହିଁ।"
+  },
+  "Practice simulation. No courier is dispatched.": {
+    "hi": "यह अभ्यास है। कोई डिलीवरी साथी नहीं भेजा जाता।",
+    "or": "ଏହା ଅଭ୍ୟାସ। କୌଣସି ଡେଲିଭରି ସାଥୀ ପଠାଯାଏ ନାହିଁ।"
+  },
+  "Prepared meal photo": {
+    "hi": "तैयार भोजन की फोटो",
+    "or": "ପ୍ରସ୍ତୁତ ଭୋଜନ ଫଟୋ"
+  },
+  "Price": {
+    "hi": "कीमत",
+    "or": "ମୂଲ୍ୟ"
+  },
+  "Privacy & support": {
+    "hi": "गोपनीयता और सहायता",
+    "or": "ଗୋପନୀୟତା ଓ ସହାୟତା"
+  },
+  "Privacy Policy: https://paustik.in/privacy": {
+    "hi": "गोपनीयता नीति: https://paustik.in/privacy",
+    "or": "ଗୋପନୀୟତା ନୀତି: https://paustik.in/privacy"
+  },
+  "Razorpay handles payment details. The app confirms payment with Paustik's server before showing it as paid.": {
+    "hi": "भुगतान विवरण Razorpay संभालता है। भुगतान पूरा दिखाने से पहले ऐप Paustik सर्वर से पुष्टि करता है।",
+    "or": "ପେମେଣ୍ଟ ବିବରଣୀ Razorpay ପରିଚାଳନା କରେ। ପେମେଣ୍ଟ ସଫଳ ଦେଖାଇବା ପୂର୍ବରୁ ଆପ୍ Paustik ସର୍ଭରରେ ଯାଞ୍ଚ କରେ।"
+  },
+  "Refresh deliveries": {
+    "hi": "डिलीवरी फिर से देखें",
+    "or": "ଡେଲିଭରି ପୁଣି ଦେଖନ୍ତୁ"
+  },
+  "Refresh products and try again.": {
+    "hi": "उत्पाद रिफ्रेश करके फिर कोशिश करें।",
+    "or": "ଉତ୍ପାଦ ପୁଣି ଲୋଡ୍ କରି ଚେଷ୍ଟା କରନ୍ତୁ।"
+  },
+  "Refresh tracking": {
+    "hi": "ट्रैकिंग रिफ्रेश करें",
+    "or": "ଟ୍ରାକିଂ ପୁଣି ଲୋଡ୍ କରନ୍ତୁ"
+  },
+  "Review order": {
+    "hi": "ऑर्डर जाँचें",
+    "or": "ଅର୍ଡର ଯାଞ୍ଚ କରନ୍ତୁ"
+  },
+  "Review product order": {
+    "hi": "उत्पाद का ऑर्डर जाँचें",
+    "or": "ଉତ୍ପାଦ ଅର୍ଡର ଯାଞ୍ଚ କରନ୍ତୁ"
+  },
+  "Review the cancellation policy before confirming. Eligible refunds follow the order rules.": {
+    "hi": "पुष्टि से पहले रद्द करने की नीति देखें। पात्र रिफंड ऑर्डर के नियमों के अनुसार होंगे।",
+    "or": "ନିଶ୍ଚିତ କରିବା ପୂର୍ବରୁ ବାତିଲ୍ ନୀତି ଦେଖନ୍ତୁ। ଯୋଗ୍ୟ ରିଫଣ୍ଡ ଅର୍ଡର ନିୟମ ଅନୁସାରେ ହେବ।"
+  },
+  "Save address": {
+    "hi": "पता सेव करें",
+    "or": "ଠିକଣା ସେଭ୍ କରନ୍ତୁ"
+  },
+  "Send email": {
+    "hi": "ईमेल भेजें",
+    "or": "ଇମେଲ୍ ପଠାନ୍ତୁ"
+  },
+  "Share this code only when your meal arrives.": {
+    "hi": "भोजन आने पर ही यह कोड दें।",
+    "or": "ଭୋଜନ ପହଞ୍ଚିଲେ ମାତ୍ର ଏହି କୋଡ୍ ଦିଅନ୍ତୁ।"
+  },
+  "Show pickup code": {
+    "hi": "पिकअप कोड दिखाएँ",
+    "or": "ପିକ୍‌ଅପ୍ କୋଡ୍ ଦେଖାନ୍ତୁ"
+  },
+  "Sign in to order from a real kitchen.": {
+    "hi": "वास्तविक किचन से ऑर्डर करने के लिए साइन इन करें।",
+    "or": "ପ୍ରକୃତ ରୋଷେଇଘରରୁ ଅର୍ଡର ପାଇଁ ସାଇନ୍ ଇନ୍ କରନ୍ତୁ।"
+  },
+  "Simulate next stage": {
+    "hi": "अभ्यास का अगला चरण",
+    "or": "ଅଭ୍ୟାସର ପରବର୍ତ୍ତୀ ପର୍ଯ୍ୟାୟ"
+  },
+  "Street and building": {
+    "hi": "सड़क और भवन",
+    "or": "ରାସ୍ତା ଓ ଘର"
+  },
+  "This kitchen has too few published days for that plan.": {
+    "hi": "इस प्लान के लिए किचन में पर्याप्त दिन प्रकाशित नहीं हैं।",
+    "or": "ଏହି ପ୍ଲାନ୍ ପାଇଁ ରୋଷେଇଘରରେ ଯଥେଷ୍ଟ ପ୍ରକାଶିତ ଦିନ ନାହିଁ।"
+  },
+  "Use 8–72 characters, with uppercase, lowercase and a number.": {
+    "hi": "8–72 अक्षर रखें, जिसमें बड़ा अक्षर, छोटा अक्षर और अंक हो।",
+    "or": "୮–୭୨ ଅକ୍ଷର ରଖନ୍ତୁ, ବଡ଼ ଓ ଛୋଟ ଇଂରାଜୀ ଅକ୍ଷର ଏବଂ ସଂଖ୍ୟା ସହିତ।"
+  },
+  "Use current location": {
+    "hi": "वर्तमान स्थान लें",
+    "or": "ବର୍ତ୍ତମାନ ସ୍ଥାନ ନିଅନ୍ତୁ"
+  },
+  "Verify code": {
+    "hi": "कोड की पुष्टि करें",
+    "or": "କୋଡ୍ ଯାଞ୍ଚ କରନ୍ତୁ"
+  },
+  "View menu": {
+    "hi": "मेन्यू देखें",
+    "or": "ମେନୁ ଦେଖନ୍ତୁ"
+  },
+  "View orders": {
+    "hi": "ऑर्डर देखें",
+    "or": "ଅର୍ଡର ଦେଖନ୍ତୁ"
+  },
+  "Waiting for location…": {
+    "hi": "स्थान मिल रहा है…",
+    "or": "ସ୍ଥାନ ମିଳୁଛି…"
+  },
+  "Wallet applied": {
+    "hi": "वॉलेट से उपयोग",
+    "or": "ୱାଲେଟ୍‌ରୁ ବ୍ୟବହୃତ"
+  },
+  "Your account, saved address and real orders are handled by Paustik. Passwords are not saved in the app. Session access is encrypted using Android Keystore.": {
+    "hi": "आपका खाता, पता और वास्तविक ऑर्डर Paustik संभालता है। ऐप पासवर्ड सेव नहीं करता। सत्र की जानकारी Android Keystore से एन्क्रिप्ट होती है।",
+    "or": "ଆପଣଙ୍କ ଆକାଉଣ୍ଟ, ଠିକଣା ଓ ପ୍ରକୃତ ଅର୍ଡର Paustik ପରିଚାଳନା କରେ। ଆପ୍‌ରେ ପାସୱାର୍ଡ ସେଭ୍ ହୁଏ ନାହିଁ। ସେସନ୍ ସୂଚନା Android Keystore ଦ୍ୱାରା ଏନ୍‌କ୍ରିପ୍ଟ ହୁଏ।"
+  },
+  "Your kitchen is awaiting approval. You can save drafts.": {
+    "hi": "आपके किचन की स्वीकृति बाकी है। आप ड्राफ्ट सेव कर सकते हैं।",
+    "or": "ଆପଣଙ୍କ ରୋଷେଇଘରର ଅନୁମୋଦନ ବାକି ଅଛି। ଆପଣ ଡ୍ରାଫ୍ଟ ସେଭ୍ କରିପାରିବେ।"
+  },
+  "Your name": {
+    "hi": "आपका नाम",
+    "or": "ଆପଣଙ୍କ ନାମ"
+  },
+  "available meals": {
+    "hi": "उपलब्ध भोजन",
+    "or": "ଉପଲବ୍ଧ ଭୋଜନ"
+  },
+  "Choose a city to browse live kitchens, or try a practice order offline.": {
+    "hi": "वास्तविक किचन देखने के लिए शहर चुनें या ऑफलाइन अभ्यास ऑर्डर करें।",
+    "or": "ପ୍ରକୃତ ରୋଷେଇଘର ଦେଖିବାକୁ ସହର ବାଛନ୍ତୁ ବା ଅଫ୍‌ଲାଇନ୍ ଅଭ୍ୟାସ ଅର୍ଡର କରନ୍ତୁ।"
+  },
+  "Service area": {
+    "hi": "सेवा क्षेत्र",
+    "or": "ସେବା ଅଞ୍ଚଳ"
+  },
+  "Pickup offers within 25 km. A normal collection batch has at most three orders.": {
+    "hi": "25 किमी के भीतर पिकअप ऑफर। सामान्य बैच में अधिकतम तीन ऑर्डर।",
+    "or": "୨୫ କିମି ଭିତରେ ପିକ୍‌ଅପ୍ ଅଫର୍। ସାଧାରଣ ବ୍ୟାଚ୍‌ରେ ସର୍ବାଧିକ ତିନୋଟି ଅର୍ଡର।"
+  },
+  "Save area and go online": {
+    "hi": "क्षेत्र सेव करके ऑनलाइन हों",
+    "or": "ଅଞ୍ଚଳ ସେଭ୍ କରି ଅନ୍‌ଲାଇନ୍ ହୁଅନ୍ତୁ"
+  },
+  "Go online": {
+    "hi": "ऑनलाइन हों",
+    "or": "ଅନ୍‌ଲାଇନ୍ ହୁଅନ୍ତୁ"
+  },
+  "Go offline": {
+    "hi": "ऑफलाइन हों",
+    "or": "ଅଫ୍‌ଲାଇନ୍ ହୁଅନ୍ତୁ"
+  },
+  "Payment received after cancellation. Contact support for refund review.": {
+    "hi": "ऑर्डर रद्द होने के बाद भुगतान मिला। रिफंड समीक्षा के लिए सहायता लें।",
+    "or": "ଅର୍ଡର ବାତିଲ୍ ପରେ ପେମେଣ୍ଟ ମିଳିଛି। ରିଫଣ୍ଡ ସମୀକ୍ଷା ପାଇଁ ସହାୟତା ନିଅନ୍ତୁ।"
+  },
+  "Food type": {
+    "hi": "भोजन का प्रकार",
+    "or": "ଖାଦ୍ୟ ପ୍ରକାର"
+  },
+  "Other": {
+    "hi": "अन्य",
+    "or": "ଅନ୍ୟ"
+  },
+  "Welcome back": {
+    "hi": "फिर से स्वागत है",
+    "or": "ପୁଣି ସ୍ୱାଗତ"
+  },
+  "Reset password": {
+    "hi": "पासवर्ड बदलें",
+    "or": "ପାସୱାର୍ଡ ବଦଳାନ୍ତୁ"
+  },
+  "Vegetarian meal": {
+    "hi": "शाकाहारी भोजन",
+    "or": "ନିରାମିଷ ଭୋଜନ"
+  },
+  "Payment confirmation is pending. Check order status.": {
+    "hi": "भुगतान की पुष्टि बाकी है। ऑर्डर की स्थिति देखें।",
+    "or": "ପେମେଣ୍ଟ ଯାଞ୍ଚ ବାକି ଅଛି। ଅର୍ଡର ସ୍ଥିତି ଦେଖନ୍ତୁ।"
+  }
+}

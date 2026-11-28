@@ -1,5 +1,19 @@
 type AuthEmailKind = "verify" | "reset";
 
+export async function sendLoginCode(email: string, code: string) {
+  const config = emailConfig();
+  if (!config || !/^\d{6}$/.test(code)) return false;
+  try {
+    const response = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${config.apiKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ from: config.from, to: [email], subject: "Your Paustik sign-in code", text: `Your Paustik sign-in code is ${code}. It expires in 10 minutes and can be used once. Never share this code. If you did not request it, ignore this email.` }),
+      cache: "no-store", signal: AbortSignal.timeout(8_000),
+    });
+    return response.ok;
+  } catch { return false; }
+}
+
 export function emailConfig() {
   const apiKey = process.env.RESEND_API_KEY?.trim();
   const from = process.env.EMAIL_FROM?.trim();

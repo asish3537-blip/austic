@@ -1311,9 +1311,9 @@ Object.assign(uiTranslations,{
     "होम स्क्रीन पर जोड़ें",
     "ହୋମ୍ ସ୍କ୍ରିନ୍‌ରେ ଯୋଡ଼ନ୍ତୁ"
   ],
-  "Android v1.3 · Android 7 or newer. On iPhone, install the web app from Safari.": [
-    "Android v1.3 · Android 7 या नया। iPhone पर Safari से वेब ऐप इंस्टॉल करें।",
-    "Android v1.3 · Android 7 ବା ନୂଆ। iPhone ରେ Safari ରୁ ୱେବ୍ ଆପ୍ ଇନଷ୍ଟଲ୍ କରନ୍ତୁ।"
+  "Android v1.4.1 · Android 7 or newer. On iPhone, install the web app from Safari.": [
+    "Android v1.4.1 · Android 7 या नया। iPhone पर Safari से वेब ऐप इंस्टॉल करें।",
+    "Android v1.4.1 · Android 7 ବା ନୂଆ। iPhone ରେ Safari ରୁ ୱେବ୍ ଆପ୍ ଇନଷ୍ଟଲ୍ କରନ୍ତୁ।"
   ],
   "Prefer your browser? Open the web app →": [
     "ब्राउज़र में इस्तेमाल करें →",
@@ -1579,9 +1579,9 @@ Object.assign(uiTranslations,{
     "↓ Android के लिए डाउनलोड",
     "↓ Android ପାଇଁ ଡାଉନଲୋଡ୍"
   ],
-  "Direct APK · v1.3": [
-    "सीधा APK · v1.3",
-    "ସିଧା APK · v1.3"
+  "Direct APK · v1.4.1": [
+    "सीधा APK · v1.4.1",
+    "ସିଧା APK · v1.4.1"
   ],
   "＋ Install the web app": [
     "＋ वेब ऐप इंस्टॉल करें",

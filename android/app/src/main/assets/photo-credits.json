@@ -1,0 +1,37 @@
+{
+  "usage": "Illustrative photographs for clearly labelled fictional pilot kitchens. These are not photos of real Paustik sellers or evidence for any order.",
+  "license": "https://www.pexels.com/license/",
+  "photos": [
+    {
+      "file": "pilot-egg-curry.jpg",
+      "author": "Pranjall Kumar",
+      "source": "https://www.pexels.com/photo/green-masala-egg-curry-dish-in-bowl-8625813/"
+    },
+    {
+      "file": "pilot-paneer-curry.jpg",
+      "author": "Milton Das",
+      "source": "https://www.pexels.com/photo/flavorful-paneer-curry-with-fresh-vegetables-35041650/"
+    },
+    {
+      "file": "pilot-chicken-curry.jpg",
+      "author": "Bilal Moazzam",
+      "source": "https://www.pexels.com/photo/spicy-indian-chicken-curry-close-up-37180957/"
+    },
+    {
+      "file": "pilot-desi-chicken-curry.jpg",
+      "author": "Kunal Lakhotia",
+      "source": "https://www.pexels.com/photo/spicy-chicken-curry-in-traditional-kadai-29684985/"
+    },
+    {
+      "file": "pilot-mutton-curry.jpg",
+      "source": "https://www.pexels.com/photo/spicy-indian-mutton-curry-with-vegetables-35287423/"
+    },
+    {
+      "file": "pilot-mushroom-curry.jpg",
+      "author": "Yakshitha",
+      "source": "https://commons.wikimedia.org/wiki/File:Mushroom_Curry_3.jpg",
+      "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "changes": "Wikimedia thumbnail rendition; displayed in a cropped card. No endorsement implied."
+    }
+  ]
+}

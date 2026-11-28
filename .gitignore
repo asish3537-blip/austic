@@ -1,6 +1,11 @@
 .vercel/
 node_modules/
+node_modules-copy-incomplete/
+android/.gradle/
+android/app/build/
+output/
 .next/
+.next-prior-local/
 out/
 build/
 dist/
