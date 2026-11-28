@@ -1,4 +1,10 @@
 export const usabilityTranslations:Record<string,[string,string]>={
+ "Check Test refund":["टेस्ट रिफंड जाँचें","ଟେଷ୍ଟ ଫେରସ୍ତ ଯାଞ୍ଚ କରନ୍ତୁ"],
+ "Test refund completed":["टेस्ट रिफंड पूरा हुआ","ଟେଷ୍ଟ ଫେରସ୍ତ ସମ୍ପୂର୍ଣ୍ଣ"],
+ "Test refund pending":["टेस्ट रिफंड लंबित है","ଟେଷ୍ଟ ଫେରସ୍ତ ବକେୟା"],
+ "Test refund not confirmed":["टेस्ट रिफंड की पुष्टि नहीं हुई","ଟେଷ୍ଟ ଫେରସ୍ତ ନିଶ୍ଚିତ ହୋଇନାହିଁ"],
+ "Cancel & refund Test payment":["रद्द करें और टेस्ट रिफंड लें","ବାତିଲ୍ କରି ଟେଷ୍ଟ ଫେରସ୍ତ ନିଅନ୍ତୁ"],
+ "Cancel unpaid practice order":["बिना भुगतान वाला अभ्यास ऑर्डर रद्द करें","ଦେୟ ହୋଇନଥିବା ଅଭ୍ୟାସ ଅର୍ଡର୍ ବାତିଲ୍ କରନ୍ତୁ"],
  "Refresh Google sign-in":["Google साइन-इन फिर शुरू करें","Google ସାଇନ୍‌-ଇନ୍ ପୁଣି ଆରମ୍ଭ କରନ୍ତୁ"],
  "Administrator? Use admin sign-in":["प्रशासक हैं? एडमिन साइन-इन खोलें","ପ୍ରଶାସକ କି? ଆଡମିନ୍ ସାଇନ୍‌-ଇନ୍ ଖୋଲନ୍ତୁ"],
  "Get started with Google":["Google से शुरुआत करें","Google ସହ ଆରମ୍ଭ କରନ୍ତୁ"],

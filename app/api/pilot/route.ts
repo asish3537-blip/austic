@@ -8,7 +8,7 @@ import {prisma} from "@/lib/prisma";
 import {indiaDate} from "@/lib/service-windows";
 import {pilotMenus,publicPilotEnabled,type PilotOverrides} from "@/lib/pilot-catalog";
 import {pilotTransition} from "@/lib/pilot-payment-policy";
-import {capturePilotReceipt,pilotGateway,pilotRazorpayConfig,validRazorpaySignature} from "@/lib/pilot-payments";
+import {capturePilotReceipt,pilotGateway,pilotRazorpayConfig,refundPilotOrder,validRazorpaySignature} from "@/lib/pilot-payments";
 import type {Prisma} from "@/app/generated/prisma/client";
 import {publicPilotSnapshot} from "@/lib/order-photo-policy";
 export const runtime="nodejs";
@@ -19,6 +19,7 @@ const input=z.discriminatedUnion("action",[
  z.object({action:z.literal("checkout"),requestKey:z.string().uuid(),kitchenId:z.string().max(60),mealId:z.string().max(80),quantity:z.number().int().min(1).max(3),days:z.union([z.literal(1),z.number().int().min(3).max(7)]),serviceDate:z.iso.date(),acknowledged:z.literal(true)}),
  z.object({action:z.literal("confirm"),orderId:z.string().uuid(),paymentId:z.string().regex(/^pay_[A-Za-z0-9]+$/),signature:z.string().regex(/^[a-f0-9]{64}$/i)}),
  z.object({action:z.literal("reconcile"),orderId:z.string().uuid()}),
+ z.object({action:z.literal("refund"),orderId:z.string().uuid()}),
  z.object({action:z.literal("advance"),orderId:z.string().uuid(),role:z.enum(["customer","mother","courier"]),status:z.string().max(30),code:z.string().regex(/^\d{4}$/).optional()}),
 ]);
 async function workspace(ownerId:string){return prisma.pilotWorkspace.upsert({where:{ownerId},create:{ownerId},update:{}});}
@@ -40,6 +41,7 @@ export async function POST(request:Request){
  const data=parsed.data;
  try{
   const w=await workspace(user.id);
+  if(data.action==="refund")return NextResponse.json(await refundPilotOrder(data.orderId,w.id),{headers});
   if(data.action==="saveMeal"){
    await prisma.$transaction(async tx=>{
     await tx.$queryRaw`SELECT 1 FROM pg_advisory_xact_lock(hashtextextended(${"pilot-workspace:"+w.id},0))`;
@@ -55,6 +57,7 @@ export async function POST(request:Request){
   if(data.action==="advance"){
    const outcome=await prisma.$transaction(async tx=>{
     await tx.$queryRaw`SELECT 1 FROM pg_advisory_xact_lock(hashtextextended(${"pilot-workspace:"+w.id},0))`;
+    await tx.$queryRaw`SELECT 1 FROM pg_advisory_xact_lock(hashtextextended(${"pilot-order:"+data.orderId},0))`;
     const order=await tx.pilotOrder.findFirst({where:{id:data.orderId,workspaceId:w.id}});if(!order)throw Error("Practice order not found.");
     const cancelPending=data.role==="customer"&&data.status==="CANCELLED"&&order.status==="PAYMENT_PENDING";
     if(!cancelPending&&!pilotTransition(data.role,order.status,data.status,order.paymentStatus==="CAPTURED"))throw Error("Complete the previous practice step first.");
@@ -66,13 +69,18 @@ export async function POST(request:Request){
     }
     const events=Array.isArray(order.events)?order.events:[];
     await tx.pilotOrder.update({where:{id:order.id},data:{status:data.status,failedAttempts:0,lockedUntil:null,events:[...events,{status:data.status,detail:"Practice "+data.role+" update. No actual fulfilment.",at:new Date().toISOString()}]}});
-    return{updated:true};
+    return{updated:true,needsRefund:data.status==="CANCELLED"&&order.paymentStatus==="CAPTURED"};
    });
+   if("needsRefund" in outcome&&outcome.needsRefund){
+    try{return NextResponse.json({...outcome,...await refundPilotOrder(data.orderId,w.id)},{headers});}
+    catch{return NextResponse.json({...outcome,refundPending:true,message:"Practice order cancelled. Test refund is not confirmed yet. Use Check Test refund to retry safely."},{headers});}
+   }
    return NextResponse.json(outcome,{status:"error" in outcome?400:200,headers});
   }
   const config=pilotRazorpayConfig();if(!config)return NextResponse.json({error:"Pilot Razorpay Test keys are not configured. No Live checkout is offered for sample kitchens."},{status:503,headers});
   if(data.action==="confirm"||data.action==="reconcile"){
    const order=await prisma.pilotOrder.findFirst({where:{id:data.orderId,workspaceId:w.id}});if(!order?.providerOrderId)throw Error("Practice payment not found.");
+   if(data.action==="reconcile"&&order.status==="CANCELLED"&&["CAPTURED","REFUND_PENDING","REFUNDED"].includes(order.paymentStatus))return NextResponse.json(await refundPilotOrder(order.id,w.id),{headers});
    if(data.action==="confirm"){
     if(!validRazorpaySignature(order.providerOrderId+"|"+data.paymentId,data.signature,config.secret))return NextResponse.json({error:"Test payment signature did not match."},{status:400,headers});
     return NextResponse.json(await capturePilotReceipt(order.providerOrderId,data.paymentId),{headers});
