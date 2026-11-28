@@ -8,7 +8,7 @@ android {
         applicationId 'in.paustik.mobile'
         minSdk 24
         targetSdk 36
-        versionCode 10
+        versionCode 11
         versionName '1.4.2'
     }
     signingConfigs {
@@ -39,7 +39,7 @@ android {
         qa {
             initWith release
             matchingFallbacks = ['release']
-            versionNameSuffix '-test4'
+            versionNameSuffix '-test5'
             buildConfigField 'boolean', 'TEST_PAYMENTS_ONLY', 'true'
         }
     }

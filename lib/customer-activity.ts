@@ -10,7 +10,7 @@ const orderSelect = (customerId:string)=>({
         scheduledFor: true,
         totalAmount: true, subtotal: true, deliveryFee: true, discountAmount: true, taxAmount: true,
         currency: true,
-        kitchen: { select: { name: true } },
+        kitchen: { select: { id:true, name: true } },
         items: { select: { mealName: true, quantity: true } },
         delivery: { select: { status: true } },
         ratings: { where: { authorId: customerId }, select: { mealScore: true, deliveryScore: true } },

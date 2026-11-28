@@ -20,7 +20,7 @@ export function OrderProgress({orderId,status,events,pilot=false}:{orderId:strin
   return <li key={step.status} data-state={step.state} aria-current={step.state==="current"?"step":undefined}>
    <strong><UiText text={step.label}/></strong><small><UiText text={step.state==="current"?"Current stage":step.state==="recorded"?"Update received":step.state==="passed"?"Earlier stage":step.state==="stopped"?"Not reached":"Awaiting update"}/></small>
    {step.at&&<time dateTime={step.at}><UiDate value={step.at}/> <UiText text="IST"/></time>}
-   {photoStage&&<div className="timeline-photo"><span><UiText text={photoStage==="PREPARED"?"Prepared meal photo":"Courier handover photo"}/></span>
+   {photoStage&&<div className="timeline-photo">{photoStage==="HANDOVER"&&<small><UiText text="Packed parcel at courier handover"/></small>}<span><UiText text={photoStage==="PREPARED"?"Prepared meal photo":"Courier handover photo"}/></span>
     {photo?<><a href={photo.url} target="_blank" rel="noopener noreferrer"><img key={revision+photo.url} src={photo.url} alt={t(photoStage==="PREPARED"?"Prepared meal photo":"Courier handover photo")} width={320} height={220} onError={()=>setError(true)}/></a><small><UiText text="Uploaded"/> <UiDate value={photo.createdAt}/> <UiText text="IST"/></small></>:<p><UiText text={error?"Photos could not load. Retry below.":photos?"Not uploaded yet":"Loading photos…"}/></p>}
    </div>}
   </li>;

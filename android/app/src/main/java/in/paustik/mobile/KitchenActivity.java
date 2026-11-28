@@ -463,6 +463,10 @@ public final class KitchenActivity extends Activity implements PaymentResultWith
     if (rows == null || rows.length() == 0) {
       label(
           "No published meals here yet. Try the practice order or check another city.", 16, false);
+      label("Check your delivery address, try another area or return when new menus are published.",14,false);
+      button("Find kitchens", () -> home());
+      if(user!=null)button("Check delivery address", () -> address());
+      else button("Try a practice order", () -> {practiceMode=true;home();});
       return;
     }
     for (int i = 0; i < rows.length(); i++) {
@@ -529,6 +533,7 @@ public final class KitchenActivity extends Activity implements PaymentResultWith
       }
       public void onNothingSelected(android.widget.AdapterView<?> parent) {}
     });
+    if(!practiceMode&&!k.optBoolean("canDeliver",true)){label("Delivery is not confirmed yet. Check again or choose another menu time or kitchen.",15,false);button("Check delivery address",()->address());button("Find kitchens",()->home());}
     JSONArray meals = k.optJSONArray("meals");
     int visibleMeals = 0;
     for (int i = 0; meals != null && i < meals.length(); i++) {
@@ -559,15 +564,19 @@ public final class KitchenActivity extends Activity implements PaymentResultWith
           13,
           false);
       if(m.optJSONArray("components")!=null && m.optJSONArray("components").length()>0) label(join(m.optJSONArray("components")),15,false);
+      label(t("Portions")+": "+t("Choose servings at checkout. Portion size varies by kitchen."),13,false);
+      label(t("Allergens")+": "+mealDetailValue(m,"allergens","Not provided"),14,true);
       button("Ingredients & allergens", () -> mealDetails(m));
       label(nonveg ? "Non-vegetarian" : "Vegetarian", 14, true);
       if (m.optBoolean("oneTimeOnly")) label("One-time special", 14, false);
-      if (m.optInt("servings") > 0) button("Choose this meal", () -> meal(k, m));
-      else label("Sold out", 16, true);
+      if (m.optInt("servings") > 0 && (practiceMode||k.optBoolean("canDeliver",true))) button("Choose this meal", () -> meal(k, m));
+      else label(m.optInt("servings")<1?"Sold out":"Delivery is not confirmed yet. Check again or choose another menu time or kitchen.",16,true);
     }
     if (visibleMeals == 0) {
-      label("No meals match this preference.", 16, false);
-      button("Clear filters", () -> menu(k));
+      label(meals==null||meals.length()==0?"No published meals yet":"No meals match this preference.", 16, false);
+      label("Check another kitchen or return later for a newly published menu.",14,false);
+      button("Find kitchens", () -> home());
+      if(meals!=null&&meals.length()>0)button("Clear filters", () -> menu(k));
     }
   }
 
@@ -1093,6 +1102,8 @@ public final class KitchenActivity extends Activity implements PaymentResultWith
       label(o.optString("status").replace('_', ' '), 16, true);
       label(money(o.optDouble("total")), 18, true);
       button("Track order", () -> track(o));
+      button("Order again", () -> repeatOrder(o));
+      button("Get help with this order", () -> orderHelp(o));
       if (!practiceMode
           && o.optString("paymentStatus").equals("PENDING")
           && !terminal(o.optString("status"))) {
@@ -1130,6 +1141,43 @@ public final class KitchenActivity extends Activity implements PaymentResultWith
                                 d -> orders()))
                     .show());
     }
+  }
+
+  private void orderHelp(JSONObject order) {
+    String reference=order.optString("orderNumber");
+    if(reference.isEmpty())reference="TEST-"+order.optString("id").substring(0,Math.min(8,order.optString("id").length())).toUpperCase(Locale.ROOT);
+    final String message=OrderChoices.supportMessage(reference);
+    new AlertDialog.Builder(this).setTitle(t("Get help with this order")).setMessage(reference+"\n\n"+t("Your order number is included. Add your question before sending."))
+      .setNegativeButton(t("Cancel"),null).setNeutralButton(t("Email support"),(dialog,which)->{
+        try {startActivity(new Intent(Intent.ACTION_SENDTO,Uri.parse("mailto:paustikdelivery@gmail.com?subject="+Uri.encode("Paustik order help")+"&body="+Uri.encode(message))));}catch(Exception unavailable){info("Email paustikdelivery@gmail.com for help.");}
+      }).setPositiveButton(t("Chat on WhatsApp"),(dialog,which)->{
+        try{startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse("https://wa.me/918310219023?text="+Uri.encode(message))));}catch(Exception unavailable){info("Email paustikdelivery@gmail.com for help.");}
+      }).show();
+  }
+
+  private void showRepeatMenu(JSONArray kitchens,JSONObject previous) {
+    JSONObject kitchen=OrderChoices.repeatKitchen(kitchens,previous);
+    if(kitchen==null){
+      page("Order again");label("This kitchen has no available meal to repeat. Choose another kitchen or try later.",16,false);button("Find kitchens",()->home());return;
+    }
+    menu(kitchen);
+    new AlertDialog.Builder(this).setTitle(t("Order again")).setMessage(t("Review current price, menu dates and availability before confirming. Your previous order will not be copied automatically.")).setPositiveButton(t("OK"),null).show();
+  }
+
+  private void repeatOrder(JSONObject order) {
+    if(practiceMode){try{showRepeatMenu(practice.kitchens(),order.optJSONObject("kitchen")==null?new JSONObject():order.optJSONObject("kitchen"));}catch(Exception error){error(error);}return;}
+    request(()->api.get("/api/mobile/workspace"),result->showRepeatMenu(result.optJSONArray("kitchens"),order.optJSONObject("kitchen")==null?new JSONObject():order.optJSONObject("kitchen")));
+  }
+
+  private void repeatTestOrder(JSONObject order) {
+    request(()->api.get("/api/pilot?role=customer"),result->{
+      JSONArray kitchens=result.optJSONArray("kitchens");JSONObject snapshot=order.optJSONObject("snapshot");
+      String id=snapshot==null?"":snapshot.optString("kitchenId");
+      for(int i=0;kitchens!=null&&i<kitchens.length();i++)if(kitchens.getJSONObject(i).optString("id").equals(id)){
+        pilotMenu(kitchens.getJSONObject(i));info("Review current price, menu dates and availability before confirming. Your previous order will not be copied automatically.");return;
+      }
+      pilotHome();info("This kitchen has no available meal to repeat. Choose another kitchen or try later.");
+    });
   }
 
   private static boolean terminal(String status) {
@@ -1201,6 +1249,8 @@ public final class KitchenActivity extends Activity implements PaymentResultWith
         JSONObject order = rows.getJSONObject(i);
         divider(); label(order.optString("orderNumber"), 18, true);
         button("Track order", () -> track(order));
+        button("Order again", () -> repeatOrder(order));
+        button("Get help with this order", () -> orderHelp(order));
         button("Preparation & handover photos", () -> orderPhotos(order));
       }
     });
@@ -1241,6 +1291,7 @@ public final class KitchenActivity extends Activity implements PaymentResultWith
   private void renderOrderPhoto(String stage, JSONArray photos) {
     try {
         divider(); label(stage.equals("PREPARED") ? "Prepared meal photo" : "Courier handover photo", 19, true);
+        if(stage.equals("HANDOVER"))label("Packed parcel at courier handover",13,false);
         JSONObject photo = null;
         for (int i = 0; photos != null && i < photos.length(); i++)
           if (stage.equals(photos.getJSONObject(i).optString("stage"))) photo = photos.getJSONObject(i);
@@ -1304,6 +1355,8 @@ public final class KitchenActivity extends Activity implements PaymentResultWith
         label(snapshot==null?"":snapshot.optString("mealName"), 19, true);
         label(money(o.optInt("amountPaise")/100.0)+" · "+t(status.replace('_',' ')), 16, false);
         button("Track Test order", () -> pilotTrack(o));
+        button("Get help with this order", () -> orderHelp(o));
+        button("Order again", () -> repeatTestOrder(o));
         button("Preparation & handover photos", () -> orderPhotos(o, true));
         if (payment.equals("PENDING")) button("Check Test payment", () -> pilotCheckPayment(id));
         if (status.equals("CANCELLED") && !payment.equals("PENDING")) {
@@ -1362,6 +1415,7 @@ public final class KitchenActivity extends Activity implements PaymentResultWith
       divider();label(meal.optString("name"),21,true);label(meal.optString("description"),16,false);
       label(money(meal.optDouble("price")),18,true);
       label("Price per serving · Delivery shown at checkout",13,false);
+      label(t("Allergens")+": "+mealDetailValue(meal,"allergens","Not provided"),14,true);
       button("Ingredients & allergens", () -> mealDetails(meal));
       if(meal.optInt("servings")>0)button("Choose Test meal", () -> pilotCheckout(kitchen,meal));
     }

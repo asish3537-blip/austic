@@ -11,9 +11,10 @@ import { KitchenMenu } from "@/components/kitchen-menu";
 
 export const metadata = { title: "Kitchen menu & subscription" };
 
-export default async function KitchenPage({ params }: { params: Promise<{ kitchenId: string }> }) {
+export default async function KitchenPage({ params, searchParams }: { params: Promise<{ kitchenId: string }>;searchParams:Promise<{q?:string|string[]}> }) {
   const user = await requireRole("CUSTOMER");
   const { kitchenId } = await params;
+  const search=(await searchParams).q; const query=typeof search==="string"?search.slice(0,100):"";
   const sample = kitchenId.startsWith("sample-");
   let kitchen: CustomerKitchen | undefined;
   let hasDeliveryPin = false;
@@ -46,7 +47,7 @@ export default async function KitchenPage({ params }: { params: Promise<{ kitche
     </header>
     {!sample && <CustomerDeliveryPin initialPinned={hasDeliveryPin} />}
     <div className="kitchen-delivery-strip"><span><strong><UiText text={"Neighbourhood delivery"}/></strong><UiText text={sample ? "Delivery eligibility is confirmed for real kitchens using your saved pin." : hasDeliveryPin ? kitchen.canDeliver===false ? "Your saved pin is outside the 25 km delivery area. You can browse; update your location before booking." : `This kitchen serves your pin within its ${kitchen.marketplaceRadiusKm} km area.` : "Add your delivery pin to confirm this kitchen can reach you."}/></span><span><strong><UiText text={"Clear daily pricing"}/></strong><UiText text={"Meal price + distance-based delivery, shown before booking"}/></span>{!sample && kitchen.latitude !== undefined && kitchen.longitude !== undefined && <GoogleMapActions point={{ latitude: kitchen.latitude, longitude: kitchen.longitude }} label="Kitchen"/>}</div>
-    <KitchenMenu meals={kitchen.meals} sample={sample} canOrder={hasDeliveryPin&&kitchen.canDeliver!==false} />
+    <KitchenMenu key={kitchen.id+query} initialQuery={query} meals={kitchen.meals} sample={sample} canOrder={hasDeliveryPin&&kitchen.canDeliver!==false} />
     <section className="kitchen-subscription-section" id="kitchen-subscription" aria-labelledby="kitchen-subscription-title">
       <div className="kitchen-section-heading"><div><span className="eyebrow"><UiText text={"Make it your everyday kitchen"}/></span><h2 id="kitchen-subscription-title"><UiText text={"Build your subscription"}/></h2><p><UiText text={"Choose 3–7 days from this mother’s available menu. Your meals, your days, one kitchen."}/></p></div><span className="kitchen-minimum-tag"><UiText text={"3 days minimum"}/></span></div>
       <WeeklyPlanPicker kitchenName={kitchen.name} preview={sample} canReserve={hasDeliveryPin&&kitchen.canDeliver!==false} menus={kitchen.meals.filter(meal=>!meal.oneTimeOnly).map((meal) => ({ menuId: meal.menuId ?? meal.id,mealPeriod:meal.mealPeriod, name: meal.name, serviceDate: meal.serviceDate, price: meal.price, servings: meal.servings, category: meal.category, components: meal.components, deliveryTime: meal.deliveryTime }))} />

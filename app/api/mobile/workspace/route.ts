@@ -13,7 +13,7 @@ export async function GET(){
  try{const [discovery,address,orders]=await Promise.all([
   loadCustomerKitchenDiscovery(u.id),
   prisma.address.findFirst({where:{userId:u.id},orderBy:[{isDefault:"desc"},{createdAt:"asc"}],select:{recipientName:true,phone:true,addressLine1:true,locality:true,city:true,pinCode:true,latitude:true,longitude:true}}),
-  prisma.order.findMany({where:{customerId:u.id},orderBy:{orderedAt:"desc"},take:50,select:{id:true,orderNumber:true,status:true,paymentStatus:true,scheduledFor:true,totalAmount:true,currency:true,kitchen:{select:{name:true}},items:{select:{mealName:true,quantity:true}},payments:{where:{status:"PENDING"},select:{amount:true}}}}),
+  prisma.order.findMany({where:{customerId:u.id},orderBy:{orderedAt:"desc"},take:50,select:{id:true,orderNumber:true,status:true,paymentStatus:true,scheduledFor:true,totalAmount:true,currency:true,kitchen:{select:{id:true,name:true}},items:{select:{mealName:true,quantity:true}},payments:{where:{status:"PENDING"},select:{amount:true}}}}),
  ]);return NextResponse.json({user:{name:u.name,email:u.email,role:u.role},...discovery,address,orders:orders.map(o=>({...o,total:Number(o.totalAmount),amountDue:o.payments.reduce((n,p)=>n+Number(p.amount),0),items:o.items.map(i=>i.quantity+" × "+i.mealName)}))},{headers});}catch{return serviceUnavailable();}
 }
 export async function POST(request:Request){

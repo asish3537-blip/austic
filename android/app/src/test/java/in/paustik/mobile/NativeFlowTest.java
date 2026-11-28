@@ -25,6 +25,36 @@ import java.util.*;
 @Config(sdk=34,shadows={NativeFlowTest.TestCheckoutShadow.class})
 @LooperMode(LooperMode.Mode.PAUSED)
 public class NativeFlowTest {
+    @Test public void repeatOrderFetchesCurrentStockAndDoesNotPlaceAnOrder()throws Exception{
+        FixtureApi api=new FixtureApi(app){@Override JSONObject get(String path)throws Exception{
+            assertEquals("/api/mobile/workspace",path);
+            JSONObject meal=new JSONObject().put("name","Fresh menu").put("price",123).put("servings",2);
+            return new JSONObject().put("kitchens",new JSONArray().put(new JSONObject().put("id","fresh").put("name","Kitchen").put("meals",new JSONArray().put(meal))));
+        }};
+        inject("api",api);inject("user",new JSONObject().put("role","CUSTOMER"));
+        java.lang.reflect.Method method=KitchenActivity.class.getDeclaredMethod("repeatOrder",JSONObject.class);method.setAccessible(true);method.invoke(app,new JSONObject().put("quantity",8).put("kitchen",new JSONObject().put("id","fresh")));
+        idleUntil("action:Choose this meal");assertNull(api.lastPayload);
+        ShadowAlertDialog.getLatestAlertDialog().getButton(AlertDialog.BUTTON_POSITIVE).performClick();click("action:Choose this meal");
+        assertEquals(2,((Spinner)view("choice:Servings")).getCount());assertNull(api.lastPayload);
+    }
+    @Test public void repeatMenuRequiresMatchingKitchenAndCurrentStock()throws Exception{
+        JSONArray kitchens=new JSONArray().put(new JSONObject().put("id","new").put("name","Same name").put("meals",new JSONArray().put(new JSONObject().put("servings",2))));
+        assertNull(OrderChoices.repeatKitchen(kitchens,new JSONObject().put("id","old").put("name","Same name")));
+        assertNotNull(OrderChoices.repeatKitchen(kitchens,new JSONObject().put("id","new")));
+        kitchens.getJSONObject(0).getJSONArray("meals").getJSONObject(0).put("servings",0);
+        assertNull(OrderChoices.repeatKitchen(kitchens,new JSONObject().put("id","new")));
+    }
+    @Test public void orderHelpPreparesEmailWithOrderReferenceWithoutSending()throws Exception{
+        java.lang.reflect.Method method=KitchenActivity.class.getDeclaredMethod("orderHelp",JSONObject.class);method.setAccessible(true);method.invoke(app,new JSONObject().put("orderNumber","PS-333"));
+        assertNull(Shadows.shadowOf(app).getNextStartedActivity());
+        ShadowAlertDialog.getLatestAlertDialog().getButton(AlertDialog.BUTTON_NEUTRAL).performClick();
+        ShadowLooper.idleMainLooper();
+        android.content.Intent intent=Shadows.shadowOf(app).getNextStartedActivity();assertEquals(android.content.Intent.ACTION_SENDTO,intent.getAction());assertTrue(intent.getDataString().contains("PS-333"));
+    }
+    @Test public void emptyMenuOffersKitchenDiscoveryWithoutMeaninglessFilterReset()throws Exception{
+        java.lang.reflect.Method method=KitchenActivity.class.getDeclaredMethod("menu",JSONObject.class);method.setAccessible(true);method.invoke(app,new JSONObject().put("name","Paused kitchen").put("meals",new JSONArray()));
+        assertNotNull(view("action:Find kitchens"));assertEquals(0,count(app.getWindow().getDecorView(),"action:Clear filters"));
+    }
     @Test public void timelinePlacesPhotosInsidePreparationAndHandoverSteps()throws Exception{
         android.graphics.Bitmap bitmap=android.graphics.Bitmap.createBitmap(2,2,android.graphics.Bitmap.Config.ARGB_8888);
         java.io.ByteArrayOutputStream bytes=new java.io.ByteArrayOutputStream();bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG,100,bytes);
