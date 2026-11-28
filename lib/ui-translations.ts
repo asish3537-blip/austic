@@ -4,6 +4,19 @@ import {orderExperienceCopy} from "@/lib/order-experience-copy";
 import {usabilityTranslations} from "@/lib/usability-translations";
 export type UiLanguage = "en" | "hi" | "or";
 export const uiTranslations: Record<string, [string, string]> = {
+"Product photo":["उत्पाद की तस्वीर","ଉତ୍ପାଦର ଫଟୋ"],
+"Product photo not added yet":["उत्पाद की तस्वीर अभी नहीं जोड़ी गई","ଉତ୍ପାଦର ଫଟୋ ଏପର୍ଯ୍ୟନ୍ତ ଯୋଡ଼ାଯାଇନାହିଁ"],
+"Product photo could not load":["उत्पाद की तस्वीर लोड नहीं हुई","ଉତ୍ପାଦର ଫଟୋ ଲୋଡ୍ ହୋଇପାରିଲା ନାହିଁ"],
+"Retry photo":["तस्वीर फिर लोड करें","ଫଟୋ ପୁଣି ଲୋଡ୍ କରନ୍ତୁ"],
+"Preparing photo…":["तस्वीर तैयार हो रही है…","ଫଟୋ ପ୍ରସ୍ତୁତ ହେଉଛି…"],
+"Replace product photo":["उत्पाद की तस्वीर बदलें","ଉତ୍ପାଦର ଫଟୋ ବଦଳାନ୍ତୁ"],
+"Add product photo":["उत्पाद की तस्वीर जोड़ें","ଉତ୍ପାଦର ଫଟୋ ଯୋଡ଼ନ୍ତୁ"],
+"Remove product photo":["उत्पाद की तस्वीर हटाएँ","ଉତ୍ପାଦର ଫଟୋ ହଟାନ୍ତୁ"],
+"Show your actual food or packaging. JPG, PNG or WebP up to 5 MB; resized before upload.":["अपने असली भोजन या पैकेजिंग की तस्वीर दिखाएँ। 5 MB तक JPG, PNG या WebP; अपलोड से पहले आकार घटाया जाएगा।","ନିଜ ପ୍ରକୃତ ଖାଦ୍ୟ ବା ପ୍ୟାକେଜିଂ ଦେଖାନ୍ତୁ। 5 MB ପର୍ଯ୍ୟନ୍ତ JPG, PNG ବା WebP; ଅପଲୋଡ୍ ପୂର୍ବରୁ ଆକାର କମାଯିବ।"],
+"Choose a JPG, PNG or WebP under 5 MB.":["5 MB से छोटी JPG, PNG या WebP चुनें।","5 MB ରୁ ଛୋଟ JPG, PNG ବା WebP ବାଛନ୍ତୁ।"],
+"Photo upload is unavailable on this device.":["इस डिवाइस पर तस्वीर अपलोड उपलब्ध नहीं है।","ଏହି ଉପକରଣରେ ଫଟୋ ଅପଲୋଡ୍ ଉପଲବ୍ଧ ନାହିଁ।"],
+"Choose a smaller photo.":["छोटी तस्वीर चुनें।","ଛୋଟ ଫଟୋ ବାଛନ୍ତୁ।"],
+"Photo could not load.":["तस्वीर लोड नहीं हुई।","ଫଟୋ ଲୋଡ୍ ହୋଇପାରିଲା ନାହିଁ।"],
 ...usabilityTranslations,
 ...pilotStartCopy,
 ...orderExperienceCopy,
