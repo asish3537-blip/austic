@@ -1,4 +1,6 @@
 export const usabilityTranslations:Record<string,[string,string]>={
+ "Refresh Google sign-in":["Google साइन-इन फिर शुरू करें","Google ସାଇନ୍‌-ଇନ୍ ପୁଣି ଆରମ୍ଭ କରନ୍ତୁ"],
+ "Administrator? Use admin sign-in":["प्रशासक हैं? एडमिन साइन-इन खोलें","ପ୍ରଶାସକ କି? ଆଡମିନ୍ ସାଇନ୍‌-ଇନ୍ ଖୋଲନ୍ତୁ"],
  "Get started with Google":["Google से शुरुआत करें","Google ସହ ଆରମ୍ଭ କରନ୍ତୁ"],
  "or create an account with email":["या ईमेल से खाता बनाएं","ବା ଇମେଲ୍‌ରେ ଖାତା ଖୋଲନ୍ତୁ"],
  "App guidance only. Never share passwords, payment details or sign-in codes.":["केवल ऐप की सहायता। पासवर्ड, भुगतान की जानकारी या साइन-इन कोड कभी साझा न करें।","କେବଳ ଆପ୍ ସହାୟତା। ପାସୱାର୍ଡ, ପେମେଣ୍ଟ ତଥ୍ୟ ବା ସାଇନ୍‌-ଇନ୍ କୋଡ୍ କେବେ ସେୟାର୍ କରନ୍ତୁ ନାହିଁ।"],

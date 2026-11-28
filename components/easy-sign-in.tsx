@@ -14,6 +14,7 @@ export function EasySignIn({ googleEnabled, emailEnabled, kitchen, initialError,
   const googleButton = useRef<HTMLDivElement>(null);
   const codeInput=useRef<HTMLInputElement>(null);
   const [ready, setReady] = useState(false);
+  const [googleAttempt, setGoogleAttempt] = useState(0);
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [sent, setSent] = useState(false);
@@ -44,12 +45,13 @@ export function EasySignIn({ googleEnabled, emailEnabled, kitchen, initialError,
             window.location.assign(afterSignIn(body.destination, kitchen));
           } catch (cause) { setError(cause instanceof Error ? cause.message : "Google sign-in failed. Reload to try again, or use email."); setBusy(false); }
         } });
+        googleButton.current.replaceChildren();
         window.google.accounts.id.renderButton(googleButton.current, { type: "standard", theme: "outline", size: "large", text: "continue_with", shape: "rectangular",locale:language });
       } catch { if (!cancelled) setError("Google sign-in could not load. Use email, or reload to try again."); }
     }
     void initialize();
     return () => { cancelled = true; };
-  }, [ready, googleEnabled, kitchen,language]);
+  }, [ready, googleEnabled, kitchen,language,googleAttempt]);
 
   async function requestCode() {
     setBusy(true); setError(""); setMessage("");
@@ -77,6 +79,8 @@ export function EasySignIn({ googleEnabled, emailEnabled, kitchen, initialError,
     {googleEnabled && <><Script src="https://accounts.google.com/gsi/client" strategy="afterInteractive" onReady={() => setReady(true)} onError={() => setError("Google could not load. Use email instead.")} /><div className="easy-google-button" ref={googleButton} aria-label={t("Continue with Google")} /><p className="sign-in-method-note">{t("Google can create your customer account or reopen your existing account.")}</p></>}
     {googleEnabled&&emailEnabled&&<div className="sign-in-separator">{t("or continue with email")}</div>}
     {error && <p className="form-alert" role="alert">{t(error)}</p>}
+    {googleEnabled && /Google|Sign-in expired/.test(error) && <button type="button" className="sign-in-resend" disabled={busy} onClick={() => { setError(""); setGoogleAttempt(attempt => attempt + 1); }}>{t("Refresh Google sign-in")}</button>}
+    {error === "Use your existing email sign-in for this account." && <p className="form-footer"><Link href="/admin-sign-in">{t("Administrator? Use admin sign-in")}</Link></p>}
     {emailEnabled && <form onSubmit={submit}>
       <p id="quick-email-help" className="sign-in-method-note">{t("Already have an account? Get a code by email. No password needed.")}</p>
       <div className="field"><label htmlFor="quick-email">{t("Email address")}</label><input id="quick-email" type="email" autoComplete="email" aria-describedby="quick-email-help" required maxLength={254} disabled={busy} value={email} onChange={event => { setEmail(event.target.value); setSent(false); setCode(""); setMessage("");setError("");setResendAt(0); }} /></div>
