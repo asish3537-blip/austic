@@ -34,6 +34,7 @@ public final class KitchenActivity extends Activity implements PaymentResultWith
   private LinearLayout body;
   private TextView notice;
   private boolean busy, practiceMode;
+  private boolean paymentPilot, paymentInProgress;
   private String screen = "home", city = "Bhubaneswar", language = "en", paymentOrder = "";
   private JSONObject translations = new JSONObject();
   private final Map<String, Typeface> fonts = new HashMap<>();
@@ -56,6 +57,8 @@ public final class KitchenActivity extends Activity implements PaymentResultWith
     api = new NativeApi(this);
     practice = new PracticeStore(this);
     language = getPreferences(0).getString("language", "en");
+    paymentOrder = getPreferences(0).getString("pendingPaymentOrder", "");
+    paymentPilot = getPreferences(0).getBoolean("pendingPaymentPilot", false);
     try {
       translations = new JSONObject(assetText("native-translations.json"));
     } catch (Exception ignored) {
@@ -63,6 +66,7 @@ public final class KitchenActivity extends Activity implements PaymentResultWith
     if (saved != null) {
       practiceMode = saved.getBoolean("practice");
       paymentOrder = saved.getString("paymentOrder", "");
+      paymentPilot = saved.getBoolean("paymentPilot", paymentPilot);
       photoOrder = saved.getString("photoOrder");
       photoStage = saved.getString("photoStage");
     }
@@ -90,6 +94,7 @@ public final class KitchenActivity extends Activity implements PaymentResultWith
   public void onSaveInstanceState(Bundle out) {
     out.putBoolean("practice", practiceMode);
     out.putString("paymentOrder", paymentOrder);
+    out.putBoolean("paymentPilot", paymentPilot);
     out.putString("photoOrder", photoOrder);
     out.putString("photoStage", photoStage);
     super.onSaveInstanceState(out);
@@ -108,6 +113,7 @@ public final class KitchenActivity extends Activity implements PaymentResultWith
   }
 
   private void back() {
+    if (paymentInProgress) return;
     if (!screen.equals("home")) home();
     else finish();
   }
@@ -238,6 +244,7 @@ public final class KitchenActivity extends Activity implements PaymentResultWith
     scroll.addView(body);
     root.addView(scroll, new LinearLayout.LayoutParams(-1, 0, 1));
     if (BuildConfig.DEBUG) label("Local test build. No physical delivery.", 12, true);
+    if (BuildConfig.TEST_PAYMENTS_ONLY) label("TEST BUILD · No live payments or real orders", 13, true);
     if (practiceMode) label("ON-DEVICE PRACTICE · No payment or food delivery", 13, true);
     if (!title.equals("Home")) label(title, 27, true);
     notice = label("", 14, false);
@@ -273,7 +280,7 @@ public final class KitchenActivity extends Activity implements PaymentResultWith
     b.setMinHeight(dp(64));
     b.setOnClickListener(
         v -> {
-          if (!busy) action.run();
+          if (!busy && !paymentInProgress) action.run();
         });
     nav.addView(b, new LinearLayout.LayoutParams(0, -2, 1));
   }
@@ -304,7 +311,7 @@ public final class KitchenActivity extends Activity implements PaymentResultWith
     body.addView(b, p);
     b.setOnClickListener(
         v -> {
-          if (!busy) press.run();
+          if (!busy && !paymentInProgress) press.run();
         });
   }
 
@@ -424,6 +431,7 @@ public final class KitchenActivity extends Activity implements PaymentResultWith
       return;
     }
     if (user != null) {
+      button("Test payments & refunds", () -> pilotHome());
       request(
           () -> api.get("/api/mobile/workspace"),
           d -> {
@@ -848,6 +856,7 @@ public final class KitchenActivity extends Activity implements PaymentResultWith
                   () -> api.post("/api/auth/logout", j()),
                   d -> {
                     api.clear();
+                    clearPilotAttempt();paymentOrder="";paymentPilot=false;savePaymentContext();
                     user = null;
                     workspace = null;
                     practiceMode = false;
@@ -1001,6 +1010,7 @@ public final class KitchenActivity extends Activity implements PaymentResultWith
   }
 
   private void orders() {
+    if (BuildConfig.TEST_PAYMENTS_ONLY && !practiceMode) { pilotHome(); return; }
     if (practiceMode) {
       showOrders(practice.orders());
       return;
@@ -1137,8 +1147,148 @@ public final class KitchenActivity extends Activity implements PaymentResultWith
         });
   }
 
+  private void savePaymentContext() {
+    getPreferences(0).edit().putString("pendingPaymentOrder", paymentOrder)
+        .putBoolean("pendingPaymentPilot", paymentPilot).commit();
+  }
+
+  private void clearPilotAttempt() {
+    getPreferences(0).edit().remove("pilotSelection").remove("pilotRequestKey").apply();
+  }
+
+  private void pilotHome() {
+    if (user == null) { signIn(); return; }
+    page("Test payments & refunds");
+    label("Fictional kitchens · Razorpay Test only · No real money or food delivery", 16, true);
+    button("Refresh Test orders", () -> pilotHome());
+    request(() -> api.get("/api/pilot?role=customer"), d -> {
+      label("Your private practice orders. Live orders and wallet stay separate.", 15, false);
+      JSONArray orders = d.optJSONArray("orders");
+      for (int i=0; orders!=null && i<orders.length(); i++) {
+        final JSONObject o=orders.getJSONObject(i), snapshot=o.optJSONObject("snapshot");
+        final String id=o.getString("id"), status=o.optString("status"), payment=o.optString("paymentStatus");
+        divider();
+        label(String.format(Locale.ROOT,"TEST-%s",id.substring(0,Math.min(8,id.length())).toUpperCase(Locale.ROOT)), 17, true);
+        label(snapshot==null?"":snapshot.optString("mealName"), 19, true);
+        label(money(o.optInt("amountPaise")/100.0)+" · "+t(status.replace('_',' ')), 16, false);
+        if (payment.equals("PENDING")) button("Check Test payment", () -> pilotCheckPayment(id));
+        if (status.equals("CANCELLED") && !payment.equals("PENDING")) {
+          label(payment.equals("REFUNDED")?"Test refund completed":payment.equals("REFUND_PENDING")?"Test refund pending":"Test refund not confirmed", 16, true);
+          button("Check Test refund", () -> request(() -> api.post("/api/pilot",j("action","refund","orderId",id)), result -> {
+            pilotHome(); new AlertDialog.Builder(this).setMessage(t(PaymentSafety.refundMessage(result))).setPositiveButton(t("OK"),null).show();
+          }));
+        }
+        if (Arrays.asList("PAYMENT_PENDING","ORDER_PLACED","CONFIRMED").contains(status)) {
+          final boolean paid=payment.equals("CAPTURED");
+          button(paid?"Cancel & refund Test payment":"Cancel unpaid practice order", () ->
+            new AlertDialog.Builder(this).setMessage(t(paid?"Cancel this practice order and request its full Razorpay Test refund? No real money moves.":"Cancel this unpaid practice order? No refund is needed."))
+              .setNegativeButton(t("Keep order"),null).setPositiveButton(t("Confirm Test cancellation"),(a,w) ->
+                request(() -> api.post("/api/pilot",j("action","advance","orderId",id,"role","customer","status","CANCELLED")),result -> {
+                  clearPilotAttempt();pilotHome();new AlertDialog.Builder(this).setMessage(t(PaymentSafety.refundMessage(result))).setPositiveButton(t("OK"),null).show();
+                })).show());
+        }
+        JSONArray events=o.optJSONArray("events");
+        for (int n=0;events!=null&&n<events.length();n++) {
+          JSONObject event=events.getJSONObject(n);
+          if (event.optString("status").startsWith("REFUND")) label(event.optString("detail"),14,false);
+        }
+      }
+      divider();
+      if (!d.optBoolean("checkoutReady")) { label("Test checkout is unavailable. Live keys are never used here.",16,false); return; }
+      label("Choose a Test kitchen",21,true);
+      JSONArray kitchens=d.optJSONArray("kitchens");
+      for(int i=0;kitchens!=null&&i<kitchens.length();i++) {
+        final JSONObject kitchen=kitchens.getJSONObject(i);
+        label(kitchen.optString("area")+" · "+kitchen.optString("name"),17,true);
+        button("View Test menu", () -> pilotMenu(kitchen));
+      }
+    });
+  }
+
+  private void pilotMenu(JSONObject kitchen) {
+    page("Test menu");label("Fictional kitchens · Razorpay Test only · No real money or food delivery",15,true);
+    JSONArray meals=kitchen.optJSONArray("meals");
+    for(int i=0;meals!=null&&i<meals.length();i++) {
+      final JSONObject meal=meals.optJSONObject(i);if(meal==null)continue;
+      divider();label(meal.optString("name"),21,true);label(meal.optString("description"),16,false);
+      label(money(meal.optDouble("price")),18,true);
+      if(!meal.optString("allergens").isEmpty())label(meal.optString("allergens"),15,false);
+      if(meal.optInt("servings")>0)button("Choose Test meal", () -> pilotCheckout(kitchen,meal));
+    }
+    button("Test payments & refunds", () -> pilotHome());
+  }
+
+  private void pilotCheckout(JSONObject kitchen, JSONObject meal) {
+    page("Test checkout");
+    label("No real payment or food delivery. This uses Razorpay Test Mode only.",16,true);
+    label(meal.optString("name"),22,true);
+    int available=Math.max(1,Math.min(3,meal.optInt("servings")));
+    String[] quantities=new String[available];for(int i=0;i<available;i++)quantities[i]=String.valueOf(i+1);
+    Spinner quantity=choice("Servings",quantities);
+    Spinner days=choice("Meal days",meal.optBoolean("oneTimeOnly")?new String[]{"1"}:new String[]{"1","3","4","5","6","7"});
+    EditText date=field("First serving date (YYYY-MM-DD)",PracticeStore.date(0),InputType.TYPE_CLASS_DATETIME);
+    TextView total=label("",21,true);
+    Runnable update=()->total.setText(t("Test total")+": "+money((meal.optDouble("price")*Integer.parseInt(quantity.getSelectedItem().toString())+9)*Integer.parseInt(days.getSelectedItem().toString())));
+    AdapterView.OnItemSelectedListener listener=new AdapterView.OnItemSelectedListener(){public void onItemSelected(AdapterView<?> p,View v,int n,long id){update.run();}public void onNothingSelected(AdapterView<?> p){}};
+    quantity.setOnItemSelectedListener(listener);days.setOnItemSelectedListener(listener);update.run();
+    label("Includes ₹9 sample delivery per day. No actual delivery or charge.",14,false);
+    CheckBox acknowledge=new CheckBox(this);acknowledge.setTag("ack:Test checkout");acknowledge.setText(t("I understand this is Test Mode, with no real payment or food delivery."));acknowledge.setMinHeight(dp(48));body.addView(acknowledge);
+    button("Review Test order", () -> {
+      if(!acknowledge.isChecked()){info("Confirm the Test-only acknowledgement before continuing.");return;}
+      String serviceDate=date.getText().toString().trim();if(!serviceDate.matches("[0-9]{4}-[0-9]{2}-[0-9]{2}")){date.setError(t("Use YYYY-MM-DD"));return;}
+      int q=Integer.parseInt(quantity.getSelectedItem().toString()),n=Integer.parseInt(days.getSelectedItem().toString());
+      new AlertDialog.Builder(this).setTitle(t("Review Test order")).setMessage(total.getText()+"\n"+serviceDate+"\n"+t("No real payment or food delivery. This uses Razorpay Test Mode only."))
+        .setNegativeButton(t("Cancel"),null).setPositiveButton(t("Open Razorpay Test checkout"),(a,w)->startPilotPayment(kitchen,meal,q,n,serviceDate)).show();
+    });
+  }
+
+  private void startPilotPayment(JSONObject kitchen,JSONObject meal,int quantity,int days,String date) {
+    String selection=kitchen.optString("id")+"|"+meal.optString("id")+"|"+quantity+"|"+days+"|"+date;
+    String key=getPreferences(0).getString("pilotRequestKey","");
+    if(!selection.equals(getPreferences(0).getString("pilotSelection",""))||key.isEmpty()) {
+      key=UUID.randomUUID().toString();getPreferences(0).edit().putString("pilotSelection",selection).putString("pilotRequestKey",key).commit();
+    }
+    final String requestKey=key;
+    request(() -> api.post("/api/pilot",j("action","checkout","requestKey",requestKey,"kitchenId",kitchen.optString("id"),"mealId",meal.optString("id"),"quantity",quantity,"days",days,"serviceDate",date,"acknowledged",true)),d -> {
+      if(d.optBoolean("paid")){clearPilotAttempt();pilotHome();return;}
+      PaymentSafety.requireTestCheckout(d);
+      paymentOrder=d.getString("orderId");paymentPilot=true;savePaymentContext();
+      openPilotCheckout(d);
+    });
+  }
+
+  // Separate method permits JVM tests to verify SDK launch arguments without opening payment UI.
+  void openPilotCheckout(JSONObject d) throws Exception {
+    PaymentSafety.requireTestCheckout(d);
+    Checkout checkout=new Checkout();checkout.setKeyID(d.getString("key"));
+    JSONObject options=j("name","Paustik Pilot","description","Test payment only — no food delivery","order_id",d.getString("providerOrderId"),"amount",d.getInt("amount"),"currency","INR","theme",j("color","#245a43"));
+    paymentInProgress=true;
+    try{checkout.open(this,options);}catch(Exception e){paymentInProgress=false;throw e;}
+  }
+
+  private void pilotCheckPayment(String orderId) {
+    request(() -> api.post("/api/pilot",j("action","reconcile","orderId",orderId)),d -> {
+      if(d.optBoolean("paid"))clearPilotAttempt();
+      String message=d.optBoolean("refunded")||d.optBoolean("refundPending")?PaymentSafety.refundMessage(d):d.optBoolean("paid")?"Test payment confirmed.":"No captured Test payment found yet. You can retry the same order.";
+      pilotHome();new AlertDialog.Builder(this).setMessage(t(message)).setPositiveButton(t("OK"),null).show();
+    });
+  }
+
+  private void confirmPilotPayment(String paymentId,PaymentData data) {
+    if(paymentOrder.isEmpty()||data==null){pilotHome();return;}
+    final String orderId=paymentOrder;
+    request(() -> api.post("/api/pilot",j("action","confirm","orderId",orderId,"paymentId",paymentId,"signature",data.getSignature())),d -> {
+      if(d.optBoolean("paid")){clearPilotAttempt();paymentOrder="";savePaymentContext();}
+      String message=d.optBoolean("refunded")||d.optBoolean("refundPending")?PaymentSafety.refundMessage(d):d.optBoolean("paid")?"Test payment confirmed.":"Test payment confirmation is pending. Check its status before retrying.";
+      pilotHome();new AlertDialog.Builder(this).setMessage(t(message)).setPositiveButton(t("OK"),null).show();
+    });
+  }
+
   private void pay(String id) {
+    if (BuildConfig.TEST_PAYMENTS_ONLY) { info("Testing APK only opens Test payments. No live payment was started."); return; }
     paymentOrder = id;
+    paymentPilot = false;
+    savePaymentContext();
     request(
         () -> api.post("/api/customer/razorpay", j("action", "checkout", "orderId", id)),
         d -> {
@@ -1160,12 +1310,15 @@ public final class KitchenActivity extends Activity implements PaymentResultWith
                   j("color", "#245a43"),
                   "prefill",
                   j("email", user == null ? "" : user.optString("email")));
-          checkout.open(this, options);
+          paymentInProgress = true;
+          try { checkout.open(this, options); } catch (Exception e) { paymentInProgress = false; throw e; }
         });
   }
 
   @Override
   public void onPaymentSuccess(String id, PaymentData data) {
+    paymentInProgress = false;
+    if (paymentPilot) { confirmPilotPayment(id, data); return; }
     if (paymentOrder.isEmpty() || data == null) {
       info("Check your order payment status before retrying.");
       return;
@@ -1201,6 +1354,14 @@ public final class KitchenActivity extends Activity implements PaymentResultWith
 
   @Override
   public void onPaymentError(int code, String description, PaymentData data) {
+    paymentInProgress = false;
+    if (paymentPilot) {
+      page("Test payment status");
+      label("Test payment did not complete. Check its status before retrying. No real money was charged.", 17, false);
+      if (!paymentOrder.isEmpty()) button("Check Test payment", () -> pilotCheckPayment(paymentOrder));
+      button("Test payments & refunds", () -> pilotHome());
+      return;
+    }
     page("Payment status");
     label("Payment did not complete. Check your bank or UPI app before retrying.", 17, false);
     button("Check order payment status", () -> orders());
@@ -1868,7 +2029,7 @@ public final class KitchenActivity extends Activity implements PaymentResultWith
         16,
         false);
     label(
-        "Practice orders stay on this device. They never request cooking, a courier or a payment.",
+        "Offline practice stays on this device. Signed-in Test payments use Razorpay Test Mode and Paustik's server. No real money or food delivery.",
         16,
         false);
     label(

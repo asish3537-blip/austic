@@ -8,8 +8,8 @@ android {
         applicationId 'in.paustik.mobile'
         minSdk 24
         targetSdk 36
-        versionCode 6
-        versionName '1.4.1'
+        versionCode 7
+        versionName '1.4.2'
     }
     signingConfigs {
         release {
@@ -23,6 +23,7 @@ android {
     }
     buildTypes {
         release {
+            buildConfigField 'boolean', 'TEST_PAYMENTS_ONLY', 'false'
             signingConfig signingConfigs.release
             minifyEnabled true
             shrinkResources true
@@ -30,9 +31,16 @@ android {
             buildConfigField 'String', 'API_BASE_URL', '"https://paustik.in"'
         }
         debug {
+            buildConfigField 'boolean', 'TEST_PAYMENTS_ONLY', 'true'
             applicationIdSuffix '.debug'
             signingConfig signingConfigs.release
             buildConfigField 'String', 'API_BASE_URL', '"https://paustik.in"'
+        }
+        qa {
+            initWith release
+            matchingFallbacks = ['release']
+            versionNameSuffix '-test1'
+            buildConfigField 'boolean', 'TEST_PAYMENTS_ONLY', 'true'
         }
     }
     compileOptions { sourceCompatibility JavaVersion.VERSION_1_8; targetCompatibility JavaVersion.VERSION_1_8 }

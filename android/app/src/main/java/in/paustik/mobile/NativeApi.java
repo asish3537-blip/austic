@@ -105,6 +105,9 @@ class NativeApi {
   JSONObject call(String method, String path, JSONObject data) throws Exception {
     if (!path.startsWith("/api/") || path.contains("..") || path.contains("\\"))
       throw new Failure(400, "Invalid app request.");
+    if (BuildConfig.TEST_PAYMENTS_ONLY && !method.equals("GET")
+        && !path.startsWith("/api/auth/") && !path.equals("/api/pilot"))
+      throw new Failure(403, "Testing APK: live account and order changes are disabled. Use Test payments.");
     URL url = new URL(origin + path);
     if (!url.getProtocol().equals("https") && !BuildConfig.DEBUG)
       throw new Failure(400, "A secure connection is required.");
@@ -112,11 +115,11 @@ class NativeApi {
     try {
       c.setRequestMethod(method);
       c.setConnectTimeout(12000);
-      c.setReadTimeout(25000);
+      c.setReadTimeout(45000);
       c.setInstanceFollowRedirects(false);
       c.setRequestProperty("Accept", "application/json");
       c.setRequestProperty("Origin", origin);
-      c.setRequestProperty("User-Agent", "Paustik-Android/1.4.1");
+      c.setRequestProperty("User-Agent", "Paustik-Android/" + BuildConfig.VERSION_NAME);
       String cookieHeader = signedIn() ? "paustik_session=" + session : "";
       if (googleNonceCookie != null) cookieHeader += (cookieHeader.isEmpty() ? "" : "; ") + "paustik_google_nonce=" + googleNonceCookie;
       if (!cookieHeader.isEmpty()) c.setRequestProperty("Cookie", cookieHeader);

@@ -16,6 +16,7 @@ const keys=new Set([...source.matchAll(/\b(?:label|button|field|choice|page|info
 for(const s of ['OK','Cancel','Menu','Checkout','Online','Offline','Home','Orders','Account','Food shop','Sign in','Practice order','ORDER PLACED','CONFIRMED','PREPARING','READY FOR PICKUP','PICKED UP','OUT FOR DELIVERY','DELIVERED','CANCELLED'])keys.add(s);
 for(const key of ["Vegetarian meal","Egg meal","Paneer meal","Chicken meal","Desi chicken meal","Mutton meal","Mushroom meal","Sattu","Sweets","Pickles","Other","Vegetarian","Vegan","Non-vegetarian","Reset password","Welcome back","Payment confirmation is pending. Check order status."])keys.add(key);
 let overrides={};try{overrides=JSON.parse(await fs.readFile('android/native-copy.json','utf8'));}catch{}
+Object.assign(overrides,JSON.parse(await fs.readFile('android/test-payment-copy.json','utf8')));
 const languages={en:{},hi:{},or:{}},missing=[];
 for(const key of Object.keys(overrides))keys.add(key);
 for(const key of keys){languages.en[key]=key;for(const language of ['hi','or']){const value=overrides[key]?.[language]??serviceLabel(key,language)??translated(key,language);languages[language][key]=value;if(value===key&&!/^https?:|^₹|^Paustik/.test(key))missing.push({key,language});}}
