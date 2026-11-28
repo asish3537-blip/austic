@@ -25,6 +25,36 @@ import java.util.*;
 @Config(sdk=34,shadows={NativeFlowTest.TestCheckoutShadow.class})
 @LooperMode(LooperMode.Mode.PAUSED)
 public class NativeFlowTest {
+    @Test public void timelinePlacesPhotosInsidePreparationAndHandoverSteps()throws Exception{
+        android.graphics.Bitmap bitmap=android.graphics.Bitmap.createBitmap(2,2,android.graphics.Bitmap.Config.ARGB_8888);
+        java.io.ByteArrayOutputStream bytes=new java.io.ByteArrayOutputStream();bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG,100,bytes);
+        String pixels=android.util.Base64.encodeToString(bytes.toByteArray(),android.util.Base64.NO_WRAP);
+        JSONArray photos=new JSONArray().put(new JSONObject().put("stage","PREPARED").put("pixels",pixels)).put(new JSONObject().put("stage","HANDOVER").put("pixels",pixels));
+        JSONObject data=new JSONObject().put("orderStatus","OUT_FOR_DELIVERY").put("photoData",new JSONObject().put("photos",photos));
+        java.lang.reflect.Method method=KitchenActivity.class.getDeclaredMethod("renderOrderTimeline",JSONObject.class,JSONObject.class,boolean.class);method.setAccessible(true);method.invoke(app,data,new JSONObject(),false);
+        View preparation=view("timeline:PREPARING"),preparedPhoto=view("photo:PREPARED"),ready=view("timeline:READY_FOR_PICKUP"),handoverPhoto=view("photo:HANDOVER");
+        ViewGroup parent=(ViewGroup)preparation.getParent();
+        assertTrue(parent.indexOfChild(preparation)<parent.indexOfChild(preparedPhoto));assertTrue(parent.indexOfChild(preparedPhoto)<parent.indexOfChild(ready));assertTrue(parent.indexOfChild(ready)<parent.indexOfChild(handoverPhoto));
+        assertEquals("current",view("timeline:OUT_FOR_DELIVERY").getContentDescription());
+    }
+    @Test public void emptyAllergensNeverClaimAllergenFree()throws Exception{
+        java.lang.reflect.Method method=KitchenActivity.class.getDeclaredMethod("mealDetails",JSONObject.class);method.setAccessible(true);method.invoke(app,new JSONObject().put("allergens",new JSONArray()));
+        String message=((android.widget.TextView)ShadowAlertDialog.getLatestAlertDialog().findViewById(android.R.id.message)).getText().toString();assertTrue(message.contains("does not mean allergen-free"));
+    }
+    @Test public void timelineDoesNotInventSkippedTimestampsOrAdvanceCancelledOrders()throws Exception{
+        java.util.List<OrderTimeline.Step> steps=OrderTimeline.build("OUT_FOR_DELIVERY",new JSONArray().put(new JSONObject().put("status","ORDER_PLACED").put("at","2026-11-28T10:00:00Z")));
+        assertEquals("current",steps.get(5).state);assertEquals("passed",steps.get(2).state);assertEquals("",steps.get(2).at);
+        assertEquals("PREPARED",steps.get(2).photo);assertEquals("HANDOVER",steps.get(3).photo);
+        assertEquals("stopped",OrderTimeline.build("CANCELLED",new JSONArray()).get(2).state);
+    }
+    @Test public void menuShowsKnownIngredientsAndAllergens()throws Exception{
+        JSONObject meal=new JSONObject().put("name","Paneer meal").put("servings",2).put("ingredients",new JSONArray().put("Paneer")).put("allergens",new JSONArray().put("Milk"));
+        JSONObject kitchen=new JSONObject().put("name","Kitchen").put("meals",new JSONArray().put(meal));
+        java.lang.reflect.Method method=KitchenActivity.class.getDeclaredMethod("menu",JSONObject.class);method.setAccessible(true);method.invoke(app,kitchen);
+        click("action:Ingredients & allergens");
+        String message=((android.widget.TextView)ShadowAlertDialog.getLatestAlertDialog().findViewById(android.R.id.message)).getText().toString();
+        assertTrue(message.contains("Paneer"));assertTrue(message.contains("Milk"));
+    }
     private void openPhotos(FixtureApi fixture)throws Exception{
         inject("api",fixture);
         java.lang.reflect.Method method=KitchenActivity.class.getDeclaredMethod("orderPhotos",JSONObject.class);method.setAccessible(true);

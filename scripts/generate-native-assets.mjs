@@ -2,6 +2,7 @@ import fs from 'node:fs/promises';
 import {PILOT_KITCHENS} from '../lib/pilot-catalog.ts';
 import {serviceLabel} from '../lib/service-labels.ts';
 import {translated} from '../lib/ui-translations.ts';
+import {orderExperienceCopy} from '../lib/order-experience-copy.ts';
 const assets='android/app/src/main/assets';
 await fs.mkdir(assets+'/food',{recursive:true});
 await fs.mkdir(assets+'/fonts',{recursive:true});
@@ -18,6 +19,7 @@ for(const key of ["Vegetarian meal","Egg meal","Paneer meal","Chicken meal","Des
 let overrides={};try{overrides=JSON.parse(await fs.readFile('android/native-copy.json','utf8'));}catch{}
 Object.assign(overrides,JSON.parse(await fs.readFile('android/test-payment-copy.json','utf8')));
 const languages={en:{},hi:{},or:{}},missing=[];
+for(const [key,values] of Object.entries(orderExperienceCopy)){keys.add(key);overrides[key]={hi:values[0],or:values[1]};}
 for(const key of Object.keys(overrides))keys.add(key);
 for(const key of keys){languages.en[key]=key;for(const language of ['hi','or']){const value=overrides[key]?.[language]??serviceLabel(key,language)??translated(key,language);languages[language][key]=value;if(value===key&&!/^https?:|^₹|^Paustik/.test(key))missing.push({key,language});}}
 await fs.writeFile(assets+'/native-translations.json',JSON.stringify(languages));

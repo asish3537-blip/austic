@@ -1,8 +1,10 @@
 import {schoolTranslations} from "@/lib/school-translations";
+import {orderExperienceCopy} from "@/lib/order-experience-copy";
 import {usabilityTranslations} from "@/lib/usability-translations";
 export type UiLanguage = "en" | "hi" | "or";
 export const uiTranslations: Record<string, [string, string]> = {
 ...usabilityTranslations,
+...orderExperienceCopy,
 "Search meals": ["भोजन खोजें", "ଭୋଜନ ଖୋଜନ୍ତୁ"],
 "Menu delivery date": ["भोजन की डिलीवरी तिथि", "ଭୋଜନ ଡେଲିଭରି ତାରିଖ"],
 "Chat with Paustik Help":["Paustik सहायता से चैट करें","Paustik ସହାୟତା ସହ ଚାଟ୍ କରନ୍ତୁ"],

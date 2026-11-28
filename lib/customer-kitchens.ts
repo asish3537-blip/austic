@@ -59,7 +59,7 @@ async function publishedKitchens(city: string | null | undefined, customerPin?: 
     select: {
       id: true, name: true, locality: true, city: true, cuisine: true, operatingHours: true, latitude: true, longitude: true, marketplaceRadiusMeters: true,
       mother: { select: { rating: true, user: { select: { name: true } } } },
-      menus: { where: menuWhere, orderBy: [{ serviceDate: "asc" }, { meal: { name: "asc" } }], select: { id: true, serviceDate: true,mealPeriod:true, deliveryTime: true, stockCount: true, meal: { select: { id: true, name: true, description: true, oneTimeOnly: true, category: true, tier: true, components: true, price: true } } } },
+      menus: { where: menuWhere, orderBy: [{ serviceDate: "asc" }, { meal: { name: "asc" } }], select: { id: true, serviceDate: true,mealPeriod:true, deliveryTime: true, stockCount: true, meal: { select: { id: true, name: true, description: true, oneTimeOnly: true, category: true, tier: true, components: true, ingredients: true, allergens: true, price: true } } } },
     },
   });
 
@@ -73,7 +73,7 @@ async function publishedKitchens(city: string | null | undefined, customerPin?: 
     meals: kitchen.menus.filter((menu) => {
       const delivery = mealDeliveryInstant(menu.serviceDate, menu.deliveryTime);
       return (menu.meal.oneTimeOnly || componentsAllowed(menu.mealPeriod,menu.meal.components)) && slotAllowed(menu.mealPeriod,menu.deliveryTime) && (menu.meal.oneTimeOnly || mealPriceAllowed(menu.meal.tier, Number(menu.meal.price))) && delivery.getTime()>=now.getTime()+30*60000 && delivery <= weekEnd;
-    }).map((menu) => ({ oneTimeOnly:menu.meal.oneTimeOnly, id: menu.meal.id, menuId: menu.id,mealPeriod:menu.mealPeriod, name: menu.meal.name, description:menu.meal.description, category: menu.meal.category, tier: menu.meal.tier, components: menu.meal.components, price: Number(menu.meal.price), serviceDate: menu.serviceDate.toISOString().slice(0, 10), deliveryTime: menu.deliveryTime, servings: menu.stockCount })),
+    }).map((menu) => ({ oneTimeOnly:menu.meal.oneTimeOnly, id: menu.meal.id, menuId: menu.id,mealPeriod:menu.mealPeriod, name: menu.meal.name, description:menu.meal.description, category: menu.meal.category, tier: menu.meal.tier, components: menu.meal.components, ingredients: menu.meal.ingredients, allergens: menu.meal.allergens, price: Number(menu.meal.price), serviceDate: menu.serviceDate.toISOString().slice(0, 10), deliveryTime: menu.deliveryTime, servings: menu.stockCount })),
   })).filter((kitchen) => kitchen.meals.length > 0)
     .sort((a, b) => Number(Boolean(b.isFavorite)) - Number(Boolean(a.isFavorite)) || (a.distanceKm !== undefined && b.distanceKm !== undefined ? a.distanceKm - b.distanceKm : b.rating - a.rating));
 
@@ -83,6 +83,6 @@ export async function loadKitchenDirectory(city: string) {
   const rows = await publishedKitchens(city);
   return rows.map(({ id, name, locality, city, cuisine, meals }) => ({
     id, name, locality, city, cuisine,
-    meals: meals.map(({ name, menuId, oneTimeOnly, description, category, tier, servings, components, price, serviceDate, deliveryTime }) => ({ name, menuId, oneTimeOnly, description, category, tier, servings, components:components.length?components:description?[description]:[], price, serviceDate, deliveryTime })),
+    meals: meals.map(({ name, menuId, oneTimeOnly, description, category, tier, servings, components, ingredients, allergens, price, serviceDate, deliveryTime }) => ({ name, menuId, oneTimeOnly, description, category, tier, servings, ingredients, allergens, components:components.length?components:description?[description]:[], price, serviceDate, deliveryTime })),
   }));
 }

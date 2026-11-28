@@ -8,6 +8,8 @@ export type KitchenMeal = {
   category: string;
   tier: string;
   components: string[];
+  ingredients?: string[];
+  allergens?: string[];
   price: number;
   serviceDate: string;
   deliveryTime: string;

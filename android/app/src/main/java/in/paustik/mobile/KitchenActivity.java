@@ -541,6 +541,7 @@ public final class KitchenActivity extends Activity implements PaymentResultWith
       if (practiceMode) foodImage(m);
       label(m.optString("name"), 21, true);
       label(money(m.optDouble("price")), 20, true);
+      label("Price per serving · Delivery shown at checkout",13,false);
       label(
           m.optString(
               "description",
@@ -557,6 +558,8 @@ public final class KitchenActivity extends Activity implements PaymentResultWith
               + t("servings"),
           13,
           false);
+      if(m.optJSONArray("components")!=null && m.optJSONArray("components").length()>0) label(join(m.optJSONArray("components")),15,false);
+      button("Ingredients & allergens", () -> mealDetails(m));
       label(nonveg ? "Non-vegetarian" : "Vegetarian", 14, true);
       if (m.optBoolean("oneTimeOnly")) label("One-time special", 14, false);
       if (m.optInt("servings") > 0) button("Choose this meal", () -> meal(k, m));
@@ -566,6 +569,17 @@ public final class KitchenActivity extends Activity implements PaymentResultWith
       label("No meals match this preference.", 16, false);
       button("Clear filters", () -> menu(k));
     }
+  }
+
+  private String mealDetailValue(JSONObject meal,String key,String fallback) {
+    JSONArray values=meal.optJSONArray(key);
+    if(values!=null)return values.length()>0?join(values):t(fallback);
+    String text=meal.optString(key,"").trim();return text.isEmpty()?t(fallback):text;
+  }
+  private void mealDetails(JSONObject meal) {
+    String ingredients=mealDetailValue(meal,"ingredients","Ingredients not provided by this kitchen.");
+    String allergens=mealDetailValue(meal,"allergens","Allergen information not provided. This does not mean allergen-free.");
+    new AlertDialog.Builder(this).setTitle(t("Ingredients & allergens")).setMessage(t("Ingredients")+"\n"+ingredients+"\n\n"+t("Allergens")+"\n"+allergens+"\n\n"+t("Portion size varies by kitchen. Ask about portions and food allergies before ordering.")).setPositiveButton(t("OK"),null).show();
   }
 
   private void meal(JSONObject k, JSONObject m) {
@@ -1155,7 +1169,11 @@ public final class KitchenActivity extends Activity implements PaymentResultWith
       return;
     }
     request(
-        () -> api.get("/api/marketplace/tracking?orderId=" + Uri.encode(o.optString("id"))),
+        () -> {
+          JSONObject data=api.get("/api/marketplace/tracking?orderId=" + Uri.encode(o.optString("id")));
+          try { data.put("photoData",loadOrderPhotoData(o,false)); } catch(Exception unavailable){data.put("photoError",true);}
+          return data;
+        },
         d -> {
           label(d.optString("orderNumber"), 20, true);
           label(d.optString("orderStatus").replace('_', ' '), 24, true);
@@ -1164,11 +1182,7 @@ public final class KitchenActivity extends Activity implements PaymentResultWith
             label(d.optString("handoverCode"), 32, true);
             label("Share this code only when your meal arrives.", 14, false);
           }
-          JSONArray events = d.optJSONArray("events");
-          for (int i = 0; events != null && i < events.length(); i++) {
-            JSONObject e = events.optJSONObject(i);
-            label(e.optString("status").replace('_', ' ') + " · " + e.optString("at"), 14, false);
-          }
+          renderOrderTimeline(d,o,false);
           button("Refresh tracking", () -> track(o));
           button("Preparation & handover photos", () -> orderPhotos(o));
         });
@@ -1186,6 +1200,7 @@ public final class KitchenActivity extends Activity implements PaymentResultWith
       for (int i = 0; rows != null && i < rows.length(); i++) {
         JSONObject order = rows.getJSONObject(i);
         divider(); label(order.optString("orderNumber"), 18, true);
+        button("Track order", () -> track(order));
         button("Preparation & handover photos", () -> orderPhotos(order));
       }
     });
@@ -1195,7 +1210,20 @@ public final class KitchenActivity extends Activity implements PaymentResultWith
     page("Preparation & handover photos");
     label(order.optString("orderNumber"), 18, true);
     label(pilot ? "Test order photos are practice evidence only. No real meal or courier handover." : "Photos uploaded by the kitchen. They show the meal and parcel at preparation and courier handover; they are not a food-safety certification.", 14, false);
-    request(() -> {
+    request(() -> loadOrderPhotoData(order, pilot), result -> {
+      JSONArray photos = result.optJSONArray("photos");
+      for (String stage : new String[] {"PREPARED", "HANDOVER"}) renderOrderPhoto(stage, photos);
+      button("Refresh photos", () -> orderPhotos(order, pilot));
+      button("Track order", () -> { if (pilot) pilotHome(); else track(order); });
+    }, () -> {
+      label("Order photos could not load. Please retry.", 15, false);
+      button("Refresh photos", () -> orderPhotos(order, pilot));
+      button("Track order", () -> { if (pilot) pilotHome(); else track(order); });
+    });
+  }
+
+
+  private JSONObject loadOrderPhotoData(JSONObject order, boolean pilot) throws Exception {
       JSONObject result = api.get("/api/order-photos?orderId=" + Uri.encode(order.optString("id")) + (pilot ? "&pilot=1" : ""));
       JSONArray photos = result.optJSONArray("photos");
       for (int i = 0; photos != null && i < photos.length(); i++) {
@@ -1208,36 +1236,47 @@ public final class KitchenActivity extends Activity implements PaymentResultWith
         } catch (Exception unavailable) { photo.put("unavailable", true); }
       }
       return result;
-    }, result -> {
-      JSONArray photos = result.optJSONArray("photos");
-      for (String stage : new String[] {"PREPARED", "HANDOVER"}) {
+  }
+
+  private void renderOrderPhoto(String stage, JSONArray photos) {
+    try {
         divider(); label(stage.equals("PREPARED") ? "Prepared meal photo" : "Courier handover photo", 19, true);
         JSONObject photo = null;
         for (int i = 0; photos != null && i < photos.length(); i++)
           if (stage.equals(photos.getJSONObject(i).optString("stage"))) photo = photos.getJSONObject(i);
-        if (photo == null) { label("Not uploaded yet", 15, false); continue; }
-        label(photo.optString("createdAt"), 13, false);
-        if (!photo.has("pixels")) { label("Photo could not load. Refresh to retry.", 15, false); continue; }
+        if (photo == null) { label("Not uploaded yet", 15, false); return; }
+        label(displaySchedule(photo.optString("createdAt")), 13, false);
+        if (!photo.has("pixels")) { label("Photo could not load. Refresh to retry.", 15, false); return; }
         byte[] bytes = android.util.Base64.decode(photo.getString("pixels"), android.util.Base64.NO_WRAP);
         BitmapFactory.Options bounds = new BitmapFactory.Options(); bounds.inJustDecodeBounds = true;
         BitmapFactory.decodeByteArray(bytes, 0, bytes.length, bounds);
         if (bounds.outWidth < 1 || bounds.outHeight < 1 || bounds.outWidth > 640 || bounds.outHeight > 640) {
-          label("Photo could not load. Refresh to retry.", 15, false); continue;
+          label("Photo could not load. Refresh to retry.", 15, false); return;
         }
         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-        if (bitmap == null) { label("Photo could not load. Refresh to retry.", 15, false); continue; }
+        if (bitmap == null) { label("Photo could not load. Refresh to retry.", 15, false); return; }
         ImageView image = new ImageView(this); image.setTag("photo:" + stage);
         image.setImageBitmap(bitmap); image.setAdjustViewBounds(true); image.setScaleType(ImageView.ScaleType.FIT_CENTER);
         image.setContentDescription(t(stage.equals("PREPARED") ? "Prepared meal photo" : "Courier handover photo"));
         body.addView(image, new LinearLayout.LayoutParams(-1, -2));
+
+    } catch(Exception error) { label("Photo could not load. Refresh to retry.",15,false); }
+  }
+
+  private void renderOrderTimeline(JSONObject data, JSONObject order, boolean pilot) {
+    label("Order progress",21,true);
+    JSONObject photoData=data.optJSONObject("photoData");
+    for(OrderTimeline.Step step:OrderTimeline.build(data.optString("orderStatus",data.optString("status")),data.optJSONArray("events"))){
+      divider();
+      TextView title=label(step.label,18,true);title.setTag("timeline:"+step.status);title.setContentDescription(step.state);
+      label(step.state.equals("current")?"Current stage":step.state.equals("recorded")?"Update received":step.state.equals("passed")?"Earlier stage":step.state.equals("stopped")?"Not reached":"Awaiting update",13,false);
+      if(!step.at.isEmpty()) label(displaySchedule(step.at),13,false);
+      if(!step.photo.isEmpty()){
+        if(data.optBoolean("photoError")) label("Order photos could not load. Please retry.",14,false);
+        else renderOrderPhoto(step.photo,photoData==null?null:photoData.optJSONArray("photos"));
       }
-      button("Refresh photos", () -> orderPhotos(order, pilot));
-      button("Track order", () -> { if (pilot) pilotHome(); else track(order); });
-    }, () -> {
-      label("Order photos could not load. Please retry.", 15, false);
-      button("Refresh photos", () -> orderPhotos(order, pilot));
-      button("Track order", () -> { if (pilot) pilotHome(); else track(order); });
-    });
+    }
+    label("Photos are kitchen uploads, not independent food-safety verification. A photo does not change the order status.",13,false);
   }
 
   private void savePaymentContext() {
@@ -1264,6 +1303,7 @@ public final class KitchenActivity extends Activity implements PaymentResultWith
         label(String.format(Locale.ROOT,"TEST-%s",id.substring(0,Math.min(8,id.length())).toUpperCase(Locale.ROOT)), 17, true);
         label(snapshot==null?"":snapshot.optString("mealName"), 19, true);
         label(money(o.optInt("amountPaise")/100.0)+" · "+t(status.replace('_',' ')), 16, false);
+        button("Track Test order", () -> pilotTrack(o));
         button("Preparation & handover photos", () -> orderPhotos(o, true));
         if (payment.equals("PENDING")) button("Check Test payment", () -> pilotCheckPayment(id));
         if (status.equals("CANCELLED") && !payment.equals("PENDING")) {
@@ -1299,6 +1339,21 @@ public final class KitchenActivity extends Activity implements PaymentResultWith
     });
   }
 
+  private void pilotTrack(JSONObject order) {
+    page("Track Test order");
+    label("Test order photos are practice evidence only. No real meal or courier handover.",15,false);
+    request(() -> {
+      JSONObject data=new JSONObject(order.toString());
+      try { data.put("photoData",loadOrderPhotoData(order,true)); } catch(Exception unavailable){data.put("photoError",true);}
+      return data;
+    },data -> {
+      label(data.optString("status").replace('_',' '),19,true);
+      renderOrderTimeline(data,order,true);
+      button("Refresh Test orders", () -> pilotHome());
+      button("Test payments & refunds", () -> pilotHome());
+    });
+  }
+
   private void pilotMenu(JSONObject kitchen) {
     page("Test menu");label("Fictional kitchens · Razorpay Test only · No real money or food delivery",15,true);
     JSONArray meals=kitchen.optJSONArray("meals");
@@ -1306,7 +1361,8 @@ public final class KitchenActivity extends Activity implements PaymentResultWith
       final JSONObject meal=meals.optJSONObject(i);if(meal==null)continue;
       divider();label(meal.optString("name"),21,true);label(meal.optString("description"),16,false);
       label(money(meal.optDouble("price")),18,true);
-      if(!meal.optString("allergens").isEmpty())label(meal.optString("allergens"),15,false);
+      label("Price per serving · Delivery shown at checkout",13,false);
+      button("Ingredients & allergens", () -> mealDetails(meal));
       if(meal.optInt("servings")>0)button("Choose Test meal", () -> pilotCheckout(kitchen,meal));
     }
     button("Test payments & refunds", () -> pilotHome());

@@ -7,6 +7,7 @@ const meals = [base, { ...base, id: "b", name: "Chicken curry", category: "NON_V
 const filters = { day: "2026-12-01", query: "", period: "ALL", diet: "all" };
 test("search finds ingredients and ignores case and outer whitespace", () => {
   assert.deepEqual(selectMenuMeals(meals, { ...filters, query: " LENTILS " }).map(m => m.id), ["a"]);
+  assert.equal(selectMenuMeals([{...base,ingredients:["Cumin"]}], {...filters,query:"cumin"}).length,1);
 });
 test("diet, date and period all apply together, including default lunch", () => {
   assert.deepEqual(selectMenuMeals(meals, { ...filters, diet: "veg", period: "LUNCH" }).map(m => m.id), ["a"]);
