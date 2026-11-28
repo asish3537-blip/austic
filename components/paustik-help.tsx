@@ -19,6 +19,7 @@ export function PaustikHelp(){
  const canTalk=useSyncExternalStore(subscribe,voiceSupported,()=>false);
  function stopVoice(){capture.current?.();capture.current=null;window.speechSynthesis?.cancel();setSpeaking(false);setVoiceNote("");}
  function close(){stopVoice();request.current?.abort();request.current=null;setBusy(false);setOpen(false);}
+ useEffect(()=>{const show=()=>setOpen(true);window.addEventListener("paustik-open-help",show);return()=>window.removeEventListener("paustik-open-help",show);},[]);
  useEffect(()=>{latest.current?.scrollIntoView({block:"nearest"});},[messages,busy]);
  useEffect(()=>{
   if(!open)return;const controller=new AbortController();
@@ -61,7 +62,7 @@ export function PaustikHelp(){
    <div className="paustik-help-tools"><button type="button" className={listening?"is-listening":""} onClick={talk} disabled={busy} aria-pressed={listening}><UiText text={listening?"■ Stop listening":"🎙 Talk to Paustik"}/></button><button type="button" onClick={readAloud} aria-pressed={speaking}><UiText text={speaking?"Stop reading":"Read reply aloud"}/></button><button type="button" disabled={busy} onClick={clearChat}><UiText text="Clear"/></button></div>
    {!canTalk&&<small className="paustik-voice-note">Voice input depends on your browser. Typing and read-aloud remain available where supported.</small>}{voiceNote&&<small className="paustik-voice-note" role="status"><UiText text={voiceNote}/></small>}
    <form onSubmit={event=>void send(event)}><label className="visually-hidden" htmlFor="pausstik-question">Ask Paustik</label><input id="pausstik-question" value={draft} onChange={e=>setDraft(e.target.value)} placeholder={t("Ask a Paustik question…")} maxLength={1200} disabled={busy}/><button type="submit" aria-label="Send message" disabled={busy||!draft.trim()}>↑</button></form>
-   <a className="paustik-whatsapp-support" href={WHATSAPP_SUPPORT_URL} target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer"><UiText text="Chat with Paustik on WhatsApp ↗"/></a>
+   <a className="paustik-whatsapp-support" href={WHATSAPP_SUPPORT_URL} target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer"><UiText text="Chat on WhatsApp"/> ↗</a>
    <small className="pausstik-chat-footnote">App guidance only, not general-purpose AI. Voice starts only when you tap Talk; your browser may process speech online. Review the words before sending. Never share passwords or codes. WhatsApp opens a chat; no message is sent automatically.</small>
   </section>}
   <button className="pausstik-assistant-launcher" type="button" aria-label={t(open?"Close help":"Paustik help")} aria-controls="paustik-help-panel" aria-expanded={open} onClick={()=>open?close():setOpen(true)}><Image src="/assets/paustik-helper.svg" width={44} height={44} alt=""/><span className="visually-hidden">{open?t("Close help"):t("Paustik help")}</span></button>
